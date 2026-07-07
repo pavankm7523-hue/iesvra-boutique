@@ -12,18 +12,12 @@
     "title": "",
     "subtitle": "",
     "buttonText": "SHOP NOW",
-    "buttonLink": "",
-    "backgroundImageUrl": "/uploads/hero-banner-1783432198573.jpg",
+    "buttonLink": "/shop",
+    "backgroundImageUrl": "/uploads/hero-banner-1783442736088.png",
     "isSpecialSale": false,
-    "productIds": [
-      "prod_drive_1",
-      "prod_drive_2"
-    ],
-    "productPrices": {
-      "prod_drive_1": 0,
-      "prod_drive_2": 0
-    },
+    "productIds": [],
+    "productPrices": {},
     "exclusiveProductIds": [],
-    "id": "1783432198602"
+    "id": "1783442736115"
   }
 ]

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useProducts, colorMap } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
@@ -15,6 +15,7 @@ export const Route = createFileRoute("/product/$id")({
 });
 
 function ProductDetails() {
+  const navigate = useNavigate();
   const { id } = Route.useParams();
   const { products, updateProduct } = useProducts();
   const product = products.find((p) => p.id === id);
@@ -68,6 +69,18 @@ function ProductDetails() {
     toast.success(
       `Successfully added ${quantity}x ${product.name}${hasColors ? ` (${selectedColor})` : ""} to your cart!`,
     );
+  };
+
+  const handleBuyDirectly = () => {
+    const hasColors = product.colors && product.colors.length > 0;
+    if (hasColors && !selectedColor) {
+      toast.error("Please select a color option.");
+      return;
+    }
+    const colorToUse = hasColors ? selectedColor : "Standard";
+    addToCart(product, colorToUse, quantity);
+    toast.success("Successfully added to cart! Redirecting to checkout...");
+    navigate({ to: "/cart" });
   };
 
   return (
@@ -274,8 +287,8 @@ function ProductDetails() {
             )}
 
             {/* Quantity and Actions */}
-            <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-border/30">
-              <div className="flex items-center border-2 border-border/50 rounded-full h-14 bg-white">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6 border-t border-border/30 w-full">
+              <div className="flex items-center justify-between border-2 border-border/50 rounded-full h-14 bg-white shrink-0">
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -295,13 +308,23 @@ function ProductDetails() {
                 </button>
               </div>
 
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className="flex-1 bg-navy-deep text-gold h-14 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-navy-deep transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-navy-deep/10 active:scale-[0.98]"
-              >
-                <ShoppingBag className="h-5 w-5" /> Add to Cart
-              </button>
+              <div className="flex flex-1 flex-col sm:flex-row gap-3 w-full">
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  className="flex-1 border-2 border-gold text-gold hover:bg-gold hover:text-navy-deep h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] cursor-pointer"
+                >
+                  <ShoppingBag className="h-4 w-4" /> Add to Cart
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleBuyDirectly}
+                  className="flex-1 bg-gradient-to-r from-[#e0b480] to-[#c1935e] text-navy-deep hover:shadow-[0_8px_30px_rgba(207,168,123,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
+                >
+                  Buy Directly
+                </button>
+              </div>
             </div>
 
             {/* Features strip */}
