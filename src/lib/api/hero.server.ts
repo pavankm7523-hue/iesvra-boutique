@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import * as fs from "fs/promises";
 import * as path from "path";
+import bundledHeroData from "../../data/hero.json";
 
 export const HeroSettingsSchema = z.object({
   id: z.string(),
@@ -56,6 +57,10 @@ async function readData(): Promise<HeroSettings[]> {
     await fs.writeFile(DATA_FILE, JSON.stringify([migrated], null, 2), "utf-8");
     return [migrated];
   } catch (e) {
+    // Fallback to bundled data if file system read fails (e.g. on Vercel)
+    if (Array.isArray(bundledHeroData) && bundledHeroData.length > 0) {
+      return bundledHeroData as HeroSettings[];
+    }
     return DEFAULT_BANNERS;
   }
 }

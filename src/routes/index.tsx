@@ -126,6 +126,55 @@ function Home() {
               className="w-full h-full object-cover object-center" 
             />
 
+            {/* Premium Layout for First Banner */}
+            {idx === 0 && (
+              <div className="absolute inset-0 z-10 flex text-left">
+                {/* Slanted Navy Background */}
+                <div 
+                  className="absolute top-0 bottom-0 left-[-10%] w-[90%] sm:w-[75%] md:w-[65%] lg:w-[55%] bg-[#061022] border-r-[3px] border-[#D4AF37] z-0 shadow-[10px_0_30px_rgba(0,0,0,0.5)]" 
+                  style={{ transform: 'skewX(15deg)', transformOrigin: 'bottom left' }}
+                ></div>
+
+                {/* Content */}
+                <div className="relative z-10 h-full flex flex-col justify-center px-6 sm:px-10 md:px-16 lg:px-20 max-w-2xl py-8">
+                  <h4 className="text-[#D4AF37] font-bold uppercase tracking-[0.2em] text-[10px] md:text-xs mb-3">
+                    WELCOME TO
+                  </h4>
+                  <h1 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white mb-4 leading-[1.1]">
+                    IESVRA
+                  </h1>
+                  <p className="text-sm sm:text-base md:text-lg text-white/90 mb-8 max-w-[80%] font-medium">
+                    Quality Products, Best Prices, Everyday
+                  </p>
+                  
+                  {/* Trust Badges */}
+                  <div className="flex flex-wrap gap-4 md:gap-6 mb-8">
+                    {[
+                      { icon: ShieldCheck, text: "Premium\nQuality" },
+                      { icon: CircleDollarSign, text: "Affordable\nPrices" },
+                      { icon: Truck, text: "Fast\nDelivery" },
+                      { icon: Award, text: "Trusted\nStore" }
+                    ].map((badge, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="h-7 w-7 md:h-9 md:w-9 rounded-full border border-white/20 flex items-center justify-center shrink-0">
+                          <badge.icon className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/80" />
+                        </div>
+                        <span className="text-[9px] md:text-[10px] text-white/80 font-bold uppercase tracking-wider leading-tight whitespace-pre-line">
+                          {badge.text}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="inline-block">
+                    <button className="bg-gradient-to-r from-[#e5c158] to-[#c59b27] text-navy-deep px-6 md:px-8 py-2.5 md:py-3 rounded-full font-bold text-xs md:text-sm uppercase tracking-wider hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all flex items-center gap-2 group cursor-pointer">
+                      SHOP NOW
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             </Link>
           );
         })}
@@ -239,12 +288,12 @@ function Home() {
             </Link>
           </div>
           {/* 5 products in a row on desktop, matching reference */}
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-none lg:grid lg:grid-cols-5 lg:gap-5 lg:overflow-visible lg:pb-0">
-            {!isLoaded ? null : bestSellersList.slice(0, 5).map((product, idx) => (
-              <div key={product.id} className="flex-shrink-0 w-[170px] sm:w-[190px] lg:w-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-5 pb-4 lg:pb-0">
+            {!isLoaded ? null : bestSellersList.slice(0, 10).map((product, idx) => (
+              <div key={product.id} className="w-full">
                 <ProductCard 
                   product={product} 
-                  customBadge={idx === 0 ? "Best Seller" : idx === 1 ? "Trending" : idx === 2 ? "New" : idx === 3 ? "Limited Stock" : "Best Seller"}
+                  customBadge={idx === 0 ? "Best Seller" : idx === 1 ? "Trending" : idx === 2 ? "New" : idx === 3 ? "Limited Stock" : idx === 4 ? "Best Seller" : undefined}
                 />
               </div>
             ))}
