@@ -27,7 +27,7 @@ function AdminSettings() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-navy-deep">Support Email</label>
-              <input type="email" defaultValue="gmailsupport.iesvra@gmail.com" className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
+              <input type="email" defaultValue="support.iesvra@gmail.com" className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-navy-deep">Currency</label>

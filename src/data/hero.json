@@ -9,16 +9,21 @@
     "id": "1783414426882"
   },
   {
-    "title": "dussera sale",
-    "subtitle": "80 % off",
+    "title": "",
+    "subtitle": "",
     "buttonText": "SHOP NOW",
     "buttonLink": "",
-    "backgroundImageUrl": "/uploads/hero-banner-1783415291454.jpg",
+    "backgroundImageUrl": "/uploads/hero-banner-1783432198573.jpg",
     "isSpecialSale": false,
     "productIds": [
-      "prod_drive_2",
-      "prod_drive_3"
+      "prod_drive_1",
+      "prod_drive_2"
     ],
-    "id": "1783415291464"
+    "productPrices": {
+      "prod_drive_1": 0,
+      "prod_drive_2": 0
+    },
+    "exclusiveProductIds": [],
+    "id": "1783432198602"
   }
 ]

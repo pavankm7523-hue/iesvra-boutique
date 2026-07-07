@@ -112,7 +112,7 @@ function Contact() {
               </div>
               <div>
                 <h4 className="font-semibold text-navy-deep">Email</h4>
-                <p className="text-sm text-muted-foreground mt-1">gmailsupport.iesvra@gmail.com</p>
+                <p className="text-sm text-muted-foreground mt-1">support.iesvra@gmail.com</p>
               </div>
             </div>
 

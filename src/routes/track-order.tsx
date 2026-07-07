@@ -288,7 +288,7 @@ function TrackOrder() {
             <p>2. Enter it in the field above and click **Track Now**.</p>
             <p>
               3. If you have any issues tracking your order, please contact our support team at{" "}
-              <span className="font-semibold text-navy-deep">gmailsupport.iesvra@gmail.com</span>.
+              <span className="font-semibold text-navy-deep">support.iesvra@gmail.com</span>.
             </p>
           </div>
         </div>

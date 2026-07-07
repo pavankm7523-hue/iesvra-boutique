@@ -45,7 +45,7 @@ function FAQPage() {
           <div className="border border-border/40 rounded-xl p-6 bg-white shadow-sm">
             <h3 className="font-semibold text-lg text-navy-deep mb-2">How can I contact customer support?</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              You can contact our friendly support team by visiting the "Contact Us" page or emailing us directly at gmailsupport.iesvra@gmail.com. We are happy to help!
+              You can contact our friendly support team by visiting the "Contact Us" page or emailing us directly at support.iesvra@gmail.com. We are happy to help!
             </p>
           </div>
         </div>
