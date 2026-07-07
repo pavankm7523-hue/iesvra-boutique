@@ -24,7 +24,7 @@ export function Footer() {
           <div className="flex flex-wrap items-center gap-3 mt-2">
             {[
               { Icon: Whatsapp, href: "https://wa.me/917061333200", title: "WhatsApp" },
-              { Icon: Instagram, href: "#", title: "Instagram" },
+              { Icon: Instagram, href: "https://www.instagram.com/iesvra.in?igsh=MXBjNnozandyY2F4eA==", title: "Instagram" },
               { Icon: Facebook, href: "#", title: "Facebook" },
               { Icon: Youtube, href: "#", title: "YouTube" },
               {
