@@ -1,0 +1,149 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-display: "Outfit", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-gold: var(--gold);
+  --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
+  --color-cream: var(--cream);
+  --color-discount: var(--discount);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: #f8f9fb; /* light background for content */
+  --foreground: #13192b; /* dark navy text */
+  --card: #ffffff;
+  --card-foreground: #13192b;
+  --popover: #ffffff;
+  --popover-foreground: #13192b;
+  --primary: #13192b; /* rich deep navy */
+  --primary-foreground: #ffffff;
+  --secondary: #f0f2f5;
+  --secondary-foreground: #13192b;
+  --muted: #f0f2f5;
+  --muted-foreground: #6b7280;
+  --accent: #e6b96e; /* metallic gold */
+  --accent-foreground: #13192b;
+  --gold: #e6b96e;
+  --navy: #13192b;
+  --navy-deep: #0d111b; /* darkest navy for contrast */
+  --cream: #fdfbf7; /* warm background */
+  --discount: #dc2626;
+  --destructive: #dc2626;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #e6b96e;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .font-serif-hero {
+    font-family: var(--font-serif);
+  }
+}
+
+@layer utilities {
+  .text-gold {
+    color: var(--gold);
+  }
+  .bg-gold {
+    background-color: var(--gold);
+  }
+  .text-navy {
+    color: var(--navy);
+  }
+  .bg-navy {
+    background-color: var(--navy);
+  }
+  .bg-navy-deep {
+    background-color: var(--navy-deep);
+  }
+  .bg-cream {
+    background-color: var(--cream);
+  }
+  .text-discount {
+    color: var(--discount);
+  }
+  .product-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: all 0.25s ease;
+    overflow: hidden;
+  }
+  .product-card:hover {
+    border-color: color-mix(in oklab, var(--gold) 60%, transparent);
+    box-shadow: 0 12px 30px -10px oklch(0 0 0 / 0.12);
+    transform: translateY(-2px);
+  }
+  .category-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, oklch(0.985 0.005 260) 0%, oklch(0.96 0.01 260) 100%);
+    border: 1px solid var(--border);
+    transition: all 0.25s ease;
+  }
+  .category-circle:hover {
+    border-color: var(--gold);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px -8px oklch(0 0 0 / 0.15);
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+

@@ -1,0 +1,209 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { PackageOpen, Clock, Truck, CheckCircle2, ChevronDown, ChevronUp, User, MapPin, Phone, Mail, ShoppingBag } from "lucide-react";
+import { useOrdersList, updateOrderStatus, Order } from "@/lib/orders";
+import { useState } from "react";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/admin/orders")({
+  head: () => ({
+    meta: [{ title: "Manage Orders - Admin" }],
+  }),
+  component: AdminOrders,
+});
+
+function AdminOrders() {
+  const orders = useOrdersList();
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+
+  const toggleExpand = (id: string) => {
+    setExpandedOrderId(expandedOrderId === id ? null : id);
+  };
+
+  const handleStatusChange = (orderId: string, status: 'Processing' | 'Shipped' | 'Delivered') => {
+    updateOrderStatus(orderId, status);
+    toast.success(`Order ${orderId} status updated to ${status}`);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Processing":
+        return "bg-yellow-50 text-yellow-700 border-yellow-200/50";
+      case "Shipped":
+        return "bg-blue-50 text-blue-700 border-blue-200/50";
+      case "Delivered":
+        return "bg-green-50 text-green-700 border-green-200/50";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200/50";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "Processing":
+        return <Clock className="h-3.5 w-3.5" />;
+      case "Shipped":
+        return <Truck className="h-3.5 w-3.5" />;
+      case "Delivered":
+        return <CheckCircle2 className="h-3.5 w-3.5" />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="space-y-8 font-sans text-navy-deep">
+      <div>
+        <h2 className="text-3xl font-display font-bold text-navy-deep">Orders Management</h2>
+        <p className="text-navy-deep/60 mt-1 text-sm">Review, track, and update customer order fulfillment states.</p>
+      </div>
+
+      {orders.length === 0 ? (
+        <div className="bg-white rounded-2xl shadow-sm border border-border/40 p-16 flex flex-col items-center justify-center text-center">
+          <div className="h-20 w-20 bg-secondary/30 rounded-full flex items-center justify-center mb-4">
+            <PackageOpen className="h-10 w-10 text-gold animate-bounce" />
+          </div>
+          <h3 className="text-xl font-bold text-navy-deep mb-2">No Orders Yet</h3>
+          <p className="text-navy-deep/60 max-w-sm text-sm">
+            Once customers place orders on the store, their purchase summaries and details will appear here.
+          </p>
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl shadow-sm border border-border/40 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-secondary/20 border-b border-border/40 text-navy-deep/70 text-xs font-bold uppercase tracking-wider">
+                  <th className="p-5">Order ID</th>
+                  <th className="p-5">Customer</th>
+                  <th className="p-5">Date</th>
+                  <th className="p-5">Total Paid</th>
+                  <th className="p-5">Status</th>
+                  <th className="p-5 text-right">Details</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40 text-sm">
+                {orders.map((order) => {
+                  const isExpanded = expandedOrderId === order.id;
+                  return (
+                    <React.Fragment key={order.id}>
+                      <tr className="hover:bg-secondary/5 transition-colors">
+                        <td className="p-5 font-bold font-mono text-navy-deep">
+                          {order.id}
+                        </td>
+                        <td className="p-5">
+                          <div className="font-semibold">{order.customerName}</div>
+                          <div className="text-xs text-navy-deep/50">{order.customerEmail}</div>
+                        </td>
+                        <td className="p-5 font-medium">
+                          {order.date}
+                        </td>
+                        <td className="p-5 font-bold text-navy-deep">
+                          ₹{order.total.toLocaleString()}
+                        </td>
+                        <td className="p-5">
+                          <div className="flex items-center gap-2">
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(order.status)}`}>
+                              {getStatusIcon(order.status)}
+                              {order.status}
+                            </span>
+                            <select
+                              value={order.status}
+                              onChange={(e) => handleStatusChange(order.id, e.target.value as any)}
+                              className="border border-border/60 text-xs rounded px-2 py-1 bg-white focus:outline-none focus:border-gold cursor-pointer font-medium"
+                            >
+                              <option value="Processing">Processing</option>
+                              <option value="Shipped">Shipped</option>
+                              <option value="Delivered">Delivered</option>
+                            </select>
+                          </div>
+                        </td>
+                        <td className="p-5 text-right">
+                          <button
+                            onClick={() => toggleExpand(order.id)}
+                            className="p-2 text-navy-deep/60 hover:text-gold hover:bg-gold/10 rounded-md transition-colors cursor-pointer"
+                          >
+                            {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                          </button>
+                        </td>
+                      </tr>
+
+                      {/* Expandable Order detail section */}
+                      {isExpanded && (
+                        <tr>
+                          <td colSpan={6} className="bg-secondary/10 p-6 border-b border-border/40">
+                            <div className="grid md:grid-cols-2 gap-8 animate-in slide-in-from-top-2 duration-200">
+                              {/* Shipping summary */}
+                              <div className="space-y-4">
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-navy-deep/60 border-b border-border/20 pb-2 flex items-center gap-2">
+                                  <User className="h-4 w-4 text-gold" /> Shipping Address
+                                </h4>
+                                <div className="space-y-2 text-xs">
+                                  <div className="flex items-center gap-2">
+                                    <User className="h-3.5 w-3.5 text-navy-deep/40 shrink-0" />
+                                    <span className="font-semibold">{order.customerName}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Mail className="h-3.5 w-3.5 text-navy-deep/40 shrink-0" />
+                                    <span>{order.customerEmail}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Phone className="h-3.5 w-3.5 text-navy-deep/40 shrink-0" />
+                                    <span>{order.customerPhone}</span>
+                                  </div>
+                                  <div className="flex items-start gap-2">
+                                    <MapPin className="h-3.5 w-3.5 text-navy-deep/40 shrink-0 mt-0.5" />
+                                    <span>{order.shippingAddress}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Items list */}
+                              <div className="space-y-4">
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-navy-deep/60 border-b border-border/20 pb-2 flex items-center gap-2">
+                                  <ShoppingBag className="h-4 w-4 text-gold" /> Items Purchased
+                                </h4>
+                                <div className="space-y-2.5 max-h-40 overflow-y-auto pr-1">
+                                  {order.items.map((item, idx) => (
+                                    <div key={idx} className="flex items-center justify-between gap-3 text-xs">
+                                      <div className="flex items-center gap-2.5 min-w-0">
+                                        <img
+                                          src={item.image}
+                                          alt={item.name}
+                                          className="h-8 w-8 object-cover rounded bg-white border border-border/20 shrink-0"
+                                        />
+                                        <div className="min-w-0">
+                                          <p className="font-semibold truncate">{item.name}</p>
+                                          <p className="text-[10px] text-navy-deep/50">
+                                            Qty: {item.quantity} {item.color && item.color !== "Standard" && `| Color: ${item.color}`}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <span className="font-bold shrink-0">
+                                        ₹{(item.price * item.quantity).toLocaleString()}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="border-t border-border/30 pt-3 flex justify-between items-center text-xs font-bold text-navy-deep">
+                                  <span>Total Amount Due:</span>
+                                  <span className="text-gold text-sm">₹{order.total.toLocaleString()}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// React.Fragment helper support since TanStack start might transpile TSX
+import React from "react";

@@ -1,0 +1,24 @@
+[
+  {
+    "title": "IESVRA",
+    "subtitle": "Quality Products, Best Prices, Everyday",
+    "buttonText": "SHOP NOW",
+    "buttonLink": "/shop",
+    "backgroundImageUrl": "/hero-bg.jpg",
+    "isSpecialSale": true,
+    "id": "1783414426882"
+  },
+  {
+    "title": "dussera sale",
+    "subtitle": "80 % off",
+    "buttonText": "SHOP NOW",
+    "buttonLink": "",
+    "backgroundImageUrl": "/uploads/hero-banner-1783415291454.jpg",
+    "isSpecialSale": false,
+    "productIds": [
+      "prod_drive_2",
+      "prod_drive_3"
+    ],
+    "id": "1783415291464"
+  }
+]
