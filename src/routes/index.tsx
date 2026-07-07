@@ -104,7 +104,7 @@ function Home() {
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + heroBanners.length) % heroBanners.length);
 
   return (
-    <div className="bg-background text-navy-deep font-sans">
+    <div className="bg-[#f8f9fb] text-navy-deep font-sans">
       {/* ============== HERO SECTION ============== */}
       <section className="relative w-full h-[380px] sm:h-[450px] md:h-[520px] lg:h-[600px] bg-navy-deep overflow-hidden group">
         
@@ -123,10 +123,57 @@ function Home() {
             <img
               src={banner.backgroundImageUrl}
               alt={banner.title}
-              className="w-full h-full object-cover object-top" 
+              className="w-full h-full object-cover object-center" 
             />
 
+            {/* Premium Layout for First Banner */}
+            {idx === 0 && (
+              <div className="absolute inset-0 z-10 flex text-left">
+                {/* Slanted Navy Background */}
+                <div 
+                  className="absolute top-0 bottom-0 left-0 w-full sm:left-[-10%] sm:w-[75%] md:w-[65%] lg:w-[55%] bg-gradient-to-r from-[#061022]/95 via-[#061022]/85 to-transparent sm:bg-[#061022] border-r-0 sm:border-r-[3px] border-[#D4AF37] z-0 shadow-none sm:shadow-[10px_0_30px_rgba(0,0,0,0.5)] transform sm:skew-x-[15deg] origin-bottom-left" 
+                ></div>
 
+                {/* Content */}
+                <div className="relative z-10 h-full flex flex-col justify-center px-5 sm:px-10 md:px-16 lg:px-20 max-w-2xl py-6 sm:py-8">
+                  <h4 className="text-[#D4AF37] font-bold uppercase tracking-[0.2em] text-[10px] md:text-xs mb-2.5">
+                    WELCOME TO
+                  </h4>
+                  <h1 className="font-display font-semibold text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-white mb-3 sm:mb-4 leading-[1.1]">
+                    IESVRA
+                  </h1>
+                  <p className="text-xs sm:text-base md:text-lg text-white/90 mb-6 sm:mb-8 max-w-[90%] sm:max-w-[80%] font-medium">
+                    Quality Products, Best Prices, Everyday
+                  </p>
+                  
+                  {/* Trust Badges */}
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 sm:flex sm:flex-wrap sm:gap-4 md:gap-6 mb-6 sm:mb-8">
+                    {[
+                      { icon: ShieldCheck, text: "Premium\nQuality" },
+                      { icon: CircleDollarSign, text: "Affordable\nPrices" },
+                      { icon: Truck, text: "Fast\nDelivery" },
+                      { icon: Award, text: "Trusted\nStore" }
+                    ].map((badge, i) => (
+                      <div key={i} className="flex items-center gap-1.5 sm:gap-2">
+                        <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-9 md:w-9 rounded-full border border-white/20 flex items-center justify-center shrink-0">
+                          <badge.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-white/80" />
+                        </div>
+                        <span className="text-[8px] sm:text-[9px] md:text-[10px] text-white/80 font-bold uppercase tracking-wider leading-tight whitespace-pre-line">
+                          {badge.text}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="inline-block">
+                    <button className="bg-gradient-to-r from-[#e5c158] to-[#c59b27] text-navy-deep px-5 sm:px-8 py-2 sm:py-3 rounded-full font-bold text-[10px] sm:text-xs md:text-sm uppercase tracking-wider hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all flex items-center gap-2 group cursor-pointer">
+                      SHOP NOW
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             </Link>
           );
         })}

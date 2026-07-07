@@ -40,29 +40,29 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #f5f7f5; /* clean light background with a touch of sage */
-  --foreground: #122b49; /* rich deep navy text from mockup */
+  --background: #f8f9fb; /* light background for content */
+  --foreground: #13192b; /* dark navy text */
   --card: #ffffff;
-  --card-foreground: #122b49;
+  --card-foreground: #13192b;
   --popover: #ffffff;
-  --popover-foreground: #122b49;
-  --primary: #122b49; /* rich deep navy */
+  --popover-foreground: #13192b;
+  --primary: #13192b; /* rich deep navy */
   --primary-foreground: #ffffff;
-  --secondary: #eae5dc; /* linen / sand */
-  --secondary-foreground: #122b49;
-  --muted: #e2e8e3; /* soft sage gray-green */
-  --muted-foreground: #55685d;
-  --accent: #cfa87b; /* gold / bronze accent from mockup */
-  --accent-foreground: #122b49;
-  --gold: #cfa87b;
-  --navy: #122b49;
-  --navy-deep: #0c1b2f;
-  --cream: #f5f2eb; /* linen background from mockup */
-  --discount: #d32f2f;
-  --destructive: #d32f2f;
-  --border: #d3dbd4; /* soft border blending with sage */
-  --input: #d3dbd4;
-  --ring: #cfa87b;
+  --secondary: #f0f2f5;
+  --secondary-foreground: #13192b;
+  --muted: #f0f2f5;
+  --muted-foreground: #6b7280;
+  --accent: #e6b96e; /* metallic gold */
+  --accent-foreground: #13192b;
+  --gold: #e6b96e;
+  --navy: #13192b;
+  --navy-deep: #0d111b; /* darkest navy for contrast */
+  --cream: #fdfbf7; /* warm background */
+  --discount: #dc2626;
+  --destructive: #dc2626;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #e6b96e;
 }
 
 @layer base {
