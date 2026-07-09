@@ -31,6 +31,7 @@ import { Route as ApiSendShippedEmailRouteImport } from './routes/api/send-shipp
 import { Route as ApiSendOtpRouteImport } from './routes/api/send-otp'
 import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
+import { Route as ApiDiagRouteImport } from './routes/api/diag'
 import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -150,6 +151,11 @@ const ApiNotifyAdminRoute = ApiNotifyAdminRouteImport.update({
   path: '/api/notify-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDiagRoute = ApiDiagRouteImport.update({
+  id: '/api/diag',
+  path: '/api/diag',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCreateOrderRoute = ApiCreateOrderRouteImport.update({
   id: '/api/create-order',
   path: '/api/create-order',
@@ -212,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -243,6 +250,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -310,6 +319,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/api/create-order'
+    | '/api/diag'
     | '/api/notify-admin'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -341,6 +351,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/api/create-order'
+    | '/api/diag'
     | '/api/notify-admin'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/api/create-order'
+    | '/api/diag'
     | '/api/notify-admin'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -402,6 +414,7 @@ export interface RootRouteChildren {
   TrackOrderRoute: typeof TrackOrderRoute
   WishlistRoute: typeof WishlistRoute
   ApiCreateOrderRoute: typeof ApiCreateOrderRoute
+  ApiDiagRoute: typeof ApiDiagRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
   ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
   ApiSendOtpRoute: typeof ApiSendOtpRoute
@@ -567,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNotifyAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/diag': {
+      id: '/api/diag'
+      path: '/api/diag'
+      fullPath: '/api/diag'
+      preLoaderRoute: typeof ApiDiagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/create-order': {
       id: '/api/create-order'
       path: '/api/create-order'
@@ -665,6 +685,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrackOrderRoute: TrackOrderRoute,
   WishlistRoute: WishlistRoute,
   ApiCreateOrderRoute: ApiCreateOrderRoute,
+  ApiDiagRoute: ApiDiagRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
   ApiSendConfirmationRoute: ApiSendConfirmationRoute,
   ApiSendOtpRoute: ApiSendOtpRoute,
