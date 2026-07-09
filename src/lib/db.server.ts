@@ -14,21 +14,32 @@ function getSupabaseConfig() {
   return { url, key };
 }
 
+function parseItems(raw: any): any[] {
+  // Supabase JSONB can return items as a string or as an array.
+  // Normalize to a plain JS array either way.
+  if (!raw) return [];
+  if (typeof raw === "string") {
+    try { return JSON.parse(raw); } catch { return []; }
+  }
+  if (Array.isArray(raw)) return raw;
+  return [];
+}
+
 function toCamelCase(dbOrder: any): Order {
   return {
-    id: dbOrder.id,
-    customerName: dbOrder.customer_name,
-    customerEmail: dbOrder.customer_email,
-    customerPhone: dbOrder.customer_phone,
-    shippingAddress: dbOrder.shipping_address,
-    items: dbOrder.items,
-    subtotal: Number(dbOrder.subtotal),
-    shipping: Number(dbOrder.shipping),
-    total: Number(dbOrder.total),
-    date: dbOrder.date,
-    status: dbOrder.status,
-    paymentStatus: dbOrder.payment_status,
-    trackingId: dbOrder.tracking_id || undefined,
+    id: String(dbOrder.id || ""),
+    customerName: String(dbOrder.customer_name || ""),
+    customerEmail: String(dbOrder.customer_email || ""),
+    customerPhone: String(dbOrder.customer_phone || ""),
+    shippingAddress: String(dbOrder.shipping_address || ""),
+    items: parseItems(dbOrder.items),
+    subtotal: Number(dbOrder.subtotal) || 0,
+    shipping: Number(dbOrder.shipping) || 0,
+    total: Number(dbOrder.total) || 0,
+    date: String(dbOrder.date || ""),
+    status: (dbOrder.status || "Processing") as Order["status"],
+    paymentStatus: (dbOrder.payment_status || undefined) as Order["paymentStatus"],
+    trackingId: dbOrder.tracking_id ? String(dbOrder.tracking_id) : undefined,
   };
 }
 
@@ -94,6 +105,13 @@ export async function insertOrderIntoDb(order: Order): Promise<Order> {
   const { url, key } = getSupabaseConfig();
   const dbData = toSnakeCase(order);
 
+  // Ensure items is always a plain array (never a string) before sending to Supabase
+  if (typeof dbData.items === "string") {
+    try { dbData.items = JSON.parse(dbData.items); } catch { dbData.items = []; }
+  }
+
+  console.log("[db] Inserting order:", order.id, "items count:", Array.isArray(dbData.items) ? dbData.items.length : "?");
+
   const res = await fetch(`${url}/rest/v1/orders`, {
     method: "POST",
     headers: {
@@ -105,8 +123,11 @@ export async function insertOrderIntoDb(order: Order): Promise<Order> {
     body: JSON.stringify(dbData),
   });
 
+  console.log("[db] Supabase insert response status:", res.status);
+
   if (!res.ok) {
     const errorText = await res.text();
+    console.error("[db] Supabase insert failed:", res.status, errorText);
     throw new Error(`Failed to save order to database: ${res.status} ${errorText}`);
   }
 
@@ -116,9 +137,24 @@ export async function insertOrderIntoDb(order: Order): Promise<Order> {
       return toCamelCase(list[0]);
     }
   } catch (e) {
-    console.warn("Could not parse returned order representation, returning input order directly:", e);
+    console.warn("[db] Could not parse returned order representation, returning sanitized input order:", e);
   }
-  return order;
+  // Return a sanitized version of the input order (primitive types only, no complex objects)
+  return toCamelCase({
+    id: order.id,
+    customer_name: order.customerName,
+    customer_email: order.customerEmail,
+    customer_phone: order.customerPhone,
+    shipping_address: order.shippingAddress,
+    items: order.items,
+    subtotal: order.subtotal,
+    shipping: order.shipping,
+    total: order.total,
+    date: order.date,
+    status: order.status,
+    payment_status: order.paymentStatus,
+    tracking_id: order.trackingId,
+  });
 }
 
 export async function updateOrderInDb(orderId: string, patch: Partial<Order>): Promise<Order> {
