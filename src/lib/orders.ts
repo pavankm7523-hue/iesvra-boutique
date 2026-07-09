@@ -193,11 +193,23 @@ export async function createOrder(
   };
 
   // Sanitize the order through JSON roundtrip to strip any `undefined` optional
-  // fields (e.g. bannerId, saleEndDate on CartItem) before seroval encodes it.
-  // Seroval cannot handle `undefined` values inside nested objects.
+  // fields (e.g. bannerId, saleEndDate on CartItem) before sending.
   const sanitizedOrder = JSON.parse(JSON.stringify(newOrder)) as Order;
 
-  const savedOrder = await createOrderServer(sanitizedOrder);
+  // Use plain fetch to /api/save-order instead of createOrderServer (seroval
+  // has issues serializing complex nested objects with optional fields).
+  const res = await fetch("/api/save-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(sanitizedOrder),
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({ error: "Failed to place order." }));
+    throw new Error(errData.error || `Server error ${res.status}`);
+  }
+
+  const savedOrder = await res.json() as Order;
   clearCart(); // Clear cart after placing order
   triggerOrdersChange();
   

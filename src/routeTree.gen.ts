@@ -30,6 +30,7 @@ import { Route as ApiVerifyPaymentRouteImport } from './routes/api/verify-paymen
 import { Route as ApiSendShippedEmailRouteImport } from './routes/api/send-shipped-email'
 import { Route as ApiSendOtpRouteImport } from './routes/api/send-otp'
 import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
+import { Route as ApiSaveOrderRouteImport } from './routes/api/save-order'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
 import { Route as ApiDiagRouteImport } from './routes/api/diag'
 import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
@@ -146,6 +147,11 @@ const ApiSendConfirmationRoute = ApiSendConfirmationRouteImport.update({
   path: '/api/send-confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSaveOrderRoute = ApiSaveOrderRouteImport.update({
+  id: '/api/save-order',
+  path: '/api/save-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiNotifyAdminRoute = ApiNotifyAdminRouteImport.update({
   id: '/api/notify-admin',
   path: '/api/notify-admin',
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
@@ -321,6 +330,7 @@ export interface FileRouteTypes {
     | '/api/create-order'
     | '/api/diag'
     | '/api/notify-admin'
+    | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
@@ -353,6 +363,7 @@ export interface FileRouteTypes {
     | '/api/create-order'
     | '/api/diag'
     | '/api/notify-admin'
+    | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
@@ -386,6 +397,7 @@ export interface FileRouteTypes {
     | '/api/create-order'
     | '/api/diag'
     | '/api/notify-admin'
+    | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
@@ -416,6 +428,7 @@ export interface RootRouteChildren {
   ApiCreateOrderRoute: typeof ApiCreateOrderRoute
   ApiDiagRoute: typeof ApiDiagRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
+  ApiSaveOrderRoute: typeof ApiSaveOrderRoute
   ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
   ApiSendOtpRoute: typeof ApiSendOtpRoute
   ApiSendShippedEmailRoute: typeof ApiSendShippedEmailRoute
@@ -573,6 +586,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSendConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/save-order': {
+      id: '/api/save-order'
+      path: '/api/save-order'
+      fullPath: '/api/save-order'
+      preLoaderRoute: typeof ApiSaveOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/notify-admin': {
       id: '/api/notify-admin'
       path: '/api/notify-admin'
@@ -687,6 +707,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCreateOrderRoute: ApiCreateOrderRoute,
   ApiDiagRoute: ApiDiagRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
+  ApiSaveOrderRoute: ApiSaveOrderRoute,
   ApiSendConfirmationRoute: ApiSendConfirmationRoute,
   ApiSendOtpRoute: ApiSendOtpRoute,
   ApiSendShippedEmailRoute: ApiSendShippedEmailRoute,
