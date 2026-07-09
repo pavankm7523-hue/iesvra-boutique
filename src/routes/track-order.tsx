@@ -216,6 +216,36 @@ function TrackOrder() {
                       </div>
                     </div>
                   )}
+
+                  {/* Tracking ID details block */}
+                  {trackedOrder.trackingId && (
+                    <div className="bg-[#f0f9ff]/60 border border-blue-100 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left">
+                      <div>
+                        <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest block mb-1">Amazon Shipping AWB</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-base text-navy-deep">{trackedOrder.trackingId}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(trackedOrder.trackingId || "");
+                              toast.success("Tracking ID copied to clipboard!");
+                            }}
+                            className="text-[10px] font-bold text-blue-600 hover:text-blue-700 underline cursor-pointer bg-transparent border-none p-0 animate-pulse-subtle"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                      </div>
+                      <a
+                        href={`https://track.amazon.in/tracking/${trackedOrder.trackingId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md shadow-blue-600/10 cursor-pointer"
+                      >
+                        <Truck className="h-4 w-4" /> Track on Amazon Shipping
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 {/* Delivery Information & Items */}

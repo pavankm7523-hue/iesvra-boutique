@@ -236,6 +236,18 @@
           </svg>
         </div>
 
+        <!-- Tracking ID display -->
+        <div id="mobileTrackingDetailsCard" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 16px; margin: 16px; display: none; color: white;">
+          <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); display: block; margin-bottom: 4px;">Amazon Shipping Tracking ID</span>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <strong id="mobileTrackingIdText" style="font-family: monospace; font-size: 16px; color: var(--accent-gold);"></strong>
+            <button onclick="window.copyMobileTrackingId()" style="background: transparent; border: none; color: var(--accent-gold); font-size: 11px; text-decoration: underline; cursor: pointer; padding: 4px;">Copy</button>
+          </div>
+          <a id="mobileTrackingUrlLink" href="#" target="_blank" rel="noopener noreferrer" class="btn" style="display: block; text-align: center; margin-top: 12px; font-size: 11px; font-weight: bold; background: var(--accent-gold); color: var(--primary-bg); text-transform: uppercase; letter-spacing: 0.05em; padding: 10px; border-radius: 10px; text-decoration: none;">
+            Track on Amazon Shipping
+          </a>
+        </div>
+
         <div class="timeline-container">
           <div class="timeline-step" id="step-placed">
             <div class="step-icon">✓</div>

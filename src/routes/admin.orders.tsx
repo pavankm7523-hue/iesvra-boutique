@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PackageOpen, Clock, Truck, CheckCircle2, ChevronDown, ChevronUp, User, MapPin, Phone, Mail, ShoppingBag, XCircle } from "lucide-react";
-import { useOrdersList, updateOrderStatus, Order } from "@/lib/orders";
+import { useOrdersList, updateOrderStatus, updateOrderTracking, Order } from "@/lib/orders";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -14,6 +14,7 @@ export const Route = createFileRoute("/admin/orders")({
 function AdminOrders() {
   const orders = useOrdersList();
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [editingTracking, setEditingTracking] = useState<Record<string, string>>({});
 
   const toggleExpand = (id: string) => {
     setExpandedOrderId(expandedOrderId === id ? null : id);
@@ -22,6 +23,16 @@ function AdminOrders() {
   const handleStatusChange = (orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') => {
     updateOrderStatus(orderId, status);
     toast.success(`Order ${orderId} status updated to ${status}`);
+  };
+
+  const handleTrackingSave = (orderId: string) => {
+    const val = editingTracking[orderId];
+    if (val === undefined) {
+      toast.error("No changes to tracking ID.");
+      return;
+    }
+    updateOrderTracking(orderId, val.trim());
+    toast.success(`Tracking ID updated for order ${orderId}`);
   };
 
   const getStatusColor = (status: string) => {
@@ -95,7 +106,12 @@ function AdminOrders() {
                     <React.Fragment key={order.id}>
                       <tr className="hover:bg-secondary/5 transition-colors">
                         <td className="p-5 font-bold font-mono text-navy-deep">
-                          {order.id}
+                          <div>{order.id}</div>
+                          {order.trackingId && (
+                            <div className="text-[10px] text-navy-deep/50 mt-1 font-semibold normal-case font-sans">
+                              AWB: <span className="font-mono text-gold font-bold text-xs">{order.trackingId}</span>
+                            </div>
+                          )}
                         </td>
                         <td className="p-5">
                           <div className="font-semibold">{order.customerName}</div>
@@ -149,7 +165,7 @@ function AdminOrders() {
                       {isExpanded && (
                         <tr>
                           <td colSpan={7} className="bg-secondary/10 p-6 border-b border-border/40">
-                            <div className="grid md:grid-cols-2 gap-8 animate-in slide-in-from-top-2 duration-200">
+                            <div className="grid md:grid-cols-3 gap-8 animate-in slide-in-from-top-2 duration-200">
                               {/* Shipping summary */}
                               <div className="space-y-4">
                                 <h4 className="text-xs font-bold uppercase tracking-wider text-navy-deep/60 border-b border-border/20 pb-2 flex items-center gap-2">
@@ -212,6 +228,41 @@ function AdminOrders() {
                                   <div className="flex justify-between items-center border-t border-border/20 pt-2 font-bold text-sm">
                                     <span>Total Amount Due:</span>
                                     <span className="text-gold">₹{order.total.toLocaleString()}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Shipment Tracking Column */}
+                              <div className="space-y-4">
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-navy-deep/60 border-b border-border/20 pb-2 flex items-center gap-2">
+                                  <Truck className="h-4 w-4 text-gold" /> Shipment Tracking
+                                </h4>
+                                <div className="bg-white p-4 rounded-xl border border-border/30 shadow-xs space-y-3">
+                                  <div className="text-xs">
+                                    <span className="font-semibold text-navy-deep/50 block mb-1">Carrier:</span>
+                                    <span className="font-bold text-navy-deep">Amazon Shipping</span>
+                                  </div>
+                                  <div className="text-xs">
+                                    <span className="font-semibold text-navy-deep/50 block mb-1">Current AWB:</span>
+                                    <span className="font-bold font-mono text-navy-deep bg-secondary/20 px-1.5 py-0.5 rounded text-[11px] break-all">{order.trackingId || "None"}</span>
+                                  </div>
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-[10px] font-bold text-navy-deep/60 uppercase">Update Tracking ID</label>
+                                    <div className="flex gap-2">
+                                      <input
+                                        type="text"
+                                        placeholder="Paste AWB number..."
+                                        value={editingTracking[order.id] !== undefined ? editingTracking[order.id] : (order.trackingId || "")}
+                                        onChange={(e) => setEditingTracking(prev => ({ ...prev, [order.id]: e.target.value }))}
+                                        className="h-8 px-2 border border-border/60 rounded text-xs font-semibold focus:ring-1 focus:ring-gold outline-none flex-1 font-mono"
+                                      />
+                                      <button
+                                        onClick={() => handleTrackingSave(order.id)}
+                                        className="px-3 h-8 bg-navy-deep hover:bg-gold text-gold hover:text-navy-deep text-xs font-bold rounded transition-colors cursor-pointer"
+                                      >
+                                        Save
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>

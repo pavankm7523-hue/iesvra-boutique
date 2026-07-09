@@ -621,8 +621,29 @@
     const storedOrders = localStorage.getItem('iesvra_orders');
     const orders = storedOrders ? JSON.parse(storedOrders) : [];
     const order = orders.find(o => o.orderId === orderId);
-
     if (!order) return;
+
+    // Show/hide tracking ID details
+    const trackingCard = document.getElementById('mobileTrackingDetailsCard');
+    const trackingIdText = document.getElementById('mobileTrackingIdText');
+    const trackingUrlLink = document.getElementById('mobileTrackingUrlLink');
+    if (trackingCard && trackingIdText && trackingUrlLink) {
+      if (order.trackingId) {
+        trackingIdText.textContent = order.trackingId;
+        trackingUrlLink.href = `https://track.amazon.in/tracking/${order.trackingId}`;
+        trackingCard.style.display = 'block';
+      } else {
+        trackingCard.style.display = 'none';
+      }
+    }
+
+    // Register copy helper globally
+    window.copyMobileTrackingId = () => {
+      if (trackingIdText && trackingIdText.textContent) {
+        navigator.clipboard.writeText(trackingIdText.textContent);
+        window.showToast("Tracking ID copied!");
+      }
+    };
 
     // Show/hide cancel button dynamically in tracking view
     if (btnCancel) {

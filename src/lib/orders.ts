@@ -15,6 +15,7 @@ export interface Order {
   date: string;
   status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending';
   paymentStatus?: 'Paid' | 'Pending - COD';
+  trackingId?: string;
 }
 
 const ORDERS_KEY = "IESVRA_orders";
@@ -30,7 +31,22 @@ export function getOrders(): Order[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(ORDERS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const parsed: Order[] = raw ? JSON.parse(raw) : [];
+    
+    // Auto-heal/backfill trackingId for older orders
+    let updated = false;
+    const healed = parsed.map(o => {
+      if (!o.trackingId) {
+        o.trackingId = `AZ${Math.floor(100000000 + Math.random() * 900000000)}IN`;
+        updated = true;
+      }
+      return o;
+    });
+
+    if (updated) {
+      localStorage.setItem(ORDERS_KEY, JSON.stringify(healed));
+    }
+    return healed;
   } catch (e) {
     console.error("Failed to parse orders", e);
     return [];
@@ -67,7 +83,6 @@ export function sendOrderConfirmationEmail(order: Order) {
       console.log("Order confirmation email triggered successfully via Resend:", data);
     })
     .catch((err) => {
-      // Do not block or fail the order checkout if email fails - just log
       console.error("Failed to send order confirmation email via Resend:", err);
     });
 }
@@ -89,6 +104,30 @@ export function sendAdminOrderNotification(order: Order) {
     })
     .catch((err) => {
       console.error("Admin order notification failed (non-blocking):", err);
+    });
+}
+
+export function sendOrderShippedEmail(order: Order) {
+  if (typeof window === "undefined") return;
+
+  fetch("/api/send-shipped-email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ order }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`Server returned status code ${res.status}`);
+      }
+      return res.json();
+    })
+    .then((data) => {
+      console.log("Order shipped email triggered successfully via Resend:", data);
+    })
+    .catch((err) => {
+      console.error("Failed to send order shipped email via Resend:", err);
     });
 }
 
@@ -117,6 +156,7 @@ export function createOrder(
     date: new Date().toISOString().split("T")[0],
     status: 'Processing',
     paymentStatus: paymentStatus || 'Pending - COD',
+    trackingId: `AZ${Math.floor(100000000 + Math.random() * 900000000)}IN`,
   };
 
   orders.unshift(newOrder); // Add to the beginning
@@ -132,11 +172,50 @@ export function createOrder(
   return newOrder;
 }
 
-
 export function updateOrderStatus(orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') {
   const orders = getOrders();
+  const oldOrder = orders.find(o => o.id === orderId);
   const updated = orders.map((o) => (o.id === orderId ? { ...o, status } : o));
   saveOrders(updated);
+
+  // If status is changed to Shipped, send the notification email automatically
+  if (status === 'Shipped' && oldOrder && oldOrder.status !== 'Shipped') {
+    const freshOrder = updated.find(o => o.id === orderId);
+    if (freshOrder) {
+      sendOrderShippedEmail(freshOrder);
+    }
+  }
+}
+
+export function updateOrderTracking(orderId: string, trackingId: string) {
+  const orders = getOrders();
+  const updated = orders.map((o) => (o.id === orderId ? { ...o, trackingId } : o));
+  saveOrders(updated);
+
+  // Sync with mobile app local storage
+  if (typeof window !== "undefined") {
+    try {
+      const mobileRaw = localStorage.getItem("iesvra_orders");
+      if (mobileRaw) {
+        const mobileOrders = JSON.parse(mobileRaw);
+        const mobileUpdated = mobileOrders.map((o: any) => {
+          if (o.orderId === orderId) {
+            return { ...o, trackingId };
+          }
+          return o;
+        });
+        localStorage.setItem("iesvra_orders", JSON.stringify(mobileUpdated));
+      }
+    } catch (e) {
+      console.error("Failed to sync tracking ID to mobile app orders", e);
+    }
+  }
+
+  // Trigger dispatch email notification
+  const order = updated.find((o) => o.id === orderId);
+  if (order) {
+    sendOrderShippedEmail(order);
+  }
 }
 
 export function cancelOrder(orderId: string): boolean {
