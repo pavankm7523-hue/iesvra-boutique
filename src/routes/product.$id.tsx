@@ -341,24 +341,24 @@ function ProductDetails() {
                   Buy Now
                 </button>
               </div>
+            </div>
 
-              {/* Live Social Proof */}
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <div className="flex items-center gap-1.5 bg-navy-deep/5 border border-navy-deep/10 rounded-full px-3 py-1.5">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
-                  </span>
-                  <Users className="h-3 w-3 text-navy-deep/60" />
-                  <span className="text-[10px] font-semibold text-navy-deep/70"><span className="font-bold text-navy-deep">{pdpShopperCount}</span> people viewing this</span>
-                </div>
-                {pdpIsBeforeCutoff && (
-                  <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5">
-                    <Clock className="h-3 w-3 text-amber-600" />
-                    <span className="text-[10px] font-semibold text-amber-700">Order before <span className="font-bold">9 PM</span> → Next Day Delivery</span>
-                  </div>
-                )}
+            {/* Live Social Proof */}
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <div className="flex items-center gap-1.5 bg-navy-deep/5 border border-navy-deep/10 rounded-full px-3 py-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                </span>
+                <Users className="h-3 w-3 text-navy-deep/60" />
+                <span className="text-[10px] font-semibold text-navy-deep/70"><span className="font-bold text-navy-deep">{pdpShopperCount}</span> people viewing this</span>
               </div>
+              {pdpIsBeforeCutoff && (
+                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5">
+                  <Clock className="h-3 w-3 text-amber-600" />
+                  <span className="text-[10px] font-semibold text-amber-700">Order before <span className="font-bold">9 PM</span> → Next Day Delivery</span>
+                </div>
+              )}
             </div>
 
             {/* Features strip */}
