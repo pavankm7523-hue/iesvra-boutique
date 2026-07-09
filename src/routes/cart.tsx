@@ -292,10 +292,10 @@ function Cart() {
   }, [cartItems, shippingName, shippingEmail, shippingPhone, addressLine1, city, state, pincode]);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  let baseShipping = 0;
-  
-  // Express fee
-  const deliveryFee = 0;
+  const FREE_SHIPPING_THRESHOLD = 499;
+  // ₹59 delivery charge for orders under ₹499, free above
+  const baseShipping = subtotal < FREE_SHIPPING_THRESHOLD ? 59 : 0;
+  const deliveryFee = baseShipping;
   const total = subtotal + deliveryFee;
 
   const handleAddressSelect = async (addr: string) => {
@@ -597,7 +597,14 @@ function Cart() {
                     </span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Shipping</span>
+                    <span>
+                      Shipping
+                      {deliveryFee > 0 && (
+                        <span className="block text-[10px] font-medium text-blue-500 mt-0.5">
+                          Add ₹{FREE_SHIPPING_THRESHOLD - subtotal} more for free delivery
+                        </span>
+                      )}
+                    </span>
                     <span className="font-medium text-foreground">
                       {deliveryFee === 0 ? (
                         <span className="text-green-600">Free</span>

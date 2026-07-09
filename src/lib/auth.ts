@@ -41,8 +41,8 @@ export interface RegisteredUser {
 
 const USERS_KEY = "ishvara_registered_users";
 const ADMIN_PASSWORD_KEY = "ishvara_admin_password";
-const DEFAULT_ADMIN_PASSWORD = "Ishvara@Admin2026!";
-const DEFAULT_ADMIN_EMAIL = "admin@ishvara.com";
+const DEFAULT_ADMIN_PASSWORD = "Iesvra@3104";
+const DEFAULT_ADMIN_EMAIL = "arenterprisess409@gmail.com";
 
 export function getRegisteredUsers(): RegisteredUser[] {
   if (typeof window === "undefined") return [];
@@ -91,7 +91,7 @@ export function validateUserCredentials(email: string, password: string): { succ
   if (normalizedEmail === DEFAULT_ADMIN_EMAIL) {
     const adminPassword = getAdminPassword();
     if (password === adminPassword) {
-      return { success: true, name: "Admin User", role: "admin" };
+      return { success: true, name: "IESVRA Admin", role: "admin" };
     }
     return { success: false, error: "Incorrect password for system administrator." };
   }

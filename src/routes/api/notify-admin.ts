@@ -17,7 +17,7 @@ export const Route = createFileRoute("/api/notify-admin")({
           }
 
           const apiKey = (process.env.RESEND_API_KEY || "").trim();
-          const adminEmail = (process.env.ADMIN_EMAIL || "pavankm7523@gmail.com").trim();
+          const adminEmail = (process.env.ADMIN_EMAIL || "arenterprisess409@gmail.com").trim();
 
           if (!apiKey) {
             console.warn("RESEND_API_KEY not set - admin notification skipped.");
