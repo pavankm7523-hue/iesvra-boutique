@@ -1,8 +1,40 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import logo from "@/assets/ishvara-logo.png";
 import { Facebook, Instagram, Youtube, Phone as Whatsapp } from "lucide-react";
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !email.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    setIsSubscribing(true);
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to subscribe.");
+      }
+      toast.success("Thanks for subscribing!");
+      setEmail("");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to subscribe. Please try again.");
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
   return (
     <footer className="bg-navy-deep text-white/80 mt-auto border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
@@ -116,17 +148,21 @@ export function Footer() {
           <p className="text-sm text-white/70 mb-5 leading-relaxed">
             Subscribe to get amazing offers and new product updates.
           </p>
-          <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
+          <form className="flex flex-col gap-3" onSubmit={handleSubscribe}>
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isSubscribing}
               className="w-full h-11 px-4 rounded-md text-white text-sm bg-white/5 border border-white/10 focus:outline-none focus:border-gold/50 transition-colors"
             />
             <button
               type="submit"
-              className="w-full bg-gold text-navy-deep h-11 rounded-md font-bold text-xs uppercase tracking-wider hover:bg-white transition-colors duration-300"
+              disabled={isSubscribing}
+              className="w-full bg-gold text-navy-deep h-11 rounded-md font-bold text-xs uppercase tracking-wider hover:bg-white transition-colors duration-300 disabled:opacity-50"
             >
-              Subscribe
+              {isSubscribing ? "Subscribing..." : "Subscribe"}
             </button>
           </form>
         </div>
