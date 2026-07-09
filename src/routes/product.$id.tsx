@@ -324,11 +324,11 @@ function ProductDetails() {
                 </button>
               </div>
 
-              <div className="flex flex-1 flex-col sm:flex-row gap-3 w-full">
+              <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="flex-1 border-2 border-gold text-gold hover:bg-gold hover:text-navy-deep h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] cursor-pointer"
+                  className="w-full sm:flex-1 border-2 border-gold text-gold hover:bg-gold hover:text-navy-deep h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] cursor-pointer"
                 >
                   <ShoppingBag className="h-4 w-4" /> Add to Cart
                 </button>
@@ -336,7 +336,7 @@ function ProductDetails() {
                 <button
                   type="button"
                   onClick={handleBuyDirectly}
-                  className="flex-1 bg-gradient-to-r from-[#e0b480] to-[#c1935e] text-navy-deep hover:shadow-[0_8px_30px_rgba(207,168,123,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
+                  className="w-full sm:flex-1 bg-gradient-to-r from-[#e0b480] to-[#c1935e] text-navy-deep hover:shadow-[0_8px_30px_rgba(207,168,123,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
                 >
                   Buy Now
                 </button>

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { Package, Search, Truck, CheckCircle2, Clock, MapPin, Phone, User, Calendar, CreditCard, XCircle } from "lucide-react";
