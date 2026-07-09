@@ -26,10 +26,14 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as ApiVerifyPaymentRouteImport } from './routes/api/verify-payment'
+import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
+import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
 import { Route as AdminProductNewRouteImport } from './routes/admin.product.new'
 import { Route as AdminProductIdRouteImport } from './routes/admin.product.$id'
 
@@ -118,6 +122,21 @@ const ProductIdRoute = ProductIdRouteImport.update({
   path: '/product/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVerifyPaymentRoute = ApiVerifyPaymentRouteImport.update({
+  id: '/api/verify-payment',
+  path: '/api/verify-payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSendConfirmationRoute = ApiSendConfirmationRouteImport.update({
+  id: '/api/send-confirmation',
+  path: '/api/send-confirmation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCreateOrderRoute = ApiCreateOrderRouteImport.update({
+  id: '/api/create-order',
+  path: '/api/create-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -137,6 +156,11 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
   getParentRoute: () => AdminRoute,
+} as any)
+const ApiNewsletterSubscribeRoute = ApiNewsletterSubscribeRouteImport.update({
+  id: '/api/newsletter/subscribe',
+  path: '/api/newsletter/subscribe',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminProductNewRoute = AdminProductNewRouteImport.update({
   id: '/product/new',
@@ -169,10 +193,14 @@ export interface FileRoutesByFullPath {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/send-confirmation': typeof ApiSendConfirmationRoute
+  '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/product/$id': typeof AdminProductIdRoute
   '/admin/product/new': typeof AdminProductNewRoute
+  '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -193,10 +221,14 @@ export interface FileRoutesByTo {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/send-confirmation': typeof ApiSendConfirmationRoute
+  '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
   '/admin': typeof AdminIndexRoute
   '/admin/product/$id': typeof AdminProductIdRoute
   '/admin/product/new': typeof AdminProductNewRoute
+  '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -219,10 +251,14 @@ export interface FileRoutesById {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/send-confirmation': typeof ApiSendConfirmationRoute
+  '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/product/$id': typeof AdminProductIdRoute
   '/admin/product/new': typeof AdminProductNewRoute
+  '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -246,10 +282,14 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/create-order'
+    | '/api/send-confirmation'
+    | '/api/verify-payment'
     | '/product/$id'
     | '/admin/'
     | '/admin/product/$id'
     | '/admin/product/new'
+    | '/api/newsletter/subscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -270,10 +310,14 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/create-order'
+    | '/api/send-confirmation'
+    | '/api/verify-payment'
     | '/product/$id'
     | '/admin'
     | '/admin/product/$id'
     | '/admin/product/new'
+    | '/api/newsletter/subscribe'
   id:
     | '__root__'
     | '/'
@@ -295,10 +339,14 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/create-order'
+    | '/api/send-confirmation'
+    | '/api/verify-payment'
     | '/product/$id'
     | '/admin/'
     | '/admin/product/$id'
     | '/admin/product/new'
+    | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -317,7 +365,11 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TrackOrderRoute: typeof TrackOrderRoute
   WishlistRoute: typeof WishlistRoute
+  ApiCreateOrderRoute: typeof ApiCreateOrderRoute
+  ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
+  ApiVerifyPaymentRoute: typeof ApiVerifyPaymentRoute
   ProductIdRoute: typeof ProductIdRoute
+  ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -441,6 +493,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/verify-payment': {
+      id: '/api/verify-payment'
+      path: '/api/verify-payment'
+      fullPath: '/api/verify-payment'
+      preLoaderRoute: typeof ApiVerifyPaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/send-confirmation': {
+      id: '/api/send-confirmation'
+      path: '/api/send-confirmation'
+      fullPath: '/api/send-confirmation'
+      preLoaderRoute: typeof ApiSendConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/create-order': {
+      id: '/api/create-order'
+      path: '/api/create-order'
+      fullPath: '/api/create-order'
+      preLoaderRoute: typeof ApiCreateOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -468,6 +541,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/categories'
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/api/newsletter/subscribe': {
+      id: '/api/newsletter/subscribe'
+      path: '/api/newsletter/subscribe'
+      fullPath: '/api/newsletter/subscribe'
+      preLoaderRoute: typeof ApiNewsletterSubscribeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/product/new': {
       id: '/admin/product/new'
@@ -524,7 +604,11 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TrackOrderRoute: TrackOrderRoute,
   WishlistRoute: WishlistRoute,
+  ApiCreateOrderRoute: ApiCreateOrderRoute,
+  ApiSendConfirmationRoute: ApiSendConfirmationRoute,
+  ApiVerifyPaymentRoute: ApiVerifyPaymentRoute,
   ProductIdRoute: ProductIdRoute,
+  ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

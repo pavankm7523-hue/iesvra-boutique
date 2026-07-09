@@ -76,8 +76,9 @@ function AdminOrders() {
                   <th className="p-5">Order ID</th>
                   <th className="p-5">Customer</th>
                   <th className="p-5">Date</th>
-                  <th className="p-5">Total Paid</th>
-                  <th className="p-5">Status</th>
+                  <th className="p-5">Total</th>
+                  <th className="p-5">Payment</th>
+                  <th className="p-5">Delivery Status</th>
                   <th className="p-5 text-right">Details</th>
                 </tr>
               </thead>
@@ -99,6 +100,15 @@ function AdminOrders() {
                         </td>
                         <td className="p-5 font-bold text-navy-deep">
                           ₹{order.total.toLocaleString()}
+                        </td>
+                        <td className="p-5">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${
+                            order.paymentStatus === 'Paid'
+                              ? 'bg-green-50 text-green-700 border-green-200/50'
+                              : 'bg-orange-50 text-orange-700 border-orange-200/50'
+                          }`}>
+                            {order.paymentStatus || 'Pending - COD'}
+                          </span>
                         </td>
                         <td className="p-5">
                           <div className="flex items-center gap-2">
@@ -130,7 +140,7 @@ function AdminOrders() {
                       {/* Expandable Order detail section */}
                       {isExpanded && (
                         <tr>
-                          <td colSpan={6} className="bg-secondary/10 p-6 border-b border-border/40">
+                          <td colSpan={7} className="bg-secondary/10 p-6 border-b border-border/40">
                             <div className="grid md:grid-cols-2 gap-8 animate-in slide-in-from-top-2 duration-200">
                               {/* Shipping summary */}
                               <div className="space-y-4">
@@ -184,9 +194,17 @@ function AdminOrders() {
                                     </div>
                                   ))}
                                 </div>
-                                <div className="border-t border-border/30 pt-3 flex justify-between items-center text-xs font-bold text-navy-deep">
-                                  <span>Total Amount Due:</span>
-                                  <span className="text-gold text-sm">₹{order.total.toLocaleString()}</span>
+                                <div className="border-t border-border/30 pt-3 space-y-2 text-xs font-bold text-navy-deep">
+                                  <div className="flex justify-between items-center">
+                                    <span>Payment Mode:</span>
+                                    <span className={order.paymentStatus === 'Paid' ? 'text-green-600' : 'text-orange-600'}>
+                                      {order.paymentStatus === 'Paid' ? 'Paid via Online Payment' : 'Cash on Delivery (Pending - COD)'}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center border-t border-border/20 pt-2 font-bold text-sm">
+                                    <span>Total Amount Due:</span>
+                                    <span className="text-gold">₹{order.total.toLocaleString()}</span>
+                                  </div>
                                 </div>
                               </div>
                             </div>

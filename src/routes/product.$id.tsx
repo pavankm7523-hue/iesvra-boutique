@@ -322,7 +322,7 @@ function ProductDetails() {
                   onClick={handleBuyDirectly}
                   className="flex-1 bg-gradient-to-r from-[#e0b480] to-[#c1935e] text-navy-deep hover:shadow-[0_8px_30px_rgba(207,168,123,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
                 >
-                  Buy Directly
+                  Buy Now
                 </button>
               </div>
             </div>

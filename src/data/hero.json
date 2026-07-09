@@ -7,17 +7,5 @@
     "backgroundImageUrl": "/hero-bg.jpg",
     "isSpecialSale": true,
     "id": "1783414426882"
-  },
-  {
-    "title": "",
-    "subtitle": "",
-    "buttonText": "SHOP NOW",
-    "buttonLink": "/shop",
-    "backgroundImageUrl": "/uploads/hero-banner-1783442736088.png",
-    "isSpecialSale": false,
-    "productIds": [],
-    "productPrices": {},
-    "exclusiveProductIds": [],
-    "id": "1783442736115"
   }
 ]

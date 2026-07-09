@@ -3,6 +3,7 @@ import logo from "@/assets/ishvara-logo.png";
 import { useCartCount } from "@/lib/cart";
 import { useCurrentUser, logoutUser } from "@/lib/auth";
 import { useState, useMemo, useEffect } from "react";
+import { fetchAddressSuggestions, checkExpressEligibility, geocodeAddress } from "@/lib/delivery";
 import { useProducts } from "@/lib/products";
 import {
   Search,
@@ -32,24 +33,89 @@ export function Header() {
   const currentUser = useCurrentUser();
 
   // Header Delivery State
-  const [headerAddress, setHeaderAddress] = useState("");
+  const [headerAddress, setHeaderAddress] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("IESVRA_delivery_address") || "";
+    }
+    return "";
+  });
+  
+  const [isExpressLocation, setIsExpressLocation] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("IESVRA_is_express_eligible") === "true";
+    }
+    return false;
+  });
+
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [addressSearch, setAddressSearch] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  
-  const isExpressLocation = useMemo(() => {
-    if (!headerAddress) return false;
-    const lower = headerAddress.toLowerCase();
-    return lower.includes("patna") || lower.includes("800020");
-  }, [headerAddress]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isSearchingSuggestions, setIsSearchingSuggestions] = useState(false);
 
-  const mockAddresses = [
-    "R.N Singh Road, Kankarbagh Main Road, Patna, Bihar 800020",
-    "Boring Road, Patna, Bihar 800001",
-    "Frazer Road, Patna, Bihar 800001",
-    "Andheri West, Mumbai, Maharashtra 400053",
-    "Indiranagar, Bangalore, Karnataka 560038"
-  ];
+  // Sync state with localStorage changes from other pages
+  useEffect(() => {
+    const handleSync = () => {
+      setHeaderAddress(localStorage.getItem("IESVRA_delivery_address") || "");
+      setIsExpressLocation(localStorage.getItem("IESVRA_is_express_eligible") === "true");
+    };
+    window.addEventListener("iesvra-address-updated", handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener("iesvra-address-updated", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
+  // Debounced search for suggestions
+  useEffect(() => {
+    if (addressSearch.trim().length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    setIsSearchingSuggestions(true);
+    const delayDebounce = setTimeout(async () => {
+      try {
+        const results = await fetchAddressSuggestions(addressSearch);
+        setSuggestions(results);
+      } catch (err) {
+        console.error("Failed to fetch address suggestions:", err);
+      } finally {
+        setIsSearchingSuggestions(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [addressSearch]);
+
+  const handleAddressSelect = async (addr: string) => {
+    setHeaderAddress(addr);
+    setIsAddressModalOpen(false);
+    setAddressSearch("");
+
+    // Geocode and check eligibility in the background
+    const res = await checkExpressEligibility(addr);
+    setIsExpressLocation(res.eligible);
+
+    localStorage.setItem("IESVRA_delivery_address", addr);
+    localStorage.setItem("IESVRA_is_express_eligible", res.eligible ? "true" : "false");
+
+    try {
+      const geo = await geocodeAddress(addr);
+      if (geo) {
+        localStorage.setItem("IESVRA_delivery_address_line1", geo.line1 || addr.split(",")[0] || "");
+        localStorage.setItem("IESVRA_delivery_address_line2", geo.line2 || "");
+        localStorage.setItem("IESVRA_delivery_city", geo.city || "");
+        localStorage.setItem("IESVRA_delivery_state", geo.state || "");
+        localStorage.setItem("IESVRA_delivery_pincode", geo.pincode || "");
+      }
+    } catch (err) {
+      console.error("Failed to parse address components in header:", err);
+    }
+
+    window.dispatchEvent(new Event("iesvra-address-updated"));
+  };
 
   useEffect(() => {
     const handleOpen = () => setIsAddressModalOpen(true);
@@ -398,38 +464,34 @@ export function Header() {
               </div>
               
               {showSuggestions && (
-                <div className="space-y-1 mt-4">
-                  {mockAddresses
-                    .filter(a => a.toLowerCase().includes(addressSearch.toLowerCase()))
-                    .map((addr, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => {
-                          setHeaderAddress(addr);
-                          setIsAddressModalOpen(false);
-                          setAddressSearch("");
-                        }}
-                        className="w-full text-left p-3 hover:bg-[#f8f9fb] rounded-xl text-sm text-navy-deep/80 flex items-start gap-3 transition-colors border border-transparent hover:border-border/50 cursor-pointer"
-                      >
-                        <MapPin className="h-4 w-4 text-navy-deep/30 shrink-0 mt-0.5" />
-                        <span>{addr}</span>
-                      </button>
-                    ))}
-                    
-                    {addressSearch && mockAddresses.filter(a => a.toLowerCase().includes(addressSearch.toLowerCase())).length === 0 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setHeaderAddress(addressSearch);
-                          setIsAddressModalOpen(false);
-                          setAddressSearch("");
-                        }}
-                        className="w-full text-left p-3 hover:bg-[#f8f9fb] rounded-xl text-sm text-[#0b72e7] font-medium flex items-center gap-2 cursor-pointer"
-                      >
-                        Use "{addressSearch}"
-                      </button>
-                    )}
+                <div className="space-y-1 mt-4 max-h-[300px] overflow-y-auto">
+                  {isSearchingSuggestions && (
+                    <div className="py-4 text-center text-xs text-navy-deep/50 font-medium">
+                      Searching addresses...
+                    </div>
+                  )}
+                  
+                  {!isSearchingSuggestions && suggestions.map((addr, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => handleAddressSelect(addr)}
+                      className="w-full text-left p-3 hover:bg-[#f8f9fb] rounded-xl text-sm text-navy-deep/80 flex items-start gap-3 transition-colors border border-transparent hover:border-border/50 cursor-pointer"
+                    >
+                      <MapPin className="h-4 w-4 text-navy-deep/30 shrink-0 mt-0.5" />
+                      <span>{addr}</span>
+                    </button>
+                  ))}
+                  
+                  {!isSearchingSuggestions && addressSearch.trim().length >= 3 && (
+                    <button
+                      type="button"
+                      onClick={() => handleAddressSelect(addressSearch)}
+                      className="w-full text-left p-3 hover:bg-[#f8f9fb] rounded-xl text-sm text-[#0b72e7] font-medium flex items-center gap-2 cursor-pointer border-t border-border/30 mt-1"
+                    >
+                      Use "{addressSearch}"
+                    </button>
+                  )}
                 </div>
               )}
             </div>

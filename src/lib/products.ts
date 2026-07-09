@@ -689,6 +689,12 @@ export const initialProducts: Product[] = [
 
 import { useState, useEffect } from "react";
 
+function triggerProductsChange() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("ishvara_products_changed"));
+  }
+}
+
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -719,12 +725,14 @@ export function useProducts() {
     const updated = [p, ...products];
     setProducts(updated);
     localStorage.setItem("ishvara_products_v4", JSON.stringify(updated));
+    triggerProductsChange();
   };
 
   const updateProduct = (p: Product) => {
     const updated = products.map((prod) => (prod.id === p.id ? p : prod));
     setProducts(updated);
     localStorage.setItem("ishvara_products_v4", JSON.stringify(updated));
+    triggerProductsChange();
   };
 
   const bulkUpdateProducts = (updatedProducts: Product[]) => {
@@ -734,12 +742,14 @@ export function useProducts() {
     }
     setProducts(current);
     localStorage.setItem("ishvara_products_v4", JSON.stringify(current));
+    triggerProductsChange();
   };
 
   const deleteProduct = (id: string) => {
     const updated = products.filter((prod) => prod.id !== id);
     setProducts(updated);
     localStorage.setItem("ishvara_products_v4", JSON.stringify(updated));
+    triggerProductsChange();
   };
 
   return {

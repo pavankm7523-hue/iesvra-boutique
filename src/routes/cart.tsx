@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useCurrentUser } from "@/lib/auth";
 import { createOrder } from "@/lib/orders";
 import { toast } from "sonner";
+import { fetchAddressSuggestions, checkExpressEligibility, geocodeAddress, reverseGeocode } from "@/lib/delivery";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -31,6 +32,45 @@ const loadRazorpayScript = () => {
   });
 };
 
+const INDIAN_STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Lakshadweep",
+  "Puducherry"
+];
+
 function Cart() {
   const cartItems = useCartItems();
   const currentUser = useCurrentUser();
@@ -54,14 +94,158 @@ function Cart() {
   const [showExpressPopup, setShowExpressPopup] = useState(false);
   const addressInputRef = useRef<HTMLInputElement>(null);
 
-  // Mock Addresses
-  const mockAddresses = [
-    "R.N Singh Road, Kankarbagh Main Road, Patna, Bihar 800020",
-    "Boring Road, Patna, Bihar 800001",
-    "Frazer Road, Patna, Bihar 800001",
-    "Andheri West, Mumbai, Maharashtra 400053",
-    "Indiranagar, Bangalore, Karnataka 560038"
-  ];
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isSearchingSuggestions, setIsSearchingSuggestions] = useState(false);
+  const [verificationError, setVerificationError] = useState<string | null>(null);
+
+  // Structured address states
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLocating, setIsLocating] = useState(false);
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser.");
+      return;
+    }
+    
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await reverseGeocode(latitude, longitude);
+          
+          if (res) {
+            setAddressLine1(res.line1 || "");
+            setAddressLine2(res.line2 || "");
+            setCity(res.city || "");
+            
+            const foundState = INDIAN_STATES.find(
+              s => s.toLowerCase() === res.state?.toLowerCase() || res.state?.toLowerCase().includes(s.toLowerCase())
+            );
+            setState(foundState || "");
+            setPincode(res.pincode || "");
+            
+            // Build temporary search query/address string
+            const formatted = [res.line1, res.line2, res.city, `${res.state} - ${res.pincode}`].filter(Boolean).join(", ");
+            setAddressSearch(formatted);
+            toast.success("Location retrieved and form pre-filled successfully!");
+          } else {
+            toast.error("Failed to retrieve location details. Please search your address manually.");
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error("Error reverse-geocoding your coordinates. Please try again.");
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        setIsLocating(false);
+        console.error(error);
+        toast.error("Failed to access your location. Please check browser permissions or search manually.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
+  // Sync state with localStorage changes
+  useEffect(() => {
+    const handleSync = () => {
+      const savedLine1 = localStorage.getItem("IESVRA_delivery_address_line1") || "";
+      const savedLine2 = localStorage.getItem("IESVRA_delivery_address_line2") || "";
+      const savedCity = localStorage.getItem("IESVRA_delivery_city") || "";
+      const savedState = localStorage.getItem("IESVRA_delivery_state") || "";
+      const savedPincode = localStorage.getItem("IESVRA_delivery_pincode") || "";
+      
+      if (savedLine1) {
+        setAddressLine1(savedLine1);
+        setAddressLine2(savedLine2);
+        setCity(savedCity);
+        setState(savedState);
+        setPincode(savedPincode);
+        
+        const formatted = [savedLine1, savedLine2, savedCity, `${savedState} - ${savedPincode}`].filter(Boolean).join(", ");
+        setShippingAddress(formatted);
+        setAddressSearch(formatted);
+        setIsAddressConfirmed(true);
+        
+        const isExpress = localStorage.getItem("IESVRA_is_express_eligible") === "true";
+        setIsExpressAvailable(isExpress);
+        setDeliverySpeed(isExpress ? "express" : "standard");
+      } else {
+        const savedAddress = localStorage.getItem("IESVRA_delivery_address") || "";
+        if (savedAddress) {
+          setAddressSearch(savedAddress);
+          setAddressLine1(savedAddress.split(",")[0] || "");
+        }
+      }
+    };
+    handleSync(); // Initial load
+    window.addEventListener("iesvra-address-updated", handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener("iesvra-address-updated", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
+  // Debounced search for suggestions based on autocomplete search bar
+  useEffect(() => {
+    if (addressSearch.trim().length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    setIsSearchingSuggestions(true);
+    const delayDebounce = setTimeout(async () => {
+      try {
+        const results = await fetchAddressSuggestions(addressSearch);
+        setSuggestions(results);
+      } catch (err) {
+        console.error("Failed to fetch address suggestions:", err);
+      } finally {
+        setIsSearchingSuggestions(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [addressSearch]);
+
+  // Debounced verification of express eligibility based on structured form inputs
+  useEffect(() => {
+    const combined = [addressLine1, city, state, pincode].filter(Boolean).join(", ");
+    if (combined.length < 10) {
+      setIsExpressAvailable(false);
+      setDeliverySpeed('standard');
+      return;
+    }
+
+    setIsCheckingDelivery(true);
+    const delayDebounce = setTimeout(async () => {
+      try {
+        const res = await checkExpressEligibility(combined);
+        setIsExpressAvailable(res.eligible);
+        if (!res.eligible) {
+          setDeliverySpeed('standard');
+        }
+        setVerificationError(res.error);
+      } catch (err) {
+        setVerificationError("We couldn't verify this address for express delivery, standard delivery available");
+        setIsExpressAvailable(false);
+        setDeliverySpeed('standard');
+      } finally {
+        setIsCheckingDelivery(false);
+      }
+    }, 800);
+
+    return () => clearTimeout(delayDebounce);
+  }, [addressLine1, city, state, pincode]);
   
   // Mock Razorpay Fallback States
   const [isMockRazorpayOpen, setIsMockRazorpayOpen] = useState(false);
@@ -78,48 +262,83 @@ function Cart() {
   }, [currentUser]);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  let baseShipping = subtotal > 499 || subtotal === 0 ? 0 : 50;
+  let baseShipping = 0;
   
   // Express fee
-  const deliveryFee = deliverySpeed === 'express' ? baseShipping + 29 : baseShipping;
+  const deliveryFee = 0;
   const total = subtotal + deliveryFee;
 
-  const handleAddressSelect = (addr: string) => {
-    setShippingAddress(addr);
-    setAddressSearch(addr);
+  const handleAddressSelect = async (addr: string) => {
     setShowSuggestions(false);
     setIsCheckingDelivery(true);
+    setVerificationError(null);
     
-    // Simulate API delay for checking delivery feasibility
-    setTimeout(() => {
+    try {
+      const res = await geocodeAddress(addr);
       setIsCheckingDelivery(false);
-      setIsAddressConfirmed(true);
       
-      // Check if within 15km (mock logic: contains Patna or 800020)
-      const isNearby = addr.toLowerCase().includes("patna") || addr.includes("800020");
-      setIsExpressAvailable(isNearby);
-      setDeliverySpeed(isNearby ? 'express' : 'standard');
-      
-      if (isNearby) {
-        setShowExpressPopup(true);
-        // Auto-dismiss the popup after 3 seconds
-        setTimeout(() => setShowExpressPopup(false), 3000);
+      if (res) {
+        setAddressLine1(res.line1 || addr.split(",")[0] || "");
+        setAddressLine2(res.line2 || "");
+        setCity(res.city || "");
+        
+        const foundState = INDIAN_STATES.find(
+          s => s.toLowerCase() === res.state?.toLowerCase() || res.state?.toLowerCase().includes(s.toLowerCase())
+        );
+        setState(foundState || "");
+        setPincode(res.pincode || "");
+      } else {
+        setAddressSearch(addr);
+        setAddressLine1(addr.split(",")[0] || "");
       }
-    }, 800);
+    } catch (err) {
+      setIsCheckingDelivery(false);
+      console.error("Failed to geocode address suggestion:", err);
+    }
   };
 
   const handleEditAddress = () => {
     setIsAddressConfirmed(false);
-    // Focus after brief delay for react to render
-    setTimeout(() => addressInputRef.current?.focus(), 50);
+    setVerificationError(null);
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!shippingName.trim() || !shippingEmail.trim() || !shippingPhone.trim() || !shippingAddress.trim()) {
-      toast.error("Please fill in all checkout fields.");
+
+    // Run validation on all fields
+    const newErrors: Record<string, string> = {};
+    if (!shippingName.trim()) newErrors.name = "Please enter your name";
+    if (!shippingEmail.trim()) newErrors.email = "Please enter your email";
+    if (!shippingPhone.trim()) newErrors.phone = "Please enter your phone number";
+    
+    if (!addressLine1.trim()) newErrors.addressLine1 = "Please enter Address Line 1";
+    if (!city.trim()) newErrors.city = "Please enter city";
+    if (!state.trim()) newErrors.state = "Please select state";
+    
+    if (!pincode.trim()) {
+      newErrors.pincode = "Please enter pincode";
+    } else if (!/^\d{6}$/.test(pincode.trim())) {
+      newErrors.pincode = "Please enter a valid 6-digit pincode";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      toast.error("Please fill in all required fields correctly.");
       return;
     }
+
+    setErrors({});
+    const combinedAddress = [addressLine1, addressLine2, city, `${state} - ${pincode}`].filter(Boolean).join(", ");
+
+    // Save fields to localStorage
+    localStorage.setItem("IESVRA_delivery_address", combinedAddress);
+    localStorage.setItem("IESVRA_delivery_address_line1", addressLine1);
+    localStorage.setItem("IESVRA_delivery_address_line2", addressLine2);
+    localStorage.setItem("IESVRA_delivery_city", city);
+    localStorage.setItem("IESVRA_delivery_state", state);
+    localStorage.setItem("IESVRA_delivery_pincode", pincode);
+    localStorage.setItem("IESVRA_is_express_eligible", isExpressAvailable ? "true" : "false");
+    window.dispatchEvent(new Event("iesvra-address-updated"));
 
     if (paymentMode === "cod") {
       try {
@@ -127,13 +346,12 @@ function Cart() {
           shippingName.trim(),
           shippingEmail.trim(),
           shippingPhone.trim(),
-          shippingAddress.trim(),
-          shippingPhone.trim(),
-          shippingAddress.trim(),
+          combinedAddress,
           cartItems,
           subtotal,
           deliveryFee,
-          total
+          total,
+          "Pending - COD"
         );
         setPlacedOrder(order);
         toast.success("Order placed successfully via Cash on Delivery!");
@@ -143,55 +361,76 @@ function Cart() {
       return;
     }
 
-    // Save key in localStorage if provided
-    if (typeof window !== "undefined") {
-      localStorage.setItem("IESVRA_rzp_key", rzpKey.trim());
-    }
-
-    // If key is empty, immediately open Simulated Payment Modal directly!
-    if (!rzpKey.trim()) {
-      setIsProcessingPayment(false);
-      setIsMockRazorpayOpen(true);
-      return;
-    }
-
-    // Razorpay Online Payment Flow (with provided key)
+    // Razorpay Online Payment Flow
     setIsProcessingPayment(true);
-    const scriptLoaded = await loadRazorpayScript();
-
-    if (!scriptLoaded) {
-      setIsProcessingPayment(false);
-      toast.info("Razorpay SDK is blocked by your browser/adblocker. Launching secure demo payment mode...");
-      setIsMockRazorpayOpen(true);
-      return;
-    }
 
     try {
+      // 1. Call /api/create-order with cart total in paise
+      const createRes = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: Math.round(total * 100) }),
+      });
+
+      const createData = await createRes.json();
+      if (!createRes.ok || !createData.order_id) {
+        throw new Error(createData.error || "Failed to create Razorpay order on backend.");
+      }
+
+      const { order_id, key_id } = createData;
+
+      // 2. Load Razorpay checkout script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error("Razorpay SDK failed to load. Please disable any ad-blockers and try again.");
+      }
+
+      // 3. Open Razorpay payment popup
       const options = {
-        key: rzpKey.trim(),
-        amount: total * 100, // in paise
+        key: key_id,
+        amount: Math.round(total * 100),
         currency: "INR",
         name: "IESVRA",
         description: "Payment for your order",
-        handler: function (response: any) {
-          setIsProcessingPayment(false);
+        order_id: order_id,
+        handler: async function (response: any) {
           try {
+            // 4. Verify payment via /api/verify-payment
+            const verifyRes = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok || !verifyData.verified) {
+              throw new Error(verifyData.error || "Payment verification failed.");
+            }
+
+            // Create order with status Paid
             const order = createOrder(
               shippingName.trim(),
               shippingEmail.trim(),
               shippingPhone.trim(),
-              shippingAddress.trim(),
-              shippingPhone.trim(),
-              shippingAddress.trim(),
+              combinedAddress,
               cartItems,
               subtotal,
               deliveryFee,
-              total
+              total,
+              "Paid"
             );
+
             setPlacedOrder(order);
-            toast.success(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
-          } catch (err) {
-            toast.error("Payment succeeded, but failed to save order details.");
+            toast.success(`Payment verified and order placed successfully! Order ID: ${order.id}`);
+          } catch (verifyErr: any) {
+            console.error("Verification error:", verifyErr);
+            toast.error(verifyErr.message || "Payment succeeded but signature verification failed.");
+          } finally {
+            setIsProcessingPayment(false);
           }
         },
         prefill: {
@@ -200,25 +439,25 @@ function Cart() {
           contact: shippingPhone.trim(),
         },
         notes: {
-          address: shippingAddress.trim(),
+          address: combinedAddress,
         },
         theme: {
-          color: "#0c1421",
+          color: "#D4AF37", // theme color Gold
         },
         modal: {
           ondismiss: function () {
             setIsProcessingPayment(false);
             toast.info("Payment cancelled.");
-          }
-        }
+          },
+        },
       };
 
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
-    } catch (err) {
+    } catch (err: any) {
       setIsProcessingPayment(false);
-      toast.info("Failed to open Razorpay modal directly. Launching secure demo payment mode...");
-      setIsMockRazorpayOpen(true);
+      console.error("Razorpay placement error:", err);
+      toast.error(err.message || "Failed to initiate online payment.");
     }
   };
 
@@ -428,201 +667,302 @@ function Cart() {
                 <form onSubmit={handlePlaceOrder} className="space-y-6 pb-24">
                   
                   {/* STEP 1: ADDRESS ENTRY */}
-                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-border/40">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-bold text-navy-deep flex items-center gap-2 text-sm">
-                        <MapPin className="h-4 w-4 text-[#0b72e7]" /> Delivery Address
-                      </h4>
-                      {isAddressConfirmed && (
-                        <button type="button" onClick={handleEditAddress} className="text-[10px] uppercase font-bold text-[#0b72e7] tracking-wider hover:underline">
-                          Change
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-border/40 space-y-4">
+                    <h4 className="font-bold text-navy-deep flex items-center gap-2 text-sm">
+                      <MapPin className="h-4 w-4 text-[#0b72e7]" /> Delivery Location & Contact
+                    </h4>
+                    
+                    {/* Autocomplete Search Bar */}
+                    <div className="relative">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Quick Search Address</label>
+                        <button
+                          type="button"
+                          onClick={handleUseCurrentLocation}
+                          disabled={isLocating}
+                          className="text-[10px] uppercase font-bold text-[#0b72e7] tracking-wider hover:underline flex items-center gap-1 cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed"
+                        >
+                          📍 {isLocating ? "Locating..." : "Use Current Location"}
                         </button>
+                      </div>
+                      <div className="relative mt-1">
+                        <input
+                          ref={addressInputRef}
+                          type="text"
+                          value={addressSearch}
+                          onChange={(e) => {
+                            setAddressSearch(e.target.value);
+                            setShowSuggestions(true);
+                          }}
+                          onFocus={() => setShowSuggestions(true)}
+                          placeholder="Search area, building, street..."
+                          className="w-full h-10 pl-9 pr-4 bg-[#f8f9fb] border-none rounded-xl focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs transition-all text-navy-deep font-semibold placeholder:text-navy-deep/30"
+                        />
+                        <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-navy-deep/40" />
+                      </div>
+                      
+                      {showSuggestions && addressSearch.trim().length >= 3 && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-border/50 overflow-hidden z-30 max-h-[200px] overflow-y-auto">
+                          {isSearchingSuggestions && (
+                            <div className="py-3 text-center text-xs text-navy-deep/50 font-medium">
+                              Searching addresses...
+                            </div>
+                          )}
+                          {!isSearchingSuggestions && suggestions.map((addr, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => handleAddressSelect(addr)}
+                              className="w-full text-left px-4 py-2 hover:bg-[#f8f9fb] text-xs text-navy-deep/80 border-b border-border/10 last:border-0 flex items-start gap-2 transition-colors"
+                            >
+                              <MapPin className="h-3 w-3 text-navy-deep/30 shrink-0 mt-0.5" />
+                              <span>{addr}</span>
+                            </button>
+                          ))}
+                        </div>
                       )}
                     </div>
 
-                    {!isAddressConfirmed ? (
-                      <div className="space-y-3 relative">
-                        <div className="relative">
-                          <input
-                            ref={addressInputRef}
-                            type="text"
-                            value={addressSearch}
-                            onChange={(e) => {
-                              setAddressSearch(e.target.value);
-                              setShowSuggestions(true);
-                            }}
-                            onFocus={() => setShowSuggestions(true)}
-                            placeholder="Search area, street, landmark..."
-                            className="w-full h-12 pl-10 pr-4 bg-[#f8f9fb] border-none rounded-xl focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-sm transition-all text-navy-deep font-medium placeholder:text-navy-deep/30 placeholder:font-normal"
-                          />
-                          <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-navy-deep/40" />
-                        </div>
-                        
-                        {/* Autocomplete Suggestions */}
-                        {showSuggestions && addressSearch.length > 0 && (
-                          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-border/50 overflow-hidden z-20 animate-in fade-in slide-in-from-top-2">
-                            {mockAddresses
-                              .filter(a => a.toLowerCase().includes(addressSearch.toLowerCase()))
-                              .map((addr, i) => (
-                                <button
-                                  key={i}
-                                  type="button"
-                                  onClick={() => handleAddressSelect(addr)}
-                                  className="w-full text-left px-4 py-3 hover:bg-[#f8f9fb] text-sm text-navy-deep/80 border-b border-border/30 last:border-0 flex items-start gap-3 transition-colors"
-                                >
-                                  <MapPin className="h-4 w-4 text-navy-deep/30 shrink-0 mt-0.5" />
-                                  <span>{addr}</span>
-                                </button>
-                              ))}
-                            {mockAddresses.filter(a => a.toLowerCase().includes(addressSearch.toLowerCase())).length === 0 && (
-                              <button
-                                type="button"
-                                onClick={() => handleAddressSelect(addressSearch)}
-                                className="w-full text-left px-4 py-3 hover:bg-[#f8f9fb] text-sm text-[#0b72e7] font-medium flex items-center gap-2"
-                              >
-                                Use "{addressSearch}"
-                              </button>
-                            )}
-                          </div>
-                        )}
-                        
-                        {/* Basic Info (Name/Phone) */}
-                        <div className="grid grid-cols-2 gap-3 pt-3">
-                          <input
-                            required
-                            type="text"
-                            value={shippingName}
-                            onChange={(e) => setShippingName(e.target.value)}
-                            placeholder="Full Name"
-                            className="h-11 px-4 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-sm"
-                          />
-                          <input
-                            required
-                            type="tel"
-                            value={shippingPhone}
-                            onChange={(e) => setShippingPhone(e.target.value)}
-                            placeholder="Phone Number"
-                            className="h-11 px-4 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-sm"
-                          />
-                        </div>
+                    {/* Contact Details */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Full Name *</label>
+                        <input
+                          type="text"
+                          value={shippingName}
+                          onChange={(e) => {
+                            setShippingName(e.target.value);
+                            if (errors.name) setErrors(prev => ({ ...prev, name: "" }));
+                          }}
+                          placeholder="Jane Doe"
+                          className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                        />
+                        {errors.name && <span className="text-[9px] text-red-500 font-semibold">{errors.name}</span>}
                       </div>
-                    ) : isCheckingDelivery ? (
-                      <div className="py-8 flex flex-col items-center justify-center space-y-3">
-                        <div className="w-6 h-6 border-2 border-[#0b72e7]/20 border-t-[#0b72e7] rounded-full animate-spin" />
-                        <p className="text-xs font-semibold text-navy-deep/60 animate-pulse tracking-wide">Checking delivery options...</p>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Phone Number *</label>
+                        <input
+                          type="tel"
+                          value={shippingPhone}
+                          onChange={(e) => {
+                            setShippingPhone(e.target.value);
+                            if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
+                          }}
+                          placeholder="e.g. 9876543210"
+                          className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                        />
+                        {errors.phone && <span className="text-[9px] text-red-500 font-semibold">{errors.phone}</span>}
                       </div>
-                    ) : (
-                      <div className="text-sm text-navy-deep leading-relaxed">
-                        <p className="font-medium">{shippingName} <span className="text-navy-deep/40 mx-2">•</span> {shippingPhone}</p>
-                        <p className="text-navy-deep/70 mt-1">{shippingAddress}</p>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Email Address *</label>
+                      <input
+                        type="email"
+                        value={shippingEmail}
+                        onChange={(e) => {
+                          setShippingEmail(e.target.value);
+                          if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+                        }}
+                        placeholder="jane.doe@example.com"
+                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                      />
+                      {errors.email && <span className="text-[9px] text-red-500 font-semibold">{errors.email}</span>}
+                    </div>
+
+                    {/* Address Fields */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Address Line 1 * (House/Flat No, Building, Street)</label>
+                      <input
+                        type="text"
+                        value={addressLine1}
+                        onChange={(e) => {
+                          setAddressLine1(e.target.value);
+                          if (errors.addressLine1) setErrors(prev => ({ ...prev, addressLine1: "" }));
+                        }}
+                        placeholder="Flat 101, Maple Heights"
+                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                      />
+                      {errors.addressLine1 && <span className="text-[9px] text-red-500 font-semibold">{errors.addressLine1}</span>}
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Address Line 2 (Landmark, Area - Optional)</label>
+                      <input
+                        type="text"
+                        value={addressLine2}
+                        onChange={(e) => setAddressLine2(e.target.value)}
+                        placeholder="Near Rajendra Nagar Over Bridge"
+                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">City *</label>
+                        <input
+                          type="text"
+                          value={city}
+                          onChange={(e) => {
+                            setCity(e.target.value);
+                            if (errors.city) setErrors(prev => ({ ...prev, city: "" }));
+                          }}
+                          placeholder="Patna"
+                          className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                        />
+                        {errors.city && <span className="text-[9px] text-red-500 font-semibold">{errors.city}</span>}
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Pincode *</label>
+                        <input
+                          type="text"
+                          value={pincode}
+                          onChange={(e) => {
+                            setPincode(e.target.value);
+                            if (errors.pincode) setErrors(prev => ({ ...prev, pincode: "" }));
+                          }}
+                          placeholder="800020"
+                          maxLength={6}
+                          className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                        />
+                        {errors.pincode && <span className="text-[9px] text-red-500 font-semibold">{errors.pincode}</span>}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">State *</label>
+                      <select
+                        value={state}
+                        onChange={(e) => {
+                          setState(e.target.value);
+                          if (errors.state) setErrors(prev => ({ ...prev, state: "" }));
+                        }}
+                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold cursor-pointer"
+                      >
+                        <option value="">Select State</option>
+                        {INDIAN_STATES.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                      {errors.state && <span className="text-[9px] text-red-500 font-semibold">{errors.state}</span>}
+                    </div>
+
+                    {isCheckingDelivery && (
+                      <div className="py-1 flex items-center justify-center gap-2">
+                        <div className="w-4 h-4 border-2 border-[#0b72e7]/20 border-t-[#0b72e7] rounded-full animate-spin" />
+                        <span className="text-[10px] font-semibold text-navy-deep/60 animate-pulse">Calculating delivery speed eligibility...</span>
+                      </div>
+                    )}
+
+                    {verificationError && (
+                      <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs font-semibold leading-normal">
+                        ⚠️ {verificationError}
                       </div>
                     )}
                   </div>
 
-                  {/* STEP 2: DELIVERY SPEED (Appears after address confirmation) */}
-                  {isAddressConfirmed && !isCheckingDelivery && (
-                    <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                      <h4 className="font-bold text-navy-deep mb-3 text-sm px-1">Delivery Speed</h4>
-                      
-                      <div className="space-y-3">
-                        {isExpressAvailable && (
-                          <label className={`block relative p-4 rounded-2xl cursor-pointer transition-all duration-300 border-2 ${
-                            deliverySpeed === 'express' 
-                              ? 'bg-[#f4f1ff] border-[#6b46c1] shadow-[0_4px_20px_rgba(107,70,193,0.15)]' 
-                              : 'bg-white border-border/40 hover:border-[#6b46c1]/30'
-                          }`}>
-                            <input 
-                              type="radio" 
-                              name="deliverySpeed" 
-                              value="express" 
-                              checked={deliverySpeed === 'express'} 
-                              onChange={() => setDeliverySpeed('express')}
-                              className="sr-only" 
-                            />
-                            <div className="flex items-start gap-4">
-                              <div className={`mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0 ${deliverySpeed === 'express' ? 'bg-[#6b46c1] text-white' : 'bg-secondary text-transparent'}`}>
-                                <CheckCircle className="h-4 w-4" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Zap className={`h-4 w-4 ${deliverySpeed === 'express' ? 'text-[#6b46c1] fill-[#6b46c1]' : 'text-gray-400'}`} />
-                                  <span className={`font-bold ${deliverySpeed === 'express' ? 'text-[#6b46c1]' : 'text-navy-deep'}`}>Express</span>
-                                </div>
-                                <p className="text-xs text-navy-deep/60 font-medium">Delivery in 15 - 20 minutes</p>
-                              </div>
-                              <div className="text-right">
-                                <span className={`font-bold ${deliverySpeed === 'express' ? 'text-[#6b46c1]' : 'text-navy-deep'}`}>+₹29</span>
-                              </div>
-                            </div>
-                          </label>
-                        )}
-
+                  {/* STEP 2: DELIVERY SPEED */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-border/40">
+                    <h4 className="font-bold text-navy-deep mb-3 text-sm">Delivery Speed</h4>
+                    
+                    <div className="space-y-3">
+                      {isExpressAvailable && (
                         <label className={`block relative p-4 rounded-2xl cursor-pointer transition-all duration-300 border-2 ${
-                          deliverySpeed === 'standard' 
-                            ? 'bg-white border-navy-deep shadow-[0_4px_20px_rgba(12,20,33,0.08)]' 
-                            : 'bg-white border-border/40 hover:border-navy-deep/30'
+                          deliverySpeed === 'express' 
+                            ? 'bg-[#f4f1ff] border-[#6b46c1] shadow-[0_4px_20px_rgba(107,70,193,0.15)]' 
+                            : 'bg-white border-border/40 hover:border-[#6b46c1]/30'
                         }`}>
                           <input 
                             type="radio" 
                             name="deliverySpeed" 
-                            value="standard" 
-                            checked={deliverySpeed === 'standard'} 
-                            onChange={() => setDeliverySpeed('standard')}
+                            value="express" 
+                            checked={deliverySpeed === 'express'} 
+                            onChange={() => setDeliverySpeed('express')}
                             className="sr-only" 
                           />
                           <div className="flex items-start gap-4">
-                            <div className={`mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0 ${deliverySpeed === 'standard' ? 'bg-navy-deep text-white' : 'bg-secondary text-transparent'}`}>
+                            <div className={`mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0 ${deliverySpeed === 'express' ? 'bg-[#6b46c1] text-white' : 'bg-secondary text-transparent'}`}>
                               <CheckCircle className="h-4 w-4" />
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <Truck className={`h-4 w-4 ${deliverySpeed === 'standard' ? 'text-navy-deep' : 'text-gray-400'}`} />
-                                <span className="font-bold text-navy-deep">Standard</span>
+                                <Zap className={`h-4 w-4 ${deliverySpeed === 'express' ? 'text-[#6b46c1] fill-[#6b46c1]' : 'text-gray-400'}`} />
+                                <span className={`font-bold ${deliverySpeed === 'express' ? 'text-[#6b46c1]' : 'text-navy-deep'}`}>Express</span>
                               </div>
-                              <p className="text-xs text-navy-deep/60 font-medium">Delivery in 2-3 business days</p>
+                              <p className="text-xs text-navy-deep/60 font-medium">Delivery in 15 - 20 minutes</p>
                             </div>
                             <div className="text-right">
-                              <span className="font-bold text-green-600">Free</span>
+                              <span className={`font-bold ${deliverySpeed === 'express' ? 'text-[#6b46c1]' : 'text-navy-deep'}`}>+₹29</span>
                             </div>
                           </div>
                         </label>
-                      </div>
+                      )}
+
+                      <label className={`block relative p-4 rounded-2xl cursor-pointer transition-all duration-300 border-2 ${
+                        deliverySpeed === 'standard' 
+                          ? 'bg-white border-navy-deep shadow-[0_4px_20px_rgba(12,20,33,0.08)]' 
+                          : 'bg-white border-border/40 hover:border-navy-deep/30'
+                      }`}>
+                        <input 
+                          type="radio" 
+                          name="deliverySpeed" 
+                          value="standard" 
+                          checked={deliverySpeed === 'standard'} 
+                          onChange={() => setDeliverySpeed('standard')}
+                          className="sr-only" 
+                        />
+                        <div className="flex items-start gap-4">
+                          <div className={`mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0 ${deliverySpeed === 'standard' ? 'bg-navy-deep text-white' : 'bg-secondary text-transparent'}`}>
+                            <CheckCircle className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Truck className={`h-4 w-4 ${deliverySpeed === 'standard' ? 'text-navy-deep' : 'text-gray-400'}`} />
+                              <span className="font-bold text-navy-deep">Standard</span>
+                            </div>
+                            <p className="text-xs text-navy-deep/60 font-medium">Delivery in 2-3 business days</p>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-bold text-green-600">Free</span>
+                          </div>
+                        </div>
+                      </label>
                     </div>
-                  )}
+                  </div>
 
                   {/* STEP 3: PAYMENT SECTION */}
-                  {isAddressConfirmed && (
-                    <div className="animate-in fade-in slide-in-from-top-4 duration-700 bg-white p-5 rounded-2xl shadow-sm border border-border/40">
-                      <h4 className="font-bold text-navy-deep flex items-center gap-2 text-sm mb-4">
-                        <CreditCard className="h-4 w-4 text-gold" /> Payment Mode
-                      </h4>
-                      
-                      <div className="space-y-1">
-                        <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${paymentMode === 'razorpay' ? 'bg-secondary/20' : 'hover:bg-secondary/10'}`}>
-                          <input
-                            type="radio"
-                            name="payment"
-                            value="razorpay"
-                            checked={paymentMode === "razorpay"}
-                            onChange={() => setPaymentMode("razorpay")}
-                            className="text-gold focus:ring-gold accent-gold h-4 w-4"
-                          />
-                          <span className="text-sm font-medium text-navy-deep">Online Payment (UPI, Cards)</span>
-                        </label>
-                        <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${paymentMode === 'cod' ? 'bg-secondary/20' : 'hover:bg-secondary/10'}`}>
-                          <input
-                            type="radio"
-                            name="payment"
-                            value="cod"
-                            checked={paymentMode === "cod"}
-                            onChange={() => setPaymentMode("cod")}
-                            className="text-gold focus:ring-gold accent-gold h-4 w-4"
-                          />
-                          <span className="text-sm font-medium text-navy-deep">Cash on Delivery (COD)</span>
-                        </label>
-                      </div>
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-border/40">
+                    <h4 className="font-bold text-navy-deep flex items-center gap-2 text-sm mb-4">
+                      <CreditCard className="h-4 w-4 text-gold" /> Payment Mode
+                    </h4>
+                    
+                    <div className="space-y-1">
+                      <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${paymentMode === 'razorpay' ? 'bg-secondary/20' : 'hover:bg-secondary/10'}`}>
+                        <input
+                          type="radio"
+                          name="payment"
+                          value="razorpay"
+                          checked={paymentMode === "razorpay"}
+                          onChange={() => setPaymentMode("razorpay")}
+                          className="text-gold focus:ring-gold accent-gold h-4 w-4"
+                        />
+                        <span className="text-sm font-medium text-navy-deep">Online Payment (UPI, Cards)</span>
+                      </label>
+                      <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${paymentMode === 'cod' ? 'bg-secondary/20' : 'hover:bg-secondary/10'}`}>
+                        <input
+                          type="radio"
+                          name="payment"
+                          value="cod"
+                          checked={paymentMode === "cod"}
+                          onChange={() => setPaymentMode("cod")}
+                          className="text-gold focus:ring-gold accent-gold h-4 w-4"
+                        />
+                        <span className="text-sm font-medium text-navy-deep">Cash on Delivery (COD)</span>
+                      </label>
                     </div>
-                  )}
+                  </div>
 
                   {/* Fixed Bottom Action Bar */}
                   <div className="fixed bottom-0 left-0 right-0 md:absolute p-4 bg-white border-t border-border/50 shadow-[0_-10px_20px_rgba(0,0,0,0.03)] flex items-center justify-between z-20">
@@ -633,7 +973,7 @@ function Cart() {
                     
                     <button
                       type="submit"
-                      disabled={isProcessingPayment || !isAddressConfirmed}
+                      disabled={isProcessingPayment}
                       className="h-12 px-8 bg-[#2dcb74] text-white rounded-xl font-bold tracking-wide hover:bg-[#25a961] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#2dcb74]/20 flex items-center gap-2"
                     >
                       {isProcessingPayment ? "Processing..." : "Place Order"} <ArrowRight className="h-4 w-4" />
@@ -686,7 +1026,7 @@ function Cart() {
                   IS
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm leading-tight">IESVRA Boutique</h4>
+                  <h4 className="font-bold text-sm leading-tight">IESVRA</h4>
                   <p className="text-[10px] text-white/50">Simulated Test Mode Payment</p>
                 </div>
               </div>
@@ -738,7 +1078,7 @@ function Cart() {
                         shippingAddress.trim(),
                         cartItems,
                         subtotal,
-                        shipping,
+                        deliveryFee,
                         total
                       );
                       setPlacedOrder(order);

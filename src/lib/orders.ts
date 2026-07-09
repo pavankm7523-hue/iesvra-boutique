@@ -14,6 +14,7 @@ export interface Order {
   total: number;
   date: string;
   status: 'Processing' | 'Shipped' | 'Delivered';
+  paymentStatus?: 'Paid' | 'Pending - COD';
 }
 
 const ORDERS_KEY = "IESVRA_orders";
@@ -49,36 +50,25 @@ export function saveOrders(orders: Order[]) {
 export function sendOrderConfirmationEmail(order: Order) {
   if (typeof window === "undefined") return;
 
-  const itemsListText = order.items
-    .map(
-      (item) =>
-        `- ${item.name} ${item.color && item.color !== "Standard" ? `(Color: ${item.color})` : ""} - ${item.quantity}x @ ₹${item.price.toLocaleString()} = ₹${(
-          item.price * item.quantity
-        ).toLocaleString()}`
-    )
-    .join("\n");
-
-  const bodyContent = `Hi ${order.customerName},\n\nThank you for shopping at IESVRA! Your order has been placed successfully and is currently being processed.\n\n=== ORDER DETAILS ===\nOrder ID: ${order.id}\nDate: ${order.date}\nPayment Status: Confirmed / Paid\n\n=== ITEMS PURCHASED ===\n${itemsListText}\n\nSubtotal: ₹${order.subtotal.toLocaleString()}\nShipping: ${order.shipping === 0 ? "Free" : `₹${order.shipping.toLocaleString()}`}\nTotal Amount: ₹${order.total.toLocaleString()}\n\n=== SHIPPING ADDRESS ===\n${order.shippingAddress}\nPhone Number: ${order.customerPhone}\n\n=== TRACK YOUR ORDER ===\nYou can track the shipping progress of your package by visiting:\n${window.location.origin}/track-order?orderId=${order.id}\n\nThank you for your trust in IESVRA.\n\nWarm regards,\nIESVRA Boutique Support`;
-
-  fetch(`https://formsubmit.co/ajax/${order.customerEmail.trim()}`, {
+  fetch("/api/send-confirmation", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json",
     },
-    body: JSON.stringify({
-      _subject: `IESVRA - Order Confirmation #${order.id}`,
-      name: "IESVRA Boutique Support",
-      message: bodyContent,
-      _template: "box",
-    }),
+    body: JSON.stringify({ order }),
   })
-    .then((res) => res.json())
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`Server returned status code ${res.status}`);
+      }
+      return res.json();
+    })
     .then((data) => {
-      console.log("Order confirmation email sent successfully via FormSubmit:", data);
+      console.log("Order confirmation email triggered successfully via Resend:", data);
     })
     .catch((err) => {
-      console.error("Failed to send order confirmation email:", err);
+      // Do not block or fail the order checkout if email fails - just log
+      console.error("Failed to send order confirmation email via Resend:", err);
     });
 }
 
@@ -90,7 +80,8 @@ export function createOrder(
   items: CartItem[],
   subtotal: number,
   shipping: number,
-  total: number
+  total: number,
+  paymentStatus?: 'Paid' | 'Pending - COD'
 ): Order {
   const orders = getOrders();
   const newOrder: Order = {
@@ -105,6 +96,7 @@ export function createOrder(
     total,
     date: new Date().toISOString().split("T")[0],
     status: 'Processing',
+    paymentStatus: paymentStatus || 'Pending - COD',
   };
 
   orders.unshift(newOrder); // Add to the beginning

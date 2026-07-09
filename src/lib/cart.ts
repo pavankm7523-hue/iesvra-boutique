@@ -109,7 +109,36 @@ export function useCartItems(): CartItem[] {
       let hasChanges = false;
       const now = new Date();
 
+      // Read current products list from localStorage to verify live prices
+      let latestProducts: Product[] = [];
+      try {
+        const stored = localStorage.getItem("ishvara_products_v4");
+        if (stored) {
+          latestProducts = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.error("Failed to parse products from localStorage inside cart hook", e);
+      }
+
       const validatedCart = currentCart.map(item => {
+        const dbProduct = latestProducts.find(p => p.id === item.id);
+        
+        let targetPrice = item.price;
+        let targetMrp = item.mrp;
+        
+        if (dbProduct) {
+          // If the price in the database changed, and this isn't an active flash sale item
+          if (dbProduct.price !== item.price) {
+            const isSaleActive = item.saleEndDate && now <= new Date(item.saleEndDate);
+            if (!isSaleActive) {
+              targetPrice = dbProduct.price;
+              targetMrp = dbProduct.mrp;
+              hasChanges = true;
+            }
+          }
+        }
+
+        // Expire old flash sale items
         if (item.saleEndDate && item.normalPrice !== undefined) {
           if (now > new Date(item.saleEndDate)) {
             hasChanges = true;
@@ -118,18 +147,26 @@ export function useCartItems(): CartItem[] {
             });
             return {
               ...item,
-              price: item.normalPrice,
-              mrp: item.normalPrice, // Optional: reset mrp if we don't know the real one, but usually it's fine
+              price: dbProduct ? dbProduct.price : item.normalPrice,
+              mrp: dbProduct ? dbProduct.mrp : item.normalPrice,
               saleEndDate: undefined,
-              bannerId: undefined, // remove banner context
+              bannerId: undefined,
             };
           }
+        }
+        
+        if (item.price !== targetPrice || item.mrp !== targetMrp) {
+          return {
+            ...item,
+            price: targetPrice,
+            mrp: targetMrp
+          };
         }
         return item;
       });
 
       if (hasChanges) {
-        saveCart(validatedCart); // this will trigger another EVENT_NAME, but that's fine
+        saveCart(validatedCart); // Trigger re-sync
       } else {
         setItems(currentCart);
       }
@@ -137,12 +174,14 @@ export function useCartItems(): CartItem[] {
 
     if (typeof window !== "undefined") {
       window.addEventListener(EVENT_NAME, handleUpdate);
+      window.addEventListener("ishvara_products_changed", handleUpdate);
       validateCartExpirations();
     }
 
     return () => {
       if (typeof window !== "undefined") {
         window.removeEventListener(EVENT_NAME, handleUpdate);
+        window.removeEventListener("ishvara_products_changed", handleUpdate);
       }
     };
   }, []);

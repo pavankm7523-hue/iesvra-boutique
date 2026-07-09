@@ -215,7 +215,9 @@ function TrackOrder() {
                       </div>
                       <div className="flex gap-3 text-navy-deep/80 pt-2 border-t border-border/20">
                         <CreditCard className="h-4 w-4 text-gold shrink-0 mt-0.5" />
-                        <span className="font-medium text-navy-deep/60">Cash on Delivery (COD)</span>
+                        <span className="font-medium text-navy-deep/60">
+                          {trackedOrder.paymentStatus === 'Paid' ? 'Paid via Online Payment' : 'Cash on Delivery (Pending - COD)'}
+                        </span>
                       </div>
                     </div>
                   </div>
