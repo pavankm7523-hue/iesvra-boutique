@@ -189,7 +189,6 @@ export async function createOrder(
     date: new Date().toISOString().split("T")[0],
     status: 'Processing',
     paymentStatus: paymentStatus || 'Pending - COD',
-    trackingId: `AZ${Math.floor(100000000 + Math.random() * 900000000)}IN`,
   };
 
   // Sanitize the order through JSON roundtrip to strip any `undefined` optional

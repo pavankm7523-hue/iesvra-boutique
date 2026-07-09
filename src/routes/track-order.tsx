@@ -229,8 +229,22 @@ function TrackOrder() {
                     </div>
                   )}
 
+                  {/* Processing / Preparation Message when no tracking ID is present yet */}
+                  {!trackedOrder.trackingId && trackedOrder.status === 'Processing' && (
+                    <div className="bg-[#fcf8e3]/60 border border-yellow-100 rounded-2xl p-5 flex items-start gap-3 text-left">
+                      <Clock className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-[10px] font-bold text-yellow-700 uppercase tracking-widest block mb-1">Fulfillment Status</span>
+                        <p className="text-sm font-semibold text-navy-deep">Order is being packed</p>
+                        <p className="text-xs text-navy-deep/60 mt-1">
+                          We are preparing your items for shipment. A tracking link will appear here as soon as the package is handed over to the courier partner.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Tracking ID details block */}
-                  {trackedOrder.trackingId && (
+                  {trackedOrder.trackingId && trackedOrder.status !== 'Processing' && (
                     <div className="bg-[#f0f9ff]/60 border border-blue-100 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left">
                       <div>
                         <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest block mb-1">Amazon Shipping AWB</span>
