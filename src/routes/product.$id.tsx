@@ -79,8 +79,8 @@ function ProductDetails() {
     }
     const colorToUse = hasColors ? selectedColor : "Standard";
     addToCart(product, colorToUse, quantity);
-    toast.success("Successfully added to cart! Redirecting to checkout...");
-    navigate({ to: "/cart" });
+    toast.success("Redirecting directly to checkout...");
+    window.location.href = "/cart?checkout=true";
   };
 
   return (

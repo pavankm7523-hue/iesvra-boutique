@@ -76,9 +76,9 @@ function Cart() {
   const currentUser = useCurrentUser();
 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [shippingName, setShippingName] = useState("");
-  const [shippingEmail, setShippingEmail] = useState("");
-  const [shippingPhone, setShippingPhone] = useState("");
+  const [shippingName, setShippingName] = useState(() => (typeof window !== "undefined" ? localStorage.getItem("IESVRA_shipping_name") || "" : ""));
+  const [shippingEmail, setShippingEmail] = useState(() => (typeof window !== "undefined" ? localStorage.getItem("IESVRA_shipping_email") || "" : ""));
+  const [shippingPhone, setShippingPhone] = useState(() => (typeof window !== "undefined" ? localStorage.getItem("IESVRA_shipping_phone") || "" : ""));
   const [shippingAddress, setShippingAddress] = useState("");
   const [placedOrder, setPlacedOrder] = useState<any>(null);
   const [paymentMode, setPaymentMode] = useState<'razorpay' | 'cod'>('razorpay');
@@ -256,10 +256,40 @@ function Cart() {
 
   useEffect(() => {
     if (currentUser) {
-      setShippingName(currentUser.name);
-      setShippingEmail(currentUser.email);
+      setShippingName(prev => prev || currentUser.name || "");
+      setShippingEmail(prev => prev || currentUser.email || "");
     }
   }, [currentUser]);
+
+  // Direct checkout URL query param handler
+  useEffect(() => {
+    if (typeof window === "undefined" || cartItems.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const checkoutParam = params.get("checkout") || params.get("buyNow");
+    if (checkoutParam === "true") {
+      // Clear search parameter from URL
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+
+      // Validate pre-filled shipping information
+      const isValid = 
+        shippingName.trim() &&
+        shippingEmail.trim() &&
+        shippingPhone.trim() &&
+        addressLine1.trim() &&
+        city.trim() &&
+        state.trim() &&
+        /^\d{6}$/.test(pincode.trim());
+
+      if (isValid) {
+        toast.info("Launching Razorpay Payment Gateway...");
+        const mockEvent = { preventDefault: () => {} } as React.FormEvent;
+        handlePlaceOrder(mockEvent);
+      } else {
+        toast.info("Please fill in your delivery details to complete checkout.");
+      }
+    }
+  }, [cartItems, shippingName, shippingEmail, shippingPhone, addressLine1, city, state, pincode]);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   let baseShipping = 0;
@@ -331,6 +361,9 @@ function Cart() {
     const combinedAddress = [addressLine1, addressLine2, city, `${state} - ${pincode}`].filter(Boolean).join(", ");
 
     // Save fields to localStorage
+    localStorage.setItem("IESVRA_shipping_name", shippingName.trim());
+    localStorage.setItem("IESVRA_shipping_email", shippingEmail.trim());
+    localStorage.setItem("IESVRA_shipping_phone", shippingPhone.trim());
     localStorage.setItem("IESVRA_delivery_address", combinedAddress);
     localStorage.setItem("IESVRA_delivery_address_line1", addressLine1);
     localStorage.setItem("IESVRA_delivery_address_line2", addressLine2);
