@@ -375,7 +375,7 @@ function Cart() {
 
     if (paymentMode === "cod") {
       try {
-        const order = createOrder(
+        const order = await createOrder(
           shippingName.trim(),
           shippingEmail.trim(),
           shippingPhone.trim(),
@@ -388,8 +388,9 @@ function Cart() {
         );
         setPlacedOrder(order);
         toast.success("Order placed successfully via Cash on Delivery!");
-      } catch (err) {
-        toast.error("Failed to place order.");
+      } catch (err: any) {
+        console.error("COD checkout error:", err);
+        toast.error(err?.message || "Failed to place order. Please try again.");
       }
       return;
     }
@@ -445,7 +446,7 @@ function Cart() {
             }
 
             // Create order with status Paid
-            const order = createOrder(
+            const order = await createOrder(
               shippingName.trim(),
               shippingEmail.trim(),
               shippingPhone.trim(),
@@ -1107,11 +1108,11 @@ function Cart() {
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   setIsMockPaying(true);
-                  setTimeout(() => {
+                  setTimeout(async () => {
                     setIsMockPaying(false);
                     setIsMockRazorpayOpen(false);
                     try {
-                      const order = createOrder(
+                      const order = await createOrder(
                         shippingName.trim(),
                         shippingEmail.trim(),
                         shippingPhone.trim(),
@@ -1123,8 +1124,9 @@ function Cart() {
                       );
                       setPlacedOrder(order);
                       toast.success(`Payment successful! Simulated ID: pay_${Math.random().toString(36).substr(2, 9)}`);
-                    } catch (err) {
-                      toast.error("Failed to process order.");
+                    } catch (err: any) {
+                      console.error("Mock checkout error:", err);
+                      toast.error(err?.message || "Failed to process order.");
                     }
                   }, 1500);
                 }} className="space-y-4">

@@ -24,41 +24,53 @@ function TrackOrder() {
   const [trackedOrder, setTrackedOrder] = useState<Order | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleCancelOrderClick = (orderIdStr: string) => {
+  const handleCancelOrderClick = async (orderIdStr: string) => {
     const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
     if (confirmCancel) {
-      const success = cancelOrder(orderIdStr);
-      if (success) {
-        toast.success("Order cancelled successfully!");
-        setTrackedOrder(getOrderById(orderIdStr));
-      } else {
-        toast.error("Failed to cancel order.");
+      try {
+        const success = await cancelOrder(orderIdStr);
+        if (success) {
+          toast.success("Order cancelled successfully!");
+          const fresh = await getOrderById(orderIdStr);
+          setTrackedOrder(fresh);
+        } else {
+          toast.error("Failed to cancel order.");
+        }
+      } catch (e) {
+        toast.error("An error occurred while cancelling the order.");
       }
     }
   };
 
   useEffect(() => {
     if (queryOrderId) {
-      const found = getOrderById(queryOrderId);
-      setTrackedOrder(found);
-      setHasSearched(true);
-      if (!found) {
-        toast.error("Order not found. Please double check your Order ID.");
-      }
+      const fetchQueryOrder = async () => {
+        const found = await getOrderById(queryOrderId);
+        setTrackedOrder(found);
+        setHasSearched(true);
+        if (!found) {
+          toast.error("Order not found. Please double check your Order ID.");
+        }
+      };
+      fetchQueryOrder();
     }
   }, [queryOrderId]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
       toast.error("Please enter an Order ID.");
       return;
     }
-    const found = getOrderById(searchQuery.trim());
-    setTrackedOrder(found);
-    setHasSearched(true);
-    if (!found) {
-      toast.error("Order not found. Please check the spelling.");
+    try {
+      const found = await getOrderById(searchQuery.trim());
+      setTrackedOrder(found);
+      setHasSearched(true);
+      if (!found) {
+        toast.error("Order not found. Please check the spelling.");
+      }
+    } catch (e) {
+      toast.error("An error occurred while retrieving order details.");
     }
   };
 

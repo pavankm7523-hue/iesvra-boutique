@@ -20,19 +20,27 @@ function AdminOrders() {
     setExpandedOrderId(expandedOrderId === id ? null : id);
   };
 
-  const handleStatusChange = (orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') => {
-    updateOrderStatus(orderId, status);
-    toast.success(`Order ${orderId} status updated to ${status}`);
+  const handleStatusChange = async (orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') => {
+    try {
+      await updateOrderStatus(orderId, status);
+      toast.success(`Order ${orderId} status updated to ${status}`);
+    } catch (e) {
+      toast.error("Failed to update status.");
+    }
   };
 
-  const handleTrackingSave = (orderId: string) => {
+  const handleTrackingSave = async (orderId: string) => {
     const val = editingTracking[orderId];
     if (val === undefined) {
       toast.error("No changes to tracking ID.");
       return;
     }
-    updateOrderTracking(orderId, val.trim());
-    toast.success(`Tracking ID updated for order ${orderId}`);
+    try {
+      await updateOrderTracking(orderId, val.trim());
+      toast.success(`Tracking ID updated for order ${orderId}`);
+    } catch (e) {
+      toast.error("Failed to update tracking ID.");
+    }
   };
 
   const getStatusColor = (status: string) => {

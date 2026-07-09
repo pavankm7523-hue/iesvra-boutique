@@ -69,14 +69,18 @@ function MyOrdersPage() {
   const allOrders = useOrdersList();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const handleCancelOrderClick = (orderId: string) => {
+  const handleCancelOrderClick = async (orderId: string) => {
     const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
     if (confirmCancel) {
-      const success = cancelOrder(orderId);
-      if (success) {
-        toast.success("Order cancelled successfully!");
-      } else {
-        toast.error("Failed to cancel order.");
+      try {
+        const success = await cancelOrder(orderId);
+        if (success) {
+          toast.success("Order cancelled successfully!");
+        } else {
+          toast.error("Failed to cancel order.");
+        }
+      } catch (e) {
+        toast.error("An error occurred while cancelling your order.");
       }
     }
   };

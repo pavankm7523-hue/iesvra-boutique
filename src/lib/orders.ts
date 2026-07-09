@@ -1,6 +1,16 @@
 import type { CartItem } from "./cart";
 import { clearCart } from "./cart";
 import { useState, useEffect } from "react";
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+
+// Helper to conditional import server-only database code to avoid bundle errors
+const getDbModule = async () => {
+  if (typeof window === "undefined") {
+    return await import("./db.server");
+  }
+  return null;
+};
 
 export interface Order {
   id: string;
@@ -18,7 +28,6 @@ export interface Order {
   trackingId?: string;
 }
 
-const ORDERS_KEY = "IESVRA_orders";
 const ORDERS_EVENT = "IESVRA_orders_changed";
 
 function triggerOrdersChange() {
@@ -27,39 +36,53 @@ function triggerOrdersChange() {
   }
 }
 
-export function getOrders(): Order[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(ORDERS_KEY);
-    const parsed: Order[] = raw ? JSON.parse(raw) : [];
-    
-    // Auto-heal/backfill trackingId for older orders
-    let updated = false;
-    const healed = parsed.map(o => {
-      if (!o.trackingId) {
-        o.trackingId = `AZ${Math.floor(100000000 + Math.random() * 900000000)}IN`;
-        updated = true;
-      }
-      return o;
-    });
+// Server functions to communicate securely with Supabase REST API
+export const getOrdersServer = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const db = await getDbModule();
+    if (!db) return [];
+    return await db.fetchAllOrdersFromDb();
+  });
 
-    if (updated) {
-      localStorage.setItem(ORDERS_KEY, JSON.stringify(healed));
-    }
-    return healed;
+export const getOrderByIdServer = createServerFn({ method: "POST" })
+  .inputValidator(z.string())
+  .handler(async ({ data: orderId }) => {
+    const db = await getDbModule();
+    if (!db) return null;
+    return await db.fetchOrderByIdFromDb(orderId);
+  });
+
+export const createOrderServer = createServerFn({ method: "POST" })
+  .inputValidator(z.any())
+  .handler(async ({ data: order }) => {
+    const db = await getDbModule();
+    if (!db) throw new Error("Server storage not available on client");
+    return await db.insertOrderIntoDb(order);
+  });
+
+export const updateOrderStatusServer = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string(), status: z.string() }))
+  .handler(async ({ data }) => {
+    const db = await getDbModule();
+    if (!db) throw new Error("Server storage not available on client");
+    return await db.updateOrderInDb(data.id, { status: data.status as any });
+  });
+
+export const updateOrderTrackingServer = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string(), trackingId: z.string() }))
+  .handler(async ({ data }) => {
+    const db = await getDbModule();
+    if (!db) throw new Error("Server storage not available on client");
+    return await db.updateOrderInDb(data.id, { trackingId: data.trackingId });
+  });
+
+// Client wrappers mapping database models to client hooks
+export async function getOrders(): Promise<Order[]> {
+  try {
+    return await getOrdersServer();
   } catch (e) {
-    console.error("Failed to parse orders", e);
+    console.error("Failed to load orders from database:", e);
     return [];
-  }
-}
-
-export function saveOrders(orders: Order[]) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-    triggerOrdersChange();
-  } catch (e) {
-    console.error("Failed to save orders", e);
   }
 }
 
@@ -131,7 +154,7 @@ export function sendOrderShippedEmail(order: Order) {
     });
 }
 
-export function createOrder(
+export async function createOrder(
   customerName: string,
   customerEmail: string,
   customerPhone: string,
@@ -141,8 +164,7 @@ export function createOrder(
   shipping: number,
   total: number,
   paymentStatus?: 'Paid' | 'Pending - COD'
-): Order {
-  const orders = getOrders();
+): Promise<Order> {
   const newOrder: Order = {
     id: `ISH-${Math.floor(100000 + Math.random() * 900000)}`,
     customerName,
@@ -159,40 +181,36 @@ export function createOrder(
     trackingId: `AZ${Math.floor(100000000 + Math.random() * 900000000)}IN`,
   };
 
-  orders.unshift(newOrder); // Add to the beginning
-  saveOrders(orders);
+  const savedOrder = await createOrderServer(newOrder);
   clearCart(); // Clear cart after placing order
+  triggerOrdersChange();
   
   // Send customer confirmation email
-  sendOrderConfirmationEmail(newOrder);
+  sendOrderConfirmationEmail(savedOrder);
   
   // Send admin notification email
-  sendAdminOrderNotification(newOrder);
+  sendAdminOrderNotification(savedOrder);
   
-  return newOrder;
+  return savedOrder;
 }
 
-export function updateOrderStatus(orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') {
-  const orders = getOrders();
-  const oldOrder = orders.find(o => o.id === orderId);
-  const updated = orders.map((o) => (o.id === orderId ? { ...o, status } : o));
-  saveOrders(updated);
+export async function updateOrderStatus(orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') {
+  const oldOrder = await getOrderById(orderId);
+  const updatedOrder = await updateOrderStatusServer({ id: orderId, status });
+  triggerOrdersChange();
 
   // If status is changed to Shipped, send the notification email automatically
   if (status === 'Shipped' && oldOrder && oldOrder.status !== 'Shipped') {
-    const freshOrder = updated.find(o => o.id === orderId);
-    if (freshOrder) {
-      sendOrderShippedEmail(freshOrder);
-    }
+    sendOrderShippedEmail(updatedOrder);
   }
+  return updatedOrder;
 }
 
-export function updateOrderTracking(orderId: string, trackingId: string) {
-  const orders = getOrders();
-  const updated = orders.map((o) => (o.id === orderId ? { ...o, trackingId } : o));
-  saveOrders(updated);
+export async function updateOrderTracking(orderId: string, trackingId: string) {
+  const updatedOrder = await updateOrderTrackingServer({ id: orderId, trackingId });
+  triggerOrdersChange();
 
-  // Sync with mobile app local storage
+  // Sync with mobile app local storage if they are on the same client browser
   if (typeof window !== "undefined") {
     try {
       const mobileRaw = localStorage.getItem("iesvra_orders");
@@ -212,40 +230,47 @@ export function updateOrderTracking(orderId: string, trackingId: string) {
   }
 
   // Trigger dispatch email notification
-  const order = updated.find((o) => o.id === orderId);
-  if (order) {
-    sendOrderShippedEmail(order);
-  }
+  sendOrderShippedEmail(updatedOrder);
+  return updatedOrder;
 }
 
-export function cancelOrder(orderId: string): boolean {
-  const orders = getOrders();
-  const order = orders.find((o) => o.id.toLowerCase() === orderId.toLowerCase());
+export async function cancelOrder(orderId: string): Promise<boolean> {
+  const order = await getOrderById(orderId);
   if (!order) return false;
   if (order.status !== 'Processing') return false;
 
   const newStatus = order.paymentStatus === 'Paid' ? 'Cancelled - Refund Pending' : 'Cancelled';
-  
-  const updated = orders.map((o) => 
-    o.id.toLowerCase() === orderId.toLowerCase() 
-      ? { ...o, status: newStatus as any } 
-      : o
-  );
-  saveOrders(updated);
+  await updateOrderStatusServer({ id: orderId, status: newStatus });
+  triggerOrdersChange();
   return true;
 }
 
-export function getOrderById(orderId: string): Order | null {
-  const orders = getOrders();
-  return orders.find((o) => o.id.toLowerCase() === orderId.toLowerCase()) || null;
+export async function getOrderById(orderId: string): Promise<Order | null> {
+  try {
+    return await getOrderByIdServer(orderId);
+  } catch (e) {
+    console.error(`Failed to get order by ID ${orderId}:`, e);
+    return null;
+  }
 }
 
 export function useOrdersList() {
-  const [orders, setOrders] = useState<Order[]>(() => getOrders());
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  const fetchOrders = async () => {
+    try {
+      const list = await getOrders();
+      setOrders(list);
+    } catch (e) {
+      console.error("Failed to load orders:", e);
+    }
+  };
 
   useEffect(() => {
+    fetchOrders();
+
     const handleUpdate = () => {
-      setOrders(getOrders());
+      fetchOrders();
     };
     window.addEventListener(ORDERS_EVENT, handleUpdate);
     return () => {
