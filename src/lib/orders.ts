@@ -50,11 +50,27 @@ export const getOrderByIdServer = createServerFn({ method: "POST" })
     return await db.fetchOrderByIdFromDb(orderId);
   });
 
+const OrderSchema = z.object({
+  id: z.string(),
+  customerName: z.string(),
+  customerEmail: z.string(),
+  customerPhone: z.string(),
+  shippingAddress: z.string(),
+  items: z.array(z.record(z.any())),
+  subtotal: z.number(),
+  shipping: z.number(),
+  total: z.number(),
+  date: z.string(),
+  status: z.string(),
+  paymentStatus: z.string().optional(),
+  trackingId: z.string().optional(),
+});
+
 export const createOrderServer = createServerFn({ method: "POST" })
-  .inputValidator(z.any())
+  .inputValidator(OrderSchema)
   .handler(async ({ data: order }) => {
     const db = await import("./db.server");
-    return await db.insertOrderIntoDb(order);
+    return await db.insertOrderIntoDb(order as any);
   });
 
 export const updateOrderStatusServer = createServerFn({ method: "POST" })
