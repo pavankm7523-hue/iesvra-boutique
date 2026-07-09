@@ -6,6 +6,8 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { nitro } from "nitro/vite";
 import process from "node:process";
 
+process.env.NITRO_PRESET = "cloudflare-module";
+
 console.log("=========================================");
 console.log("LOADING VITE CONFIG - CLOUDFLARE VERSION");
 console.log("CWD:", process.cwd());
