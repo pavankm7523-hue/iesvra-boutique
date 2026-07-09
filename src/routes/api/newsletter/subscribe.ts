@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
+import fs from "node:fs";
+import path from "node:path";
 
 export const Route = createFileRoute("/api/newsletter/subscribe")({
   server: {
@@ -9,99 +11,109 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
           const body = await request.json();
           const { email } = body;
 
+          // 1. Basic validation
           if (!email || typeof email !== "string" || !email.includes("@")) {
             return new Response(
-              JSON.stringify({ error: "Please provide a valid email address." }),
+              JSON.stringify({ error: "Please enter a valid email address." }),
               { status: 400, headers: { "Content-Type": "application/json" } }
             );
           }
 
+          const trimmedEmail = email.trim().toLowerCase();
+
+          // 2. Append to a local JSON file in workspace as a local backup
+          try {
+            const dataDir = path.resolve(process.cwd(), "src/data");
+            if (!fs.existsSync(dataDir)) {
+              fs.mkdirSync(dataDir, { recursive: true });
+            }
+
+            const subscribersFile = path.join(dataDir, "subscribers.json");
+            let subscribersList = [];
+            if (fs.existsSync(subscribersFile)) {
+              const rawData = fs.readFileSync(subscribersFile, "utf-8");
+              subscribersList = JSON.parse(rawData || "[]");
+            }
+
+            if (!subscribersList.some((s: any) => s.email === trimmedEmail)) {
+              subscribersList.push({
+                email: trimmedEmail,
+                subscribedAt: new Date().toISOString(),
+              });
+              fs.writeFileSync(subscribersFile, JSON.stringify(subscribersList, null, 2), "utf-8");
+            }
+          } catch (fsErr) {
+            console.error("Local JSON storage warning (non-fatal):", fsErr);
+          }
+
+          // 3. Connect to Resend to create audience contact & send welcome email
           const apiKey = (process.env.RESEND_API_KEY || "").trim();
           if (!apiKey) {
-            console.warn("RESEND_API_KEY environment variable is not configured. Simulating success.");
+            console.warn("RESEND_API_KEY is not configured. Simulating success in development mode.");
             return new Response(
-              JSON.stringify({ success: true, message: "Subscription simulated successfully (no Resend API key)." }),
+              JSON.stringify({ success: true, message: "Subscribed successfully (Simulated mode)." }),
               { status: 200, headers: { "Content-Type": "application/json" } }
             );
           }
 
-          // 1. Get or create Resend Newsletter Audience
+          // A. Fetch existing audiences to get or create audience ID
           let audienceId = "";
           try {
-            const listRes = await fetch("https://api.resend.com/audiences", {
+            const audiencesRes = await fetch("https://api.resend.com/audiences", {
+              method: "GET",
               headers: {
-                "Authorization": `Bearer ${apiKey}`
-              }
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json",
+              },
             });
-            const listData = await listRes.json();
 
-            if (listRes.ok && listData.data && listData.data.length > 0) {
-              // Use first existing audience list
-              audienceId = listData.data[0].id;
-            } else {
-              // Create a new newsletter list if none exist
-              const createAudienceRes = await fetch("https://api.resend.com/audiences", {
+            if (audiencesRes.ok) {
+              const audData = await audiencesRes.json();
+              if (audData.data && audData.data.length > 0) {
+                // Use the first existing audience
+                audienceId = audData.data[0].id;
+              } else {
+                // If no audiences, create a new one named "Newsletter Subscribers"
+                const createAudRes = await fetch("https://api.resend.com/audiences", {
+                  method: "POST",
+                  headers: {
+                    "Authorization": `Bearer ${apiKey}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ name: "Newsletter Subscribers" }),
+                });
+
+                if (createAudRes.ok) {
+                  const createAudData = await createAudRes.json();
+                  audienceId = createAudData.id;
+                }
+              }
+            }
+          } catch (audErr) {
+            console.error("Failed to query or create Resend audience:", audErr);
+          }
+
+          // B. Add contact to the audience if ID is found
+          if (audienceId) {
+            try {
+              await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
                 method: "POST",
                 headers: {
                   "Authorization": `Bearer ${apiKey}`,
-                  "Content-Type": "application/json"
+                  "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ name: "Newsletter" })
+                body: JSON.stringify({
+                  email: trimmedEmail,
+                  unsubscribed: false,
+                }),
               });
-              const createAudienceData = await createAudienceRes.json();
-              if (createAudienceRes.ok && createAudienceData.id) {
-                audienceId = createAudienceData.id;
-              } else {
-                throw new Error(createAudienceData.message || "Failed to create audience list on Resend.");
-              }
+            } catch (contactErr) {
+              console.error("Failed to add contact to Resend audience list:", contactErr);
             }
-          } catch (audienceErr: any) {
-            console.error("Error managing Resend audiences:", audienceErr);
-            // Fall back or report error
-            return new Response(
-              JSON.stringify({ error: "Failed to verify subscription database list in Resend." }),
-              { status: 500, headers: { "Content-Type": "application/json" } }
-            );
           }
 
-          // 2. Add Contact to Audience List
-          try {
-            const addContactRes = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
-              method: "POST",
-              headers: {
-                "Authorization": `Bearer ${apiKey}`,
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                email: email.trim(),
-                unsubscribed: false
-              })
-            });
-            const addContactData = await addContactRes.json();
-
-            if (!addContactRes.ok) {
-              // If the email is already subscribed, Resend might return 409 or similar message
-              const errMsg = addContactData.message || "";
-              if (errMsg.toLowerCase().includes("already") || addContactRes.status === 409) {
-                console.log("Contact already exists in audience. Proceeding with confirmation email.");
-              } else {
-                console.error("Resend create contact error:", addContactData);
-                return new Response(
-                  JSON.stringify({ error: addContactData.message || "Failed to register subscription." }),
-                  { status: 500, headers: { "Content-Type": "application/json" } }
-                );
-              }
-            }
-          } catch (contactErr: any) {
-            console.error("Error adding contact to Resend:", contactErr);
-            return new Response(
-              JSON.stringify({ error: "Failed to persist newsletter contact details." }),
-              { status: 500, headers: { "Content-Type": "application/json" } }
-            );
-          }
-
-          // 3. Send confirmation / welcome email
-          const welcomeEmailHtml = `
+          // C. Send welcome coupon email to subscriber
+          const emailHtml = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -109,45 +121,58 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>Welcome to the IESVRA Newsletter</title>
             </head>
-            <body style="margin: 0; padding: 0; background-color: #f8f9fb; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+            <body style="margin: 0; padding: 0; background-color: #f8f9fb; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8f9fb; padding: 40px 0;">
                 <tr>
                   <td align="center">
                     <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb;">
                       <!-- Header -->
                       <tr>
-                        <td align="center" style="background-color: #13192b; padding: 40px 20px; border-bottom: 4px solid #e6b96e;">
-                          <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;">IESVRA</h1>
-                          <p style="color: #e6b96e; margin: 8px 0 0 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">Newsletter Subscription</p>
+                        <td align="center" style="background-color: #0b121e; padding: 40px 20px; border-bottom: 4px solid #c9a55c;">
+                          <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 0.1em; font-family: 'Outfit', sans-serif; text-transform: uppercase;">IESVRA</h1>
+                          <p style="color: #c9a55c; margin: 8px 0 0 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em;">Newsletter Subscription</p>
                         </td>
                       </tr>
-                      <!-- Content -->
+                      
+                      <!-- Message -->
                       <tr>
                         <td style="padding: 40px 30px;">
-                          <h2 style="color: #13192b; font-size: 20px; margin-top: 0; margin-bottom: 16px; font-weight: 700;">Welcome to the IESVRA Community!</h2>
-                          <p style="font-size: 15px; color: #4b5563; line-height: 1.6; margin-bottom: 24px;">
-                            Thank you for subscribing to the IESVRA newsletter. You're now on the list to receive exclusive sneak peeks, early access to new arrivals, and special boutique discounts.
+                          <h2 style="margin: 0 0 20px 0; font-size: 20px; color: #0b121e; font-weight: 700;">You are in the Loop!</h2>
+                          <p style="margin: 0 0 20px 0; font-size: 15px; color: #475569; line-height: 1.6; font-weight: 300;">
+                            Thank you for subscribing to the **IESVRA** newsletter. You are now officially a part of our inner circle.
                           </p>
-                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #fcfbf9; border-radius: 12px; border: 1px solid #f1ece4; padding: 20px; margin-bottom: 30px; text-align: center;">
+                          <p style="margin: 0 0 30px 0; font-size: 15px; color: #475569; line-height: 1.6; font-weight: 300;">
+                            We promise to bring you only the finest details: exclusive early sale access, new curated product drops, and insights into premium essentials.
+                          </p>
+                          
+                          <!-- Promo box -->
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #fdfbf7; border-radius: 12px; border: 1px dashed #c9a55c; padding: 24px; text-align: center; margin-bottom: 30px;">
                             <tr>
                               <td>
-                                <p style="margin: 0; font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Your Subscriber Email</p>
-                                <p style="margin: 6px 0 0 0; font-size: 16px; font-weight: 700; color: #13192b;">${email.trim()}</p>
+                                <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px;">Your Welcome Coupon</span>
+                                <strong style="font-size: 24px; color: #c9a55c; font-family: 'Outfit', sans-serif; display: block; margin-bottom: 8px;">FIRST15</strong>
+                                <span style="font-size: 13px; color: #0b121e; font-weight: 500;">Enjoy 15% OFF on your first boutique checkouts!</span>
                               </td>
                             </tr>
                           </table>
-                          <p style="font-size: 14px; color: #7a8b7b; font-style: italic; line-height: 1.6; margin-bottom: 0;">
-                            Warm regards,<br>
-                            <strong>The IESVRA Team</strong>
-                          </p>
+                          
+                          <!-- Action Button -->
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                              <td align="center" style="padding-bottom: 10px;">
+                                <a href="https://www.iesvra.com/shop" target="_blank" style="background-color: #c9a55c; color: #ffffff; padding: 14px 32px; font-size: 13px; font-weight: 700; text-decoration: none; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">Explore the Shop</a>
+                              </td>
+                            </tr>
+                          </table>
                         </td>
                       </tr>
+                      
                       <!-- Footer -->
                       <tr>
                         <td align="center" style="background-color: #f8f9fb; padding: 30px 20px; border-top: 1px solid #e5e7eb;">
-                          <p style="margin: 0 0 10px 0; font-size: 13px; color: #13192b; font-weight: 700; letter-spacing: 0.05em;">IESVRA BOUTIQUE</p>
-                          <p style="margin: 0; font-size: 11px; color: #9ca3af; line-height: 1.5;">
-                            You received this email because you subscribed to our newsletter on our website. If you'd like to unsubscribe, you can click the unsubscribe link in any future email.
+                          <p style="margin: 0 0 10px 0; font-size: 13px; color: #0b121e; font-weight: 700; letter-spacing: 0.05em;">IESVRA</p>
+                          <p style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.5;">
+                            You received this email because you subscribed to our updates. If you wish to unsubscribe, you can do so by replying to this email.
                           </p>
                         </td>
                       </tr>
@@ -163,34 +188,33 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
             method: "POST",
             headers: {
               "Authorization": `Bearer ${apiKey}`,
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               from: "IESVRA <newsletter@iesvra.com>",
-              to: email.trim(),
+              to: trimmedEmail,
               subject: "Welcome to the IESVRA Newsletter!",
-              html: welcomeEmailHtml
-            })
+              html: emailHtml,
+            }),
           });
 
           if (!emailRes.ok) {
-            const emailData = await emailRes.json();
-            console.warn("Resend Welcome email notification failed to send:", emailData);
-            // We still return 200 OK because the contact registration succeeded.
+            const emailErrData = await emailRes.json();
+            console.error("Resend welcome email failed:", emailErrData);
           }
 
-          return new Response(JSON.stringify({ success: true, message: "Subscription completed!" }), {
-            status: 200,
-            headers: { "Content-Type": "application/json" }
-          });
-        } catch (error: any) {
-          console.error("Newsletter subscription endpoint runtime error:", error);
           return new Response(
-            JSON.stringify({ error: error.message || "Failed to process request." }),
+            JSON.stringify({ success: true, message: "Subscribed successfully." }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          );
+        } catch (err: any) {
+          console.error("Newsletter subscription handler error:", err);
+          return new Response(
+            JSON.stringify({ error: err.message || "Failed to submit subscription request." }),
             { status: 500, headers: { "Content-Type": "application/json" } }
           );
         }
-      }
-    }
-  }
+      },
+    },
+  },
 });

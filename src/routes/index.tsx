@@ -37,42 +37,6 @@ export const Route = createFileRoute("/")(
 
 function Home() {
   const { isLoaded, bestSellersList, products } = useProducts();
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [isSubscribing, setIsSubscribing] = useState(false);
-
-  const handleNewsletterSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newsletterEmail.trim()) {
-      toast.error("Please enter your email address.");
-      return;
-    }
-    if (!newsletterEmail.includes("@")) {
-      toast.error("Please enter a valid email address.");
-      return;
-    }
-
-    setIsSubscribing(true);
-    try {
-      const res = await fetch("/api/newsletter/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email: newsletterEmail.trim() })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        toast.success("Thanks for subscribing!");
-        setNewsletterEmail("");
-      } else {
-        toast.error(data.error || "Failed to subscribe. Please try again.");
-      }
-    } catch (err: any) {
-      toast.error("An error occurred. Please try again later.");
-    } finally {
-      setIsSubscribing(false);
-    }
-  };
   const { categories } = useCategories();
   const { data: banners, isLoading: isHeroLoading } = useHeroBanners();
   
@@ -91,6 +55,36 @@ function Home() {
   }];
 
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [subscriberEmail, setSubscriberEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subscriberEmail.trim() || !subscriberEmail.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    setIsSubscribing(true);
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: subscriberEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to subscribe.");
+      }
+      toast.success("Thanks for subscribing!");
+      setSubscriberEmail("");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to subscribe. Please try again.");
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
 
   // Auto-play interval
   useEffect(() => {
@@ -459,14 +453,14 @@ function Home() {
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <h2 className="text-2xl lg:text-3xl font-display font-bold text-white mb-4">Stay in the Loop</h2>
           <p className="text-white/70 text-sm lg:text-base mb-8 max-w-lg mx-auto">Subscribe to our newsletter for exclusive offers, early access to sales, and new arrivals.</p>
-          <form onSubmit={handleNewsletterSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Enter your email address"
-              value={newsletterEmail}
-              onChange={(e) => setNewsletterEmail(e.target.value)}
+              value={subscriberEmail}
+              onChange={(e) => setSubscriberEmail(e.target.value)}
               disabled={isSubscribing}
-              className="flex-1 h-12 px-6 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-gold transition-colors disabled:opacity-50"
+              className="flex-1 h-12 px-6 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-gold transition-colors"
             />
             <button
               type="submit"
