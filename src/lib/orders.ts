@@ -39,40 +39,35 @@ function triggerOrdersChange() {
 // Server functions to communicate securely with Supabase REST API
 export const getOrdersServer = createServerFn({ method: "GET" })
   .handler(async () => {
-    const db = await getDbModule();
-    if (!db) return [];
+    const db = await import("./db.server");
     return await db.fetchAllOrdersFromDb();
   });
 
 export const getOrderByIdServer = createServerFn({ method: "POST" })
   .inputValidator(z.string())
   .handler(async ({ data: orderId }) => {
-    const db = await getDbModule();
-    if (!db) return null;
+    const db = await import("./db.server");
     return await db.fetchOrderByIdFromDb(orderId);
   });
 
 export const createOrderServer = createServerFn({ method: "POST" })
   .inputValidator(z.any())
   .handler(async ({ data: order }) => {
-    const db = await getDbModule();
-    if (!db) throw new Error("Server storage not available on client");
+    const db = await import("./db.server");
     return await db.insertOrderIntoDb(order);
   });
 
 export const updateOrderStatusServer = createServerFn({ method: "POST" })
   .inputValidator(z.object({ id: z.string(), status: z.string() }))
   .handler(async ({ data }) => {
-    const db = await getDbModule();
-    if (!db) throw new Error("Server storage not available on client");
+    const db = await import("./db.server");
     return await db.updateOrderInDb(data.id, { status: data.status as any });
   });
 
 export const updateOrderTrackingServer = createServerFn({ method: "POST" })
   .inputValidator(z.object({ id: z.string(), trackingId: z.string() }))
   .handler(async ({ data }) => {
-    const db = await getDbModule();
-    if (!db) throw new Error("Server storage not available on client");
+    const db = await import("./db.server");
     return await db.updateOrderInDb(data.id, { trackingId: data.trackingId });
   });
 
