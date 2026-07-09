@@ -3,18 +3,7 @@ import react from "@vitejs/plugin-react";
 import tsConfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import { nitro } from "nitro/vite";
-import process from "node:process";
-
-process.env.NITRO_PRESET = "cloudflare-module";
-
-console.log("=========================================");
-console.log("LOADING VITE CONFIG - CLOUDFLARE VERSION");
-console.log("CWD:", process.cwd());
-console.log("ENV NITRO_PRESET:", process.env.NITRO_PRESET);
-console.log("ENV VERCEL:", process.env.VERCEL);
-console.log("ENV CF_PAGES:", process.env.CF_PAGES);
-console.log("=========================================");
+import { cloudflare } from "@cloudflare/vite-plugin";
 
 export default defineConfig({
   resolve: {
@@ -34,6 +23,7 @@ export default defineConfig({
     transformer: "lightningcss"
   },
   plugins: [
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
     tailwindcss(),
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
     tanstackStart({
@@ -45,9 +35,6 @@ export default defineConfig({
         }
       },
       server: { entry: "server" }
-    }),
-    nitro({
-      preset: "cloudflare-module"
     }),
     react()
   ]

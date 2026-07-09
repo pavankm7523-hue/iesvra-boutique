@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // This MUST match the existing Worker/project name already set up
+  // in the Cloudflare dashboard (Compute > Workers & Pages > your project)
+  "name": "iesvra-boutique",
+  "compatibility_date": "2026-07-09",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/server.ts",
+  "observability": {
+    "enabled": true
+  }
+}
