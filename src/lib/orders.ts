@@ -192,7 +192,12 @@ export async function createOrder(
     trackingId: `AZ${Math.floor(100000000 + Math.random() * 900000000)}IN`,
   };
 
-  const savedOrder = await createOrderServer(newOrder);
+  // Sanitize the order through JSON roundtrip to strip any `undefined` optional
+  // fields (e.g. bannerId, saleEndDate on CartItem) before seroval encodes it.
+  // Seroval cannot handle `undefined` values inside nested objects.
+  const sanitizedOrder = JSON.parse(JSON.stringify(newOrder)) as Order;
+
+  const savedOrder = await createOrderServer(sanitizedOrder);
   clearCart(); // Clear cart after placing order
   triggerOrdersChange();
   
