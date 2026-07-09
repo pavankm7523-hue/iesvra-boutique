@@ -43,35 +43,24 @@ function Login() {
       const otp = Math.floor(1000 + Math.random() * 9000).toString();
       setGeneratedOtp(otp);
 
-      const promise = fetch(`https://formsubmit.co/ajax/${forgotEmail.trim()}`, {
+      // Send OTP via Resend through our own secure /api/send-otp endpoint
+      const sendOtpPromise = fetch("/api/send-otp", {
         method: "POST",
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          _subject: "IESVRA - Password Reset Verification Code",
-          name: "IESVRA Security",
-          message: `Your password reset verification code is: ${otp}\n\nIf you did not request this, please ignore this email.`,
-          _template: "box"
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail.trim(), otp }),
+      }).then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to send OTP.");
+        return data;
       });
 
-      toast.promise(promise, {
-        loading: 'Sending OTP verification code to your email...',
-        success: () => {
-          setTimeout(() => {
-            toast.info(`Simulated OTP Backup Code: ${otp}`, { duration: 15000 });
-          }, 1500);
-          return "OTP sent! Check your Gmail inbox/spam. (First time using this email? Check for a FormSubmit confirmation email).";
-        },
+      toast.promise(sendOtpPromise, {
+        loading: "Sending OTP to your Gmail inbox...",
+        success: `OTP sent! Check your Gmail inbox (or spam) for a message from IESVRA Security.`,
         error: (err) => {
-          console.error("Email send failed:", err);
-          setTimeout(() => {
-            toast.info(`Simulated OTP Backup Code: ${otp}`, { duration: 15000 });
-          }, 1500);
-          return "Email dispatch failed. Showing simulated OTP backup below instead.";
-        }
+          console.error("OTP send failed:", err);
+          return err?.message || "Failed to send OTP email. Please try again.";
+        },
       });
 
       setForgotStep('otp');
