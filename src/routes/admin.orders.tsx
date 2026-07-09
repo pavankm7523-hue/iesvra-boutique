@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PackageOpen, Clock, Truck, CheckCircle2, ChevronDown, ChevronUp, User, MapPin, Phone, Mail, ShoppingBag } from "lucide-react";
+import { PackageOpen, Clock, Truck, CheckCircle2, ChevronDown, ChevronUp, User, MapPin, Phone, Mail, ShoppingBag, XCircle } from "lucide-react";
 import { useOrdersList, updateOrderStatus, Order } from "@/lib/orders";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ function AdminOrders() {
     setExpandedOrderId(expandedOrderId === id ? null : id);
   };
 
-  const handleStatusChange = (orderId: string, status: 'Processing' | 'Shipped' | 'Delivered') => {
+  const handleStatusChange = (orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') => {
     updateOrderStatus(orderId, status);
     toast.success(`Order ${orderId} status updated to ${status}`);
   };
@@ -32,6 +32,9 @@ function AdminOrders() {
         return "bg-blue-50 text-blue-700 border-blue-200/50";
       case "Delivered":
         return "bg-green-50 text-green-700 border-green-200/50";
+      case "Cancelled":
+      case "Cancelled - Refund Pending":
+        return "bg-red-50 text-red-700 border-red-200/50";
       default:
         return "bg-gray-50 text-gray-700 border-gray-200/50";
     }
@@ -45,6 +48,9 @@ function AdminOrders() {
         return <Truck className="h-3.5 w-3.5" />;
       case "Delivered":
         return <CheckCircle2 className="h-3.5 w-3.5" />;
+      case "Cancelled":
+      case "Cancelled - Refund Pending":
+        return <XCircle className="h-3.5 w-3.5" />;
       default:
         return null;
     }
@@ -124,6 +130,8 @@ function AdminOrders() {
                               <option value="Processing">Processing</option>
                               <option value="Shipped">Shipped</option>
                               <option value="Delivered">Delivered</option>
+                              <option value="Cancelled">Cancelled</option>
+                              <option value="Cancelled - Refund Pending">Cancelled - Refund Pending</option>
                             </select>
                           </div>
                         </td>

@@ -10,7 +10,9 @@ export function Footer() {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Newsletter handleSubscribe triggered on footer form", { email });
     if (!email.trim() || !email.includes("@")) {
+      console.warn("Newsletter subscription validation failed: invalid email", { email });
       toast.error("Please enter a valid email address.");
       return;
     }

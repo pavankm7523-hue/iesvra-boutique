@@ -13,7 +13,7 @@ export interface Order {
   shipping: number;
   total: number;
   date: string;
-  status: 'Processing' | 'Shipped' | 'Delivered';
+  status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending';
   paymentStatus?: 'Paid' | 'Pending - COD';
 }
 
@@ -72,6 +72,26 @@ export function sendOrderConfirmationEmail(order: Order) {
     });
 }
 
+export function sendAdminOrderNotification(order: Order) {
+  if (typeof window === "undefined") return;
+
+  fetch("/api/notify-admin", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ order }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error(`Admin notify HTTP ${res.status}`);
+      return res.json();
+    })
+    .then((data) => {
+      console.log("Admin order notification sent:", data);
+    })
+    .catch((err) => {
+      console.error("Admin order notification failed (non-blocking):", err);
+    });
+}
+
 export function createOrder(
   customerName: string,
   customerEmail: string,
@@ -103,16 +123,37 @@ export function createOrder(
   saveOrders(orders);
   clearCart(); // Clear cart after placing order
   
-  // Send email confirmation
+  // Send customer confirmation email
   sendOrderConfirmationEmail(newOrder);
+  
+  // Send admin notification email
+  sendAdminOrderNotification(newOrder);
   
   return newOrder;
 }
 
-export function updateOrderStatus(orderId: string, status: 'Processing' | 'Shipped' | 'Delivered') {
+
+export function updateOrderStatus(orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') {
   const orders = getOrders();
   const updated = orders.map((o) => (o.id === orderId ? { ...o, status } : o));
   saveOrders(updated);
+}
+
+export function cancelOrder(orderId: string): boolean {
+  const orders = getOrders();
+  const order = orders.find((o) => o.id.toLowerCase() === orderId.toLowerCase());
+  if (!order) return false;
+  if (order.status !== 'Processing') return false;
+
+  const newStatus = order.paymentStatus === 'Paid' ? 'Cancelled - Refund Pending' : 'Cancelled';
+  
+  const updated = orders.map((o) => 
+    o.id.toLowerCase() === orderId.toLowerCase() 
+      ? { ...o, status: newStatus as any } 
+      : o
+  );
+  saveOrders(updated);
+  return true;
 }
 
 export function getOrderById(orderId: string): Order | null {

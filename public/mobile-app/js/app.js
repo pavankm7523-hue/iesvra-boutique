@@ -382,6 +382,15 @@
           </button>
         </div>
 
+        <!-- Live Social Proof -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 12px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.3);animation:pulse 2s infinite;flex-shrink:0;"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,0.8);font-weight:600;" id="mobileShopperCount">${Math.floor(8 + Math.random() * 22)} people viewing</span>
+          </div>
+          ${new Date().getHours() < 21 ? `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:5px 12px;"><span style="font-size:10px;color:#f59e0b;">⏰</span><span style="font-size:11px;color:#f59e0b;font-weight:600;">Order before 9 PM → Next Day</span></div>` : ''}
+        </div>
+
         <div class="detail-actions">
           <button class="detail-add-btn" onclick="window.detailAddToCart()">Add to Cart</button>
           <button class="detail-buy-btn" onclick="window.detailBuyNow()">Buy Now</button>
@@ -575,11 +584,16 @@
         <div class="order-history-body">
           <div class="order-details">
             <h4>₹${order.amount}</h4>
-            <p>${order.itemsCount} items · Status: <span style="color: var(--accent-gold); font-weight: 700;">${order.status}</span></p>
+            <p>${order.itemsCount} items · Status: <span style="color: ${order.status === 'Cancelled' ? '#ef4444' : 'var(--accent-gold)'}; font-weight: 700;">${order.status}</span></p>
           </div>
           <button class="track-btn" onclick="window.trackMobileOrder('${order.orderId}')">
             Track Order
           </button>
+          ${(order.status === "Placed" || order.status === "Confirmed") ? `
+            <button class="cancel-btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; margin-left: 8px; width: auto;" onclick="window.cancelMobileOrder('${order.orderId}')">
+              Cancel
+            </button>
+          ` : ''}
         </div>
       </div>
     `).join('');
@@ -589,6 +603,7 @@
     const viewList = document.getElementById('ordersListView');
     const viewTracking = document.getElementById('orderTrackingView');
     const btnBack = document.getElementById('trackingBackBtn');
+    const btnCancel = document.getElementById('trackingCancelBtn');
 
     if (!viewList || !viewTracking) return;
 
@@ -609,6 +624,18 @@
 
     if (!order) return;
 
+    // Show/hide cancel button dynamically in tracking view
+    if (btnCancel) {
+      if (order.status === "Placed" || order.status === "Confirmed") {
+        btnCancel.style.display = 'block';
+        btnCancel.onclick = () => {
+          window.cancelMobileOrder(order.orderId);
+        };
+      } else {
+        btnCancel.style.display = 'none';
+      }
+    }
+
     // Animate map & update timeline status
     animateTrackingFlow(order);
   };
@@ -620,6 +647,7 @@
     const stepPacked = document.getElementById('step-packed');
     const stepTransit = document.getElementById('step-transit');
     const stepDelivered = document.getElementById('step-delivered');
+    const btnCancel = document.getElementById('trackingCancelBtn');
 
     // Reset status steps visual styling
     const steps = [stepPlaced, stepConfirmed, stepPacked, stepTransit, stepDelivered];
@@ -630,6 +658,14 @@
     if (scooter) {
       scooter.setAttribute('transform', 'translate(45, 80)');
       scooter.style.transition = 'transform 6s linear';
+      scooter.style.opacity = '1';
+    }
+
+    // If already Cancelled, show visual indication instead
+    if (order.status === "Cancelled") {
+      if (btnCancel) btnCancel.style.display = 'none';
+      if (scooter) scooter.style.opacity = '0.3';
+      return;
     }
 
     // Step 1: Placed (Immediate)
@@ -637,18 +673,31 @@
 
     // Step 2: Confirmed (1.5s)
     setTimeout(() => {
+      const orders = JSON.parse(localStorage.getItem('iesvra_orders') || '[]');
+      const currentOrder = orders.find(o => o.orderId === order.orderId);
+      if (currentOrder && currentOrder.status === "Cancelled") return;
+
       if (stepConfirmed) stepConfirmed.classList.add('completed');
       updateOrderLiveStatus(order.orderId, "Confirmed");
     }, 1500);
 
     // Step 3: Packed (3s)
     setTimeout(() => {
+      const orders = JSON.parse(localStorage.getItem('iesvra_orders') || '[]');
+      const currentOrder = orders.find(o => o.orderId === order.orderId);
+      if (currentOrder && currentOrder.status === "Cancelled") return;
+
       if (stepPacked) stepPacked.classList.add('completed');
       updateOrderLiveStatus(order.orderId, "Packed");
+      if (btnCancel) btnCancel.style.display = 'none'; // Can't cancel after packed
     }, 3000);
 
     // Step 4: Out for Delivery (4.5s) & start scooter animation
     setTimeout(() => {
+      const orders = JSON.parse(localStorage.getItem('iesvra_orders') || '[]');
+      const currentOrder = orders.find(o => o.orderId === order.orderId);
+      if (currentOrder && currentOrder.status === "Cancelled") return;
+
       if (stepTransit) stepTransit.classList.add('completed');
       updateOrderLiveStatus(order.orderId, "Out for Delivery");
 
@@ -660,6 +709,10 @@
 
     // Step 5: Delivered (7.5s)
     setTimeout(() => {
+      const orders = JSON.parse(localStorage.getItem('iesvra_orders') || '[]');
+      const currentOrder = orders.find(o => o.orderId === order.orderId);
+      if (currentOrder && currentOrder.status === "Cancelled") return;
+
       if (stepDelivered) stepDelivered.classList.add('completed');
       updateOrderLiveStatus(order.orderId, "Delivered");
     }, 7500);
@@ -671,10 +724,39 @@
     const orders = JSON.parse(stored);
     const order = orders.find(o => o.orderId === orderId);
     if (order) {
+      if (order.status === "Cancelled") return;
       order.status = status;
       localStorage.setItem('iesvra_orders', JSON.stringify(orders));
     }
   }
+
+  window.cancelMobileOrder = (orderId) => {
+    const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+    if (confirmCancel) {
+      const stored = localStorage.getItem('iesvra_orders');
+      if (!stored) return;
+      const orders = JSON.parse(stored);
+      const order = orders.find(o => o.orderId === orderId);
+      if (order) {
+        if (order.status !== "Placed" && order.status !== "Confirmed") {
+          showToast("Cannot cancel order: already in transit or delivered.");
+          return;
+        }
+        order.status = "Cancelled";
+        localStorage.setItem('iesvra_orders', JSON.stringify(orders));
+        showToast("Order cancelled successfully!");
+        
+        // Hide tracking and show list view
+        const viewList = document.getElementById('ordersListView');
+        const viewTracking = document.getElementById('orderTrackingView');
+        if (viewList && viewTracking) {
+          viewList.style.display = 'block';
+          viewTracking.style.display = 'none';
+        }
+        renderOrdersScreen();
+      }
+    }
+  };
 
   // ==================== GLOBAL ACTIONS ====================
   window.handleAddClick = (productId) => {

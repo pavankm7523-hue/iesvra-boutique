@@ -17,6 +17,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
+  Users,
+  Clock,
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -58,9 +60,41 @@ function Home() {
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
 
+  // ---- LIVE SOCIAL PROOF ----
+  const deliveryMessages = ["4 minutes ago", "11 minutes ago", "7 minutes ago", "19 minutes ago", "3 minutes ago", "12 minutes ago", "8 minutes ago", "22 minutes ago"];
+  const [shopperCount, setShopperCount] = useState(() => Math.floor(95 + Math.random() * 35)); // 95-130
+  const [deliveryMsgIdx, setDeliveryMsgIdx] = useState(() => Math.floor(Math.random() * 8));
+  const [showDeliveryIndicator, setShowDeliveryIndicator] = useState(true);
+
+  useEffect(() => {
+    // Rotate shopper count slightly every 8-15s for believability
+    const shopperInterval = setInterval(() => {
+      setShopperCount(prev => {
+        const delta = Math.floor(Math.random() * 7) - 3; // -3 to +3
+        return Math.max(80, Math.min(155, prev + delta));
+      });
+    }, 9000);
+    return () => clearInterval(shopperInterval);
+  }, []);
+
+  useEffect(() => {
+    // Rotate delivery message every 6s
+    const deliveryInterval = setInterval(() => {
+      setDeliveryMsgIdx(prev => (prev + 1) % deliveryMessages.length);
+    }, 6000);
+    return () => clearInterval(deliveryInterval);
+  }, []);
+
+  // Show next-day delivery cutoff only if current hour < 21 (before 9 PM)
+  const currentHour = new Date().getHours();
+  const isBeforeCutoff = currentHour < 21;
+  // --------------------------
+
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Newsletter handleSubscribe triggered on homepage banner form", { email: subscriberEmail });
     if (!subscriberEmail.trim() || !subscriberEmail.includes("@")) {
+      console.warn("Newsletter subscription validation failed: invalid email", { email: subscriberEmail });
       toast.error("Please enter a valid email address.");
       return;
     }
@@ -268,6 +302,40 @@ function Home() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* ============== LIVE SOCIAL PROOF STRIP ============== */}
+      <section className="bg-navy-deep border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-center">
+          {/* Shoppers live count */}
+          <div className="flex items-center gap-2 text-white/90 text-xs">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
+            </span>
+            <Users className="h-3.5 w-3.5 text-gold" />
+            <span><span className="font-bold text-white">{shopperCount}</span> people shopping right now</span>
+          </div>
+
+          <span className="hidden sm:block w-px h-4 bg-white/20" />
+
+          {/* Last delivery time */}
+          <div className="flex items-center gap-2 text-white/90 text-xs">
+            <Truck className="h-3.5 w-3.5 text-gold shrink-0" />
+            <span>Delivered <span className="font-bold text-white">{deliveryMessages[deliveryMsgIdx]}</span> near you</span>
+          </div>
+
+          {/* Cutoff delivery reminder (only before 9 PM) */}
+          {isBeforeCutoff && (
+            <>
+              <span className="hidden sm:block w-px h-4 bg-white/20" />
+              <div className="flex items-center gap-2 text-white/90 text-xs">
+                <Clock className="h-3.5 w-3.5 text-gold shrink-0" />
+                <span>Order before <span className="font-bold text-gold">9 PM</span> for Next Day Delivery</span>
+              </div>
+            </>
+          )}
+        </div>
       </section>
       
       {/* ============== 15-MIN EXPRESS DELIVERY HIGHLIGHT ============== */}

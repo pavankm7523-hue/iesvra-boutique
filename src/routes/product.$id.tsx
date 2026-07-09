@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useProducts, colorMap } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
-import { ArrowLeft, Star, ShoppingBag, Shield, Truck, RefreshCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Star, ShoppingBag, Shield, Truck, RefreshCcw, ChevronLeft, ChevronRight, Users, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/product/$id")({
   head: () => {
@@ -34,6 +34,22 @@ function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || "");
   const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // ---- LIVE SOCIAL PROOF (product page) ----
+  // NOTE: Must be here BEFORE any early returns to satisfy React Rules of Hooks
+  const [pdpShopperCount, setPdpShopperCount] = useState(() => Math.floor(8 + Math.random() * 22));
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPdpShopperCount(prev => {
+        const delta = Math.floor(Math.random() * 5) - 2;
+        return Math.max(5, Math.min(40, prev + delta));
+      });
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+  const pdpCurrentHour = new Date().getHours();
+  const pdpIsBeforeCutoff = pdpCurrentHour < 21;
+  // -------------------------------------------
 
   if (!product) {
     return (
@@ -324,6 +340,24 @@ function ProductDetails() {
                 >
                   Buy Now
                 </button>
+              </div>
+
+              {/* Live Social Proof */}
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <div className="flex items-center gap-1.5 bg-navy-deep/5 border border-navy-deep/10 rounded-full px-3 py-1.5">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                  </span>
+                  <Users className="h-3 w-3 text-navy-deep/60" />
+                  <span className="text-[10px] font-semibold text-navy-deep/70"><span className="font-bold text-navy-deep">{pdpShopperCount}</span> people viewing this</span>
+                </div>
+                {pdpIsBeforeCutoff && (
+                  <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5">
+                    <Clock className="h-3 w-3 text-amber-600" />
+                    <span className="text-[10px] font-semibold text-amber-700">Order before <span className="font-bold">9 PM</span> → Next Day Delivery</span>
+                  </div>
+                )}
               </div>
             </div>
 

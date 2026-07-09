@@ -137,7 +137,7 @@ function RootComponent() {
           <Outlet />
         </main>
         <Footer />
-        <Toaster position="top-center" richColors closeButton />
+        <Toaster position="bottom-right" richColors closeButton />
 
         {/* Floating WhatsApp Button */}
         <a

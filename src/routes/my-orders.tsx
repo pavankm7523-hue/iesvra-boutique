@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCurrentUser, logoutUser } from "@/lib/auth";
-import { useOrdersList } from "@/lib/orders";
+import { useOrdersList, cancelOrder } from "@/lib/orders";
 import { useEffect, useState } from "react";
 import {
   Package,
@@ -16,6 +16,7 @@ import {
   Mail,
   Phone,
   MapPin,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -48,6 +49,18 @@ const statusConfig = {
     bar: "bg-green-500",
     step: 3,
   },
+  Cancelled: {
+    color: "bg-red-100 text-red-700 border-red-200",
+    icon: XCircle,
+    bar: "bg-red-400",
+    step: 0,
+  },
+  "Cancelled - Refund Pending": {
+    color: "bg-red-100 text-red-700 border-red-200",
+    icon: Clock,
+    bar: "bg-red-400",
+    step: 0,
+  },
 };
 
 function MyOrdersPage() {
@@ -55,6 +68,18 @@ function MyOrdersPage() {
   const navigate = useNavigate();
   const allOrders = useOrdersList();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const handleCancelOrderClick = (orderId: string) => {
+    const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+    if (confirmCancel) {
+      const success = cancelOrder(orderId);
+      if (success) {
+        toast.success("Order cancelled successfully!");
+      } else {
+        toast.error("Failed to cancel order.");
+      }
+    }
+  };
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -212,50 +237,64 @@ function MyOrdersPage() {
                   {isExpanded && (
                     <div className="border-t border-border/40 p-5 sm:p-6 space-y-6 bg-[#fafaf9]">
                       {/* Progress Tracker */}
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-navy-deep/50 mb-3">
-                          Order Progress
-                        </p>
-                        <div className="flex items-center gap-0">
-                          {(["Processing", "Shipped", "Delivered"] as const).map(
-                            (step, idx) => {
-                              const stepCfg = statusConfig[step];
-                              const StepIcon = stepCfg.icon;
-                              const isActive = cfg.step >= idx + 1;
-                              const isLast = idx === 2;
-                              return (
-                                <div key={step} className="flex items-center flex-1">
-                                  <div className="flex flex-col items-center gap-1.5 w-full">
-                                    <div
-                                      className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all ${
-                                        isActive
-                                          ? "bg-gold border-gold text-navy-deep"
-                                          : "bg-white border-border/50 text-navy-deep/30"
-                                      }`}
-                                    >
-                                      <StepIcon className="h-4 w-4" />
-                                    </div>
-                                    <span
-                                      className={`text-[10px] font-semibold uppercase tracking-wide text-center ${
-                                        isActive ? "text-navy-deep" : "text-navy-deep/30"
-                                      }`}
-                                    >
-                                      {step}
-                                    </span>
-                                  </div>
-                                  {!isLast && (
-                                    <div
-                                      className={`h-0.5 flex-1 -mt-5 mx-1 rounded-full transition-all ${
-                                        cfg.step >= idx + 2 ? "bg-gold" : "bg-border/50"
-                                      }`}
-                                    />
-                                  )}
-                                </div>
-                              );
-                            }
-                          )}
+                      {order.status === 'Cancelled' || order.status === 'Cancelled - Refund Pending' ? (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 text-red-700">
+                          <XCircle className="h-5 w-5 shrink-0" />
+                          <div>
+                            <p className="font-semibold text-sm">Order Cancelled</p>
+                            <p className="text-xs text-red-600/90">
+                              {order.status === 'Cancelled - Refund Pending' 
+                                ? "This order has been cancelled. Your refund is being processed to your original payment method."
+                                : "This order has been cancelled successfully."}
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-navy-deep/50 mb-3">
+                            Order Progress
+                          </p>
+                          <div className="flex items-center gap-0">
+                            {(["Processing", "Shipped", "Delivered"] as const).map(
+                              (step, idx) => {
+                                const stepCfg = statusConfig[step];
+                                const StepIcon = stepCfg.icon;
+                                const isActive = cfg.step >= idx + 1;
+                                const isLast = idx === 2;
+                                return (
+                                  <div key={step} className="flex items-center flex-1">
+                                    <div className="flex flex-col items-center gap-1.5 w-full">
+                                      <div
+                                        className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all ${
+                                          isActive
+                                            ? "bg-gold border-gold text-navy-deep"
+                                            : "bg-white border-border/50 text-navy-deep/30"
+                                        }`}
+                                      >
+                                        <StepIcon className="h-4 w-4" />
+                                      </div>
+                                      <span
+                                        className={`text-[10px] font-semibold uppercase tracking-wide text-center ${
+                                          isActive ? "text-navy-deep" : "text-navy-deep/30"
+                                        }`}
+                                      >
+                                        {step}
+                                      </span>
+                                    </div>
+                                    {!isLast && (
+                                      <div
+                                        className={`h-0.5 flex-1 -mt-5 mx-1 rounded-full transition-all ${
+                                          cfg.step >= idx + 2 ? "bg-gold" : "bg-border/50"
+                                        }`}
+                                      />
+                                    )}
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Items */}
                       <div>
@@ -346,6 +385,14 @@ function MyOrdersPage() {
                             <span className="text-navy-deep">Total Paid</span>
                             <span className="text-gold">₹{order.total.toLocaleString()}</span>
                           </div>
+                          {order.status === 'Processing' && (
+                            <button
+                              onClick={() => handleCancelOrderClick(order.id)}
+                              className="w-full mt-4 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200/50 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                            >
+                              Cancel Order
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

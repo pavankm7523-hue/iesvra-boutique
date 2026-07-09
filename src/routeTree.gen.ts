@@ -28,6 +28,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ApiVerifyPaymentRouteImport } from './routes/api/verify-payment'
 import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
+import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
 import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -132,6 +133,11 @@ const ApiSendConfirmationRoute = ApiSendConfirmationRouteImport.update({
   path: '/api/send-confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiNotifyAdminRoute = ApiNotifyAdminRouteImport.update({
+  id: '/api/notify-admin',
+  path: '/api/notify-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCreateOrderRoute = ApiCreateOrderRouteImport.update({
   id: '/api/create-order',
   path: '/api/create-order',
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -222,6 +229,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -252,6 +260,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/api/create-order'
+    | '/api/notify-admin'
     | '/api/send-confirmation'
     | '/api/verify-payment'
     | '/product/$id'
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/api/create-order'
+    | '/api/notify-admin'
     | '/api/send-confirmation'
     | '/api/verify-payment'
     | '/product/$id'
@@ -340,6 +351,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/api/create-order'
+    | '/api/notify-admin'
     | '/api/send-confirmation'
     | '/api/verify-payment'
     | '/product/$id'
@@ -366,6 +378,7 @@ export interface RootRouteChildren {
   TrackOrderRoute: typeof TrackOrderRoute
   WishlistRoute: typeof WishlistRoute
   ApiCreateOrderRoute: typeof ApiCreateOrderRoute
+  ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
   ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
   ApiVerifyPaymentRoute: typeof ApiVerifyPaymentRoute
   ProductIdRoute: typeof ProductIdRoute
@@ -507,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSendConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/notify-admin': {
+      id: '/api/notify-admin'
+      path: '/api/notify-admin'
+      fullPath: '/api/notify-admin'
+      preLoaderRoute: typeof ApiNotifyAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/create-order': {
       id: '/api/create-order'
       path: '/api/create-order'
@@ -605,6 +625,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrackOrderRoute: TrackOrderRoute,
   WishlistRoute: WishlistRoute,
   ApiCreateOrderRoute: ApiCreateOrderRoute,
+  ApiNotifyAdminRoute: ApiNotifyAdminRoute,
   ApiSendConfirmationRoute: ApiSendConfirmationRoute,
   ApiVerifyPaymentRoute: ApiVerifyPaymentRoute,
   ProductIdRoute: ProductIdRoute,

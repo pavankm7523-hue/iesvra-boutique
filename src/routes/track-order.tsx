@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { z } from "zod";
-import { Package, Search, Truck, CheckCircle2, Clock, MapPin, Phone, User, Calendar, CreditCard } from "lucide-react";
-import { getOrderById, Order } from "@/lib/orders";
+import { Package, Search, Truck, CheckCircle2, Clock, MapPin, Phone, User, Calendar, CreditCard, XCircle } from "lucide-react";
+import { getOrderById, Order, cancelOrder } from "@/lib/orders";
 import { toast } from "sonner";
 
 const trackSearchSchema = z.object({
@@ -18,10 +18,24 @@ export const Route = createFileRoute("/track-order")({
 });
 
 function TrackOrder() {
+  const navigate = useNavigate();
   const { orderId: queryOrderId } = Route.useSearch();
   const [searchQuery, setSearchQuery] = useState(queryOrderId || "");
   const [trackedOrder, setTrackedOrder] = useState<Order | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const handleCancelOrderClick = (orderIdStr: string) => {
+    const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+    if (confirmCancel) {
+      const success = cancelOrder(orderIdStr);
+      if (success) {
+        toast.success("Order cancelled successfully!");
+        setTrackedOrder(getOrderById(orderIdStr));
+      } else {
+        toast.error("Failed to cancel order.");
+      }
+    }
+  };
 
   useEffect(() => {
     if (queryOrderId) {
@@ -126,68 +140,82 @@ function TrackOrder() {
                     </div>
                   </div>
 
-                  {/* Visual Progress Bar */}
-                  <div className="py-6">
-                    <div className="relative flex items-center justify-between">
-                      {/* Background line */}
-                      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-gray-100 rounded-full z-0" />
-                      {/* Active progress line */}
-                      <div
-                        className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-gold rounded-full z-0 transition-all duration-700"
-                        style={{
-                          width: activeStep === 1 ? "0%" : activeStep === 2 ? "50%" : "100%",
-                        }}
-                      />
-
-                      {/* Step 1: Processing */}
-                      <div className="flex flex-col items-center gap-2 relative z-10">
-                        <div
-                          className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                            activeStep >= 1
-                              ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
-                              : "bg-white border-border text-navy-deep/40"
-                          }`}
-                        >
-                          <Clock className="h-5 w-5" />
-                        </div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-navy-deep">
-                          Processing
-                        </span>
-                      </div>
-
-                      {/* Step 2: Shipped */}
-                      <div className="flex flex-col items-center gap-2 relative z-10">
-                        <div
-                          className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                            activeStep >= 2
-                              ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
-                              : "bg-white border-border text-navy-deep/40"
-                          }`}
-                        >
-                          <Truck className="h-5 w-5" />
-                        </div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-navy-deep">
-                          Shipped
-                        </span>
-                      </div>
-
-                      {/* Step 3: Delivered */}
-                      <div className="flex flex-col items-center gap-2 relative z-10">
-                        <div
-                          className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                            activeStep >= 3
-                              ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
-                              : "bg-white border-border text-navy-deep/40"
-                          }`}
-                        >
-                          <CheckCircle2 className="h-5 w-5" />
-                        </div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-navy-deep">
-                          Delivered
-                        </span>
+                  {/* Visual Progress Bar or Cancelled Banner */}
+                  {trackedOrder.status === 'Cancelled' || trackedOrder.status === 'Cancelled - Refund Pending' ? (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 text-red-700 my-4 text-left">
+                      <XCircle className="h-5 w-5 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-sm">Order Cancelled</p>
+                        <p className="text-xs text-red-600/90">
+                          {trackedOrder.status === 'Cancelled - Refund Pending' 
+                            ? "This order has been cancelled. Your refund is being processed to your original payment method."
+                            : "This order has been cancelled successfully."}
+                        </p>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="py-6">
+                      <div className="relative flex items-center justify-between">
+                        {/* Background line */}
+                        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-gray-100 rounded-full z-0" />
+                        {/* Active progress line */}
+                        <div
+                          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-gold rounded-full z-0 transition-all duration-700"
+                          style={{
+                            width: activeStep === 1 ? "0%" : activeStep === 2 ? "50%" : "100%",
+                          }}
+                        />
+
+                        {/* Step 1: Processing */}
+                        <div className="flex flex-col items-center gap-2 relative z-10">
+                          <div
+                            className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                              activeStep >= 1
+                                ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
+                                : "bg-white border-border text-navy-deep/40"
+                            }`}
+                          >
+                            <Clock className="h-5 w-5" />
+                          </div>
+                          <span className="text-xs font-bold uppercase tracking-wider text-navy-deep">
+                            Processing
+                          </span>
+                        </div>
+
+                        {/* Step 2: Shipped */}
+                        <div className="flex flex-col items-center gap-2 relative z-10">
+                          <div
+                            className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                              activeStep >= 2
+                                ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
+                                : "bg-white border-border text-navy-deep/40"
+                            }`}
+                          >
+                            <Truck className="h-5 w-5" />
+                          </div>
+                          <span className="text-xs font-bold uppercase tracking-wider text-navy-deep">
+                            Shipped
+                          </span>
+                        </div>
+
+                        {/* Step 3: Delivered */}
+                        <div className="flex flex-col items-center gap-2 relative z-10">
+                          <div
+                            className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                              activeStep >= 3
+                                ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
+                                : "bg-white border-border text-navy-deep/40"
+                            }`}
+                          >
+                            <CheckCircle2 className="h-5 w-5" />
+                          </div>
+                          <span className="text-xs font-bold uppercase tracking-wider text-navy-deep">
+                            Delivered
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Delivery Information & Items */}
@@ -265,6 +293,14 @@ function TrackOrder() {
                         <span>Total Paid</span>
                         <span className="text-gold">₹{trackedOrder.total.toLocaleString()}</span>
                       </div>
+                      {trackedOrder.status === 'Processing' && (
+                        <button
+                          onClick={() => handleCancelOrderClick(trackedOrder.id)}
+                          className="w-full mt-4 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200/50 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                        >
+                          Cancel Order
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
