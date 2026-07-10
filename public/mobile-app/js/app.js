@@ -13,18 +13,7 @@
   let activeDetailProductId = null;
   let activeDetailDeliveryType = "express"; // "express" or "standard"
 
-  // Time display updater
-  function updateTime() {
-    const timeSpan = document.getElementById('statusTime');
-    if (timeSpan) {
-      const now = new Date();
-      timeSpan.textContent = now.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      });
-    }
-  }
+
 
   // ==================== APP LIFECYCLE ====================
   // Color Theme Manager
@@ -205,8 +194,8 @@
 
   // ==================== APP LIFECYCLE ====================
   function init() {
-    updateTime();
-    setInterval(updateTime, 30000);
+    // Run auth email migration
+    migrateAuthEmail();
 
     // Initialize Theme
     initTheme();
@@ -243,6 +232,44 @@
         }, 500);
       }
     }, 2000);
+  }
+
+  // ==================== AUTH DATA MIGRATION ====================
+  // One-time migration: validate ishvara_auth.email on app load.
+  // ROOT CAUSE: The email concatenation bug was caused by a previous version
+  // of the login/signup code that did not clear input fields when switching
+  // between Login and Sign Up tabs, causing the DOM input's .value to retain
+  // the previous user's email and the new email to be appended via the browser's
+  // autocomplete or leftover state. The write paths now all use direct assignment
+  // (email: username) on a fresh object literal, so new sessions cannot produce
+  // concatenated values. This migration cleans up stale corrupted data.
+  const VALID_EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  function migrateAuthEmail() {
+    const rawAuth = localStorage.getItem('ishvara_auth');
+    if (!rawAuth) return;
+
+    try {
+      const auth = JSON.parse(rawAuth);
+      const email = auth.email || '';
+
+      if (email && !VALID_EMAIL_REGEX.test(email)) {
+        // Email fails strict validation — clear it entirely rather than guessing
+        console.warn('[Auth Validation] Invalid email detected and cleared:', email);
+        auth.email = '';
+        localStorage.setItem('ishvara_auth', JSON.stringify(auth));
+
+        // Prompt user to re-enter their email after the app finishes loading
+        setTimeout(() => {
+          showToast('Your email was invalid and has been cleared. Please update it in Profile Settings.');
+          // Auto-open the profile edit modal so user can fix it
+          if (typeof window.openProfileEdit === 'function') {
+            window.openProfileEdit();
+          }
+        }, 1500);
+      }
+    } catch (e) {
+      console.error('[Auth Validation] Failed to parse auth data:', e);
+    }
   }
 
   function updateProfileDisplay() {
@@ -587,11 +614,125 @@
 
   function initHomeSearch() {
     const input = document.getElementById('homeSearchInput');
-    if (input) {
-      input.addEventListener('input', (e) => {
-        renderBestSellers(e.target.value);
+    const overlay = document.getElementById('searchResultsOverlay');
+    const micBtn = document.getElementById('micBtn');
+    if (!input || !overlay) return;
+
+    // Remove old listeners by cloning
+    const newInput = input.cloneNode(true);
+    input.parentNode.replaceChild(newInput, input);
+
+    let searchDebounce = null;
+
+    newInput.addEventListener('input', () => {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        const query = newInput.value.trim();
+        if (query.length === 0) {
+          overlay.style.display = 'none';
+          renderBestSellers();
+          return;
+        }
+        renderBestSellers(query);
+        showSearchResults(query, overlay);
+      }, 200);
+    });
+
+    newInput.addEventListener('focus', () => {
+      const q = newInput.value.trim();
+      if (q.length > 0) showSearchResults(q, overlay);
+    });
+
+    // Close overlay when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!overlay.contains(e.target) && e.target !== newInput && !e.target.closest('.mic-btn')) {
+        overlay.style.display = 'none';
+      }
+    });
+
+    // Voice Search (Web Speech API)
+    if (micBtn) {
+      const newMic = micBtn.cloneNode(true);
+      micBtn.parentNode.replaceChild(newMic, micBtn);
+
+      newMic.addEventListener('click', () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          showToast('Voice search is not supported in this browser.');
+          return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-IN';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        newMic.classList.add('listening');
+        showToast('Listening... speak now');
+
+        recognition.start();
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          newInput.value = transcript;
+          newInput.dispatchEvent(new Event('input'));
+          newMic.classList.remove('listening');
+        };
+
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          if (event.error === 'not-allowed') {
+            showToast('Microphone permission denied.');
+          } else {
+            showToast('Could not recognize speech. Try again.');
+          }
+          newMic.classList.remove('listening');
+        };
+
+        recognition.onend = () => {
+          newMic.classList.remove('listening');
+        };
       });
     }
+  }
+
+  function showSearchResults(query, overlay) {
+    const products = getProducts();
+    const q = query.toLowerCase();
+    const matches = products.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      (p.sub && p.sub.toLowerCase().includes(q)) ||
+      (p.categories && p.categories.some(c => c.toLowerCase().includes(q)))
+    );
+
+    if (matches.length === 0) {
+      overlay.innerHTML = `
+        <div class="search-no-results">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <div>No products found for "${query}"</div>
+        </div>`;
+    } else {
+      overlay.innerHTML = matches.slice(0, 8).map(p => `
+        <div class="search-result-item" onclick="window.openProductDetails('${p.id}')">
+          <img src="${p.image}" alt="${p.name}" />
+          <div class="search-result-info">
+            <div class="sr-name">${highlightMatch(p.name, query)}</div>
+            <div class="sr-category">${(p.categories || []).join(', ')}</div>
+          </div>
+          <div class="search-result-price">₹${p.price}</div>
+        </div>
+      `).join('');
+    }
+    overlay.style.display = 'block';
+  }
+
+  function highlightMatch(text, query) {
+    const idx = text.toLowerCase().indexOf(query.toLowerCase());
+    if (idx === -1) return text;
+    const before = text.slice(0, idx);
+    const match = text.slice(idx, idx + query.length);
+    const after = text.slice(idx + query.length);
+    return `${before}<strong style="color:var(--accent-gold)">${match}</strong>${after}`;
   }
 
   window.filterHomeByCategory = (categoryName) => {
@@ -599,8 +740,73 @@
     const input = document.getElementById('homeSearchInput');
     if (input) {
       input.value = categoryName;
+      input.dispatchEvent(new Event('input'));
     }
     renderBestSellers(categoryName);
+  };
+
+  // ==================== PROFILE EDIT ====================
+  window.openProfileEdit = () => {
+    const modal = document.getElementById('profileEditModal');
+    if (!modal) return;
+
+    const rawAuth = localStorage.getItem('ishvara_auth');
+    if (!rawAuth) {
+      showToast('Please login first to edit profile.');
+      return;
+    }
+
+    try {
+      const auth = JSON.parse(rawAuth);
+      const nameInput = document.getElementById('editProfileName');
+      const emailInput = document.getElementById('editProfileEmail');
+      const phoneInput = document.getElementById('editProfilePhone');
+      if (nameInput) nameInput.value = auth.name || '';
+      if (emailInput) emailInput.value = auth.email || '';
+      if (phoneInput) phoneInput.value = auth.phone || '';
+    } catch (e) { /* ignore parse errors */ }
+
+    modal.classList.add('active');
+  };
+
+  window.closeProfileEdit = () => {
+    const modal = document.getElementById('profileEditModal');
+    if (modal) modal.classList.remove('active');
+  };
+
+  window.saveProfileEdit = () => {
+    const nameInput = document.getElementById('editProfileName');
+    const emailInput = document.getElementById('editProfileEmail');
+    const phoneInput = document.getElementById('editProfilePhone');
+
+    const newName = nameInput ? nameInput.value.trim() : '';
+    const newEmail = emailInput ? emailInput.value.trim() : '';
+    const newPhone = phoneInput ? phoneInput.value.trim() : '';
+
+    if (!newName) {
+      showToast('Name cannot be empty.');
+      return;
+    }
+
+    const rawAuth = localStorage.getItem('ishvara_auth');
+    if (!rawAuth) return;
+
+    try {
+      const auth = JSON.parse(rawAuth);
+      auth.name = newName;
+      auth.email = newEmail;
+      auth.phone = newPhone;
+      localStorage.setItem('ishvara_auth', JSON.stringify(auth));
+
+      // Notify other tabs/pages of profile update
+      window.dispatchEvent(new CustomEvent('ishvara_auth_changed'));
+
+      updateProfileDisplay();
+      showToast('Profile updated successfully!');
+      window.closeProfileEdit();
+    } catch (e) {
+      showToast('Failed to save profile.');
+    }
   };
 
   // ==================== CATEGORIES GRID SCREEN ====================
