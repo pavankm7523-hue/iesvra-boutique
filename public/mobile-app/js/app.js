@@ -27,9 +27,83 @@
   }
 
   // ==================== APP LIFECYCLE ====================
+  // Color Theme Manager
+  function initTheme() {
+    const savedTheme = localStorage.getItem('iesvra_mobile_theme');
+    const isLight = savedTheme === 'light';
+    document.body.classList.toggle('theme-light', isLight);
+    
+    // Toggle icon display inside buttons
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const currentlyLight = document.body.classList.contains('theme-light');
+        const nextTheme = currentlyLight ? 'dark' : 'light';
+        document.body.classList.toggle('theme-light', !currentlyLight);
+        localStorage.setItem('iesvra_mobile_theme', nextTheme);
+        showToast(`Switched to ${currentlyLight ? 'Dark' : 'Light'} Mode`);
+      });
+    }
+  }
+
+  // Credentials and registration helpers for shared localStorage keys (synced with website)
+  const DEFAULT_ADMIN_EMAIL = "arenterprisess409@gmail.com";
+  const DEFAULT_ADMIN_PASSWORD = "Iesvra@3104";
+
+  function getRegisteredUsers() {
+    try {
+      const raw = localStorage.getItem("ishvara_registered_users");
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function registerMobileUser(name, email, password) {
+    const users = getRegisteredUsers();
+    const normalizedEmail = email.trim().toLowerCase();
+    if (normalizedEmail === DEFAULT_ADMIN_EMAIL) return false;
+    if (users.some(u => u.email.toLowerCase() === normalizedEmail)) {
+      return false;
+    }
+    users.push({
+      name: name.trim(),
+      email: normalizedEmail,
+      passwordHash: password,
+      role: 'user'
+    });
+    localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
+    return true;
+  }
+
+  function validateCredentials(email, password) {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (normalizedEmail === DEFAULT_ADMIN_EMAIL) {
+      const adminPassword = localStorage.getItem("ishvara_admin_password") || DEFAULT_ADMIN_PASSWORD;
+      if (password === adminPassword) {
+        return { success: true, name: "IESVRA Admin", role: "admin" };
+      }
+      return { success: false, error: "Incorrect password for system administrator." };
+    }
+
+    const users = getRegisteredUsers();
+    const user = users.find(u => u.email.toLowerCase() === normalizedEmail);
+    if (!user) {
+      return { success: false, error: "Email address not found. Please sign up." };
+    }
+    if (user.passwordHash !== password) {
+      return { success: false, error: "Incorrect password. Please try again." };
+    }
+    return { success: true, name: user.name, role: user.role };
+  }
+
+  // ==================== APP LIFECYCLE ====================
   function init() {
     updateTime();
     setInterval(updateTime, 30000);
+
+    // Initialize Theme
+    initTheme();
 
     // Sync cart badges
     updateCartBadges();
@@ -65,16 +139,39 @@
     }, 2000);
   }
 
+  function updateProfileDisplay() {
+    const rawAuth = localStorage.getItem("ishvara_auth");
+    const profileName = document.getElementById("profileName");
+    const profilePhone = document.getElementById("profilePhone");
+    const profileAvatar = document.getElementById("profileAvatar");
+
+    if (rawAuth) {
+      try {
+        const auth = JSON.parse(rawAuth);
+        if (profileName) profileName.textContent = auth.name || "Store User";
+        if (profilePhone) profilePhone.textContent = auth.email || "No Email";
+        if (profileAvatar) profileAvatar.textContent = (auth.name || "U").substring(0, 1).toUpperCase();
+      } catch (e) {
+        console.error("Failed to parse auth", e);
+      }
+    } else {
+      if (profileName) profileName.textContent = "Guest User";
+      if (profilePhone) profilePhone.textContent = "+91 820 123 4567";
+      if (profileAvatar) profileAvatar.textContent = "G";
+    }
+  }
+
   function checkNavigationState() {
     const onboardingSeen = localStorage.getItem('iesvra_onboarding_seen');
-    const userLoggedIn = localStorage.getItem('iesvra_user_logged_in');
+    const authSession = localStorage.getItem('ishvara_auth');
 
     if (!onboardingSeen) {
       initOnboarding();
-    } else if (!userLoggedIn) {
+    } else if (!authSession) {
       initLogin();
     } else {
-      // Launch main Home Screen
+      // User is logged in, update Profile display and switch to Home Screen
+      updateProfileDisplay();
       switchTab('home');
     }
   }
@@ -138,22 +235,115 @@
   }
 
   // ==================== LOGIN / SIGNUP ====================
+  let activeAuthTab = 'login'; // 'login' or 'signup'
+
+  window.switchAuthTab = (tab) => {
+    activeAuthTab = tab;
+    
+    // Toggle active tab highlight
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignUp = document.getElementById('tabSignUp');
+    if (tabLogin && tabSignUp) {
+      tabLogin.classList.toggle('active', tab === 'login');
+      tabSignUp.classList.toggle('active', tab === 'signup');
+    }
+
+    // Toggle fields visibility
+    const groupName = document.getElementById('inputGroupName');
+    if (groupName) {
+      groupName.style.display = tab === 'signup' ? 'flex' : 'none';
+    }
+
+    // Toggle headers and buttons text
+    const headerTitle = document.querySelector('#loginScreen h2');
+    const subtitleText = document.getElementById('authHeaderSubtitle');
+    const submitBtn = document.getElementById('loginSubmitBtn');
+
+    if (headerTitle && subtitleText && submitBtn) {
+      if (tab === 'login') {
+        headerTitle.textContent = "Welcome Back!";
+        subtitleText.textContent = "Login to continue shopping";
+        submitBtn.textContent = "Login";
+      } else {
+        headerTitle.textContent = "Create Account";
+        subtitleText.textContent = "Sign up to start your journey";
+        submitBtn.textContent = "Sign Up";
+      }
+    }
+  };
+
   function initLogin() {
     const loginScreen = document.getElementById('loginScreen');
     if (loginScreen) {
       loginScreen.style.display = 'flex';
+      loginScreen.style.opacity = '1';
     }
 
     const btnSubmit = document.getElementById('loginSubmitBtn');
     if (btnSubmit) {
-      btnSubmit.addEventListener('click', () => {
-        localStorage.setItem('iesvra_user_logged_in', 'true');
-        loginScreen.style.opacity = '0';
-        setTimeout(() => {
-          loginScreen.style.display = 'none';
-          switchTab('home');
-          showToast("Welcome to IESVRA Boutique!");
-        }, 300);
+      // Remove old listeners by cloning node
+      const newSubmit = btnSubmit.cloneNode(true);
+      btnSubmit.parentNode.replaceChild(newSubmit, btnSubmit);
+      
+      newSubmit.addEventListener('click', () => {
+        const usernameInput = document.getElementById('loginUsername');
+        const passwordInput = document.getElementById('loginPassword');
+        const nameInput = document.getElementById('loginName');
+
+        const username = usernameInput ? usernameInput.value.trim() : '';
+        const password = passwordInput ? passwordInput.value : '';
+        const name = nameInput ? nameInput.value.trim() : '';
+
+        if (!username || !password) {
+          showToast("Please fill in email/phone and password.");
+          return;
+        }
+
+        if (activeAuthTab === 'signup') {
+          if (!name) {
+            showToast("Please enter your name.");
+            return;
+          }
+          const success = registerMobileUser(name, username, password);
+          if (success) {
+            // Set login session
+            const userSession = { name, email: username, role: 'user' };
+            localStorage.setItem('ishvara_auth', JSON.stringify(userSession));
+            
+            // Notify other pages
+            window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
+
+            showToast("Sign up successful! Welcome.");
+            loginScreen.style.opacity = '0';
+            setTimeout(() => {
+              loginScreen.style.display = 'none';
+              updateProfileDisplay();
+              switchTab('home');
+            }, 300);
+          } else {
+            showToast("Email address already registered.");
+          }
+        } else {
+          // Login validation
+          const res = validateCredentials(username, password);
+          if (res.success) {
+            const userSession = { name: res.name, email: username, role: res.role || 'user' };
+            localStorage.setItem('ishvara_auth', JSON.stringify(userSession));
+            
+            // Notify other pages
+            window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
+
+            showToast("Welcome back!");
+            loginScreen.style.opacity = '0';
+            setTimeout(() => {
+              loginScreen.style.display = 'none';
+              updateProfileDisplay();
+              switchTab('home');
+            }, 300);
+          } else {
+            showToast(res.error || "Incorrect credentials. Try again.");
+          }
+        }
       });
     }
   }
@@ -194,6 +384,29 @@
       renderCartScreen();
     } else if (tabId === 'orders') {
       renderOrdersScreen();
+    } else if (tabId === 'profile') {
+      updateProfileDisplay();
+      
+      // Wire Logout action
+      const logoutBtn = document.getElementById('profileLogoutBtn');
+      if (logoutBtn) {
+        // Clone to clear previous event listeners
+        const newLogoutBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+        
+        newLogoutBtn.addEventListener('click', () => {
+          const confirmLogout = window.confirm("Are you sure you want to logout?");
+          if (confirmLogout) {
+            localStorage.removeItem('ishvara_auth');
+            // Notify other tabs of logout
+            window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
+            showToast("Logged out successfully.");
+            
+            // Re-initialize login overlay
+            initLogin();
+          }
+        });
+      }
     }
   }
 

@@ -5,7 +5,25 @@
 }
 
 :root {
-  --primary-bg: #f9f7f4;     /* Premium soft warm white/cream */
+  /* Default Dark Mode Styles (Screenshot Match) */
+  --primary-bg: #080c16;     /* Deep dark navy background */
+  --card-bg: #0e1422;        /* Slightly lighter navy for cards */
+  --card-accent: #131b2e;    /* Deep slate blue/grey for selectors */
+  --accent-gold: #c9a55c;    /* Rich luxury gold */
+  --text-primary: #ffffff;   /* Pure white text */
+  --text-muted: #8c98ad;     /* Soft grey-blue for descriptions */
+  --white: #ffffff;
+  --green-success: #10b981;  /* Vibrant success green */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.35); /* Elegant dark shadow */
+  --shadow-gold: 0 6px 20px rgba(201, 165, 92, 0.2);
+  --border-color: rgba(255, 255, 255, 0.08); /* White border overlay */
+  --border-light: rgba(255, 255, 255, 0.04);
+}
+
+body.theme-light {
+  /* Premium Light Mode Styles (Warm Cream Theme) */
+  --primary-bg: #faf8f4;     /* Premium soft warm white/cream */
   --card-bg: #ffffff;        /* Crisp clean white for cards */
   --card-accent: #f0ece6;    /* Soft beige/grey for selectors */
   --accent-gold: #c9a55c;    /* Rich luxury gold */
@@ -13,9 +31,10 @@
   --text-muted: #64748b;     /* Slate grey for descriptions */
   --white: #ffffff;
   --green-success: #15803d;  /* Clean green for success tags */
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --shadow-premium: 0 10px 30px rgba(15, 23, 42, 0.06); /* Soft elegant shadow */
+  --shadow-premium: 0 10px 30px rgba(15, 23, 42, 0.06); /* Soft light shadow */
   --shadow-gold: 0 6px 20px rgba(201, 165, 92, 0.15);
+  --border-color: rgba(0, 0, 0, 0.06); /* Black border overlay */
+  --border-light: rgba(0, 0, 0, 0.03);
 }
 
 html, body {
@@ -28,6 +47,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ==================== GLOBAL LAYOUT ==================== */
@@ -72,7 +92,8 @@ html, body {
   justify-content: space-between;
   padding: 0 20px;
   z-index: 999;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .app-header .logo-area {
@@ -114,13 +135,14 @@ html, body {
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--card-accent);
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   position: relative;
+  transition: all 0.2s ease;
 }
 
 .app-header .hdr-btn svg {
@@ -421,11 +443,12 @@ html, body {
   height: 52px;
   border-radius: 14px;
   background-color: var(--card-bg);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
   padding: 0 16px;
   color: var(--text-primary);
   font-size: 14px;
   outline: none;
+  transition: border-color 0.2s ease;
 }
 
 .input-group input:focus {
@@ -442,10 +465,48 @@ html, body {
   border: none;
   cursor: pointer;
   box-shadow: var(--shadow-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.2s ease;
+}
+
+.login-btn:active {
+  opacity: 0.85;
+}
+
+/* Tab Segment Control */
+.auth-tabs {
+  display: flex;
+  background: var(--card-accent);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+}
+
+.auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.auth-tab.active {
+  background: var(--card-bg);
+  color: var(--accent-gold);
+  box-shadow: var(--shadow-premium);
 }
 
 .social-login {
   text-align: center;
+  margin-top: 10px;
 }
 
 .social-login .divider {
@@ -460,7 +521,7 @@ html, body {
   left: 0;
   right: 0;
   height: 1px;
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--border-color);
   z-index: 1;
 }
 
@@ -472,25 +533,38 @@ html, body {
   font-weight: 700;
   color: var(--text-muted);
   z-index: 2;
+  letter-spacing: 0.05em;
 }
 
 .social-buttons {
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .social-btn {
-  width: 52px;
-  height: 52px;
+  flex: 1;
+  height: 50px;
   border-radius: 14px;
   background-color: var(--card-bg);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   cursor: pointer;
   color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.social-btn:active {
+  background-color: var(--card-accent);
+}
+
+.social-btn svg {
+  flex-shrink: 0;
 }
 
 /* ==================== HOME SCREEN ==================== */
@@ -1576,7 +1650,7 @@ html, body {
   right: 0;
   height: 60px;
   background-color: var(--card-bg);
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -1664,3 +1738,58 @@ html, body {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* Theme Toggle Button Icon Display */
+body.theme-light .theme-icon-sun {
+  display: none !important;
+}
+body.theme-light .theme-icon-moon {
+  display: block !important;
+}
+body:not(.theme-light) .theme-icon-sun {
+  display: block !important;
+}
+body:not(.theme-light) .theme-icon-moon {
+  display: none !important;
+}
+
+/* Profile screen gear icon and badge styles */
+.profile-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green-success);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.settings-gear-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.settings-gear-btn:active {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--accent-gold);
+}
+
+.settings-gear-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Wallet and Refer Badges styling */
+.item-right-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
