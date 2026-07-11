@@ -76,9 +76,9 @@ function Cart() {
   const currentUser = useCurrentUser();
 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [shippingName, setShippingName] = useState(() => (typeof window !== "undefined" ? localStorage.getItem("IESVRA_shipping_name") || "" : ""));
-  const [shippingEmail, setShippingEmail] = useState(() => (typeof window !== "undefined" ? localStorage.getItem("IESVRA_shipping_email") || "" : ""));
-  const [shippingPhone, setShippingPhone] = useState(() => (typeof window !== "undefined" ? localStorage.getItem("IESVRA_shipping_phone") || "" : ""));
+  const [shippingName, setShippingName] = useState("");
+  const [shippingEmail, setShippingEmail] = useState("");
+  const [shippingPhone, setShippingPhone] = useState("");
   const [shippingAddress, setShippingAddress] = useState("");
   const [placedOrder, setPlacedOrder] = useState<any>(null);
   const [paymentMode, setPaymentMode] = useState<'razorpay' | 'cod'>('razorpay');
@@ -157,6 +157,11 @@ function Cart() {
   // Sync state with localStorage changes
   useEffect(() => {
     const handleSync = () => {
+      setShippingName(localStorage.getItem("IESVRA_shipping_name") || "");
+      setShippingEmail(localStorage.getItem("IESVRA_shipping_email") || "");
+      setShippingPhone(localStorage.getItem("IESVRA_shipping_phone") || "");
+      setRzpKey(localStorage.getItem("IESVRA_rzp_key") || "");
+
       const savedLine1 = localStorage.getItem("IESVRA_delivery_address_line1") || "";
       const savedLine2 = localStorage.getItem("IESVRA_delivery_address_line2") || "";
       const savedCity = localStorage.getItem("IESVRA_delivery_city") || "";
@@ -252,7 +257,7 @@ function Cart() {
   const [mockPaymentMethod, setMockPaymentMethod] = useState<'card' | 'upi' | 'netbanking'>('card');
   const [isMockPaying, setIsMockPaying] = useState(false);
 
-  const [rzpKey, setRzpKey] = useState(() => (typeof window !== "undefined" ? localStorage.getItem("IESVRA_rzp_key") || "" : ""));
+  const [rzpKey, setRzpKey] = useState("");
 
   useEffect(() => {
     if (currentUser) {

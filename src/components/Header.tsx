@@ -33,19 +33,8 @@ export function Header() {
   const currentUser = useCurrentUser();
 
   // Header Delivery State
-  const [headerAddress, setHeaderAddress] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("IESVRA_delivery_address") || "";
-    }
-    return "";
-  });
-  
-  const [isExpressLocation, setIsExpressLocation] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("IESVRA_is_express_eligible") === "true";
-    }
-    return false;
-  });
+  const [headerAddress, setHeaderAddress] = useState("");
+  const [isExpressLocation, setIsExpressLocation] = useState(false);
 
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [addressSearch, setAddressSearch] = useState("");
@@ -55,6 +44,10 @@ export function Header() {
 
   // Sync state with localStorage changes from other pages
   useEffect(() => {
+    // Read initial values from localStorage client-side after hydration
+    setHeaderAddress(localStorage.getItem("IESVRA_delivery_address") || "");
+    setIsExpressLocation(localStorage.getItem("IESVRA_is_express_eligible") === "true");
+
     const handleSync = () => {
       setHeaderAddress(localStorage.getItem("IESVRA_delivery_address") || "");
       setIsExpressLocation(localStorage.getItem("IESVRA_is_express_eligible") === "true");
