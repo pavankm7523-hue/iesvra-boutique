@@ -99,6 +99,7 @@ function AdminOrders() {
               <thead>
                 <tr className="bg-secondary/20 border-b border-border/40 text-navy-deep/70 text-xs font-bold uppercase tracking-wider">
                   <th className="p-5">Order ID</th>
+                  <th className="p-5">Source</th>
                   <th className="p-5">Customer</th>
                   <th className="p-5">Date</th>
                   <th className="p-5">Total</th>
@@ -120,6 +121,15 @@ function AdminOrders() {
                               AWB: <span className="font-mono text-gold font-bold text-xs">{order.trackingId}</span>
                             </div>
                           )}
+                        </td>
+                        <td className="p-5">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${
+                            order.source === 'mobile'
+                              ? 'bg-blue-50 text-blue-700 border-blue-200/60'
+                              : 'bg-purple-50 text-purple-700 border-purple-200/60'
+                          }`}>
+                            {order.source === 'mobile' ? '📱 Mobile App' : '🌐 Website'}
+                          </span>
                         </td>
                         <td className="p-5">
                           <div className="font-semibold">{order.customerName}</div>

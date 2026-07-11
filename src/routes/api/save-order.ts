@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/save-order")({
           }
 
           // Convert camelCase order to snake_case for Supabase
-          const dbData = {
+          const dbData: Record<string, unknown> = {
             id: order.id,
             customer_name: order.customerName,
             customer_email: order.customerEmail,
@@ -40,9 +40,14 @@ export const Route = createFileRoute("/api/save-order")({
             status: order.status || "Processing",
             payment_status: order.paymentStatus || "Pending - COD",
             tracking_id: order.trackingId || null,
-            latitude: order.latitude !== undefined && order.latitude !== null ? Number(order.latitude) : null,
-            longitude: order.longitude !== undefined && order.longitude !== null ? Number(order.longitude) : null,
+            source: order.source || "website",
           };
+
+          // Only include lat/lng if they exist (columns may not be in DB schema yet)
+          if (order.latitude != null && order.longitude != null) {
+            dbData.latitude = Number(order.latitude);
+            dbData.longitude = Number(order.longitude);
+          }
 
           console.log("[save-order] Inserting order:", dbData.id);
 
@@ -72,7 +77,7 @@ export const Route = createFileRoute("/api/save-order")({
           const savedRow = list && list.length > 0 ? list[0] : dbData;
 
           // Return camelCase order to client
-          const savedOrder = {
+          const savedOrder: Record<string, unknown> = {
             id: String(savedRow.id || order.id),
             customerName: String(savedRow.customer_name || order.customerName),
             customerEmail: String(savedRow.customer_email || order.customerEmail),
@@ -86,9 +91,10 @@ export const Route = createFileRoute("/api/save-order")({
             status: savedRow.status || order.status,
             paymentStatus: savedRow.payment_status || order.paymentStatus,
             trackingId: savedRow.tracking_id || order.trackingId,
-            latitude: savedRow.latitude !== undefined && savedRow.latitude !== null ? Number(savedRow.latitude) : null,
-            longitude: savedRow.longitude !== undefined && savedRow.longitude !== null ? Number(savedRow.longitude) : null,
+            source: savedRow.source || order.source || "website",
           };
+          if (savedRow.latitude != null) savedOrder.latitude = Number(savedRow.latitude);
+          if (savedRow.longitude != null) savedOrder.longitude = Number(savedRow.longitude);
 
           return new Response(JSON.stringify(savedOrder), {
             status: 200,

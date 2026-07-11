@@ -1925,6 +1925,7 @@
         date: orderDate,
         status: "Placed",
         paymentStatus: "Pending - COD",
+        source: "mobile",
         latitude: appPinnedLat,
         longitude: appPinnedLng
       };
@@ -2008,6 +2009,7 @@
                 date: orderDate,
                 status: "Placed",
                 paymentStatus: "Paid",
+                source: "mobile",
                 latitude: appPinnedLat,
                 longitude: appPinnedLng
               };

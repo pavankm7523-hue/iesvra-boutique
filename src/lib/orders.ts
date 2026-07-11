@@ -26,6 +26,7 @@ export interface Order {
   status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending';
   paymentStatus?: 'Paid' | 'Pending - COD';
   trackingId?: string;
+  source?: 'website' | 'mobile';
   latitude?: number | null;
   longitude?: number | null;
 }
@@ -180,7 +181,8 @@ export async function createOrder(
   total: number,
   paymentStatus?: 'Paid' | 'Pending - COD',
   latitude?: number | null,
-  longitude?: number | null
+  longitude?: number | null,
+  source: 'website' | 'mobile' = 'website'
 ): Promise<Order> {
   const newOrder: Order = {
     id: `ISH-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -195,6 +197,7 @@ export async function createOrder(
     date: new Date().toISOString().split("T")[0],
     status: 'Processing',
     paymentStatus: paymentStatus || 'Pending - COD',
+    source,
     latitude: latitude ?? null,
     longitude: longitude ?? null,
   };

@@ -40,6 +40,7 @@ function toCamelCase(dbOrder: any): Order {
     status: (dbOrder.status || "Processing") as Order["status"],
     paymentStatus: (dbOrder.payment_status || undefined) as Order["paymentStatus"],
     trackingId: dbOrder.tracking_id ? String(dbOrder.tracking_id) : undefined,
+    source: (dbOrder.source || "website") as Order["source"],
     latitude: dbOrder.latitude !== undefined && dbOrder.latitude !== null ? Number(dbOrder.latitude) : null,
     longitude: dbOrder.longitude !== undefined && dbOrder.longitude !== null ? Number(dbOrder.longitude) : null,
   };
@@ -60,6 +61,7 @@ function toSnakeCase(order: Partial<Order>): any {
   if (order.status !== undefined) dbData.status = order.status;
   if (order.paymentStatus !== undefined) dbData.payment_status = order.paymentStatus;
   if (order.trackingId !== undefined) dbData.tracking_id = order.trackingId;
+  if (order.source !== undefined) dbData.source = order.source;
   if (order.latitude !== undefined) dbData.latitude = order.latitude;
   if (order.longitude !== undefined) dbData.longitude = order.longitude;
   return dbData;
