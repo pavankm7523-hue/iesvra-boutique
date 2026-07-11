@@ -23,11 +23,6 @@ import {
 import heroBg from "@/assets/hero-bg.jpg";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    if (typeof window !== "undefined") {
-      window.location.replace("/mobile-app/");
-    }
-  },
   head: () => ({
     meta: [
       { title: "IESVRA — Quality Products, Best Prices, Everyday" },
@@ -38,8 +33,15 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  component: () => null,
+  component: RedirectComponent,
 });
+
+function RedirectComponent() {
+  useEffect(() => {
+    window.location.replace("/mobile-app/");
+  }, []);
+  return null;
+}
 
 function Home() {
   const { isLoaded, bestSellersList, products } = useProducts();
