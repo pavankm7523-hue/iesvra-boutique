@@ -104,12 +104,35 @@ export function saveCategories(cats: Category[]) {
   if (typeof window === "undefined") return;
   localStorage.setItem("ishvara_categories_v2", JSON.stringify(cats));
   window.dispatchEvent(new CustomEvent("ishvara_categories_changed"));
+  fetch("/api/categories", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cats),
+  }).catch(console.error);
 }
 
 export function useCategories() {
   const [cats, setCats] = useState<Category[]>(() => getCategories());
 
   useEffect(() => {
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((globalCats) => {
+        if (Array.isArray(globalCats) && globalCats.length > 0) {
+          setCats(globalCats);
+          localStorage.setItem("ishvara_categories_v2", JSON.stringify(globalCats));
+        } else {
+          fetch("/api/categories", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(cats),
+          }).catch(console.error);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch global categories:", err);
+      });
+
     const handleUpdate = () => {
       setCats(getCategories());
     };
@@ -700,25 +723,59 @@ export function useProducts() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    // 1. Load locally immediately
     const stored = localStorage.getItem("ishvara_products_v4");
+    let localList = initialProducts;
     if (stored) {
-      const parsed = JSON.parse(stored);
-      // Migrate old data that uses 'category: string' to 'categories: string[]'
-      const migrated = parsed.map((p: any) => {
-        if (!p.categories) {
-          return {
-            ...p,
-            categories: p.category ? [p.category] : ["Uncategorized"],
-          };
-        }
-        return p;
-      });
-      setProducts(migrated);
-    } else {
-      setProducts(initialProducts);
-      localStorage.setItem("ishvara_products_v4", JSON.stringify(initialProducts));
+      try {
+        const parsed = JSON.parse(stored);
+        localList = parsed.map((p: any) => {
+          if (!p.categories) {
+            return {
+              ...p,
+              categories: p.category ? [p.category] : ["Uncategorized"],
+            };
+          }
+          return p;
+        });
+      } catch (e) {
+        console.error("Failed to parse local products", e);
+      }
     }
-    setIsLoaded(true);
+    setProducts(localList);
+
+    // 2. Fetch globally in background
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((globalList) => {
+        if (Array.isArray(globalList) && globalList.length > 0) {
+          setProducts(globalList);
+          localStorage.setItem("ishvara_products_v4", JSON.stringify(globalList));
+        } else {
+          // If first run (no global data), initialize global list with local data
+          fetch("/api/products", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(localList),
+          }).catch(console.error);
+        }
+        setIsLoaded(true);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch global products:", err);
+        setIsLoaded(true);
+      });
+
+    const handleUpdate = () => {
+      const latest = localStorage.getItem("ishvara_products_v4");
+      if (latest) {
+        try { setProducts(JSON.parse(latest)); } catch {}
+      }
+    };
+    window.addEventListener("ishvara_products_changed", handleUpdate);
+    return () => {
+      window.removeEventListener("ishvara_products_changed", handleUpdate);
+    };
   }, []);
 
   const addProduct = (p: Product) => {
@@ -726,6 +783,13 @@ export function useProducts() {
     setProducts(updated);
     localStorage.setItem("ishvara_products_v4", JSON.stringify(updated));
     triggerProductsChange();
+    
+    // Save to global DB
+    fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    }).catch(console.error);
   };
 
   const updateProduct = (p: Product) => {
@@ -733,6 +797,13 @@ export function useProducts() {
     setProducts(updated);
     localStorage.setItem("ishvara_products_v4", JSON.stringify(updated));
     triggerProductsChange();
+
+    // Save to global DB
+    fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    }).catch(console.error);
   };
 
   const bulkUpdateProducts = (updatedProducts: Product[]) => {
@@ -743,6 +814,13 @@ export function useProducts() {
     setProducts(current);
     localStorage.setItem("ishvara_products_v4", JSON.stringify(current));
     triggerProductsChange();
+
+    // Save to global DB
+    fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(current),
+    }).catch(console.error);
   };
 
   const deleteProduct = (id: string) => {
@@ -750,6 +828,13 @@ export function useProducts() {
     setProducts(updated);
     localStorage.setItem("ishvara_products_v4", JSON.stringify(updated));
     triggerProductsChange();
+
+    // Save to global DB
+    fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    }).catch(console.error);
   };
 
   return {

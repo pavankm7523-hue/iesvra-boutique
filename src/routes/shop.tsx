@@ -74,7 +74,12 @@ function Shop() {
     }
       
     const matchesCategory = category ? p.categories.some(cat => cat.toLowerCase() === category.toLowerCase()) : true;
-    const matchesSearch = q ? p.name.toLowerCase().includes(q.toLowerCase()) : true;
+    const matchesSearch = q ? (
+      p.name.toLowerCase().includes(q.toLowerCase()) ||
+      (p.sub && p.sub.toLowerCase().includes(q.toLowerCase())) ||
+      (p.description && p.description.toLowerCase().includes(q.toLowerCase())) ||
+      p.categories.some(cat => cat.toLowerCase().includes(q.toLowerCase()))
+    ) : true;
     
     if (selectedPrices.length > 0) {
       const matchesPrice = selectedPrices.some((range) => {

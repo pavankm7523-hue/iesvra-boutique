@@ -57,6 +57,11 @@ export function getRegisteredUsers(): RegisteredUser[] {
 export function saveRegisteredUsers(users: RegisteredUser[]) {
   if (typeof window === "undefined") return;
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  fetch("/api/users", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(users)
+  }).catch(console.error);
 }
 
 export function getAdminPassword(): string {
@@ -67,6 +72,33 @@ export function getAdminPassword(): string {
 export function saveAdminPassword(password: string) {
   if (typeof window === "undefined") return;
   localStorage.setItem(ADMIN_PASSWORD_KEY, password);
+  fetch("/api/admin-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password })
+  }).catch(console.error);
+}
+
+export function syncAuthWithDb() {
+  if (typeof window === "undefined") return;
+  
+  fetch("/api/users")
+    .then(res => res.json())
+    .then(globalUsers => {
+      if (Array.isArray(globalUsers) && globalUsers.length > 0) {
+        localStorage.setItem(USERS_KEY, JSON.stringify(globalUsers));
+      }
+    })
+    .catch(console.error);
+
+  fetch("/api/admin-password")
+    .then(res => res.json())
+    .then(globalPassword => {
+      if (globalPassword) {
+        localStorage.setItem(ADMIN_PASSWORD_KEY, globalPassword);
+      }
+    })
+    .catch(console.error);
 }
 
 // WARNING: Hashing passwords client-side is a partial mitigation only (prevents casual localStorage inspection).
@@ -245,6 +277,9 @@ export function useCurrentUser() {
   const [user, setUser] = useState<User | null>(() => getCurrentUser());
 
   useEffect(() => {
+    // Sync with global database on mount
+    syncAuthWithDb();
+
     const handleUpdate = () => {
       setUser(getCurrentUser());
     };

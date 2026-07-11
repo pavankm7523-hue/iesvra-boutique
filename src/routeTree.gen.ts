@@ -27,13 +27,17 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ApiVerifyPaymentRouteImport } from './routes/api/verify-payment'
+import { Route as ApiUsersRouteImport } from './routes/api/users'
 import { Route as ApiSendShippedEmailRouteImport } from './routes/api/send-shipped-email'
 import { Route as ApiSendOtpRouteImport } from './routes/api/send-otp'
 import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
 import { Route as ApiSaveOrderRouteImport } from './routes/api/save-order'
+import { Route as ApiProductsRouteImport } from './routes/api/products'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
 import { Route as ApiDiagRouteImport } from './routes/api/diag'
 import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
+import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
+import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin-password'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
@@ -132,6 +136,11 @@ const ApiVerifyPaymentRoute = ApiVerifyPaymentRouteImport.update({
   path: '/api/verify-payment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUsersRoute = ApiUsersRouteImport.update({
+  id: '/api/users',
+  path: '/api/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSendShippedEmailRoute = ApiSendShippedEmailRouteImport.update({
   id: '/api/send-shipped-email',
   path: '/api/send-shipped-email',
@@ -152,6 +161,11 @@ const ApiSaveOrderRoute = ApiSaveOrderRouteImport.update({
   path: '/api/save-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProductsRoute = ApiProductsRouteImport.update({
+  id: '/api/products',
+  path: '/api/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiNotifyAdminRoute = ApiNotifyAdminRouteImport.update({
   id: '/api/notify-admin',
   path: '/api/notify-admin',
@@ -165,6 +179,16 @@ const ApiDiagRoute = ApiDiagRouteImport.update({
 const ApiCreateOrderRoute = ApiCreateOrderRouteImport.update({
   id: '/api/create-order',
   path: '/api/create-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCategoriesRoute = ApiCategoriesRouteImport.update({
+  id: '/api/categories',
+  path: '/api/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminPasswordRoute = ApiAdminPasswordRouteImport.update({
+  id: '/api/admin-password',
+  path: '/api/admin-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -223,13 +247,17 @@ export interface FileRoutesByFullPath {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/admin-password': typeof ApiAdminPasswordRoute
+  '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/products': typeof ApiProductsRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
+  '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -256,13 +284,17 @@ export interface FileRoutesByTo {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/admin-password': typeof ApiAdminPasswordRoute
+  '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/products': typeof ApiProductsRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
+  '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
   '/admin': typeof AdminIndexRoute
@@ -291,13 +323,17 @@ export interface FileRoutesById {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/admin-password': typeof ApiAdminPasswordRoute
+  '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/products': typeof ApiProductsRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
+  '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -327,13 +363,17 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/admin-password'
+    | '/api/categories'
     | '/api/create-order'
     | '/api/diag'
     | '/api/notify-admin'
+    | '/api/products'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
+    | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
     | '/admin/'
@@ -360,13 +400,17 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/admin-password'
+    | '/api/categories'
     | '/api/create-order'
     | '/api/diag'
     | '/api/notify-admin'
+    | '/api/products'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
+    | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
     | '/admin'
@@ -394,13 +438,17 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/admin-password'
+    | '/api/categories'
     | '/api/create-order'
     | '/api/diag'
     | '/api/notify-admin'
+    | '/api/products'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
+    | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
     | '/admin/'
@@ -425,13 +473,17 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TrackOrderRoute: typeof TrackOrderRoute
   WishlistRoute: typeof WishlistRoute
+  ApiAdminPasswordRoute: typeof ApiAdminPasswordRoute
+  ApiCategoriesRoute: typeof ApiCategoriesRoute
   ApiCreateOrderRoute: typeof ApiCreateOrderRoute
   ApiDiagRoute: typeof ApiDiagRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
+  ApiProductsRoute: typeof ApiProductsRoute
   ApiSaveOrderRoute: typeof ApiSaveOrderRoute
   ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
   ApiSendOtpRoute: typeof ApiSendOtpRoute
   ApiSendShippedEmailRoute: typeof ApiSendShippedEmailRoute
+  ApiUsersRoute: typeof ApiUsersRoute
   ApiVerifyPaymentRoute: typeof ApiVerifyPaymentRoute
   ProductIdRoute: typeof ProductIdRoute
   ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
@@ -565,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiVerifyPaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/users': {
+      id: '/api/users'
+      path: '/api/users'
+      fullPath: '/api/users'
+      preLoaderRoute: typeof ApiUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/send-shipped-email': {
       id: '/api/send-shipped-email'
       path: '/api/send-shipped-email'
@@ -593,6 +652,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSaveOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/products': {
+      id: '/api/products'
+      path: '/api/products'
+      fullPath: '/api/products'
+      preLoaderRoute: typeof ApiProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/notify-admin': {
       id: '/api/notify-admin'
       path: '/api/notify-admin'
@@ -612,6 +678,20 @@ declare module '@tanstack/react-router' {
       path: '/api/create-order'
       fullPath: '/api/create-order'
       preLoaderRoute: typeof ApiCreateOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/categories': {
+      id: '/api/categories'
+      path: '/api/categories'
+      fullPath: '/api/categories'
+      preLoaderRoute: typeof ApiCategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin-password': {
+      id: '/api/admin-password'
+      path: '/api/admin-password'
+      fullPath: '/api/admin-password'
+      preLoaderRoute: typeof ApiAdminPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/settings': {
@@ -704,13 +784,17 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TrackOrderRoute: TrackOrderRoute,
   WishlistRoute: WishlistRoute,
+  ApiAdminPasswordRoute: ApiAdminPasswordRoute,
+  ApiCategoriesRoute: ApiCategoriesRoute,
   ApiCreateOrderRoute: ApiCreateOrderRoute,
   ApiDiagRoute: ApiDiagRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
+  ApiProductsRoute: ApiProductsRoute,
   ApiSaveOrderRoute: ApiSaveOrderRoute,
   ApiSendConfirmationRoute: ApiSendConfirmationRoute,
   ApiSendOtpRoute: ApiSendOtpRoute,
   ApiSendShippedEmailRoute: ApiSendShippedEmailRoute,
+  ApiUsersRoute: ApiUsersRoute,
   ApiVerifyPaymentRoute: ApiVerifyPaymentRoute,
   ProductIdRoute: ProductIdRoute,
   ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,

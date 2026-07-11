@@ -156,6 +156,14 @@
       role: 'user'
     });
     localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
+    
+    // Save globally
+    fetch("/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(users)
+    }).catch(console.error);
+
     return true;
   }
 
@@ -168,6 +176,11 @@
         // Upgrade legacy plaintext admin password to hashed version on first successful login
         if (password === adminPassword) {
           localStorage.setItem("ishvara_admin_password", incomingHash);
+          fetch("/api/admin-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: incomingHash })
+          }).catch(console.error);
         }
         return { success: true, name: "IESVRA Admin", role: "admin" };
       }
@@ -188,6 +201,11 @@
     if (user.passwordHash === password) {
       user.passwordHash = incomingHash;
       localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
+      fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(users)
+      }).catch(console.error);
     }
     return { success: true, name: user.name, role: user.role };
   }
@@ -199,6 +217,48 @@
 
     // Initialize Theme
     initTheme();
+
+    // Fetch and sync global products
+    fetch("/api/products")
+      .then(res => res.json())
+      .then(globalProducts => {
+        if (Array.isArray(globalProducts) && globalProducts.length > 0) {
+          localStorage.setItem("ishvara_products_v4", JSON.stringify(globalProducts));
+          if (typeof renderHomeScreen === 'function') renderHomeScreen();
+        }
+      })
+      .catch(err => console.error("Failed to sync global products:", err));
+
+    // Fetch and sync global categories
+    fetch("/api/categories")
+      .then(res => res.json())
+      .then(globalCategories => {
+        if (Array.isArray(globalCategories) && globalCategories.length > 0) {
+          localStorage.setItem("ishvara_categories_v2", JSON.stringify(globalCategories));
+          if (typeof renderCategoriesScreen === 'function') renderCategoriesScreen();
+        }
+      })
+      .catch(err => console.error("Failed to sync global categories:", err));
+
+    // Fetch and sync global users
+    fetch("/api/users")
+      .then(res => res.json())
+      .then(globalUsers => {
+        if (Array.isArray(globalUsers) && globalUsers.length > 0) {
+          localStorage.setItem("ishvara_registered_users", JSON.stringify(globalUsers));
+        }
+      })
+      .catch(err => console.error("Failed to sync global users:", err));
+
+    // Fetch and sync global admin password
+    fetch("/api/admin-password")
+      .then(res => res.json())
+      .then(globalPassword => {
+        if (globalPassword) {
+          localStorage.setItem("ishvara_admin_password", globalPassword);
+        }
+      })
+      .catch(err => console.error("Failed to sync global admin password:", err));
 
     // Sync cart badges
     updateCartBadges();
@@ -220,6 +280,13 @@
         }
       });
     });
+
+    const headerCartBtn = document.getElementById('headerCartBtn');
+    if (headerCartBtn) {
+      headerCartBtn.addEventListener('click', () => {
+        switchTab('cart');
+      });
+    }
 
     // 1. Splash Screen Transition
     setTimeout(() => {
@@ -585,13 +652,24 @@
   function renderBestSellers(filterTerm = '') {
     if (!bestSellersRow) return;
     const products = getProducts();
-    let bestSellers = products.filter(p => p.isBestSeller);
+    let displayProducts = products;
 
     if (filterTerm) {
-      bestSellers = bestSellers.filter(p => p.name.toLowerCase().includes(filterTerm.toLowerCase()) || (p.categories && p.categories.some(c => c.toLowerCase().includes(filterTerm.toLowerCase()))));
+      displayProducts = products.filter(p => 
+        p.name.toLowerCase().includes(filterTerm.toLowerCase()) || 
+        (p.sub && p.sub.toLowerCase().includes(filterTerm.toLowerCase())) ||
+        (p.description && p.description.toLowerCase().includes(filterTerm.toLowerCase())) ||
+        (p.categories && p.categories.some(c => c.toLowerCase().includes(filterTerm.toLowerCase())))
+      );
+      const titleEl = document.getElementById('bestSellersTitle');
+      if (titleEl) titleEl.textContent = `Search: "${filterTerm}"`;
+    } else {
+      displayProducts = products.filter(p => p.isBestSeller);
+      const titleEl = document.getElementById('bestSellersTitle');
+      if (titleEl) titleEl.textContent = `Best Sellers`;
     }
 
-    bestSellersRow.innerHTML = bestSellers.slice(0, 6).map(product => {
+    bestSellersRow.innerHTML = (filterTerm ? displayProducts : displayProducts.slice(0, 8)).map(product => {
       return `
         <div class="mobile-product-card" onclick="window.openProductDetails('${product.id}')">
           <div>
@@ -1056,38 +1134,106 @@
     updateCartQty(productId, color, change);
   };
 
+  let checkoutDeliverySpeed = 'standard';
+  let checkoutPaymentMode = 'razorpay';
+  let checkoutIsExpressEligible = false;
+  let checkoutSubtotal = 0;
+  let checkoutShippingFee = 0;
+  let checkoutTotal = 0;
+
+  window.updateCheckoutDelivery = (speed) => {
+    checkoutDeliverySpeed = speed;
+    checkoutShippingFee = speed === 'express' ? 49 : 0;
+    window.updateCheckoutSummary();
+  };
+
+  window.updateCheckoutPayment = (mode) => {
+    checkoutPaymentMode = mode;
+    window.updateCheckoutSummary();
+  };
+
+  window.updateCheckoutSummary = () => {
+    checkoutTotal = checkoutSubtotal + checkoutShippingFee;
+    const summaryContainer = document.getElementById('checkoutSummarySection');
+    if (!summaryContainer) return;
+
+    summaryContainer.innerHTML = `
+      <div class="receipt-row" style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: var(--text-primary);">
+        <span>Subtotal</span>
+        <span>₹${checkoutSubtotal}</span>
+      </div>
+      <div class="receipt-row" style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: var(--text-primary);">
+        <span>Delivery Option (${checkoutDeliverySpeed === 'express' ? 'Express 15-Min' : 'Standard'})</span>
+        <span>${checkoutShippingFee > 0 ? `₹${checkoutShippingFee}` : '<span style="color: var(--green-success);">FREE</span>'}</span>
+      </div>
+      <div class="receipt-row total" style="display: flex; justify-content: space-between; font-size: 15px; font-weight: bold; border-top: 1px dashed var(--border-color); padding-top: 8px; color: var(--text-primary);">
+        <span>Total Amount</span>
+        <span>₹${checkoutTotal}</span>
+      </div>
+    `;
+
+    const placeBtn = document.getElementById('placeOrderBtn');
+    if (placeBtn) {
+      placeBtn.innerText = checkoutPaymentMode === 'razorpay' ? `Pay & Place Order (₹${checkoutTotal})` : `Place COD Order (₹${checkoutTotal})`;
+    }
+  };
+
   window.checkoutCart = (amount) => {
     const cart = getCart();
     if (cart.length === 0) return;
 
-    // Create a new order object
-    const orderId = "ISH-" + Math.floor(100000 + Math.random() * 900000);
-    const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    checkoutSubtotal = amount;
+    checkoutDeliverySpeed = 'standard';
+    checkoutPaymentMode = 'razorpay';
+    checkoutIsExpressEligible = false;
+    checkoutShippingFee = 0;
 
-    const newOrder = {
-      orderId,
-      date,
-      amount,
-      itemsCount: cart.reduce((total, item) => total + item.quantity, 0),
-      items: cart,
-      status: "Placed" // Placed -> Confirmed -> Packed -> Out for Delivery -> Delivered
-    };
+    // Reset checkout fields
+    const sessionStr = localStorage.getItem('ishvara_auth');
+    const session = sessionStr ? JSON.parse(sessionStr) : null;
 
-    // Save to orders history
-    const storedOrders = localStorage.getItem('iesvra_orders');
-    const orders = storedOrders ? JSON.parse(storedOrders) : [];
-    orders.unshift(newOrder);
-    localStorage.setItem('iesvra_orders', JSON.stringify(orders));
+    const n = document.getElementById('checkoutName');
+    const e = document.getElementById('checkoutEmail');
+    const p = document.getElementById('checkoutPhone');
+    const a1 = document.getElementById('checkoutAddress1');
+    const a2 = document.getElementById('checkoutAddress2');
+    const c = document.getElementById('checkoutCity');
+    const s = document.getElementById('checkoutState');
+    const pin = document.getElementById('checkoutPincode');
+    const aSearch = document.getElementById('checkoutAddressSearch');
 
-    // Clear cart
-    localStorage.setItem('ishvara_cart', JSON.stringify([]));
-    window.dispatchEvent(new CustomEvent("ishvara_cart_changed"));
+    if (n) n.value = session?.name || localStorage.getItem('IESVRA_shipping_name') || '';
+    if (e) e.value = session?.email || localStorage.getItem('IESVRA_shipping_email') || '';
+    if (p) p.value = localStorage.getItem('IESVRA_shipping_phone') || '';
+    if (a1) a1.value = localStorage.getItem('IESVRA_delivery_address_line1') || '';
+    if (a2) a2.value = localStorage.getItem('IESVRA_delivery_address_line2') || '';
+    if (c) c.value = localStorage.getItem('IESVRA_delivery_city') || '';
+    if (s) s.value = localStorage.getItem('IESVRA_delivery_state') || '';
+    if (pin) pin.value = localStorage.getItem('IESVRA_delivery_pincode') || '';
+    if (aSearch) aSearch.value = '';
 
-    showToast("Order placed successfully!");
+    // Set radios to default
+    const radios = document.getElementsByName('deliverySpeed');
+    if (radios && radios.length > 0) radios[0].checked = true;
+    const pRadios = document.getElementsByName('paymentMode');
+    if (pRadios && pRadios.length > 0) pRadios[0].checked = true;
 
-    // Switch to orders tab and start tracking
-    switchTab('orders');
-    window.trackMobileOrder(orderId);
+    // Trigger address eligibility hide initially
+    const label = document.getElementById('expressDeliveryLabel');
+    const notice = document.getElementById('expressUnavailableNotice');
+    if (label) label.style.display = 'none';
+    if (notice) notice.style.display = 'block';
+
+    window.updateCheckoutSummary();
+    switchTab('checkout');
+
+    // Init address listeners
+    setTimeout(() => {
+      initCheckoutAddressAutocomplete();
+      if (pin) {
+        pin.addEventListener('blur', triggerManualAddressCheck);
+      }
+    }, 100);
   };
 
   // ==================== ORDERS & LIVE TRACKING ====================
@@ -1342,6 +1488,569 @@
       }, 2500);
     }
   }
+
+  // ==================== SOCIAL AUTH MOCK SYSTEM ====================
+  window.closeSocialLogin = () => {
+    const modal = document.getElementById('socialLoginModal');
+    if (modal) modal.classList.remove('active');
+  };
+
+  window.submitSocialLogin = (name, email) => {
+    // Overwrite ishvara_auth with the logged in user
+    const userSession = { name: name, email: email, role: 'user' };
+    localStorage.setItem('ishvara_auth', JSON.stringify(userSession));
+    
+    // Register user locally and globally in background if not already present
+    const users = getRegisteredUsers();
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!users.some(u => u.email.toLowerCase() === normalizedEmail)) {
+      users.push({
+        name: name,
+        email: normalizedEmail,
+        passwordHash: hashPassword("social-auth-bypass-pass"),
+        role: 'user'
+      });
+      localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
+      fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(users)
+      }).catch(console.error);
+    }
+
+    // Notify listeners
+    window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
+
+    // Close modal & hide login screen
+    window.closeSocialLogin();
+    const loginScreen = document.getElementById('loginScreen');
+    if (loginScreen) {
+      loginScreen.style.opacity = '0';
+      setTimeout(() => {
+        loginScreen.style.display = 'none';
+        updateProfileDisplay();
+        switchTab('home');
+      }, 300);
+    }
+    showToast(`Logged in successfully via Social Auth!`);
+  };
+
+  window.openSocialLogin = (provider) => {
+    const modal = document.getElementById('socialLoginModal');
+    const card = document.getElementById('socialLoginCard');
+    if (!modal || !card) return;
+
+    if (provider === 'google') {
+      card.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+          <svg viewBox="0 0 24 24" width="40" height="40" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 12px;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 4px; color: var(--text-primary);">Sign in with Google</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">to continue to IESVRA</p>
+        </div>
+
+        <div id="google-signin-btn-container" style="display: flex; justify-content: center; min-height: 44px; margin-bottom: 20px; width: 100%;">
+          <div style="font-size: 13px; color: var(--text-muted);">Loading Google Sign-in...</div>
+        </div>
+
+        <div style="height: 1px; background: var(--border-light); margin: 16px 0;"></div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="font-size: 11px; font-weight: bold; color: var(--text-muted);">OR SIGN IN WITH ANOTHER EMAIL</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="email" id="googleCustomEmail" placeholder="name@domain.com" style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--primary-bg); color: var(--text-primary); font-size: 13px;" />
+            <button onclick="const em = document.getElementById('googleCustomEmail').value; if(em) window.submitSocialLogin(em.split('@')[0], em); else alert('Please enter email')" style="padding: 8px 16px; background: var(--accent-gold); color: var(--primary-bg); border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">Next</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+          <button onclick="window.closeSocialLogin()" style="padding: 8px 16px; background: transparent; border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 12px; font-weight: bold; cursor: pointer;">Cancel</button>
+        </div>
+      `;
+
+      const initGoogle = () => {
+        const client_id = window.GOOGLE_CLIENT_ID || "1056525141674-lhfocgctskjflc2oecmrc2i2b94fep9q.apps.googleusercontent.com";
+        google.accounts.id.initialize({
+          client_id: client_id,
+          callback: (response) => {
+            try {
+              const base64Url = response.credential.split('.')[1];
+              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
+                  return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+              }).join(''));
+              const payload = JSON.parse(jsonPayload);
+              if (payload && payload.email) {
+                window.submitSocialLogin(payload.name || payload.email.split('@')[0], payload.email);
+              }
+            } catch (err) {
+              console.error("Google authentication error:", err);
+            }
+          }
+        });
+        const container = document.getElementById("google-signin-btn-container");
+        if (container) {
+          container.innerHTML = "";
+          google.accounts.id.renderButton(container, {
+            theme: "outline",
+            size: "large",
+            width: "300"
+          });
+        }
+      };
+
+      if (typeof google === "undefined" || !google.accounts) {
+        const script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.defer = true;
+        script.onload = initGoogle;
+        document.head.appendChild(script);
+      } else {
+        setTimeout(initGoogle, 100);
+      }
+    } else {
+      card.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 12px; color: var(--text-primary);"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.11.09 2.26-.56 2.95-1.39z"/></svg>
+          <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 4px; color: var(--text-primary);">Sign in with Apple ID</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">Use your Apple ID to sign in to IESVRA</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+          <input type="email" id="appleIdInput" placeholder="Apple ID (email)" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--primary-bg); color: var(--text-primary); font-size: 14px;" />
+          <button onclick="const val = document.getElementById('appleIdInput').value; if(val) window.submitSocialLogin(val.split('@')[0], val); else alert('Please enter Apple ID')" style="width: 100%; padding: 12px; background: var(--text-primary); color: var(--primary-bg); border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer;">Continue</button>
+        </div>
+
+        <div style="height: 1px; background: var(--border-light); margin: 16px 0;"></div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+          <button onclick="window.submitSocialLogin('Apple User', 'appleuser@iesvra.com')" style="background: transparent; border: none; color: var(--accent-gold); font-size: 13px; font-weight: bold; cursor: pointer;">Sign in with Touch ID / Face ID</button>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+          <button onclick="window.closeSocialLogin()" style="padding: 8px 16px; background: transparent; border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 12px; font-weight: bold; cursor: pointer;">Cancel</button>
+        </div>
+      `;
+    }
+
+    modal.classList.add('active');
+  };
+
+  // ==================== CHECKOUT SYSTEM ====================
+  let searchTimeout = null;
+  
+  function initCheckoutAddressAutocomplete() {
+    setupFieldAutocomplete('checkoutAddress1', 'checkoutAddress1Suggestions');
+    setupFieldAutocomplete('checkoutAddress2', 'checkoutAddress2Suggestions');
+  }
+
+  function setupFieldAutocomplete(inputId, boxId) {
+    const input = document.getElementById(inputId);
+    const suggestionsBox = document.getElementById(boxId);
+    if (!input || !suggestionsBox) return;
+
+    // Remove existing event listeners by cloning
+    const newInput = input.cloneNode(true);
+    input.parentNode.replaceChild(newInput, input);
+
+    newInput.addEventListener('input', () => {
+      const val = newInput.value;
+      if (searchTimeout) clearTimeout(searchTimeout);
+
+      if (val.trim().length < 3) {
+        suggestionsBox.style.display = 'none';
+        suggestionsBox.innerHTML = '';
+        return;
+      }
+
+      searchTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=5&countrycodes=in&accept-language=en`, {
+            headers: { 'User-Agent': 'IESVRA-Boutique-App/1.0' }
+          });
+          const list = await res.json();
+          if (list && list.length > 0) {
+            suggestionsBox.innerHTML = list.map(item => `
+              <div class="address-suggestion-item" style="padding: 10px 12px; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-color); color: var(--text-primary); transition: background 0.2s;" onclick="window.selectCheckoutSuggestion('${encodeURIComponent(JSON.stringify(item))}', '${inputId}', '${boxId}')">
+                ${item.display_name}
+              </div>
+            `).join('');
+            suggestionsBox.style.display = 'block';
+          } else {
+            suggestionsBox.style.display = 'none';
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, 400);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target !== newInput && e.target !== suggestionsBox) {
+        suggestionsBox.style.display = 'none';
+      }
+    });
+  }
+
+  window.selectCheckoutSuggestion = (itemStr, inputId, boxId) => {
+    const item = JSON.parse(decodeURIComponent(itemStr));
+    const suggestionsBox = document.getElementById(boxId);
+    if (suggestionsBox) suggestionsBox.style.display = 'none';
+
+    const addr = item.address || {};
+    const road = addr.road || addr.pedestrian || addr.street || "";
+    const houseNumber = addr.house_number || "";
+    const suburb = addr.suburb || addr.neighbourhood || addr.city_district || "";
+    const city = addr.city || addr.town || addr.village || addr.county || "";
+    const state = addr.state || "";
+    const pincode = addr.postcode || "";
+
+    const a1 = document.getElementById('checkoutAddress1');
+    const a2 = document.getElementById('checkoutAddress2');
+    const c = document.getElementById('checkoutCity');
+    const s = document.getElementById('checkoutState');
+    const p = document.getElementById('checkoutPincode');
+
+    if (inputId === 'checkoutAddress1') {
+      if (a1) a1.value = [houseNumber, road].filter(Boolean).join(" ") || item.display_name.split(',')[0];
+      if (a2) a2.value = suburb || item.display_name.split(',')[1] || '';
+    } else {
+      if (a2) a2.value = [houseNumber, road].filter(Boolean).join(" ") || item.display_name.split(',')[0];
+    }
+    
+    if (c) c.value = city;
+    if (s) s.value = state;
+    if (p) p.value = pincode;
+
+    if (item.lat && item.lon) {
+      checkExpressEligibilityByCoords(parseFloat(item.lat), parseFloat(item.lon));
+    } else {
+      checkExpressEligibilityByText(item.display_name);
+    }
+  };
+
+  window.detectCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    const locBtn = document.getElementById('detectLocationBtn');
+    const originalText = locBtn ? locBtn.innerHTML : "📍 Detect Location";
+    if (locBtn) locBtn.innerHTML = "⌛ Detecting...";
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=en`, {
+          headers: { 'User-Agent': 'IESVRA-Boutique-App/1.0' }
+        });
+        const data = await res.json();
+        if (data && data.address) {
+          const addr = data.address;
+          const road = addr.road || addr.pedestrian || addr.street || "";
+          const houseNumber = addr.house_number || "";
+          const suburb = addr.suburb || addr.neighbourhood || addr.city_district || "";
+          const city = addr.city || addr.town || addr.village || addr.county || "";
+          const state = addr.state || "";
+          const pincode = addr.postcode || "";
+
+          const a1 = document.getElementById('checkoutAddress1');
+          const a2 = document.getElementById('checkoutAddress2');
+          const c = document.getElementById('checkoutCity');
+          const s = document.getElementById('checkoutState');
+          const p = document.getElementById('checkoutPincode');
+
+          if (a1) a1.value = [houseNumber, road].filter(Boolean).join(" ");
+          if (a2) a2.value = suburb;
+          if (c) c.value = city;
+          if (s) s.value = state;
+          if (p) p.value = pincode;
+
+          checkExpressEligibilityByCoords(lat, lon);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (locBtn) locBtn.innerHTML = originalText;
+      }
+    }, (error) => {
+      console.error(error);
+      alert("Failed to retrieve current location. Please grant permission.");
+      if (locBtn) locBtn.innerHTML = originalText;
+    });
+  };
+
+  const WAREHOUSE_LAT = 25.5945;
+  const WAREHOUSE_LON = 85.1565;
+
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  function checkExpressEligibilityByCoords(lat, lon) {
+    const distance = calculateDistance(WAREHOUSE_LAT, WAREHOUSE_LON, lat, lon);
+    const label = document.getElementById('expressDeliveryLabel');
+    const notice = document.getElementById('expressUnavailableNotice');
+    
+    if (distance <= 15) {
+      checkoutIsExpressEligible = true;
+      if (label) label.style.display = 'flex';
+      if (notice) notice.style.display = 'none';
+      showToast(`Address is within 15 km (${distance.toFixed(1)} km). Express 15-min delivery available!`);
+    } else {
+      checkoutIsExpressEligible = false;
+      if (label) label.style.display = 'none';
+      if (notice) {
+        notice.style.display = 'block';
+        notice.innerText = `Address is ${distance.toFixed(1)} km away. Standard delivery available (limit is 15 km).`;
+      }
+      checkoutDeliverySpeed = 'standard';
+      const radios = document.getElementsByName('deliverySpeed');
+      if (radios && radios.length > 0) radios[0].checked = true;
+      checkoutShippingFee = 0;
+      window.updateCheckoutDelivery('standard');
+    }
+  }
+
+  async function checkExpressEligibilityByText(text) {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(text)}&format=json&limit=1`, {
+        headers: { 'User-Agent': 'IESVRA-Boutique-App/1.0' }
+      });
+      const data = await res.json();
+      if (data && data.length > 0) {
+        checkExpressEligibilityByCoords(parseFloat(data[0].lat), parseFloat(data[0].lon));
+      }
+    } catch (e) {
+      console.error("Geocoding check failed:", e);
+    }
+  }
+
+  function triggerManualAddressCheck() {
+    const a1 = document.getElementById('checkoutAddress1')?.value || "";
+    const city = document.getElementById('checkoutCity')?.value || "";
+    const state = document.getElementById('checkoutState')?.value || "";
+    const pincode = document.getElementById('checkoutPincode')?.value || "";
+    const combined = [a1, city, state, pincode].filter(Boolean).join(", ");
+    if (combined.length > 8) {
+      checkExpressEligibilityByText(combined);
+    }
+  }
+
+  function loadRazorpayScript() {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.head.appendChild(script);
+    });
+  }
+
+  window.submitCheckoutForm = async () => {
+    const nameInput = document.getElementById('checkoutName');
+    const emailInput = document.getElementById('checkoutEmail');
+    const phoneInput = document.getElementById('checkoutPhone');
+    const a1Input = document.getElementById('checkoutAddress1');
+    const a2Input = document.getElementById('checkoutAddress2');
+    const cityInput = document.getElementById('checkoutCity');
+    const stateInput = document.getElementById('checkoutState');
+    const pinInput = document.getElementById('checkoutPincode');
+
+    const name = nameInput?.value.trim() || "";
+    const email = emailInput?.value.trim() || "";
+    const phone = phoneInput?.value.trim() || "";
+    const a1 = a1Input?.value.trim() || "";
+    const a2 = a2Input?.value.trim() || "";
+    const city = cityInput?.value.trim() || "";
+    const state = stateInput?.value.trim() || "";
+    const pin = pinInput?.value.trim() || "";
+
+    if (!name || !email || !phone || !a1 || !city || !state || !pin) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      alert("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
+    if (!/^\d{6}$/.test(pin)) {
+      alert("Please enter a valid 6-digit pincode.");
+      return;
+    }
+
+    const address = [a1, a2, city, `${state} - ${pin}`].filter(Boolean).join(", ");
+    const orderId = "ISH-" + Math.floor(100000 + Math.random() * 900000);
+    const orderDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    // Save shipping details locally to prefill next time
+    localStorage.setItem("IESVRA_shipping_name", name);
+    localStorage.setItem("IESVRA_shipping_email", email);
+    localStorage.setItem("IESVRA_shipping_phone", phone);
+    localStorage.setItem("IESVRA_delivery_address_line1", a1);
+    localStorage.setItem("IESVRA_delivery_address_line2", a2);
+    localStorage.setItem("IESVRA_delivery_city", city);
+    localStorage.setItem("IESVRA_delivery_state", state);
+    localStorage.setItem("IESVRA_delivery_pincode", pin);
+
+    if (checkoutPaymentMode === 'cod') {
+      const orderData = {
+        id: orderId,
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone,
+        shippingAddress: address,
+        items: getCart(),
+        subtotal: checkoutSubtotal,
+        shipping: checkoutShippingFee,
+        total: checkoutTotal,
+        date: orderDate,
+        status: "Placed",
+        paymentStatus: "Pending - COD"
+      };
+
+      try {
+        showToast("Saving order...");
+        const res = await fetch("/api/save-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData)
+        });
+        if (!res.ok) throw new Error("Failed to save order");
+
+        const saved = await res.json();
+        
+        // Save order locally
+        const storedOrders = localStorage.getItem('iesvra_orders');
+        const orders = storedOrders ? JSON.parse(storedOrders) : [];
+        orders.unshift(saved);
+        localStorage.setItem('iesvra_orders', JSON.stringify(orders));
+
+        // Clear cart
+        localStorage.setItem('ishvara_cart', JSON.stringify([]));
+        window.dispatchEvent(new CustomEvent("ishvara_cart_changed"));
+
+        showToast("Order placed successfully via COD!");
+        switchTab('orders');
+        window.trackMobileOrder(saved.id);
+      } catch (err) {
+        console.error(err);
+        showToast("Failed to place order. Try again.");
+      }
+    } else {
+      // Razorpay online gateway
+      try {
+        showToast("Initiating secure payment...");
+        
+        const res = await fetch("/api/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: Math.round(checkoutTotal * 100) })
+        });
+        if (!res.ok) throw new Error("Payment initialization failed");
+        const { order_id, key_id } = await res.json();
+
+        const sdkLoaded = await loadRazorpayScript();
+        if (!sdkLoaded) throw new Error("Payment gateway SDK failed to load");
+
+        const options = {
+          key: key_id,
+          amount: Math.round(checkoutTotal * 100),
+          currency: "INR",
+          name: "IESVRA",
+          description: "Boutique Order Payment",
+          order_id: order_id,
+          handler: async function (response) {
+            try {
+              showToast("Verifying payment...");
+              const vRes = await fetch("/api/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })
+              });
+              const vData = await vRes.json();
+              if (!vRes.ok || !vData.verified) throw new Error("Payment verification failed");
+
+              const orderData = {
+                id: orderId,
+                customerName: name,
+                customerEmail: email,
+                customerPhone: phone,
+                shippingAddress: address,
+                items: getCart(),
+                subtotal: checkoutSubtotal,
+                shipping: checkoutShippingFee,
+                total: checkoutTotal,
+                date: orderDate,
+                status: "Placed",
+                paymentStatus: "Paid"
+              };
+
+              const sRes = await fetch("/api/save-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderData)
+              });
+              if (!sRes.ok) throw new Error("Failed to save order after payment success");
+              const saved = await sRes.json();
+
+              const storedOrders = localStorage.getItem('iesvra_orders');
+              const orders = storedOrders ? JSON.parse(storedOrders) : [];
+              orders.unshift(saved);
+              localStorage.setItem('iesvra_orders', JSON.stringify(orders));
+
+              localStorage.setItem('ishvara_cart', JSON.stringify([]));
+              window.dispatchEvent(new CustomEvent("ishvara_cart_changed"));
+
+              showToast("Payment successful & order placed!");
+              switchTab('orders');
+              window.trackMobileOrder(saved.id);
+            } catch (e) {
+              console.error(e);
+              showToast(e.message || "Verification failed");
+            }
+          },
+          prefill: {
+            name: name,
+            email: email,
+            contact: phone
+          },
+          theme: {
+            color: "#C9A54A"
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+          showToast("Payment failed: " + response.error.description);
+        });
+        rzp.open();
+      } catch (e) {
+        console.error(e);
+        showToast(e.message || "Failed to start online payment");
+      }
+    }
+  };
 
   // Start app
   window.addEventListener('DOMContentLoaded', init);

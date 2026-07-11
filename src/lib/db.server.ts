@@ -183,3 +183,69 @@ export async function updateOrderInDb(orderId: string, patch: Partial<Order>): P
   }
   return toCamelCase(list[0]);
 }
+
+export async function getMetadataFromDb(keyStr: string): Promise<any | null> {
+  const { url, key } = getSupabaseConfig();
+  const res = await fetch(`${url}/rest/v1/orders?id=eq.${encodeURIComponent(keyStr)}&select=*`, {
+    method: "GET",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+    },
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  const list = await res.json();
+  if (list.length === 0) return null;
+  
+  // If it's a string, try parsing it, otherwise return directly
+  const raw = list[0].items;
+  if (!raw) return null;
+  if (typeof raw === "string") {
+    try { return JSON.parse(raw); } catch { return raw; }
+  }
+  return raw;
+}
+
+export async function saveMetadataToDb(keyStr: string, data: any): Promise<boolean> {
+  const { url, key } = getSupabaseConfig();
+  const mockRecord = {
+    id: keyStr,
+    customer_name: "Metadata Store",
+    customer_email: "metadata@iesvra.com",
+    customer_phone: "0000000000",
+    shipping_address: "Global System Configuration",
+    items: data, // JSONB
+    subtotal: 0,
+    shipping: 0,
+    total: 0,
+    date: new Date().toISOString(),
+    status: "Processing",
+    payment_status: "Pending"
+  };
+
+  // Upsert pattern
+  await fetch(`${url}/rest/v1/orders?id=eq.${encodeURIComponent(keyStr)}`, {
+    method: "DELETE",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`
+    }
+  });
+
+  const res = await fetch(`${url}/rest/v1/orders`, {
+    method: "POST",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation"
+    },
+    body: JSON.stringify(mockRecord)
+  });
+
+  return res.ok;
+}

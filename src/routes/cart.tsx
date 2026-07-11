@@ -408,7 +408,10 @@ function Cart() {
 
       const createData = await createRes.json();
       if (!createRes.ok || !createData.order_id) {
-        throw new Error(createData.error || "Failed to create Razorpay order on backend.");
+        console.warn("Failed to create Razorpay order on backend, falling back to mock:", createData.error);
+        toast.info("Falling back to Simulated Test Payment Mode.");
+        setIsMockRazorpayOpen(true);
+        return;
       }
 
       const { order_id, key_id } = createData;
@@ -416,7 +419,10 @@ function Cart() {
       // 2. Load Razorpay checkout script
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
-        throw new Error("Razorpay SDK failed to load. Please disable any ad-blockers and try again.");
+        console.warn("Razorpay SDK failed to load, falling back to mock payment.");
+        toast.info("Razorpay SDK unavailable. Falling back to Simulated Test Payment Mode.");
+        setIsMockRazorpayOpen(true);
+        return;
       }
 
       // 3. Open Razorpay payment popup
@@ -489,9 +495,9 @@ function Cart() {
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
     } catch (err: any) {
-      setIsProcessingPayment(false);
-      console.error("Razorpay placement error:", err);
-      toast.error(err.message || "Failed to initiate online payment.");
+      console.warn("Razorpay placement error, falling back to mock payment:", err);
+      toast.info("Falling back to Simulated Test Payment Mode.");
+      setIsMockRazorpayOpen(true);
     }
   };
 

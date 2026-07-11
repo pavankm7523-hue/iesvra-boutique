@@ -5,15 +5,18 @@
 }
 
 :root {
-  /* Default Dark Mode Styles (Screenshot Match) */
-  --primary-bg: #080c16;     /* Deep dark navy background */
-  --card-bg: #0e1422;        /* Slightly lighter navy for cards */
-  --card-accent: #131b2e;    /* Deep slate blue/grey for selectors */
-  --accent-gold: #c9a55c;    /* Rich luxury gold */
+  /* Default Dark Mode Styles (Aligned with IESVRA roadmap) */
+  --primary-bg: #111827;     /* Dark navy/background */
+  --card-bg: #1f2937;        /* Lighter background for cards */
+  --card-accent: #374151;    /* Deep slate blue/grey for selectors */
+  --accent-gold: #C9A54A;    /* Primary gold accent */
   --text-primary: #ffffff;   /* Pure white text */
-  --text-muted: #8c98ad;     /* Soft grey-blue for descriptions */
-  --white: #ffffff;
-  --green-success: #10b981;  /* Vibrant success green */
+  --text-muted: #9ca3af;     /* Soft grey for descriptions */
+  --white: #FFFFFF;
+  --green-success: #16A34A;  /* Success/green */
+  --red-error: #DC2626;      /* Error/red */
+  --font-display: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.35); /* Elegant dark shadow */
   --shadow-gold: 0 6px 20px rgba(201, 165, 92, 0.2);
@@ -22,19 +25,24 @@
 }
 
 body.theme-light {
-  /* Premium Light Mode Styles (Warm Cream Theme) */
-  --primary-bg: #faf8f4;     /* Premium soft warm white/cream */
-  --card-bg: #ffffff;        /* Crisp clean white for cards */
-  --card-accent: #f0ece6;    /* Soft beige/grey for selectors */
-  --accent-gold: #c9a55c;    /* Rich luxury gold */
-  --text-primary: #0f172a;   /* Deep slate/navy for text */
-  --text-muted: #64748b;     /* Slate grey for descriptions */
-  --white: #ffffff;
-  --green-success: #15803d;  /* Clean green for success tags */
-  --shadow-premium: 0 10px 30px rgba(15, 23, 42, 0.06); /* Soft light shadow */
+  /* Premium Light Mode Styles (Aligned with IESVRA roadmap) */
+  --primary-bg: #F8F8F8;     /* Light background */
+  --card-bg: #FFFFFF;        /* White card background */
+  --card-accent: #E5E7EB;    /* Light grey selectors */
+  --accent-gold: #C9A54A;    /* Primary gold accent */
+  --text-primary: #111827;   /* Deep slate/navy for text */
+  --text-muted: #6B7280;     /* Slate grey for descriptions */
+  --white: #FFFFFF;
+  --green-success: #16A34A;  /* Success/green */
+  --red-error: #DC2626;      /* Error/red */
+  --shadow-premium: 0 10px 30px rgba(17, 24, 39, 0.06); /* Soft light shadow */
   --shadow-gold: 0 6px 20px rgba(201, 165, 92, 0.15);
   --border-color: rgba(0, 0, 0, 0.06); /* Black border overlay */
   --border-light: rgba(0, 0, 0, 0.03);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
 }
 
 html, body {
@@ -42,7 +50,7 @@ html, body {
   height: 100%;
   background-color: var(--primary-bg);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -90,7 +98,7 @@ html, body {
 }
 
 .app-header .brand-name {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 19px;
   font-weight: 800;
   letter-spacing: 0.15em;
@@ -165,7 +173,8 @@ html, body {
   position: fixed;
   inset: 0;
   z-index: 2100;
-  background-color: var(--primary-bg);
+  /* Premium bright gold gradient background */
+  background: linear-gradient(135deg, #FFE89E 0%, #F5C752 45%, #D49E25 80%, #B37D14 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -173,45 +182,86 @@ html, body {
   transition: opacity 0.5s ease;
 }
 
-.splash-logo-ring {
-  width: 88px;
-  height: 88px;
-  border-radius: 24px;
-  background-color: var(--accent-gold);
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: splashPop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes splashPop {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.iesvra-logo-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow-gold);
+  position: relative;
+  filter: drop-shadow(0 4px 10px rgba(19, 25, 43, 0.22));
 }
 
-.splash-logo-ring svg {
-  width: 44px;
-  height: 44px;
-  color: var(--white);
-}
-
-.splash-brand {
-  font-family: 'Outfit', sans-serif;
-  font-size: 28px;
+.iesvra-logo-wrapper .logo-text {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-size: 52px;
   font-weight: 800;
-  letter-spacing: 0.25em;
-  margin-bottom: 8px;
-  color: var(--text-primary);
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.iesvra-logo-wrapper .logo-registered {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+  position: absolute;
+  top: 4px;
+  right: -13px;
+}
+
+.logo-bag-container {
+  width: 48px;
+  height: 58px;
+  margin: 0 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-bag-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.splash-divider-line {
+  width: 90px;
+  height: 1.5px;
+  background-color: #13192b;
+  margin-top: 14px;
+  margin-bottom: 10px;
+  opacity: 0.75;
+  border-radius: 1px;
 }
 
 .splash-tagline {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  color: var(--accent-gold);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #13192b;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .splash-loader {
-  margin-top: 36px;
-  width: 120px;
-  height: 3px;
-  background-color: rgba(0, 0, 0, 0.05);
+  margin-top: 40px;
+  width: 130px;
+  height: 3.5px;
+  background-color: rgba(19, 25, 43, 0.12);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -219,7 +269,7 @@ html, body {
 .splash-loader .bar {
   width: 0%;
   height: 100%;
-  background-color: var(--accent-gold);
+  background-color: #13192b;
   animation: loadProgress 1.8s forwards ease-in-out;
 }
 
@@ -276,7 +326,7 @@ html, body {
 }
 
 .onboarding-slide h2 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 26px;
   font-weight: 700;
   margin-bottom: 12px;
@@ -377,7 +427,7 @@ html, body {
 }
 
 .login-header h2 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
@@ -724,7 +774,7 @@ html, body {
 }
 
 .profile-edit-card h3 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
@@ -837,7 +887,7 @@ html, body {
 }
 
 .scooter-banner h3 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 700;
   line-height: 1.25;
@@ -868,7 +918,7 @@ html, body {
 .section-title {
   padding: 0 20px;
   margin-bottom: 12px;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -959,7 +1009,7 @@ html, body {
 }
 
 .offer-card h4 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
   color: var(--accent-gold);
@@ -1149,7 +1199,7 @@ html, body {
   background-color: rgba(201, 165, 92, 0.08);
   color: var(--accent-gold);
   border: 1px solid var(--accent-gold);
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   padding: 6px 12px;
@@ -1511,7 +1561,7 @@ html, body {
 }
 
 .profile-hero-card h3 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   color: var(--text-primary);
 }
@@ -1678,7 +1728,7 @@ html, body {
 }
 
 .detail-info h2 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-display);
   font-size: 19px;
   font-weight: 700;
   color: var(--text-primary);

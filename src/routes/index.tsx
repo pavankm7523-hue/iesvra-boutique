@@ -22,8 +22,12 @@ import {
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 
-export const Route = createFileRoute("/")(
-  {
+export const Route = createFileRoute("/")({
+  beforeLoad: () => {
+    if (typeof window !== "undefined") {
+      window.location.replace("/mobile-app/");
+    }
+  },
   head: () => ({
     meta: [
       { title: "IESVRA — Quality Products, Best Prices, Everyday" },
@@ -34,7 +38,7 @@ export const Route = createFileRoute("/")(
       },
     ],
   }),
-  component: Home,
+  component: () => null,
 });
 
 function Home() {
