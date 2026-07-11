@@ -319,7 +319,7 @@ function Cart() {
               if (!active) return;
               setupMap(L, initialLat, initialLng);
             },
-            { timeout: 6000 }
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
           );
         } else {
           setupMap(L, initialLat, initialLng);
@@ -471,7 +471,7 @@ function Cart() {
         toast.error("Failed to detect location. Please check permissions.");
         console.warn("Geolocation error:", err);
       },
-      { timeout: 6000 }
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
     );
   };
 
@@ -1060,10 +1060,11 @@ function Cart() {
                           <button
                             type="button"
                             onClick={handleRecenterMapOnGPS}
-                            className="absolute bottom-3 right-3 z-[400] h-9 w-9 rounded-full bg-white shadow-md border border-border/40 flex items-center justify-center text-[#0b72e7] hover:text-[#0b72e7]/80 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-                            title="Center on my location"
+                            className="absolute bottom-10 right-3 z-[1000] h-10 w-10 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform cursor-pointer border-0"
+                            style={{ background: 'linear-gradient(135deg, #1a73e8, #0b5ed7)', boxShadow: '0 2px 12px rgba(11,94,215,0.45), 0 1px 4px rgba(0,0,0,0.15)' }}
+                            title="Use my exact location"
                           >
-                            <Locate className="h-5 w-5" />
+                            <Locate className="h-5 w-5 text-white" />
                           </button>
                         )}
                       </div>

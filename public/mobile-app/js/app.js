@@ -1782,7 +1782,7 @@
       console.error(error);
       alert("Failed to retrieve current location. Please grant permission.");
       if (locBtn) locBtn.innerHTML = originalText;
-    });
+    }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
   };
 
   const WAREHOUSE_LAT = 25.5945;
@@ -2089,7 +2089,7 @@
           () => {
             setupMobileMap(L, initialLat, initialLng);
           },
-          { timeout: 6000 }
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
         );
       } else {
         setupMobileMap(L, initialLat, initialLng);
@@ -2248,6 +2248,8 @@
         confirmBtn.disabled = false;
       }
     }
+  };
+
   window.recenterAppMapOnGPS = () => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser.");
@@ -2279,7 +2281,7 @@
         alert("Failed to detect location. Please check browser permissions.");
         console.warn("Mobile map geolocation error:", err);
       },
-      { timeout: 6000 }
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
     );
   };
 
