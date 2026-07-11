@@ -26,8 +26,6 @@ export const Route = createFileRoute("/api/save-order")({
           }
 
           // Convert camelCase order to snake_case for Supabase
-          // NOTE: Only include columns that exist in the DB schema.
-          // latitude, longitude, source are NOT yet in Supabase — omit them.
           const dbData = {
             id: order.id,
             customer_name: order.customerName,
@@ -42,6 +40,9 @@ export const Route = createFileRoute("/api/save-order")({
             status: order.status || "Processing",
             payment_status: order.paymentStatus || "Pending - COD",
             tracking_id: order.trackingId || null,
+            source: order.source || "website",
+            latitude: order.latitude != null ? Number(order.latitude) : null,
+            longitude: order.longitude != null ? Number(order.longitude) : null,
           };
 
           console.log("[save-order] Inserting order:", dbData.id);
@@ -86,7 +87,9 @@ export const Route = createFileRoute("/api/save-order")({
             status: savedRow.status || order.status,
             paymentStatus: savedRow.payment_status || order.paymentStatus,
             trackingId: savedRow.tracking_id || order.trackingId,
-            source: order.source || "website",
+            source: savedRow.source || order.source || "website",
+            latitude: savedRow.latitude != null ? Number(savedRow.latitude) : null,
+            longitude: savedRow.longitude != null ? Number(savedRow.longitude) : null,
           };
 
           return new Response(JSON.stringify(savedOrder), {
