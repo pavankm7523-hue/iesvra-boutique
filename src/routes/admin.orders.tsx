@@ -196,6 +196,24 @@ function AdminOrders() {
                                     <MapPin className="h-3.5 w-3.5 text-navy-deep/40 shrink-0 mt-0.5" />
                                     <span>{order.shippingAddress}</span>
                                   </div>
+                                  {order.latitude && order.longitude ? (
+                                    <div className="mt-2.5 pt-2.5 border-t border-border/20 text-xs">
+                                      <span className="font-semibold text-navy-deep/60 block mb-1">Pin Location:</span>
+                                      <p className="font-mono text-[10px] text-navy-deep/75">{Number(order.latitude).toFixed(6)}, {Number(order.longitude).toFixed(6)}</p>
+                                      <a
+                                        href={`https://www.google.com/maps?q=${order.latitude},${order.longitude}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-gold hover:underline font-bold mt-1 text-[11px] cursor-pointer"
+                                      >
+                                        <MapPin className="h-3 w-3 shrink-0" /> View on Map
+                                      </a>
+                                    </div>
+                                  ) : (
+                                    <div className="mt-2.5 pt-2.5 border-t border-border/20 text-[10px] text-navy-deep/40 italic">
+                                      No map location pinned
+                                    </div>
+                                  )}
                                 </div>
                               </div>
 

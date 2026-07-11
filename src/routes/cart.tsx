@@ -83,6 +83,17 @@ function Cart() {
   const [placedOrder, setPlacedOrder] = useState<any>(null);
   const [paymentMode, setPaymentMode] = useState<'razorpay' | 'cod'>('razorpay');
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  // Map Pinpoint States
+  const [pinnedLat, setPinnedLat] = useState<number | null>(null);
+  const [pinnedLng, setPinnedLng] = useState<number | null>(null);
+  const [isMapLoading, setIsMapLoading] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
+  const [isGeocoding, setIsGeocoding] = useState(false);
+
+  const mapRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+  const mapInitialized = useRef(false);
   
   // Quick-Commerce Checkout States
   const [isAddressConfirmed, setIsAddressConfirmed] = useState(false);
@@ -266,6 +277,174 @@ function Cart() {
     }
   }, [currentUser]);
 
+  useEffect(() => {
+    if (!isCheckoutOpen) {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+        markerRef.current = null;
+        mapInitialized.current = false;
+      }
+      return;
+    }
+
+    let active = true;
+
+    async function initLeafletMap() {
+      setIsMapLoading(true);
+      setMapError(null);
+
+      try {
+        const L = await loadLeaflet();
+        if (!active) return;
+
+        const mapContainer = document.getElementById("checkout-map");
+        if (!mapContainer || mapInitialized.current) return;
+
+        setIsMapLoading(false);
+
+        // Geolocation or default coordinates (Patna)
+        let initialLat = 25.5941;
+        let initialLng = 85.1376;
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              if (!active) return;
+              initialLat = pos.coords.latitude;
+              initialLng = pos.coords.longitude;
+              setupMap(L, initialLat, initialLng);
+            },
+            () => {
+              if (!active) return;
+              setupMap(L, initialLat, initialLng);
+            },
+            { timeout: 6000 }
+          );
+        } else {
+          setupMap(L, initialLat, initialLng);
+        }
+      } catch (err: any) {
+        if (!active) return;
+        setIsMapLoading(false);
+        setMapError("Failed to load map. You can still fill the address manually.");
+        console.error(err);
+      }
+    }
+
+    function setupMap(L: any, lat: number, lng: number) {
+      if (mapInitialized.current) return;
+      mapInitialized.current = true;
+
+      setPinnedLat(lat);
+      setPinnedLng(lng);
+
+      const map = L.map("checkout-map").setView([lat, lng], 15);
+      mapRef.current = map;
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      const markerHtml = `
+        <div style="background-color: #0b72e7; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.4); transform: translate(-3px, -3px);"></div>
+        <div style="background-color: #0b72e7; width: 3px; height: 18px; margin-left: 5px; transform: translateY(-5px);"></div>
+      `;
+      const customIcon = L.divIcon({
+        html: markerHtml,
+        iconSize: [20, 20],
+        iconAnchor: [10, 20]
+      });
+
+      const marker = L.marker([lat, lng], {
+        draggable: true,
+        icon: customIcon
+      }).addTo(map);
+      markerRef.current = marker;
+
+      marker.on("dragend", () => {
+        const position = marker.getLatLng();
+        setPinnedLat(position.lat);
+        setPinnedLng(position.lng);
+      });
+
+      map.on("click", (e: any) => {
+        marker.setLatLng(e.latlng);
+        setPinnedLat(e.latlng.lat);
+        setPinnedLng(e.latlng.lng);
+      });
+    }
+
+    const timer = setTimeout(() => {
+      initLeafletMap();
+    }, 200);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [isCheckoutOpen]);
+
+  const handleConfirmPinLocation = async () => {
+    if (!pinnedLat || !pinnedLng) return;
+    
+    setIsGeocoding(true);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pinnedLat}&lon=${pinnedLng}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            "Accept-Language": "en",
+            "User-Agent": "IESVRA-Boutique-App/1.0"
+          }
+        }
+      );
+      
+      if (!res.ok) throw new Error("Reverse geocoding failed");
+      const data = await res.json();
+      
+      if (data && data.address) {
+        const addr = data.address;
+        const road = addr.road || addr.suburb || addr.neighbourhood || addr.amenity || "";
+        const cityVal = addr.city || addr.town || addr.village || addr.county || "";
+        const stateVal = addr.state || "";
+        const pincodeVal = addr.postcode || "";
+        
+        const line1 = [road, addr.house_number || ""].filter(Boolean).join(" ");
+        
+        if (line1) setAddressLine1(line1);
+        if (cityVal) setCity(cityVal);
+        if (pincodeVal && /^\d{6}$/.test(pincodeVal)) setPincode(pincodeVal);
+        
+        if (stateVal) {
+          const matchedState = INDIAN_STATES.find(
+            (s) => s.toLowerCase() === stateVal.toLowerCase() || stateVal.toLowerCase().includes(s.toLowerCase())
+          );
+          if (matchedState) {
+            setState(matchedState);
+            if (errors.state) setErrors(prev => ({ ...prev, state: "" }));
+          }
+        }
+        
+        if (line1 && errors.addressLine1) setErrors(prev => ({ ...prev, addressLine1: "" }));
+        if (cityVal && errors.city) setErrors(prev => ({ ...prev, city: "" }));
+        if (pincodeVal && errors.pincode) setErrors(prev => ({ ...prev, pincode: "" }));
+        
+        const formatted = data.display_name || "";
+        setAddressSearch(formatted);
+        
+        toast.success("Location confirmed and address autofilled!");
+      } else {
+        throw new Error("No address found for these coordinates.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to retrieve address details. Please fill manually.");
+    } finally {
+      setIsGeocoding(false);
+    }
+  };
+
   // Direct checkout URL query param handler
   useEffect(() => {
     if (typeof window === "undefined" || cartItems.length === 0) return;
@@ -389,7 +568,9 @@ function Cart() {
           subtotal,
           deliveryFee,
           total,
-          "Pending - COD"
+          "Pending - COD",
+          pinnedLat,
+          pinnedLng
         );
         setPlacedOrder(order);
         toast.success("Order placed successfully via Cash on Delivery!");
@@ -466,7 +647,9 @@ function Cart() {
               subtotal,
               deliveryFee,
               total,
-              "Paid"
+              "Paid",
+              pinnedLat,
+              pinnedLng
             );
 
             setPlacedOrder(order);
@@ -823,6 +1006,40 @@ function Cart() {
                       {errors.email && <span className="text-[9px] text-red-500 font-semibold">{errors.email}</span>}
                     </div>
 
+                    {/* Map Pinpoint Selector Card */}
+                    <div className="flex flex-col gap-2 bg-[#f8f9fb] p-3 rounded-xl border border-border/20">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/75">Pin Exact Delivery Location</span>
+                        {pinnedLat && pinnedLng && (
+                          <span className="text-[9px] font-mono text-navy-deep/50 bg-[#e4e7eb] px-1.5 py-0.5 rounded">
+                            {pinnedLat.toFixed(5)}, {pinnedLng.toFixed(5)}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div id="checkout-map" style={{ height: '180px' }} className="w-full rounded-lg overflow-hidden border border-border/40 relative z-10 bg-secondary/15 flex items-center justify-center">
+                        {isMapLoading ? (
+                          <span className="text-xs font-semibold text-navy-deep/60">Loading Interactive Map...</span>
+                        ) : mapError ? (
+                          <span className="text-xs text-red-500 font-semibold p-4 text-center">{mapError}</span>
+                        ) : null}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={handleConfirmPinLocation}
+                          disabled={!pinnedLat || !pinnedLng || isGeocoding}
+                          className="flex-1 h-9 bg-[#0b72e7] hover:bg-[#095ec0] disabled:bg-gray-300 text-white rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center gap-1.5 animate-in fade-in duration-200"
+                        >
+                          📍 {isGeocoding ? "Confirming..." : "Confirm Pin Location"}
+                        </button>
+                      </div>
+                      <p className="text-[9px] text-navy-deep/50 leading-normal">
+                        Drag map/pin to delivery location. Click "Confirm Pin Location" to autofill fields.
+                      </p>
+                    </div>
+
                     {/* Address Fields */}
                     <div className="flex flex-col gap-1">
                       <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Address Line 1 * (House/Flat No, Building, Street)</label>
@@ -1131,7 +1348,10 @@ function Cart() {
                         cartItems,
                         subtotal,
                         deliveryFee,
-                        total
+                        total,
+                        "Paid",
+                        pinnedLat,
+                        pinnedLng
                       );
                       setPlacedOrder(order);
                       toast.success(`Payment successful! Simulated ID: pay_${Math.random().toString(36).substr(2, 9)}`);
@@ -1242,4 +1462,43 @@ function Cart() {
       )}
     </div>
   );
+}
+
+function loadLeaflet(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === "undefined") {
+      reject(new Error("Cannot load Leaflet in SSR environment"));
+      return;
+    }
+    if ((window as any).L) {
+      resolve((window as any).L);
+      return;
+    }
+
+    if (!document.getElementById("leaflet-css")) {
+      const link = document.createElement("link");
+      link.id = "leaflet-css";
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+    }
+
+    const existingScript = document.getElementById("leaflet-js");
+    if (existingScript) {
+      existingScript.addEventListener("load", () => resolve((window as any).L));
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "leaflet-js";
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.async = true;
+    script.onload = () => {
+      resolve((window as any).L);
+    };
+    script.onerror = () => {
+      reject(new Error("Leaflet script failed to load"));
+    };
+    document.body.appendChild(script);
+  });
 }

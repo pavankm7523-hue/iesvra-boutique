@@ -26,6 +26,8 @@ export interface Order {
   status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending';
   paymentStatus?: 'Paid' | 'Pending - COD';
   trackingId?: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 const ORDERS_EVENT = "IESVRA_orders_changed";
@@ -64,6 +66,8 @@ const OrderSchema = z.object({
   status: z.string(),
   paymentStatus: z.string().optional(),
   trackingId: z.string().optional(),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
 });
 
 export const createOrderServer = createServerFn({ method: "POST" })
@@ -174,7 +178,9 @@ export async function createOrder(
   subtotal: number,
   shipping: number,
   total: number,
-  paymentStatus?: 'Paid' | 'Pending - COD'
+  paymentStatus?: 'Paid' | 'Pending - COD',
+  latitude?: number | null,
+  longitude?: number | null
 ): Promise<Order> {
   const newOrder: Order = {
     id: `ISH-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -189,6 +195,8 @@ export async function createOrder(
     date: new Date().toISOString().split("T")[0],
     status: 'Processing',
     paymentStatus: paymentStatus || 'Pending - COD',
+    latitude: latitude ?? null,
+    longitude: longitude ?? null,
   };
 
   // Sanitize the order through JSON roundtrip to strip any `undefined` optional
