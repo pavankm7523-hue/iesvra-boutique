@@ -19,7 +19,8 @@
   // Color Theme Manager
   function initTheme() {
     const savedTheme = localStorage.getItem('iesvra_mobile_theme');
-    const isLight = savedTheme === 'light';
+    // Default to 'light' mode if no theme has been saved yet
+    const isLight = (savedTheme || 'light') === 'light';
     document.body.classList.toggle('theme-light', isLight);
     
     // Toggle icon display inside buttons
