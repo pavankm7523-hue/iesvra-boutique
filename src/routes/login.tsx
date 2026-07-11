@@ -257,14 +257,27 @@ function Login() {
 
   return (
     <div className="bg-background text-foreground min-h-screen flex flex-col items-center justify-center p-4">
-      <Link to="/" className="mb-8 flex items-center gap-3">
-        <img
-          src={logo}
-          alt="IESVRA"
-          className="h-14 w-14 rounded-full bg-navy-deep p-1 shadow-sm ring-1 ring-gold/30 object-cover"
-        />
-        <span className="font-display text-3xl font-semibold tracking-tight text-navy-deep leading-none">
-          IESVRA
+      <Link to="/" className="mb-8 flex items-center">
+        <span className="font-display text-3xl sm:text-4xl font-extrabold tracking-[0.05em] text-navy-deep flex items-center select-none">
+          <span>IES</span>
+          <span className="inline-block mx-1.5 w-8 h-10 relative -top-[2px]">
+            <svg className="w-full h-full" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32,38 C32,18 68,18 68,38" stroke="#E6B96E" strokeWidth="6" strokeLinecap="round" fill="none" />
+              <polygon points="50,95 78,38 48,38" fill="url(#loginGoldGradient)" />
+              <polygon points="50,95 48,38 22,38" fill="#1e293b" />
+              <line x1="22" y1="38" x2="78" y2="38" stroke="#E6B96E" strokeWidth="6.5" strokeLinecap="round" />
+              <circle cx="29" cy="46" r="4.5" fill="#ffffff" />
+              <defs>
+                <linearGradient id="loginGoldGradient" x1="48" y1="38" x2="78" y2="95" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#FFF3CC" />
+                  <stop offset="50%" stopColor="#E6B96E" />
+                  <stop offset="100%" stopColor="#A67C33" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </span>
+          <span>RA</span>
+          <span className="text-xs font-normal align-super relative -top-2 ml-0.5 opacity-60">®</span>
         </span>
       </Link>
 

@@ -42,14 +42,27 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
         {/* Brand & Social */}
         <div className="flex flex-col gap-6">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src={logo}
-              alt="IESVRA"
-              className="h-12 w-12 object-contain"
-            />
-            <span className="font-display text-2xl font-bold tracking-[0.1em] text-white leading-none">
-              IESVRA
+          <Link to="/" className="flex items-center text-white">
+            <span className="font-display text-2xl font-extrabold tracking-[0.05em] flex items-center select-none">
+              <span>IES</span>
+              <span className="inline-block mx-0.5 w-6 h-8 relative -top-[1px]">
+                <svg className="w-full h-full" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M32,38 C32,18 68,18 68,38" stroke="#E6B96E" strokeWidth="6" strokeLinecap="round" fill="none" />
+                  <polygon points="50,95 78,38 48,38" fill="url(#footerGoldGradient)" />
+                  <polygon points="50,95 48,38 22,38" fill="#ffffff" />
+                  <line x1="22" y1="38" x2="78" y2="38" stroke="#E6B96E" strokeWidth="6.5" strokeLinecap="round" />
+                  <circle cx="29" cy="46" r="4.5" fill="#061022" />
+                  <defs>
+                    <linearGradient id="footerGoldGradient" x1="48" y1="38" x2="78" y2="95" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#FFF3CC" />
+                      <stop offset="50%" stopColor="#E6B96E" />
+                      <stop offset="100%" stopColor="#A67C33" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </span>
+              <span>RA</span>
+              <span className="text-[9px] font-normal align-super relative -top-1.5 ml-0.5 opacity-60">®</span>
             </span>
           </Link>
           <p className="text-sm text-white/70 leading-relaxed">

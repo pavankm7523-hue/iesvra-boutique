@@ -149,17 +149,28 @@ export function Header() {
             >
               <Menu className="h-6 w-6" />
             </button>
-            <Link to="/" className="flex items-center gap-3">
-              <img
-                src={logo}
-                alt="IESVRA"
-                className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
-              />
-              <div className="hidden sm:flex flex-col">
-                <span className="font-display text-2xl lg:text-3xl font-bold tracking-[0.1em] text-white leading-none">
-                  IESVRA
+            <Link to="/" className="flex items-center">
+              <span className="font-display text-2xl sm:text-3xl font-extrabold tracking-[0.05em] text-white flex items-center select-none">
+                <span>IES</span>
+                <span className="inline-block mx-0.5 w-6 sm:w-7 h-8 sm:h-9 relative -top-[1px]">
+                  <svg className="w-full h-full" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32,38 C32,18 68,18 68,38" stroke="#E6B96E" strokeWidth="6" strokeLinecap="round" fill="none" />
+                    <polygon points="50,95 78,38 48,38" fill="url(#headerGoldGradient)" />
+                    <polygon points="50,95 48,38 22,38" fill="#ffffff" />
+                    <line x1="22" y1="38" x2="78" y2="38" stroke="#E6B96E" strokeWidth="6.5" strokeLinecap="round" />
+                    <circle cx="29" cy="46" r="4.5" fill="#061022" />
+                    <defs>
+                      <linearGradient id="headerGoldGradient" x1="48" y1="38" x2="78" y2="95" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="#FFF3CC" />
+                        <stop offset="50%" stopColor="#E6B96E" />
+                        <stop offset="100%" stopColor="#A67C33" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
                 </span>
-              </div>
+                <span>RA</span>
+                <span className="text-[9px] sm:text-xs font-normal align-super relative -top-1.5 ml-0.5 opacity-60">®</span>
+              </span>
             </Link>
 
             {/* Zepto-style Delivery Indicator */}
@@ -370,14 +381,27 @@ export function Header() {
         }`}
       >
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
-          <Link to="/" className="flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
-            <img
-              src={logo}
-              alt="IESVRA"
-              className="h-10 w-10 object-contain"
-            />
-            <span className="font-display text-xl font-bold tracking-[0.1em] text-white">
-              IESVRA
+          <Link to="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
+            <span className="font-display text-xl font-extrabold tracking-[0.05em] text-white flex items-center select-none">
+              <span>IES</span>
+              <span className="inline-block mx-0.5 w-5 h-7 relative -top-[1px]">
+                <svg className="w-full h-full" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M32,38 C32,18 68,18 68,38" stroke="#E6B96E" strokeWidth="6" strokeLinecap="round" fill="none" />
+                  <polygon points="50,95 78,38 48,38" fill="url(#mobileGoldGradient)" />
+                  <polygon points="50,95 48,38 22,38" fill="#ffffff" />
+                  <line x1="22" y1="38" x2="78" y2="38" stroke="#E6B96E" strokeWidth="6.5" strokeLinecap="round" />
+                  <circle cx="29" cy="46" r="4.5" fill="#061022" />
+                  <defs>
+                    <linearGradient id="mobileGoldGradient" x1="48" y1="38" x2="78" y2="95" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#FFF3CC" />
+                      <stop offset="50%" stopColor="#E6B96E" />
+                      <stop offset="100%" stopColor="#A67C33" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </span>
+              <span>RA</span>
+              <span className="text-[8px] font-normal align-super relative -top-1.5 ml-0.5 opacity-60">®</span>
             </span>
           </Link>
           <button 
