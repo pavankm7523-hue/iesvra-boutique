@@ -348,6 +348,13 @@ export function Header() {
               <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
             </Link>
           ))}
+          <a
+            href="/mobile-app/"
+            className="text-xs font-semibold tracking-wide text-white/80 hover:text-gold transition-colors relative py-3.5 group flex items-center gap-1"
+          >
+            Mobile App
+            <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
+          </a>
         </div>
       </nav>
       {/* Mobile Menu Drawer Overlay */}
@@ -415,6 +422,13 @@ export function Header() {
               {l.label}
             </Link>
           ))}
+          <a
+            href="/mobile-app/"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-sm font-semibold tracking-wide text-white/80 hover:text-gold transition-colors py-2 border-b border-white/5 last:border-0"
+          >
+            Mobile App
+          </a>
         </nav>
       </div>
 
