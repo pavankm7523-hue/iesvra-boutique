@@ -165,7 +165,7 @@ export async function fetchAddressSuggestions(query: string): Promise<string[]> 
   try {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
       query
-    )}&format=json&limit=5&countrycodes=in&addressdetails=1&accept-language=en`;
+    )}&format=json&limit=15&countrycodes=in&addressdetails=1&accept-language=en`;
     console.log("[checkout-map-search] Nominatim URL:", url);
     const res = await fetch(url, {
       headers: {
