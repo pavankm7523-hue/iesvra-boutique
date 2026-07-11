@@ -285,7 +285,11 @@ export async function cancelOrder(orderId: string): Promise<boolean> {
 
 export async function getOrderById(orderId: string): Promise<Order | null> {
   try {
-    return await getOrderByIdServer(orderId);
+    // Use direct fetch to /api/get-order to avoid createServerFn SSR caching issues
+    const res = await fetch(`/api/get-order?id=${encodeURIComponent(orderId)}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data as Order | null;
   } catch (e) {
     console.error(`Failed to get order by ID ${orderId}:`, e);
     return null;

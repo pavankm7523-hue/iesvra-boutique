@@ -34,6 +34,7 @@ import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confi
 import { Route as ApiSaveOrderRouteImport } from './routes/api/save-order'
 import { Route as ApiProductsRouteImport } from './routes/api/products'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
+import { Route as ApiGetOrderRouteImport } from './routes/api/get-order'
 import { Route as ApiDiagRouteImport } from './routes/api/diag'
 import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
 import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
@@ -171,6 +172,11 @@ const ApiNotifyAdminRoute = ApiNotifyAdminRouteImport.update({
   path: '/api/notify-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGetOrderRoute = ApiGetOrderRouteImport.update({
+  id: '/api/get-order',
+  path: '/api/get-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDiagRoute = ApiDiagRouteImport.update({
   id: '/api/diag',
   path: '/api/diag',
@@ -251,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
+  '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
   '/api/save-order': typeof ApiSaveOrderRoute
@@ -288,6 +295,7 @@ export interface FileRoutesByTo {
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
+  '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
   '/api/save-order': typeof ApiSaveOrderRoute
@@ -327,6 +335,7 @@ export interface FileRoutesById {
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/diag': typeof ApiDiagRoute
+  '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
   '/api/save-order': typeof ApiSaveOrderRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/api/categories'
     | '/api/create-order'
     | '/api/diag'
+    | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
     | '/api/save-order'
@@ -404,6 +414,7 @@ export interface FileRouteTypes {
     | '/api/categories'
     | '/api/create-order'
     | '/api/diag'
+    | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
     | '/api/save-order'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/api/categories'
     | '/api/create-order'
     | '/api/diag'
+    | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
     | '/api/save-order'
@@ -477,6 +489,7 @@ export interface RootRouteChildren {
   ApiCategoriesRoute: typeof ApiCategoriesRoute
   ApiCreateOrderRoute: typeof ApiCreateOrderRoute
   ApiDiagRoute: typeof ApiDiagRoute
+  ApiGetOrderRoute: typeof ApiGetOrderRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
   ApiProductsRoute: typeof ApiProductsRoute
   ApiSaveOrderRoute: typeof ApiSaveOrderRoute
@@ -666,6 +679,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNotifyAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/get-order': {
+      id: '/api/get-order'
+      path: '/api/get-order'
+      fullPath: '/api/get-order'
+      preLoaderRoute: typeof ApiGetOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/diag': {
       id: '/api/diag'
       path: '/api/diag'
@@ -788,6 +808,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCategoriesRoute: ApiCategoriesRoute,
   ApiCreateOrderRoute: ApiCreateOrderRoute,
   ApiDiagRoute: ApiDiagRoute,
+  ApiGetOrderRoute: ApiGetOrderRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
   ApiProductsRoute: ApiProductsRoute,
   ApiSaveOrderRoute: ApiSaveOrderRoute,
