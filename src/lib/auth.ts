@@ -44,6 +44,15 @@ const ADMIN_PASSWORD_KEY = "ishvara_admin_password";
 const DEFAULT_ADMIN_PASSWORD = "Iesvra@3104";
 const DEFAULT_ADMIN_EMAIL = "arenterprisess409@gmail.com";
 
+export function isAdminEmail(email: string): boolean {
+  const normalized = email.trim().toLowerCase();
+  return (
+    normalized === "arenterprisess409@gmail.com" ||
+    normalized === "ishvaraindiaa@gmail.com" ||
+    normalized === "admin@iesvra.com"
+  );
+}
+
 export function getRegisteredUsers(): RegisteredUser[] {
   if (typeof window === "undefined") return [];
   try {
@@ -200,7 +209,8 @@ export function hashPassword(password: string): string {
 export function registerUserInDb(name: string, email: string, password: string): boolean {
   const users = getRegisteredUsers();
   const normalizedEmail = email.trim().toLowerCase();
-  if (normalizedEmail === DEFAULT_ADMIN_EMAIL) return false;
+  // Don't allow registering the primary default admin email as a user
+  if (normalizedEmail === "arenterprisess409@gmail.com" || normalizedEmail === "admin@iesvra.com") return false;
   if (users.some(u => u.email.toLowerCase() === normalizedEmail)) {
     return false;
   }
@@ -208,7 +218,7 @@ export function registerUserInDb(name: string, email: string, password: string):
     name: name.trim(),
     email: normalizedEmail,
     passwordHash: hashPassword(password),
-    role: 'user'
+    role: isAdminEmail(normalizedEmail) ? 'admin' : 'user'
   });
   saveRegisteredUsers(users);
   return true;
@@ -216,16 +226,33 @@ export function registerUserInDb(name: string, email: string, password: string):
 
 export function validateUserCredentials(email: string, password: string): { success: boolean; name?: string; role?: 'user' | 'admin'; error?: string } {
   const normalizedEmail = email.trim().toLowerCase();
-  if (normalizedEmail === DEFAULT_ADMIN_EMAIL) {
+  
+  if (isAdminEmail(normalizedEmail)) {
     const adminPassword = getAdminPassword();
     const incomingHash = hashPassword(password);
+    
+    // Check against global admin password
     if (password === adminPassword || incomingHash === adminPassword) {
-      // Upgrade plaintext admin password to hashed version on first successful login
       if (password === adminPassword) {
         saveAdminPassword(incomingHash);
       }
       return { success: true, name: "IESVRA Admin", role: "admin" };
     }
+    
+    // Fallback: Check if they have registered a user account with a personal password
+    const users = getRegisteredUsers();
+    const userIndex = users.findIndex(u => u.email.toLowerCase() === normalizedEmail);
+    if (userIndex !== -1) {
+      const user = users[userIndex];
+      if (user.passwordHash === password || user.passwordHash === incomingHash) {
+        if (user.passwordHash === password) {
+          user.passwordHash = incomingHash;
+          saveRegisteredUsers(users);
+        }
+        return { success: true, name: user.name, role: "admin" }; // Upgrade role to admin!
+      }
+    }
+    
     return { success: false, error: "Incorrect password for system administrator." };
   }
 
@@ -241,7 +268,6 @@ export function validateUserCredentials(email: string, password: string): { succ
     return { success: false, error: "Incorrect password. Please try again." };
   }
   
-  // Upgrade legacy plaintext password to hashed format and write back to storage on first successful login
   if (user.passwordHash === password) {
     user.passwordHash = incomingHash;
     saveRegisteredUsers(users);
@@ -252,22 +278,26 @@ export function validateUserCredentials(email: string, password: string): { succ
 
 export function updateUserPassword(email: string, password: string): boolean {
   const normalizedEmail = email.trim().toLowerCase();
-  if (normalizedEmail === DEFAULT_ADMIN_EMAIL) {
-    saveAdminPassword(hashPassword(password));
-    return true;
+  const hashed = hashPassword(password);
+  
+  if (isAdminEmail(normalizedEmail)) {
+    saveAdminPassword(hashed);
   }
 
   const users = getRegisteredUsers();
   const userIndex = users.findIndex(u => u.email.toLowerCase() === normalizedEmail);
-  if (userIndex === -1) return false;
-  users[userIndex].passwordHash = hashPassword(password);
-  saveRegisteredUsers(users);
-  return true;
+  if (userIndex !== -1) {
+    users[userIndex].passwordHash = hashed;
+    saveRegisteredUsers(users);
+    return true;
+  }
+  
+  return isAdminEmail(normalizedEmail);
 }
 
 export function hasUserAccount(email: string): boolean {
   const normalizedEmail = email.trim().toLowerCase();
-  if (normalizedEmail === DEFAULT_ADMIN_EMAIL) return true;
+  if (isAdminEmail(normalizedEmail)) return true;
   const users = getRegisteredUsers();
   return users.some(u => u.email.toLowerCase() === normalizedEmail);
 }

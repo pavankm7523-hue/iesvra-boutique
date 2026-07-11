@@ -143,10 +143,19 @@
     }
   }
 
+  function isAdminEmail(email) {
+    const normalized = email.trim().toLowerCase();
+    return (
+      normalized === "arenterprisess409@gmail.com" ||
+      normalized === "ishvaraindiaa@gmail.com" ||
+      normalized === "admin@iesvra.com"
+    );
+  }
+
   function registerMobileUser(name, email, password) {
     const users = getRegisteredUsers();
     const normalizedEmail = email.trim().toLowerCase();
-    if (normalizedEmail === DEFAULT_ADMIN_EMAIL) return false;
+    if (normalizedEmail === "arenterprisess409@gmail.com" || normalizedEmail === "admin@iesvra.com") return false;
     if (users.some(u => u.email.toLowerCase() === normalizedEmail)) {
       return false;
     }
@@ -154,7 +163,7 @@
       name: name.trim(),
       email: normalizedEmail,
       passwordHash: hashPassword(password),
-      role: 'user'
+      role: isAdminEmail(normalizedEmail) ? 'admin' : 'user'
     });
     localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
     
@@ -170,11 +179,13 @@
 
   function validateCredentials(email, password) {
     const normalizedEmail = email.trim().toLowerCase();
-    if (normalizedEmail === DEFAULT_ADMIN_EMAIL) {
+    
+    if (isAdminEmail(normalizedEmail)) {
       const adminPassword = localStorage.getItem("ishvara_admin_password") || DEFAULT_ADMIN_PASSWORD;
       const incomingHash = hashPassword(password);
+      
+      // Check against global admin password
       if (password === adminPassword || incomingHash === adminPassword) {
-        // Upgrade legacy plaintext admin password to hashed version on first successful login
         if (password === adminPassword) {
           localStorage.setItem("ishvara_admin_password", incomingHash);
           fetch("/api/admin-password", {
@@ -185,6 +196,26 @@
         }
         return { success: true, name: "IESVRA Admin", role: "admin" };
       }
+      
+      // Fallback: Check if they have a registered user account
+      const users = getRegisteredUsers();
+      const userIndex = users.findIndex(u => u.email.toLowerCase() === normalizedEmail);
+      if (userIndex !== -1) {
+        const user = users[userIndex];
+        if (user.passwordHash === password || user.passwordHash === incomingHash) {
+          if (user.passwordHash === password) {
+            user.passwordHash = incomingHash;
+            localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
+            fetch("/api/users", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(users)
+            }).catch(console.error);
+          }
+          return { success: true, name: user.name, role: "admin" }; // Upgrade role to admin!
+        }
+      }
+      
       return { success: false, error: "Incorrect password for system administrator." };
     }
 
@@ -198,7 +229,6 @@
     if (user.passwordHash !== password && user.passwordHash !== incomingHash) {
       return { success: false, error: "Incorrect password. Please try again." };
     }
-    // Upgrades legacy plaintext password to hashed format upon first successful login
     if (user.passwordHash === password) {
       user.passwordHash = incomingHash;
       localStorage.setItem("ishvara_registered_users", JSON.stringify(users));

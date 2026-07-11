@@ -112,14 +112,14 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
             }
           }
 
-          // C. Send welcome coupon email to subscriber
+          // C. Send welcome coupon email to subscriber (with details about our website)
           const emailHtml = `
             <!DOCTYPE html>
             <html>
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Welcome to the IESVRA Newsletter</title>
+              <title>Welcome to the IESVRA Boutique</title>
             </head>
             <body style="margin: 0; padding: 0; background-color: #f8f9fb; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8f9fb; padding: 40px 0;">
@@ -130,16 +130,20 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
                       <tr>
                         <td align="center" style="background-color: #0b121e; padding: 40px 20px; border-bottom: 4px solid #c9a55c;">
                           <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 0.1em; font-family: 'Outfit', sans-serif; text-transform: uppercase;">IESVRA</h1>
-                          <p style="color: #c9a55c; margin: 8px 0 0 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em;">Newsletter Subscription</p>
+                          <p style="color: #c9a55c; margin: 8px 0 0 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em;">Quality Products, Best Prices, Everyday</p>
                         </td>
                       </tr>
                       
                       <!-- Message -->
                       <tr>
                         <td style="padding: 40px 30px;">
-                          <h2 style="margin: 0 0 20px 0; font-size: 20px; color: #0b121e; font-weight: 700;">You are in the Loop!</h2>
+                          <h2 style="margin: 0 0 20px 0; font-size: 20px; color: #0b121e; font-weight: 700;">Welcome to the IESVRA Family!</h2>
                           <p style="margin: 0 0 20px 0; font-size: 15px; color: #475569; line-height: 1.6; font-weight: 300;">
-                            Thank you for subscribing to the **IESVRA** newsletter. You are now officially a part of our inner circle.
+                            Thank you for subscribing to the **IESVRA** newsletter. You are now officially a part of our premium shopping circle!
+                          </p>
+                          <p style="margin: 0 0 20px 0; font-size: 15px; color: #475569; line-height: 1.6; font-weight: 300;">
+                            <strong>About Our Store:</strong><br>
+                            At <strong>IESVRA</strong>, we curate high-quality products across multiple categories including trendy gadgets, premium home & kitchen essentials, beauty, personal care, and fashion accessories. Our mission is to make premium boutique shopping accessible with top-tier customer service and fast delivery options.
                           </p>
                           <p style="margin: 0 0 30px 0; font-size: 15px; color: #475569; line-height: 1.6; font-weight: 300;">
                             We promise to bring you only the finest details: exclusive early sale access, new curated product drops, and insights into premium essentials.
@@ -170,7 +174,7 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
                       <!-- Footer -->
                       <tr>
                         <td align="center" style="background-color: #f8f9fb; padding: 30px 20px; border-top: 1px solid #e5e7eb;">
-                          <p style="margin: 0 0 10px 0; font-size: 13px; color: #0b121e; font-weight: 700; letter-spacing: 0.05em;">IESVRA</p>
+                          <p style="margin: 0 0 10px 0; font-size: 13px; color: #0b121e; font-weight: 700; letter-spacing: 0.05em;">IESVRA BOUTIQUE</p>
                           <p style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.5;">
                             You received this email because you subscribed to our updates. If you wish to unsubscribe, you can do so by replying to this email.
                           </p>
@@ -201,6 +205,38 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
           if (!emailRes.ok) {
             const emailErrData = await emailRes.json();
             console.error("Resend welcome email failed:", emailErrData);
+          }
+
+          // Send admin notification to both admin emails
+          const adminEmails = ["arenterprisess409@gmail.com", "ishvaraindiaa@gmail.com"];
+          try {
+            const adminNotifyRes = await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                from: "IESVRA Alerts <newsletter@iesvra.com>",
+                to: adminEmails,
+                subject: `🔔 New Newsletter Subscriber: ${trimmedEmail}`,
+                html: `
+                  <div style="font-family: sans-serif; padding: 20px; max-width: 600px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <h2 style="color: #0b121e; margin-bottom: 20px;">New Newsletter Subscription</h2>
+                    <p>A new user has subscribed to the IESVRA newsletter!</p>
+                    <p><strong>Subscriber Email:</strong> <a href="mailto:${trimmedEmail}">${trimmedEmail}</a></p>
+                    <p><strong>Subscribed At:</strong> ${new Date().toLocaleString()}</p>
+                    <p>The subscriber has been sent the welcome email and FIRST15 welcome coupon code.</p>
+                  </div>
+                `,
+              }),
+            });
+            if (!adminNotifyRes.ok) {
+              const adminErr = await adminNotifyRes.json();
+              console.error("Failed to send admin notification email:", adminErr);
+            }
+          } catch (adminErr) {
+            console.error("Resend admin notify email error:", adminErr);
           }
 
           return new Response(

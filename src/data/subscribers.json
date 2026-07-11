@@ -1,0 +1,18 @@
+[
+  {
+    "email": "test-subscriber@gmail.com",
+    "subscribedAt": "2026-07-11T07:47:39.240Z"
+  },
+  {
+    "email": "another-test-subscriber@gmail.com",
+    "subscribedAt": "2026-07-11T07:48:51.234Z"
+  },
+  {
+    "email": "third-test-subscriber@gmail.com",
+    "subscribedAt": "2026-07-11T07:49:41.912Z"
+  },
+  {
+    "email": "immediate-test@gmail.com",
+    "subscribedAt": "2026-07-11T07:50:07.176Z"
+  }
+]
