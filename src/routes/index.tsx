@@ -33,31 +33,8 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  component: HomeRouteComponent,
+  component: Home,
 });
-
-function HomeRouteComponent() {
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const checkDevice = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (mobile) {
-        window.location.replace("/mobile-app/");
-      }
-    };
-    checkDevice();
-    window.addEventListener("resize", checkDevice);
-    return () => window.removeEventListener("resize", checkDevice);
-  }, []);
-
-  if (isMobile === null || isMobile) {
-    return null;
-  }
-
-  return <Home />;
-}
 
 function Home() {
   const { isLoaded, bestSellersList, products } = useProducts();
