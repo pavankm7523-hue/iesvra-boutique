@@ -26,7 +26,9 @@ export const Route = createFileRoute("/api/save-order")({
           }
 
           // Convert camelCase order to snake_case for Supabase
-          const dbData: Record<string, unknown> = {
+          // NOTE: Only include columns that exist in the DB schema.
+          // latitude, longitude, source are NOT yet in Supabase — omit them.
+          const dbData = {
             id: order.id,
             customer_name: order.customerName,
             customer_email: order.customerEmail,
@@ -40,14 +42,7 @@ export const Route = createFileRoute("/api/save-order")({
             status: order.status || "Processing",
             payment_status: order.paymentStatus || "Pending - COD",
             tracking_id: order.trackingId || null,
-            source: order.source || "website",
           };
-
-          // Only include lat/lng if they exist (columns may not be in DB schema yet)
-          if (order.latitude != null && order.longitude != null) {
-            dbData.latitude = Number(order.latitude);
-            dbData.longitude = Number(order.longitude);
-          }
 
           console.log("[save-order] Inserting order:", dbData.id);
 
@@ -77,7 +72,7 @@ export const Route = createFileRoute("/api/save-order")({
           const savedRow = list && list.length > 0 ? list[0] : dbData;
 
           // Return camelCase order to client
-          const savedOrder: Record<string, unknown> = {
+          const savedOrder = {
             id: String(savedRow.id || order.id),
             customerName: String(savedRow.customer_name || order.customerName),
             customerEmail: String(savedRow.customer_email || order.customerEmail),
@@ -91,10 +86,8 @@ export const Route = createFileRoute("/api/save-order")({
             status: savedRow.status || order.status,
             paymentStatus: savedRow.payment_status || order.paymentStatus,
             trackingId: savedRow.tracking_id || order.trackingId,
-            source: savedRow.source || order.source || "website",
+            source: order.source || "website",
           };
-          if (savedRow.latitude != null) savedOrder.latitude = Number(savedRow.latitude);
-          if (savedRow.longitude != null) savedOrder.longitude = Number(savedRow.longitude);
 
           return new Response(JSON.stringify(savedOrder), {
             status: 200,
