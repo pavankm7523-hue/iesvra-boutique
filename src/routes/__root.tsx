@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -132,6 +133,25 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Dynamically load Google Maps JavaScript API if key is present
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || localStorage.getItem("IESVRA_google_maps_key") || "";
+    if (!apiKey) return;
+
+    if ((window as any).google?.maps?.places) return; // already loaded
+
+    const scriptId = "google-maps-sdk";
+    if (document.getElementById(scriptId)) return;
+
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=en`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
