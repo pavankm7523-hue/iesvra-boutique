@@ -249,6 +249,8 @@ function Cart() {
         setIsExpressAvailable(res.eligible);
         if (!res.eligible) {
           setDeliverySpeed('standard');
+        } else {
+          setDeliverySpeed('express');
         }
         setVerificationError(res.error);
       } catch (err) {

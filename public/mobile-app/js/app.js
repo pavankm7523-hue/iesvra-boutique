@@ -1903,6 +1903,15 @@
       checkoutIsExpressEligible = true;
       if (label) label.style.display = 'flex';
       if (notice) notice.style.display = 'none';
+      
+      // Auto-select Express delivery radio button
+      const radios = document.getElementsByName('deliverySpeed');
+      if (radios && radios.length > 1) {
+        radios[1].checked = true; // Express is the second radio option
+      }
+      checkoutDeliverySpeed = 'express';
+      window.updateCheckoutDelivery('express');
+      
       showToast(`Address is within 15 km (${distance.toFixed(1)} km). Express 15-min delivery available!`);
     } else {
       checkoutIsExpressEligible = false;
