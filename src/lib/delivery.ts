@@ -57,6 +57,9 @@ export function getGoogleApiKey(): string {
       ""
     );
   }
+  return "";
+}
+
 // In-memory cache for resolved Google Maps URLs
 export const resolvedUrlsCache = new Map<string, GeocodeResult>();
 

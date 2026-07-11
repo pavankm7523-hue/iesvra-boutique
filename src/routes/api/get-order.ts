@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
 
-export const Route = createFileRoute("/api/get-order")(({
+export const Route = createFileRoute("/api/get-order")({
   server: {
     handlers: {
       GET: async ({ request }) => {
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/api/get-order")(({
           }
 
           const res = await fetch(
-            `${supaUrl}/rest/v1/orders?id=eq.${encodeURIComponent(orderId)}&select=*`,
+            `${supaUrl}/rest/v1/orders?id=eq.${encodeURIComponent(orderId)}`,
             {
               headers: {
                 apikey: key,
@@ -52,31 +52,33 @@ export const Route = createFileRoute("/api/get-order")(({
             });
           }
 
-          const row = list[0];
-          const order = {
-            id: String(row.id || ""),
-            customerName: String(row.customer_name || ""),
-            customerEmail: String(row.customer_email || ""),
-            customerPhone: String(row.customer_phone || ""),
-            shippingAddress: String(row.shipping_address || ""),
-            items: Array.isArray(row.items)
-              ? row.items
-              : typeof row.items === "string"
-              ? JSON.parse(row.items)
-              : [],
-            subtotal: Number(row.subtotal) || 0,
-            shipping: Number(row.shipping) || 0,
-            total: Number(row.total) || 0,
-            date: String(row.date || ""),
-            status: row.status || "Processing",
-            paymentStatus: row.payment_status || undefined,
-            trackingId: row.tracking_id || undefined,
-            source: row.source || "website",
-            latitude: row.latitude != null ? Number(row.latitude) : null,
-            longitude: row.longitude != null ? Number(row.longitude) : null,
+          const order = list[0];
+          // Convert database snake_case fields back to CamelCase for the frontend
+          const result = {
+            id: order.id,
+            name: order.name,
+            email: order.email,
+            phone: order.phone,
+            addressLine1: order.address_line1,
+            addressLine2: order.address_line2,
+            city: order.city,
+            state: order.state,
+            pincode: order.pincode,
+            deliverySpeed: order.delivery_speed,
+            paymentMethod: order.payment_method,
+            items: order.items,
+            subtotal: order.subtotal,
+            shipping: order.shipping,
+            total: order.total,
+            date: order.date,
+            status: order.status,
+            paymentStatus: order.payment_status,
+            trackingId: order.tracking_id,
+            latitude: order.latitude,
+            longitude: order.longitude,
           };
 
-          return new Response(JSON.stringify(order), {
+          return new Response(JSON.stringify(result), {
             status: 200,
             headers: { "Content-Type": "application/json" },
           });
@@ -89,4 +91,4 @@ export const Route = createFileRoute("/api/get-order")(({
       },
     },
   },
-}) as any);
+});

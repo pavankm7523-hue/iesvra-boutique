@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
 
-export const Route = createFileRoute("/api/update-order")(({
+export const Route = createFileRoute("/api/update-order")({
   server: {
     handlers: {
       POST: async ({ request }) => {
@@ -76,4 +76,4 @@ export const Route = createFileRoute("/api/update-order")(({
       },
     },
   },
-}) as any);
+});
