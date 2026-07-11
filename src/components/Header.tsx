@@ -21,7 +21,9 @@ import {
   MapPin,
   Zap,
   Package,
+  Navigation,
 } from "lucide-react";
+import { toast } from "sonner";
 
 export function Header() {
   const navigate = useNavigate();
@@ -41,6 +43,51 @@ export function Header() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSearchingSuggestions, setIsSearchingSuggestions] = useState(false);
+  const [isDetecting, setIsDetecting] = useState(false);
+
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setIsDetecting(true);
+    toast.info("Accessing your location...");
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=en&addressdetails=1`;
+          const res = await fetch(url, {
+            headers: {
+              "User-Agent": "IESVRA-Boutique-App/1.0"
+            }
+          });
+          if (!res.ok) throw new Error("Reverse geocoding failed");
+          const data = await res.json();
+          
+          if (data && data.display_name) {
+            await handleAddressSelect(data.display_name);
+            toast.success("Location detected successfully!");
+          } else {
+            toast.error("Could not find address for your coordinates.");
+          }
+        } catch (err) {
+          console.error("Failed to detect location:", err);
+          toast.error("Failed to retrieve address details.");
+        } finally {
+          setIsDetecting(false);
+        }
+      },
+      (err) => {
+        console.error("Geolocation error:", err);
+        toast.error("Permission denied or location unavailable.");
+        setIsDetecting(false);
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+    );
+  };
 
   // Sync state with localStorage changes from other pages
   useEffect(() => {
@@ -461,6 +508,16 @@ export function Header() {
                 />
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-navy-deep/40" />
               </div>
+
+              <button
+                type="button"
+                onClick={detectLocation}
+                disabled={isDetecting}
+                className="w-full h-11 bg-navy-deep hover:bg-navy-deep/90 disabled:bg-navy-deep/60 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-sm select-none"
+              >
+                <Navigation className={`h-4 w-4 text-gold ${isDetecting ? "animate-spin" : ""}`} />
+                {isDetecting ? "Detecting Location..." : "Auto-Detect My Location"}
+              </button>
               
               {showSuggestions && (
                 <div className="space-y-1 mt-4 max-h-[300px] overflow-y-auto">
