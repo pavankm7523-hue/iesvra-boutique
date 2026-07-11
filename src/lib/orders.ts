@@ -234,18 +234,35 @@ export async function createOrder(
 
 export async function updateOrderStatus(orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') {
   const oldOrder = await getOrderById(orderId);
-  const updatedOrder = await updateOrderStatusServer({ id: orderId, status });
+  
+  // Use direct fetch to /api/update-order to avoid createServerFn SSR caching issues
+  const res = await fetch("/api/update-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: orderId, status })
+  });
+  if (!res.ok) throw new Error("Failed to update order status");
+  
+  const updatedOrder = await getOrderById(orderId);
   triggerOrdersChange();
 
   // If status is changed to Shipped, send the notification email automatically
-  if (status === 'Shipped' && oldOrder && oldOrder.status !== 'Shipped') {
+  if (status === 'Shipped' && oldOrder && oldOrder.status !== 'Shipped' && updatedOrder) {
     sendOrderShippedEmail(updatedOrder);
   }
   return updatedOrder;
 }
 
 export async function updateOrderTracking(orderId: string, trackingId: string) {
-  const updatedOrder = await updateOrderTrackingServer({ id: orderId, trackingId });
+  // Use direct fetch to /api/update-order to avoid createServerFn SSR caching issues
+  const res = await fetch("/api/update-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: orderId, trackingId })
+  });
+  if (!res.ok) throw new Error("Failed to update order tracking");
+
+  const updatedOrder = await getOrderById(orderId);
   triggerOrdersChange();
 
   // Sync with mobile app local storage if they are on the same client browser
@@ -268,7 +285,9 @@ export async function updateOrderTracking(orderId: string, trackingId: string) {
   }
 
   // Trigger dispatch email notification
-  sendOrderShippedEmail(updatedOrder);
+  if (updatedOrder) {
+    sendOrderShippedEmail(updatedOrder);
+  }
   return updatedOrder;
 }
 
@@ -278,7 +297,15 @@ export async function cancelOrder(orderId: string): Promise<boolean> {
   if (order.status !== 'Processing') return false;
 
   const newStatus = order.paymentStatus === 'Paid' ? 'Cancelled - Refund Pending' : 'Cancelled';
-  await updateOrderStatusServer({ id: orderId, status: newStatus });
+  
+  // Use direct fetch to /api/update-order to avoid createServerFn SSR caching issues
+  const res = await fetch("/api/update-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: orderId, status: newStatus })
+  });
+  if (!res.ok) return false;
+
   triggerOrdersChange();
   return true;
 }

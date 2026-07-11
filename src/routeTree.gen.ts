@@ -28,6 +28,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ApiVerifyPaymentRouteImport } from './routes/api/verify-payment'
 import { Route as ApiUsersRouteImport } from './routes/api/users'
+import { Route as ApiUpdateOrderRouteImport } from './routes/api/update-order'
 import { Route as ApiSendShippedEmailRouteImport } from './routes/api/send-shipped-email'
 import { Route as ApiSendOtpRouteImport } from './routes/api/send-otp'
 import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
@@ -141,6 +142,11 @@ const ApiVerifyPaymentRoute = ApiVerifyPaymentRouteImport.update({
 const ApiUsersRoute = ApiUsersRouteImport.update({
   id: '/api/users',
   path: '/api/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUpdateOrderRoute = ApiUpdateOrderRouteImport.update({
+  id: '/api/update-order',
+  path: '/api/update-order',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSendShippedEmailRoute = ApiSendShippedEmailRouteImport.update({
@@ -271,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
+  '/api/update-order': typeof ApiUpdateOrderRoute
   '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -310,6 +317,7 @@ export interface FileRoutesByTo {
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
+  '/api/update-order': typeof ApiUpdateOrderRoute
   '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -351,6 +359,7 @@ export interface FileRoutesById {
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
+  '/api/update-order': typeof ApiUpdateOrderRoute
   '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -393,6 +402,7 @@ export interface FileRouteTypes {
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
+    | '/api/update-order'
     | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
@@ -432,6 +442,7 @@ export interface FileRouteTypes {
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
+    | '/api/update-order'
     | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
@@ -472,6 +483,7 @@ export interface FileRouteTypes {
     | '/api/send-confirmation'
     | '/api/send-otp'
     | '/api/send-shipped-email'
+    | '/api/update-order'
     | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
@@ -509,6 +521,7 @@ export interface RootRouteChildren {
   ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
   ApiSendOtpRoute: typeof ApiSendOtpRoute
   ApiSendShippedEmailRoute: typeof ApiSendShippedEmailRoute
+  ApiUpdateOrderRoute: typeof ApiUpdateOrderRoute
   ApiUsersRoute: typeof ApiUsersRoute
   ApiVerifyPaymentRoute: typeof ApiVerifyPaymentRoute
   ProductIdRoute: typeof ProductIdRoute
@@ -648,6 +661,13 @@ declare module '@tanstack/react-router' {
       path: '/api/users'
       fullPath: '/api/users'
       preLoaderRoute: typeof ApiUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/update-order': {
+      id: '/api/update-order'
+      path: '/api/update-order'
+      fullPath: '/api/update-order'
+      preLoaderRoute: typeof ApiUpdateOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/send-shipped-email': {
@@ -836,6 +856,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSendConfirmationRoute: ApiSendConfirmationRoute,
   ApiSendOtpRoute: ApiSendOtpRoute,
   ApiSendShippedEmailRoute: ApiSendShippedEmailRoute,
+  ApiUpdateOrderRoute: ApiUpdateOrderRoute,
   ApiUsersRoute: ApiUsersRoute,
   ApiVerifyPaymentRoute: ApiVerifyPaymentRoute,
   ProductIdRoute: ProductIdRoute,
