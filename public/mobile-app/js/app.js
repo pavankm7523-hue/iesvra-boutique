@@ -2248,6 +2248,39 @@
         confirmBtn.disabled = false;
       }
     }
+  window.recenterAppMapOnGPS = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    showToast("Accessing current location...");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        appPinnedLat = lat;
+        appPinnedLng = lng;
+
+        const coordsDisplay = document.getElementById("appMapCoords");
+        if (coordsDisplay) {
+          coordsDisplay.innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        }
+
+        if (appMapInstance) {
+          appMapInstance.setView([lat, lng], 15);
+        }
+        if (appMarkerInstance) {
+          appMarkerInstance.setLatLng([lat, lng]);
+        }
+        showToast("Location detected and centered!");
+      },
+      (err) => {
+        alert("Failed to detect location. Please check browser permissions.");
+        console.warn("Mobile map geolocation error:", err);
+      },
+      { timeout: 6000 }
+    );
   };
 
   // Expose routing helpers globally

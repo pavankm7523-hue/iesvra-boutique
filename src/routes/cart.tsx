@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ShoppingCart, Trash2, ArrowRight, X, CreditCard, CheckCircle, MapPin, Zap, Truck, Navigation } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowRight, X, CreditCard, CheckCircle, MapPin, Zap, Truck, Navigation, Locate } from "lucide-react";
 import { useCartItems, removeFromCart, updateCartQuantity } from "@/lib/cart";
 import { useState, useEffect, useRef } from "react";
 import { useCurrentUser } from "@/lib/auth";
@@ -443,6 +443,36 @@ function Cart() {
     } finally {
       setIsGeocoding(false);
     }
+  };
+
+  const handleRecenterMapOnGPS = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser.");
+      return;
+    }
+    
+    toast.info("Accessing current location...");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        setPinnedLat(lat);
+        setPinnedLng(lng);
+        
+        if (mapRef.current) {
+          mapRef.current.setView([lat, lng], 15);
+        }
+        if (markerRef.current) {
+          markerRef.current.setLatLng([lat, lng]);
+        }
+        toast.success("Location detected and map centered!");
+      },
+      (err) => {
+        toast.error("Failed to detect location. Please check permissions.");
+        console.warn("Geolocation error:", err);
+      },
+      { timeout: 6000 }
+    );
   };
 
   // Direct checkout URL query param handler
@@ -1017,12 +1047,25 @@ function Cart() {
                         )}
                       </div>
                       
-                      <div id="checkout-map" style={{ height: '180px' }} className="w-full rounded-lg overflow-hidden border border-border/40 relative z-10 bg-secondary/15 flex items-center justify-center">
-                        {isMapLoading ? (
-                          <span className="text-xs font-semibold text-navy-deep/60">Loading Interactive Map...</span>
-                        ) : mapError ? (
-                          <span className="text-xs text-red-500 font-semibold p-4 text-center">{mapError}</span>
-                        ) : null}
+                      <div className="relative w-full rounded-lg overflow-hidden border border-border/40">
+                        <div id="checkout-map" style={{ height: '180px' }} className="w-full relative z-10 bg-secondary/15 flex items-center justify-center">
+                          {isMapLoading ? (
+                            <span className="text-xs font-semibold text-navy-deep/60">Loading Interactive Map...</span>
+                          ) : mapError ? (
+                            <span className="text-xs text-red-500 font-semibold p-4 text-center">{mapError}</span>
+                          ) : null}
+                        </div>
+                        
+                        {!isMapLoading && !mapError && (
+                          <button
+                            type="button"
+                            onClick={handleRecenterMapOnGPS}
+                            className="absolute bottom-3 right-3 z-[400] h-9 w-9 rounded-full bg-white shadow-md border border-border/40 flex items-center justify-center text-[#0b72e7] hover:text-[#0b72e7]/80 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+                            title="Center on my location"
+                          >
+                            <Locate className="h-5 w-5" />
+                          </button>
+                        )}
                       </div>
 
                       <div className="flex gap-2">
