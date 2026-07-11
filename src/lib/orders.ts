@@ -291,6 +291,19 @@ export async function updateOrderTracking(orderId: string, trackingId: string) {
   return updatedOrder;
 }
 
+export async function deleteOrder(orderId: string): Promise<void> {
+  const res = await fetch("/api/delete-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: orderId }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || "Failed to delete order");
+  }
+  triggerOrdersChange();
+}
+
 export async function cancelOrder(orderId: string): Promise<boolean> {
   const order = await getOrderById(orderId);
   if (!order) return false;

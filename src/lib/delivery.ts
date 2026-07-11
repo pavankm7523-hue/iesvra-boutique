@@ -159,24 +159,17 @@ export async function fetchAddressSuggestions(query: string): Promise<string[]> 
     }
   }
 
-  // 3. Fallback to OpenStreetMap Nominatim — search ALL of India (countrycodes=in),
-  // no viewbox/bounded restriction. addressdetails=1 ensures city/state/pincode fields
-  // are populated when the user selects a suggestion.
+  // 3. Fallback to Ola Maps Autocomplete API
   try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-      query
-    )}&format=json&limit=15&countrycodes=in&addressdetails=1&extratags=1&namedetails=1&viewbox=84.6565,26.0945,85.6565,25.0945&bounded=0&accept-language=en`;
-    console.log("[checkout-map-search] Nominatim URL:", url);
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": "IESVRA-Boutique-App/1.0"
-      }
-    });
-    if (!res.ok) throw new Error("Nominatim API error");
+    const url = `/api/address-suggestions?query=${encodeURIComponent(query)}`;
+    console.log("[checkout-map-search] Fetching from Ola backend route:", url);
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Ola Autocomplete API error");
     const data = await res.json();
-    return data.map((item: any) => item.display_name);
+    const predictions = data?.predictions || [];
+    return predictions.map((item: any) => item.description);
   } catch (e) {
-    console.error("Address autocomplete failed:", e);
+    console.error("Ola address autocomplete failed:", e);
     return [];
   }
 }
@@ -255,48 +248,69 @@ export async function geocodeAddress(address: string): Promise<GeocodeResult | n
         }
       }
     } catch (e) {
-      console.warn("Google Geocoding failed, falling back to Nominatim:", e);
+      console.warn("Google Geocoding failed, falling back to Ola Maps:", e);
     }
   }
 
-  // 2. Fallback to OpenStreetMap Nominatim
+  // 3. Fallback to Ola Maps Geocoding API via backend proxy
   try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-      address
-    )}&format=json&limit=1&addressdetails=1&countrycodes=in&accept-language=en`;
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": "IESVRA-Boutique-App/1.0"
-      }
-    });
-    if (!res.ok) throw new Error("Nominatim geocoding error");
+    const url = `/api/geocode?address=${encodeURIComponent(address)}`;
+    console.log("[delivery] Geocoding via Ola Maps proxy:", url);
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Local geocode proxy endpoint error");
     const data = await res.json();
-    if (data && data.length > 0) {
-      const first = data[0];
-      const addr = first.address || {};
 
-      const road = addr.road || addr.pedestrian || addr.street || "";
-      const houseNumber = addr.house_number || "";
-      const suburb = addr.suburb || addr.neighbourhood || addr.city_district || "";
-      const city = addr.city || addr.town || addr.village || addr.county || "";
-      const state = addr.state || "";
-      const pincode = addr.postcode || "";
+    const results = data?.geocodingResults || data?.results || [];
+    if (results.length === 0) return null;
 
-      return {
-        lat: parseFloat(first.lat),
-        lon: parseFloat(first.lon),
-        line1: [houseNumber, road].filter(Boolean).join(" "),
-        line2: suburb,
-        city,
-        state,
-        pincode,
-      };
+    const first = results[0];
+    const lat = first.geometry?.location?.lat;
+    const lon = first.geometry?.location?.lng || first.geometry?.location?.lon;
+    if (lat == null || lon == null) return null;
+
+    const components = first.address_components || [];
+    
+    let pincode = "";
+    let state = "";
+    let city = "";
+    let road = "";
+    let suburb = "";
+
+    for (const comp of components) {
+      const types = comp.types || [];
+      if (types.includes("postal_code")) {
+        pincode = comp.long_name;
+      }
+      if (types.includes("administrative_area_level_1")) {
+        state = comp.long_name;
+      }
+      if (types.includes("locality") || types.includes("administrative_area_level_2") || types.includes("city")) {
+        city = comp.long_name;
+      }
+      if (types.includes("route") || types.includes("sublocality") || types.includes("street_number")) {
+        road = comp.long_name;
+      }
+      if (types.includes("neighborhood") || types.includes("sublocality_level_1")) {
+        suburb = comp.long_name;
+      }
     }
-  } catch (e) {
-    console.error("Geocoding failed:", e);
-  }
 
-  return null;
+    const line1 = road || first.formatted_address?.split(",")[0] || "";
+    const line2 = suburb || "";
+
+    return {
+      lat,
+      lon,
+      line1,
+      line2,
+      city,
+      state,
+      pincode,
+    };
+  } catch (err) {
+    console.error("Geocoding failed via Ola Maps:", err);
+    return null;
+  }
 }
 
 /**

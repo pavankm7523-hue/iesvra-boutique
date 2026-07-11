@@ -37,10 +37,13 @@ import { Route as ApiResolveMapsUrlRouteImport } from './routes/api/resolve-maps
 import { Route as ApiProductsRouteImport } from './routes/api/products'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
 import { Route as ApiGetOrderRouteImport } from './routes/api/get-order'
+import { Route as ApiGeocodeRouteImport } from './routes/api/geocode'
 import { Route as ApiDiagRouteImport } from './routes/api/diag'
+import { Route as ApiDeleteOrderRouteImport } from './routes/api/delete-order'
 import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
 import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
 import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin-password'
+import { Route as ApiAddressSuggestionsRouteImport } from './routes/api/address-suggestions'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
@@ -189,9 +192,19 @@ const ApiGetOrderRoute = ApiGetOrderRouteImport.update({
   path: '/api/get-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGeocodeRoute = ApiGeocodeRouteImport.update({
+  id: '/api/geocode',
+  path: '/api/geocode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDiagRoute = ApiDiagRouteImport.update({
   id: '/api/diag',
   path: '/api/diag',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDeleteOrderRoute = ApiDeleteOrderRouteImport.update({
+  id: '/api/delete-order',
+  path: '/api/delete-order',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCreateOrderRoute = ApiCreateOrderRouteImport.update({
@@ -207,6 +220,11 @@ const ApiCategoriesRoute = ApiCategoriesRouteImport.update({
 const ApiAdminPasswordRoute = ApiAdminPasswordRouteImport.update({
   id: '/api/admin-password',
   path: '/api/admin-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAddressSuggestionsRoute = ApiAddressSuggestionsRouteImport.update({
+  id: '/api/address-suggestions',
+  path: '/api/address-suggestions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -265,10 +283,13 @@ export interface FileRoutesByFullPath {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/delete-order': typeof ApiDeleteOrderRoute
   '/api/diag': typeof ApiDiagRoute
+  '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
@@ -305,10 +326,13 @@ export interface FileRoutesByTo {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/delete-order': typeof ApiDeleteOrderRoute
   '/api/diag': typeof ApiDiagRoute
+  '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
@@ -347,10 +371,13 @@ export interface FileRoutesById {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
+  '/api/delete-order': typeof ApiDeleteOrderRoute
   '/api/diag': typeof ApiDiagRoute
+  '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
@@ -390,10 +417,13 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/address-suggestions'
     | '/api/admin-password'
     | '/api/categories'
     | '/api/create-order'
+    | '/api/delete-order'
     | '/api/diag'
+    | '/api/geocode'
     | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
@@ -430,10 +460,13 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/address-suggestions'
     | '/api/admin-password'
     | '/api/categories'
     | '/api/create-order'
+    | '/api/delete-order'
     | '/api/diag'
+    | '/api/geocode'
     | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
@@ -471,10 +504,13 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/orders'
     | '/admin/settings'
+    | '/api/address-suggestions'
     | '/api/admin-password'
     | '/api/categories'
     | '/api/create-order'
+    | '/api/delete-order'
     | '/api/diag'
+    | '/api/geocode'
     | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
@@ -509,10 +545,13 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TrackOrderRoute: typeof TrackOrderRoute
   WishlistRoute: typeof WishlistRoute
+  ApiAddressSuggestionsRoute: typeof ApiAddressSuggestionsRoute
   ApiAdminPasswordRoute: typeof ApiAdminPasswordRoute
   ApiCategoriesRoute: typeof ApiCategoriesRoute
   ApiCreateOrderRoute: typeof ApiCreateOrderRoute
+  ApiDeleteOrderRoute: typeof ApiDeleteOrderRoute
   ApiDiagRoute: typeof ApiDiagRoute
+  ApiGeocodeRoute: typeof ApiGeocodeRoute
   ApiGetOrderRoute: typeof ApiGetOrderRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
   ApiProductsRoute: typeof ApiProductsRoute
@@ -726,11 +765,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGetOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/geocode': {
+      id: '/api/geocode'
+      path: '/api/geocode'
+      fullPath: '/api/geocode'
+      preLoaderRoute: typeof ApiGeocodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/diag': {
       id: '/api/diag'
       path: '/api/diag'
       fullPath: '/api/diag'
       preLoaderRoute: typeof ApiDiagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/delete-order': {
+      id: '/api/delete-order'
+      path: '/api/delete-order'
+      fullPath: '/api/delete-order'
+      preLoaderRoute: typeof ApiDeleteOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/create-order': {
@@ -752,6 +805,13 @@ declare module '@tanstack/react-router' {
       path: '/api/admin-password'
       fullPath: '/api/admin-password'
       preLoaderRoute: typeof ApiAdminPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/address-suggestions': {
+      id: '/api/address-suggestions'
+      path: '/api/address-suggestions'
+      fullPath: '/api/address-suggestions'
+      preLoaderRoute: typeof ApiAddressSuggestionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/settings': {
@@ -844,10 +904,13 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TrackOrderRoute: TrackOrderRoute,
   WishlistRoute: WishlistRoute,
+  ApiAddressSuggestionsRoute: ApiAddressSuggestionsRoute,
   ApiAdminPasswordRoute: ApiAdminPasswordRoute,
   ApiCategoriesRoute: ApiCategoriesRoute,
   ApiCreateOrderRoute: ApiCreateOrderRoute,
+  ApiDeleteOrderRoute: ApiDeleteOrderRoute,
   ApiDiagRoute: ApiDiagRoute,
+  ApiGeocodeRoute: ApiGeocodeRoute,
   ApiGetOrderRoute: ApiGetOrderRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
   ApiProductsRoute: ApiProductsRoute,

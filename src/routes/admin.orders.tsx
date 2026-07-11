@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PackageOpen, Clock, Truck, CheckCircle2, ChevronDown, ChevronUp, User, MapPin, Phone, Mail, ShoppingBag, XCircle } from "lucide-react";
-import { useOrdersList, updateOrderStatus, updateOrderTracking, Order } from "@/lib/orders";
+import { useOrdersList, updateOrderStatus, updateOrderTracking, deleteOrder, Order } from "@/lib/orders";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -15,6 +15,22 @@ function AdminOrders() {
   const orders = useOrdersList();
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [editingTracking, setEditingTracking] = useState<Record<string, string>>({});
+
+  const handleDeleteOrder = async (orderId: string) => {
+    if (!window.confirm(`⚠️ WARNING: Are you sure you want to permanently delete Order #${orderId}? This action CANNOT be undone.`)) {
+      return;
+    }
+
+    try {
+      await deleteOrder(orderId);
+      toast.success(`Order #${orderId} has been deleted.`);
+      if (expandedOrderId === orderId) {
+        setExpandedOrderId(null);
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to delete order.");
+    }
+  };
 
   const toggleExpand = (id: string) => {
     setExpandedOrderId(expandedOrderId === id ? null : id);
@@ -299,6 +315,16 @@ function AdminOrders() {
                                         Save
                                       </button>
                                     </div>
+                                  </div>
+                                  
+                                  <div className="pt-3 border-t border-red-100/50 mt-3 flex items-center justify-between">
+                                    <span className="text-[10px] text-red-500 font-bold uppercase tracking-wider">Danger Zone</span>
+                                    <button
+                                      onClick={() => handleDeleteOrder(order.id)}
+                                      className="px-2.5 py-1 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white border border-red-200 hover:border-red-500 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors cursor-pointer"
+                                    >
+                                      Delete Order
+                                    </button>
                                   </div>
                                 </div>
                               </div>
