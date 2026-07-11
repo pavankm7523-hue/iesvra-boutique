@@ -33,14 +33,30 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  component: RedirectComponent,
+  component: HomeRouteComponent,
 });
 
-function RedirectComponent() {
+function HomeRouteComponent() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
   useEffect(() => {
-    window.location.replace("/mobile-app/");
+    const checkDevice = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        window.location.replace("/mobile-app/");
+      }
+    };
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
+    return () => window.removeEventListener("resize", checkDevice);
   }, []);
-  return null;
+
+  if (isMobile === null || isMobile) {
+    return null;
+  }
+
+  return <Home />;
 }
 
 function Home() {
