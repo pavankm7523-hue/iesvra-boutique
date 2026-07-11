@@ -1228,12 +1228,13 @@
     window.updateCheckoutSummary();
     switchTab('checkout');
 
-    // Init address listeners
+    // Init address listeners and Map pinpoint
     setTimeout(() => {
       initCheckoutAddressAutocomplete();
       if (pin) {
         pin.addEventListener('blur', triggerManualAddressCheck);
       }
+      window.initAppCheckoutMap();
     }, 100);
   };
 
@@ -1923,7 +1924,9 @@
         total: checkoutTotal,
         date: orderDate,
         status: "Placed",
-        paymentStatus: "Pending - COD"
+        paymentStatus: "Pending - COD",
+        latitude: appPinnedLat,
+        longitude: appPinnedLng
       };
 
       try {
@@ -2004,7 +2007,9 @@
                 total: checkoutTotal,
                 date: orderDate,
                 status: "Placed",
-                paymentStatus: "Paid"
+                paymentStatus: "Paid",
+                latitude: appPinnedLat,
+                longitude: appPinnedLng
               };
 
               const sRes = await fetch("/api/save-order", {
@@ -2055,6 +2060,195 @@
 
   // Start app
   window.addEventListener('DOMContentLoaded', init);
+
+  // ==================== MOBILE APP PINPOINT MAP SYSTEM ====================
+  let appPinnedLat = null;
+  let appPinnedLng = null;
+  let appMapInstance = null;
+  let appMarkerInstance = null;
+
+  window.initAppCheckoutMap = async () => {
+    const mapContainer = document.getElementById("app-checkout-map");
+    if (!mapContainer) return;
+    
+    mapContainer.innerHTML = '<div id="leaflet-mobile-map" style="width: 100%; height: 100%;"></div>';
+    
+    try {
+      const L = await loadLeafletForApp();
+      
+      let initialLat = 25.5941; // Patna default
+      let initialLng = 85.1376;
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            initialLat = pos.coords.latitude;
+            initialLng = pos.coords.longitude;
+            setupMobileMap(L, initialLat, initialLng);
+          },
+          () => {
+            setupMobileMap(L, initialLat, initialLng);
+          },
+          { timeout: 6000 }
+        );
+      } else {
+        setupMobileMap(L, initialLat, initialLng);
+      }
+    } catch (err) {
+      console.error("Leaflet loading error in mobile app:", err);
+      mapContainer.innerHTML = '<div style="padding: 16px; font-size: 11px; color: red; text-align: center; font-weight: 500;">Failed to load map. You can still type address manually.</div>';
+    }
+  };
+
+  function setupMobileMap(L, lat, lng) {
+    appPinnedLat = lat;
+    appPinnedLng = lng;
+    
+    const coordsDisplay = document.getElementById("appMapCoords");
+    if (coordsDisplay) {
+      coordsDisplay.innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      coordsDisplay.style.display = "inline-block";
+    }
+
+    if (appMapInstance) {
+      try {
+        appMapInstance.remove();
+      } catch (e) {
+        console.warn("Error removing previous map instance:", e);
+      }
+      appMapInstance = null;
+      appMarkerInstance = null;
+    }
+
+    const map = L.map("leaflet-mobile-map").setView([lat, lng], 15);
+    appMapInstance = map;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    const markerHtml = `
+      <div style="background-color: var(--accent-gold); width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.4); transform: translate(-3px, -3px);"></div>
+      <div style="background-color: var(--accent-gold); width: 3px; height: 18px; margin-left: 5px; transform: translateY(-5px);"></div>
+    `;
+    const customIcon = L.divIcon({
+      html: markerHtml,
+      iconSize: [20, 20],
+      iconAnchor: [10, 20]
+    });
+
+    const marker = L.marker([lat, lng], {
+      draggable: true,
+      icon: customIcon
+    }).addTo(map);
+    appMarkerInstance = marker;
+
+    marker.on("dragend", () => {
+      const position = marker.getLatLng();
+      appPinnedLat = position.lat;
+      appPinnedLng = position.lng;
+      if (coordsDisplay) {
+        coordsDisplay.innerText = `${position.lat.toFixed(5)}, ${position.lng.toFixed(5)}`;
+      }
+    });
+
+    map.on("click", (e) => {
+      marker.setLatLng(e.latlng);
+      appPinnedLat = e.latlng.lat;
+      appPinnedLng = e.latlng.lng;
+      if (coordsDisplay) {
+        coordsDisplay.innerText = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+      }
+    });
+    
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 150);
+  }
+
+  function loadLeafletForApp() {
+    return new Promise((resolve, reject) => {
+      if (window.L) {
+        resolve(window.L);
+        return;
+      }
+      
+      if (!document.getElementById("leaflet-css")) {
+        const link = document.createElement("link");
+        link.id = "leaflet-css";
+        link.rel = "stylesheet";
+        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        document.head.appendChild(link);
+      }
+      
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.async = true;
+      script.onload = () => resolve(window.L);
+      script.onerror = () => reject(new Error("Leaflet script load failed"));
+      document.body.appendChild(script);
+    });
+  }
+
+  window.confirmAppLocation = async () => {
+    if (!appPinnedLat || !appPinnedLng) return;
+    
+    const confirmBtn = document.getElementById("confirmAppLocationBtn");
+    const originalText = confirmBtn ? confirmBtn.innerHTML : "📍 Confirm Pin Location";
+    if (confirmBtn) {
+      confirmBtn.innerHTML = "⏳ Geocoding...";
+      confirmBtn.disabled = true;
+    }
+    
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${appPinnedLat}&lon=${appPinnedLng}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            "Accept-Language": "en",
+            "User-Agent": "IESVRA-Boutique-App/1.0"
+          }
+        }
+      );
+      
+      if (!res.ok) throw new Error("Reverse geocoding failed");
+      const data = await res.json();
+      
+      if (data && data.address) {
+        const addr = data.address;
+        const road = addr.road || addr.suburb || addr.neighbourhood || addr.amenity || "";
+        const cityVal = addr.city || addr.town || addr.village || addr.county || "";
+        const stateVal = addr.state || "";
+        const pincodeVal = addr.postcode || "";
+        
+        const line1 = [road, addr.house_number || ""].filter(Boolean).join(" ");
+        
+        const a1 = document.getElementById('checkoutAddress1');
+        const c = document.getElementById('checkoutCity');
+        const s = document.getElementById('checkoutState');
+        const p = document.getElementById('checkoutPincode');
+        
+        if (a1 && line1) a1.value = line1;
+        if (c && cityVal) c.value = cityVal;
+        if (s && stateVal) s.value = stateVal;
+        if (p && pincodeVal && /^\d{6}$/.test(pincodeVal)) p.value = pincodeVal;
+        
+        // Trigger eligibility check
+        checkExpressEligibilityByCoords(appPinnedLat, appPinnedLng);
+        showToast("Location confirmed and address autofilled!");
+      } else {
+        throw new Error("No address details found for this location.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Failed to retrieve address details. Please fill manually.");
+    } finally {
+      if (confirmBtn) {
+        confirmBtn.innerHTML = originalText;
+        confirmBtn.disabled = false;
+      }
+    }
+  };
 
   // Expose routing helpers globally
   window.switchTab = switchTab;
