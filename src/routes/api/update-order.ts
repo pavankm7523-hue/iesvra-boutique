@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
-import { updateOrderStatusServer } from "../../lib/orders";
 
 export const Route = createFileRoute("/api/update-order")(({
   server: {
