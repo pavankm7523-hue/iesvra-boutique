@@ -1667,7 +1667,11 @@
 
       searchTimeout = setTimeout(async () => {
         try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=5&countrycodes=in&accept-language=en`, {
+          // Checkout map search: countrycodes=in (all India, no region/viewbox restriction)
+          // addressdetails=1 required so city/state/pincode autofill when user picks a result
+          const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=5&countrycodes=in&addressdetails=1&accept-language=en`;
+          console.log('[checkout-map-search] Nominatim URL:', nominatimUrl);
+          const res = await fetch(nominatimUrl, {
             headers: { 'User-Agent': 'IESVRA-Boutique-App/1.0' }
           });
           const list = await res.json();

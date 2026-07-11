@@ -91,11 +91,14 @@ export async function fetchAddressSuggestions(query: string): Promise<string[]> 
     }
   }
 
-  // 2. Fallback to OpenStreetMap Nominatim
+  // 2. Fallback to OpenStreetMap Nominatim — search ALL of India (countrycodes=in),
+  // no viewbox/bounded restriction. addressdetails=1 ensures city/state/pincode fields
+  // are populated when the user selects a suggestion.
   try {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
       query
-    )}&format=json&limit=5&countrycodes=in&accept-language=en`;
+    )}&format=json&limit=5&countrycodes=in&addressdetails=1&accept-language=en`;
+    console.log("[checkout-map-search] Nominatim URL:", url);
     const res = await fetch(url, {
       headers: {
         "User-Agent": "IESVRA-Boutique-App/1.0"
