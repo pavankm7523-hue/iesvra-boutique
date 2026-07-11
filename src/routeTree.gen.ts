@@ -32,6 +32,7 @@ import { Route as ApiSendShippedEmailRouteImport } from './routes/api/send-shipp
 import { Route as ApiSendOtpRouteImport } from './routes/api/send-otp'
 import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
 import { Route as ApiSaveOrderRouteImport } from './routes/api/save-order'
+import { Route as ApiResolveMapsUrlRouteImport } from './routes/api/resolve-maps-url'
 import { Route as ApiProductsRouteImport } from './routes/api/products'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
 import { Route as ApiGetOrderRouteImport } from './routes/api/get-order'
@@ -162,6 +163,11 @@ const ApiSaveOrderRoute = ApiSaveOrderRouteImport.update({
   path: '/api/save-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiResolveMapsUrlRoute = ApiResolveMapsUrlRouteImport.update({
+  id: '/api/resolve-maps-url',
+  path: '/api/resolve-maps-url',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProductsRoute = ApiProductsRouteImport.update({
   id: '/api/products',
   path: '/api/products',
@@ -260,6 +266,7 @@ export interface FileRoutesByFullPath {
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
+  '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -298,6 +305,7 @@ export interface FileRoutesByTo {
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
+  '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -338,6 +346,7 @@ export interface FileRoutesById {
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
+  '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -379,6 +388,7 @@ export interface FileRouteTypes {
     | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
+    | '/api/resolve-maps-url'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -417,6 +427,7 @@ export interface FileRouteTypes {
     | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
+    | '/api/resolve-maps-url'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -456,6 +467,7 @@ export interface FileRouteTypes {
     | '/api/get-order'
     | '/api/notify-admin'
     | '/api/products'
+    | '/api/resolve-maps-url'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -492,6 +504,7 @@ export interface RootRouteChildren {
   ApiGetOrderRoute: typeof ApiGetOrderRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
   ApiProductsRoute: typeof ApiProductsRoute
+  ApiResolveMapsUrlRoute: typeof ApiResolveMapsUrlRoute
   ApiSaveOrderRoute: typeof ApiSaveOrderRoute
   ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
   ApiSendOtpRoute: typeof ApiSendOtpRoute
@@ -665,6 +678,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSaveOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/resolve-maps-url': {
+      id: '/api/resolve-maps-url'
+      path: '/api/resolve-maps-url'
+      fullPath: '/api/resolve-maps-url'
+      preLoaderRoute: typeof ApiResolveMapsUrlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/products': {
       id: '/api/products'
       path: '/api/products'
@@ -811,6 +831,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGetOrderRoute: ApiGetOrderRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
   ApiProductsRoute: ApiProductsRoute,
+  ApiResolveMapsUrlRoute: ApiResolveMapsUrlRoute,
   ApiSaveOrderRoute: ApiSaveOrderRoute,
   ApiSendConfirmationRoute: ApiSendConfirmationRoute,
   ApiSendOtpRoute: ApiSendOtpRoute,

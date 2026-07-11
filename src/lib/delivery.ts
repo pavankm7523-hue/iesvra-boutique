@@ -57,8 +57,8 @@ export function getGoogleApiKey(): string {
       ""
     );
   }
-  return "";
-}
+// In-memory cache for resolved Google Maps URLs
+export const resolvedUrlsCache = new Map<string, GeocodeResult>();
 
 /**
  * Fetches address autocomplete suggestions.
@@ -67,9 +67,74 @@ export function getGoogleApiKey(): string {
 export async function fetchAddressSuggestions(query: string): Promise<string[]> {
   if (!query || query.trim().length < 3) return [];
 
+  const trimmedQuery = query.trim();
+
+  // 1. Detect if query is coordinates like "lat, lon"
+  const coordsRegex = /^([-+]?[0-9]+\.[0-9]+)\s*,\s*([-+]?[0-9]+\.[0-9]+)$/;
+  const coordsMatch = trimmedQuery.match(coordsRegex);
+  if (coordsMatch) {
+    try {
+      const lat = parseFloat(coordsMatch[1]);
+      const lon = parseFloat(coordsMatch[2]);
+      const reverseUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=en&addressdetails=1`;
+      const res = await fetch(reverseUrl, { headers: { "User-Agent": "IESVRA-Boutique-App/1.0" } });
+      if (res.ok) {
+        const data = await res.json();
+        const displayName = `📍 Coordinates: ${data.display_name}`;
+        const addr = data.address || {};
+        const road = addr.road || addr.pedestrian || addr.street || "";
+        const houseNumber = addr.house_number || "";
+        const suburb = addr.suburb || addr.neighbourhood || addr.city_district || "";
+        const city = addr.city || addr.town || addr.village || addr.county || "";
+        const state = addr.state || "";
+        const pincode = addr.postcode || "";
+
+        resolvedUrlsCache.set(displayName, {
+          lat,
+          lon,
+          line1: [houseNumber, road].filter(Boolean).join(" ") || trimmedQuery,
+          line2: suburb,
+          city,
+          state,
+          pincode,
+        });
+        return [displayName];
+      }
+    } catch (e) {
+      console.error("[delivery] Coordinates resolution failed:", e);
+    }
+  }
+
+  // 2. Detect if the query is a Google Maps share URL or direct URL
+  const isMapsUrl =
+    /https?:\/\/(maps\.(google|app\.goo)\.gl|goo\.gl\/maps|www\.google\.com\/maps)/i.test(trimmedQuery);
+
+  if (isMapsUrl) {
+    try {
+      const res = await fetch(`/api/resolve-maps-url?url=${encodeURIComponent(trimmedQuery)}`);
+      if (!res.ok) throw new Error("Failed to resolve Google Maps link");
+      const data = await res.json();
+      if (data && data.lat && data.lon) {
+        const displayName = `📍 ${data.displayName}`;
+        resolvedUrlsCache.set(displayName, {
+          lat: data.lat,
+          lon: data.lon,
+          line1: data.line1,
+          line2: data.line2,
+          city: data.city,
+          state: data.state,
+          pincode: data.pincode,
+        });
+        return [displayName];
+      }
+    } catch (e) {
+      console.error("[delivery] Failed to resolve maps URL suggestion:", e);
+    }
+  }
+
   const apiKey = getGoogleApiKey();
   
-  // 1. Try Google Places if SDK is loaded
+  // 2. Try Google Places if SDK is loaded
   if (typeof window !== "undefined" && (window as any).google?.maps?.places) {
     try {
       const service = new (window as any).google.maps.places.AutocompleteService();
@@ -91,7 +156,7 @@ export async function fetchAddressSuggestions(query: string): Promise<string[]> 
     }
   }
 
-  // 2. Fallback to OpenStreetMap Nominatim — search ALL of India (countrycodes=in),
+  // 3. Fallback to OpenStreetMap Nominatim — search ALL of India (countrycodes=in),
   // no viewbox/bounded restriction. addressdetails=1 ensures city/state/pincode fields
   // are populated when the user selects a suggestion.
   try {
@@ -120,9 +185,16 @@ export async function fetchAddressSuggestions(query: string): Promise<string[]> 
 export async function geocodeAddress(address: string): Promise<GeocodeResult | null> {
   if (!address || !address.trim()) return null;
 
+  // 1. Check if the address is a resolved Google Maps URL in cache
+  const cached = resolvedUrlsCache.get(address);
+  if (cached) {
+    console.log("[delivery] Geocoding cache hit for:", address);
+    return cached;
+  }
+
   const apiKey = getGoogleApiKey();
 
-  // 1. Try Google Geocoding API if API key exists
+  // 2. Try Google Geocoding API if API key exists
   if (apiKey) {
     try {
       const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(

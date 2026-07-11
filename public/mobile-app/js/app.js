@@ -1697,14 +1697,75 @@
 
       searchTimeout = setTimeout(async () => {
         try {
-          // Checkout map search: countrycodes=in (all India, no region/viewbox restriction)
-          // addressdetails=1 required so city/state/pincode autofill when user picks a result
-          const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=5&countrycodes=in&addressdetails=1&accept-language=en`;
-          console.log('[checkout-map-search] Nominatim URL:', nominatimUrl);
-          const res = await fetch(nominatimUrl, {
-            headers: { 'User-Agent': 'IESVRA-Boutique-App/1.0' }
-          });
-          const list = await res.json();
+          const trimmed = val.trim();
+          const isMapsUrl = /https?:\/\/(maps\.(google|app\.goo)\.gl|goo\.gl\/maps|www\.google\.com\/maps)/i.test(trimmed);
+          const coordsRegex = /^([-+]?[0-9]+\.[0-9]+)\s*,\s*([-+]?[0-9]+\.[0-9]+)$/;
+          const coordsMatch = trimmed.match(coordsRegex);
+
+          let list = [];
+          if (coordsMatch) {
+            try {
+              const lat = parseFloat(coordsMatch[1]);
+              const lon = parseFloat(coordsMatch[2]);
+              const reverseRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=en&addressdetails=1`, {
+                headers: { 'User-Agent': 'IESVRA-Boutique-App/1.0' }
+              });
+              if (reverseRes.ok) {
+                const data = await reverseRes.json();
+                const addr = data.address || {};
+                const road = addr.road || addr.pedestrian || addr.street || "";
+                const houseNumber = addr.house_number || "";
+                const suburb = addr.suburb || addr.neighbourhood || addr.city_district || "";
+                const city = addr.city || addr.town || addr.village || addr.county || "";
+                const state = addr.state || "";
+                const pincode = addr.postcode || "";
+                list = [{
+                  display_name: `📍 Coordinates: ${data.display_name}`,
+                  lat: lat,
+                  lon: lon,
+                  address: {
+                    road: [houseNumber, road].filter(Boolean).join(" ") || trimmed,
+                    suburb: suburb,
+                    city: city,
+                    state: state,
+                    postcode: pincode
+                  }
+                }];
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          } else if (isMapsUrl) {
+            const resolveRes = await fetch(`/api/resolve-maps-url?url=${encodeURIComponent(trimmed)}`);
+            if (resolveRes.ok) {
+              const data = await resolveRes.json();
+              if (data && data.lat && data.lon) {
+                // Map resolved data format to Nominatim format so selectCheckoutSuggestion works out of the box
+                list = [{
+                  display_name: `📍 ${data.displayName}`,
+                  lat: data.lat,
+                  lon: data.lon,
+                  address: {
+                    road: data.line1,
+                    suburb: data.line2,
+                    city: data.city,
+                    state: data.state,
+                    postcode: data.pincode
+                  }
+                }];
+              }
+            }
+          } else {
+            // Checkout map search: countrycodes=in (all India, no region/viewbox restriction)
+            // addressdetails=1 required so city/state/pincode autofill when user picks a result
+            const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=5&countrycodes=in&addressdetails=1&accept-language=en`;
+            console.log('[checkout-map-search] Nominatim URL:', nominatimUrl);
+            const res = await fetch(nominatimUrl, {
+              headers: { 'User-Agent': 'IESVRA-Boutique-App/1.0' }
+            });
+            list = await res.json();
+          }
+
           if (list && list.length > 0) {
             suggestionsBox.innerHTML = list.map(item => `
               <div class="address-suggestion-item" style="padding: 10px 12px; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-color); color: var(--text-primary); transition: background 0.2s;" onclick="window.selectCheckoutSuggestion('${encodeURIComponent(JSON.stringify(item))}', '${inputId}', '${boxId}')">
