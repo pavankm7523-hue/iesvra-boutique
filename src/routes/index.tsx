@@ -21,7 +21,7 @@ import {
   Clock,
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
-import heroBanner from "@/assets/hero-banner.png";
+import heroMockup from "@/assets/hero-mockup.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -178,127 +178,115 @@ function Home() {
   return (
     <div className="bg-[#f8f9fb] text-navy-deep font-sans">
       {/* ============== HERO SECTION ============== */}
-      <section className="max-w-7xl mx-auto px-4 lg:px-8 mt-6 select-none">
-        <div className="relative w-full overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          {/* Default banner background link */}
-          <Link to="/shop" className="block w-full">
-            <img 
-              src={heroBanner} 
-              alt="IESVRA Smart Shopping Banner" 
-              className="w-full h-auto block"
-              style={{ imageRendering: "auto" }}
-            />
-          </Link>
-
-          {/* Absolute Overlays for Action Buttons & Badges */}
+      <section className="max-w-7xl mx-auto px-4 lg:px-8 mt-6">
+        <div className="relative w-full bg-gradient-to-r from-[#efeefc] via-[#f5f4fd] to-[#fcfcff] overflow-hidden rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between py-10 px-6 sm:px-10 md:px-16 gap-8 min-h-[380px] sm:min-h-[440px] md:min-h-[480px]">
           
-          {/* 1. Badge: 15 MIN DELIVERY (Check Eligibility) */}
-          <button 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              window.dispatchEvent(new CustomEvent('open-address-modal'));
-            }}
-            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/5"
-            style={{
-              left: "4.0%",
-              top: "62.0%",
-              width: "10.5%",
-              height: "9.0%"
-            }}
-            aria-label="Check Delivery Eligibility"
-          />
+          {/* Left Column: Text Content & Badges */}
+          <div className="flex-1 space-y-6 max-w-2xl text-left">
+            <div className="space-y-3">
+              <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-5.5xl text-[#1D0C69] leading-[1.15] tracking-tight">
+                SMART SHOPPING<br />
+                <span className="text-primary">FASTER THAN EVER</span>
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-lg">
+                Top quality products, best prices & 15 min delivery at your doorstep.
+              </p>
+            </div>
 
-          {/* 2. Badge: FREE SHIPPING */}
-          <Link 
-            to="/shop" 
-            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/5"
-            style={{
-              left: "15.0%",
-              top: "62.0%",
-              width: "10.5%",
-              height: "9.0%"
-            }}
-            aria-label="Free Shipping Info"
-          />
+            {/* Pill-shaped Badges */}
+            <div className="flex flex-wrap gap-2 sm:gap-2.5">
+              {/* Badge 1: 15 Min Delivery (Interactive) */}
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.dispatchEvent(new CustomEvent('open-address-modal'));
+                }}
+                className="bg-white px-3 py-2 rounded-xl shadow-xs border border-slate-100/80 flex items-center gap-2 transition-all hover:-translate-y-0.5 hover:shadow-sm cursor-pointer select-none text-left"
+              >
+                <div className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-amber-500 bg-amber-50">
+                  <Zap className="h-3.5 w-3.5 stroke-[2.5]" />
+                </div>
+                <div className="leading-tight">
+                  <div className="text-[9px] font-extrabold text-slate-800 tracking-wide uppercase">15 MIN</div>
+                  <div className="text-[7.5px] font-bold text-slate-400 uppercase tracking-widest">DELIVERY</div>
+                </div>
+              </button>
 
-          {/* 3. Badge: 100% SECURE PAYMENTS */}
-          <Link 
-            to="/shop" 
-            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/5"
-            style={{
-              left: "26.0%",
-              top: "62.0%",
-              width: "10.5%",
-              height: "9.0%"
-            }}
-            aria-label="Secure Payments Info"
-          />
+              {/* Badge 2: Free Shipping */}
+              <Link 
+                to="/shop"
+                className="bg-white px-3 py-2 rounded-xl shadow-xs border border-slate-100/80 flex items-center gap-2 transition-all hover:-translate-y-0.5 hover:shadow-sm cursor-pointer select-none text-left"
+              >
+                <div className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-blue-500 bg-blue-50">
+                  <Truck className="h-3.5 w-3.5 stroke-[2.5]" />
+                </div>
+                <div className="leading-tight">
+                  <div className="text-[9px] font-extrabold text-slate-800 tracking-wide uppercase">FREE SHIPPING</div>
+                  <div className="text-[7.5px] font-bold text-slate-400 uppercase tracking-widest">ABOVE ₹499</div>
+                </div>
+              </Link>
 
-          {/* 4. Badge: EASY RETURNS */}
-          <Link 
-            to="/shop" 
-            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/5"
-            style={{
-              left: "37.0%",
-              top: "62.0%",
-              width: "10.5%",
-              height: "9.0%"
-            }}
-            aria-label="Easy Returns Info"
-          />
+              {/* Badge 3: 100% Secure */}
+              <Link 
+                to="/shop"
+                className="bg-white px-3 py-2 rounded-xl shadow-xs border border-slate-100/80 flex items-center gap-2 transition-all hover:-translate-y-0.5 hover:shadow-sm cursor-pointer select-none text-left"
+              >
+                <div className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-emerald-500 bg-emerald-50">
+                  <ShieldCheck className="h-3.5 w-3.5 stroke-[2.5]" />
+                </div>
+                <div className="leading-tight">
+                  <div className="text-[9px] font-extrabold text-slate-800 tracking-wide uppercase">100% SECURE</div>
+                  <div className="text-[7.5px] font-bold text-slate-400 uppercase tracking-widest">PAYMENTS</div>
+                </div>
+              </Link>
 
-          {/* 5. SHOP NOW */}
-          <Link 
-            to="/shop" 
-            className="absolute z-20 cursor-pointer rounded-full transition-all hover:bg-white/10"
-            style={{
-              left: "3.8%",
-              top: "74.0%",
-              width: "12.5%",
-              height: "8.5%"
-            }}
-            aria-label="Shop Now"
-          />
+              {/* Badge 4: Easy Returns */}
+              <Link 
+                to="/shop"
+                className="bg-white px-3 py-2 rounded-xl shadow-xs border border-slate-100/80 flex items-center gap-2 transition-all hover:-translate-y-0.5 hover:shadow-sm cursor-pointer select-none text-left"
+              >
+                <div className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-red-500 bg-red-50">
+                  <RefreshCw className="h-3.5 w-3.5 stroke-[2.5]" />
+                </div>
+                <div className="leading-tight">
+                  <div className="text-[9px] font-extrabold text-slate-800 tracking-wide uppercase">EASY RETURNS</div>
+                  <div className="text-[7.5px] font-bold text-slate-400 uppercase tracking-widest">7 DAYS</div>
+                </div>
+              </Link>
+            </div>
 
-          {/* 6. DOWNLOAD APP */}
-          <a 
-            href="/mobile-app/index.html" 
-            className="absolute z-20 cursor-pointer rounded-full transition-all hover:bg-black/5"
-            style={{
-              left: "17.4%",
-              top: "74.0%",
-              width: "14.2%",
-              height: "8.5%"
-            }}
-            aria-label="Download App"
-          />
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Link to="/shop" className="bg-primary hover:bg-primary/95 text-white px-7 py-3 rounded-full font-bold text-xs uppercase tracking-wider transition-all shadow-md select-none flex items-center gap-1.5 group cursor-pointer">
+                Shop Now
+                <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <a href="/mobile-app/index.html" className="border border-primary/30 hover:border-primary text-primary px-7 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider transition-all select-none flex items-center gap-1.5 group cursor-pointer bg-white/50 backdrop-blur-xs">
+                Download App
+              </a>
+              
+              <div className="flex items-center gap-2 pl-1">
+                <a href="/mobile-app/index.html" className="opacity-85 hover:opacity-100 transition-opacity">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-5" />
+                </a>
+                <a href="/mobile-app/index.html" className="opacity-85 hover:opacity-100 transition-opacity">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-5" />
+                </a>
+              </div>
+            </div>
+          </div>
 
-          {/* 7. Google Play Store */}
-          <a 
-            href="/mobile-app/index.html" 
-            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/10"
-            style={{
-              left: "32.6%",
-              top: "75.0%",
-              width: "9.3%",
-              height: "6.8%"
-            }}
-            aria-label="Get it on Google Play"
-          />
+          {/* Right Column: 3D Mockup */}
+          <div className="flex-1 w-full max-w-sm md:max-w-md flex justify-center items-center relative select-none">
+            {/* Soft background glow */}
+            <div className="absolute w-[80%] h-[80%] rounded-full bg-primary/5 filter blur-3xl -z-10" />
+            <img 
+              src={heroMockup} 
+              alt="IESVRA 3D Mockup" 
+              className="w-[85%] sm:w-[75%] md:w-[90%] lg:w-[85%] h-auto object-contain max-h-[280px] sm:max-h-[340px] md:max-h-[380px]"
+            />
+          </div>
 
-          {/* 8. Apple App Store */}
-          <a 
-            href="/mobile-app/index.html" 
-            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/10"
-            style={{
-              left: "42.8%",
-              top: "75.0%",
-              width: "8.5%",
-              height: "6.8%"
-            }}
-            aria-label="Download on the App Store"
-          />
         </div>
       </section>
 
