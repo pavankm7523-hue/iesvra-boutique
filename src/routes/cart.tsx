@@ -848,13 +848,13 @@ function Cart() {
 
                 <button 
                   onClick={() => setIsCheckoutOpen(true)}
-                  className="w-full bg-navy-deep text-gold h-14 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-gold hover:text-navy-deep transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-navy-deep/10 cursor-pointer"
+                  className="w-full bg-primary text-white h-14 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-primary/95 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-primary/10 cursor-pointer"
                 >
                   Proceed to Checkout <ArrowRight className="h-4 w-4" />
                 </button>
 
                 <div className="mt-6 text-center">
-                  <Link to="/shop" className="text-xs uppercase tracking-widest text-navy-deep/60 font-semibold hover:text-gold transition-colors">
+                  <Link to="/shop" className="text-xs uppercase tracking-widest text-navy-deep/60 font-semibold hover:text-primary transition-colors">
                     Continue Shopping
                   </Link>
                 </div>
@@ -868,7 +868,7 @@ function Cart() {
             <p className="text-navy-deep/60 mb-8 font-light">Looks like you haven't added anything yet.</p>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-3 bg-navy-deep text-gold px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-gold hover:text-navy-deep transition-all duration-300 shadow-lg"
+              className="inline-flex items-center gap-3 bg-primary text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-primary/95 transition-all duration-300 shadow-lg"
             >
               Start Shopping
             </Link>
@@ -924,7 +924,7 @@ function Cart() {
                     to="/track-order"
                     search={{ orderId: placedOrder.id }}
                     onClick={() => setIsCheckoutOpen(false)}
-                    className="mx-6 h-12 bg-navy-deep text-gold rounded-xl font-bold text-sm hover:bg-gold hover:text-navy-deep transition-colors flex items-center justify-center"
+                    className="mx-6 h-12 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/95 transition-colors flex items-center justify-center"
                   >
                     Track Order
                   </Link>

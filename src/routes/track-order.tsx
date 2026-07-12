@@ -111,7 +111,7 @@ function TrackOrder() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="e.g. ISH-123456"
-                  className="w-full h-12 pl-12 pr-4 rounded-xl border border-border focus:border-gold focus:ring-1 focus:ring-gold outline-none text-sm transition-all"
+                  className="w-full h-12 pl-12 pr-4 rounded-xl border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none text-sm transition-all"
                 />
                 <Package className="absolute left-4 top-3.5 h-5 w-5 text-navy-deep/40" />
               </div>
@@ -119,7 +119,7 @@ function TrackOrder() {
 
             <button
               type="submit"
-              className="w-full bg-navy-deep text-gold h-12 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-gold hover:text-navy-deep transition-all duration-300 flex items-center justify-center gap-2 shadow-md shadow-navy-deep/10 cursor-pointer animate-pulse-subtle"
+              className="w-full bg-primary text-white h-12 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-primary/95 transition-all duration-300 flex items-center justify-center gap-2 shadow-md shadow-primary/10 cursor-pointer animate-pulse-subtle"
             >
               <Search className="h-4 w-4" /> Track Now
             </button>
@@ -172,7 +172,7 @@ function TrackOrder() {
                         <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-gray-100 rounded-full z-0" />
                         {/* Active progress line */}
                         <div
-                          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-gold rounded-full z-0 transition-all duration-700"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary rounded-full z-0 transition-all duration-700"
                           style={{
                             width: activeStep === 1 ? "0%" : activeStep === 2 ? "50%" : "100%",
                           }}
@@ -183,7 +183,7 @@ function TrackOrder() {
                           <div
                             className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                               activeStep >= 1
-                                ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
+                                ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
                                 : "bg-white border-border text-navy-deep/40"
                             }`}
                           >
@@ -199,7 +199,7 @@ function TrackOrder() {
                           <div
                             className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                               activeStep >= 2
-                                ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
+                                ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
                                 : "bg-white border-border text-navy-deep/40"
                             }`}
                           >
@@ -215,7 +215,7 @@ function TrackOrder() {
                           <div
                             className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                               activeStep >= 3
-                                ? "bg-gold border-gold text-navy-deep shadow-md shadow-gold/20"
+                                ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
                                 : "bg-white border-border text-navy-deep/40"
                             }`}
                           >

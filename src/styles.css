@@ -40,28 +40,28 @@
 :root {
   --radius: 0.75rem;
   --background: #f8f9fb; /* light background for content */
-  --foreground: #13192b; /* dark navy text */
+  --foreground: #1e293b; /* slate-800 text */
   --card: #ffffff;
-  --card-foreground: #13192b;
+  --card-foreground: #1e293b;
   --popover: #ffffff;
-  --popover-foreground: #13192b;
-  --primary: #13192b; /* rich deep navy */
+  --popover-foreground: #1e293b;
+  --primary: #6B46C1; /* primary purple/violet */
   --primary-foreground: #ffffff;
-  --secondary: #f0f2f5;
-  --secondary-foreground: #13192b;
-  --muted: #f0f2f5;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #1e293b;
+  --muted: #f3f4f6;
   --muted-foreground: #6b7280;
-  --accent: #e6b96e; /* metallic gold */
-  --accent-foreground: #13192b;
-  --gold: #e6b96e;
-  --navy: #13192b;
-  --navy-deep: #0d111b; /* darkest navy for contrast */
-  --cream: #fdfbf7; /* warm background */
-  --discount: #dc2626;
+  --accent: #F6A623; /* orange-gold accent */
+  --accent-foreground: #ffffff;
+  --gold: #F6A623; /* map gold classes to orange-gold */
+  --navy: #6B46C1; /* map navy classes to primary purple */
+  --navy-deep: #0b121f; /* dark blue/indigo contrast bar color */
+  --cream: #FAF9FF; /* very light purple/violet background */
+  --discount: #10B981; /* green/emerald for discount badges */
   --destructive: #dc2626;
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #e6b96e;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #6B46C1;
 }
 
 @layer base {
@@ -119,7 +119,7 @@
     overflow: hidden;
   }
   .product-card:hover {
-    border-color: color-mix(in oklab, var(--gold) 60%, transparent);
+    border-color: color-mix(in oklab, var(--primary) 60%, transparent);
     box-shadow: 0 12px 30px -10px oklch(0 0 0 / 0.12);
     transform: translateY(-2px);
   }
@@ -132,7 +132,7 @@
     transition: all 0.25s ease;
   }
   .category-circle:hover {
-    border-color: var(--gold);
+    border-color: var(--primary);
     transform: translateY(-3px);
     box-shadow: 0 8px 20px -8px oklch(0 0 0 / 0.15);
   }

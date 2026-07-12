@@ -22,6 +22,7 @@ import {
   Zap,
   Package,
   Navigation,
+  Smartphone,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -182,17 +183,55 @@ export function Header() {
   ];
 
   return (
-    <header className="w-full z-50 flex flex-col relative">
+    <header className="w-full z-50 flex flex-col relative select-none font-sans">
+
+      {/* ============== SECTION 1: TOP UTILITY BAR ============== */}
+      <div style={{ backgroundColor: "#0b121f" }} className="w-full border-b border-white/5 py-2.5 hidden sm:block">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between text-[11px] font-bold text-slate-300 uppercase tracking-widest">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-1.5 text-amber-400">
+              <Zap className="h-3.5 w-3.5 fill-amber-400" />
+              <span>15 Min Delivery in Patna & Nearby Areas</span>
+            </div>
+            <div className="h-3 w-[1px] bg-white/10" />
+            <div className="flex items-center gap-1.5">
+              <Truck className="h-3.5 w-3.5 text-slate-400" />
+              <span>Free Shipping Above ₹499</span>
+            </div>
+            <div className="h-3 w-[1px] bg-white/10" />
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="h-3.5 w-3.5 text-slate-400" />
+              <span>100% Secure Payments</span>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-1.5">
+              <Smartphone className="h-3.5 w-3.5 text-slate-400" />
+              <span>Download Our App</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <a href="#" className="hover:opacity-80 transition-opacity">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-4.5" />
+              </a>
+              <a href="#" className="hover:opacity-80 transition-opacity">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-4.5" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* ======================================================== */}
 
       {/* Main Header */}
-      <div className="bg-navy py-4 lg:py-5 border-b border-white/5">
+      <div className="bg-white py-4 lg:py-5 border-b border-slate-200/60">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between gap-4 lg:gap-8">
           
           {/* Logo & Delivery Indicator (Left) */}
           <div className="flex items-center gap-4 sm:gap-5 shrink-0">
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden text-white/80 hover:text-gold transition cursor-pointer"
+              className="lg:hidden text-slate-800 hover:text-primary transition cursor-pointer"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -205,34 +244,34 @@ export function Header() {
             </Link>
 
             {/* Zepto-style Delivery Indicator */}
-            <div className="hidden sm:block border-l border-white/10 pl-4 lg:pl-5 ml-1 lg:ml-2">
+            <div className="hidden sm:block border-l border-slate-200 pl-4 lg:pl-5 ml-1 lg:ml-2">
               <button 
                 onClick={() => setIsAddressModalOpen(true)}
                 className="flex flex-col items-start text-left group cursor-pointer"
               >
                 {!headerAddress ? (
-                  <div className="flex items-center gap-1.5 text-white/70 group-hover:text-gold transition-colors">
-                    <MapPin className="h-4 w-4" />
+                  <div className="flex items-center gap-1.5 text-slate-600 group-hover:text-primary transition-colors">
+                    <MapPin className="h-4 w-4 text-primary" />
                     <span className="text-xs font-bold whitespace-nowrap">Select delivery address</span>
-                    <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                    <ChevronDown className="h-3.5 w-3.5 opacity-55" />
                   </div>
                 ) : (
                   <>
                     <div className="flex items-center gap-1.5 mb-0.5">
                       {isExpressLocation ? (
                         <>
-                          <Zap className="h-3.5 w-3.5 text-gold fill-gold" />
-                          <span className="text-xs font-bold text-gold whitespace-nowrap tracking-wide">15 minutes</span>
+                          <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                          <span className="text-xs font-bold text-amber-500 whitespace-nowrap tracking-wide">15 minutes</span>
                         </>
                       ) : (
-                        <span className="text-xs font-bold text-white group-hover:text-gold transition-colors whitespace-nowrap tracking-wide">Standard Delivery</span>
+                        <span className="text-xs font-bold text-slate-800 group-hover:text-primary transition-colors whitespace-nowrap tracking-wide">Standard Delivery</span>
                       )}
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-white/60 truncate max-w-[130px] lg:max-w-[180px]" title={headerAddress}>
+                      <span className="text-[10px] text-slate-500 truncate max-w-[130px] lg:max-w-[180px]" title={headerAddress}>
                         {headerAddress}
                       </span>
-                      <ChevronDown className="h-3 w-3 text-white/40 group-hover:text-white/80 transition-colors shrink-0" />
+                      <ChevronDown className="h-3 w-3 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0" />
                     </div>
                   </>
                 )}
@@ -251,18 +290,24 @@ export function Header() {
                 }
               }}
             >
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                placeholder="Search for products..."
-                className="w-full h-11 bg-white/5 border border-white/10 rounded-full pl-5 pr-12 text-white text-sm focus:outline-none focus:border-gold/50 focus:bg-white/10 transition-all placeholder:text-white/40"
-              />
-              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full flex items-center justify-center text-white/60 hover:text-gold hover:bg-white/5 transition-colors">
-                <Search className="h-4 w-4" />
-              </button>
+              <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg overflow-hidden h-11 w-full focus-within:border-primary/50 focus-within:bg-white transition-all shadow-sm">
+                <div className="hidden lg:flex items-center gap-1.5 px-4 text-xs font-bold text-slate-700 bg-slate-100/50 h-full border-r border-slate-200 shrink-0 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <span>All Categories</span>
+                  <ChevronDown className="h-3 w-3 opacity-60" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                  placeholder="Search for products, brands and more..."
+                  className="flex-1 h-full px-4 text-slate-800 text-sm focus:outline-none placeholder:text-slate-400 bg-transparent"
+                />
+                <button type="submit" className="h-full px-5 bg-primary text-white hover:bg-primary/95 transition-colors flex items-center justify-center cursor-pointer shrink-0">
+                  <Search className="h-4 w-4" />
+                </button>
+              </div>
 
               {/* Search Recommendations Dropdown */}
               {isSearchFocused && searchResults.length > 0 && (
@@ -302,7 +347,7 @@ export function Header() {
                       navigate({ to: "/shop", search: { q: searchQuery.trim() } });
                       setIsSearchFocused(false);
                     }}
-                    className="block w-full p-4 text-center text-xs font-bold text-gold hover:text-navy-deep hover:bg-secondary/10 uppercase tracking-widest transition-colors bg-white"
+                    className="block w-full p-4 text-center text-xs font-bold text-primary hover:text-primary/80 hover:bg-secondary/10 uppercase tracking-widest transition-colors bg-white border-t border-slate-100"
                   >
                     View all results for "{searchQuery}"
                   </Link>
@@ -312,10 +357,10 @@ export function Header() {
           </div>
 
           {/* Actions (Right) */}
-          <div className="flex items-center gap-5 sm:gap-6 lg:gap-8 shrink-0 text-white/80">
+          <div className="flex items-center gap-5 sm:gap-6 lg:gap-8 shrink-0 text-slate-700">
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="md:hidden text-white/80 hover:text-gold transition cursor-pointer"
+              className="md:hidden text-slate-700 hover:text-primary transition cursor-pointer"
             >
               <Search className="h-6 w-6" />
             </button>
@@ -323,10 +368,10 @@ export function Header() {
             {/* User / Login */}
             {currentUser ? (
               <div className="relative group">
-                <button className="flex flex-col items-center gap-1 hover:text-gold transition group/btn cursor-pointer">
+                <button className="flex flex-col items-center gap-1 hover:text-primary transition group/btn cursor-pointer">
                   <User className="h-5 w-5 lg:h-6 lg:w-6 group-hover/btn:scale-110 transition-transform" />
-                  <span className="text-[10px] font-medium hidden sm:block truncate max-w-[60px]">
-                    {currentUser.name.split(" ")[0]}
+                  <span className="text-[10px] font-bold hidden sm:block truncate max-w-[75px]">
+                    My Account
                   </span>
                 </button>
                 {/* Dropdown */}
@@ -337,14 +382,14 @@ export function Header() {
                   </div>
                   <Link
                     to="/my-orders"
-                    className="flex items-center gap-2 px-4 py-3 text-sm text-navy-deep hover:bg-gold/5 hover:text-gold transition-colors"
+                    className="flex items-center gap-2 px-4 py-3 text-sm text-navy-deep hover:bg-primary/5 hover:text-primary transition-colors"
                   >
                     <Package className="h-4 w-4" /> My Orders
                   </Link>
                   {currentUser.role === 'admin' && (
                     <Link
                       to="/admin"
-                      className="flex items-center gap-2 px-4 py-3 text-sm text-navy-deep hover:bg-gold/5 hover:text-gold transition-colors border-t border-border/30"
+                      className="flex items-center gap-2 px-4 py-3 text-sm text-navy-deep hover:bg-primary/5 hover:text-primary transition-colors border-t border-border/30"
                     >
                       <Settings className="h-4 w-4" /> Admin Panel
                     </Link>
@@ -358,49 +403,59 @@ export function Header() {
                 </div>
               </div>
             ) : (
-              <Link to="/login" className="flex flex-col items-center gap-1 hover:text-gold transition group">
+              <Link to="/login" className="flex flex-col items-center gap-1 hover:text-primary transition group">
                 <User className="h-5 w-5 lg:h-6 lg:w-6 group-hover:scale-110 transition-transform" />
-                <span className="text-[10px] font-medium hidden sm:block">Login</span>
+                <span className="text-[10px] font-bold hidden sm:block">My Account</span>
               </Link>
             )}
 
-            <Link to="/wishlist" className="flex flex-col items-center gap-1 hover:text-gold transition group">
+            <Link to="/wishlist" className="flex flex-col items-center gap-1 hover:text-primary transition group">
               <Heart className="h-5 w-5 lg:h-6 lg:w-6 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-medium hidden sm:block">Wishlist</span>
+              <span className="text-[10px] font-bold hidden sm:block">Wishlist</span>
             </Link>
 
-            <Link to="/cart" className="flex flex-col items-center gap-1 hover:text-gold transition group relative">
+            <Link to="/cart" className="flex flex-col items-center gap-1 hover:text-primary transition group relative">
               <div className="relative">
                 <ShoppingCart className="h-5 w-5 lg:h-6 lg:w-6 group-hover:scale-110 transition-transform" />
-                <span className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-gold text-[10px] text-navy-deep flex items-center justify-center font-bold">
+                <span className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-primary text-[10px] text-white flex items-center justify-center font-bold">
                   {cartCount}
                 </span>
               </div>
-              <span className="text-[10px] font-medium hidden sm:block">Cart</span>
+              <span className="text-[10px] font-bold hidden sm:block">Cart</span>
             </Link>
           </div>
         </div>
       </div>
 
       {/* Navigation Bar */}
-      <nav className="bg-navy-deep hidden lg:block border-b border-white/5 shadow-sm">
-        <div className="max-w-7xl mx-auto px-8 flex items-center justify-center gap-10">
-          {navLinks.map((l) => (
-            <Link
-              key={l.label}
-              to={l.to}
-              className="text-xs font-semibold tracking-wide text-white/80 hover:text-gold transition-colors relative py-3.5 group"
-            >
-              {l.label}
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-            </Link>
-          ))}
+      <nav className="bg-white hidden lg:block border-b border-slate-200 shadow-sm py-2">
+        <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <div className="relative group">
+              <button className="bg-primary hover:bg-primary/95 text-white px-5 py-2.5 rounded-md font-bold text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer h-10 select-none">
+                <Menu className="h-4 w-4" /> Shop by Categories
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-8">
+              {navLinks.map((l) => (
+                <Link
+                  key={l.label}
+                  to={l.to}
+                  className="text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-primary transition-colors py-3 relative group"
+                >
+                  {l.label}
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
+                </Link>
+              ))}
+            </div>
+          </div>
+          
           <a
-            href="/mobile-app/"
-            className="text-xs font-semibold tracking-wide text-white/80 hover:text-gold transition-colors relative py-3.5 group flex items-center gap-1"
+            href="/mobile-app/index.html"
+            className="text-xs font-bold uppercase tracking-wider text-primary hover:opacity-85 transition-opacity flex items-center gap-1.5"
           >
-            Mobile App
-            <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
+            <Smartphone className="h-4 w-4" /> Download Our App
           </a>
         </div>
       </nav>

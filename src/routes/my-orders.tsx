@@ -163,7 +163,7 @@ function MyOrdersPage() {
             </p>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 bg-navy-deep text-gold px-8 py-3.5 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-gold hover:text-navy-deep transition-all duration-300 shadow-lg shadow-navy-deep/10"
+              className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3.5 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-primary/95 transition-all duration-300 shadow-lg shadow-primary/10"
             >
               <Package className="h-4 w-4" />
               Browse Products
@@ -271,7 +271,7 @@ function MyOrdersPage() {
                                       <div
                                         className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all ${
                                           isActive
-                                            ? "bg-gold border-gold text-navy-deep"
+                                            ? "bg-primary border-primary text-white"
                                             : "bg-white border-border/50 text-navy-deep/30"
                                         }`}
                                       >
@@ -288,7 +288,7 @@ function MyOrdersPage() {
                                     {!isLast && (
                                       <div
                                         className={`h-0.5 flex-1 -mt-5 mx-1 rounded-full transition-all ${
-                                          cfg.step >= idx + 2 ? "bg-gold" : "bg-border/50"
+                                          cfg.step >= idx + 2 ? "bg-primary" : "bg-border/50"
                                         }`}
                                       />
                                     )}

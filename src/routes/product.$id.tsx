@@ -60,7 +60,7 @@ function ProductDetails() {
         </p>
         <Link
           to="/shop"
-          className="inline-flex items-center gap-2 bg-navy-deep text-gold px-8 py-3 rounded-full font-semibold uppercase tracking-wide hover:bg-gold hover:text-navy-deep transition-all duration-300"
+          className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-full font-semibold uppercase tracking-wide hover:bg-primary/95 transition-all duration-300"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Shop
         </Link>
@@ -104,7 +104,7 @@ function ProductDetails() {
       {/* Breadcrumbs */}
       <div className="bg-cream border-b border-border/50">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-4 text-xs font-semibold uppercase tracking-widest text-navy-deep/60 flex flex-wrap items-center gap-3">
-          <Link to="/" className="hover:text-gold transition">
+          <Link to="/" className="hover:text-primary transition">
             Home
           </Link>
           <span>/</span>
@@ -157,7 +157,7 @@ function ProductDetails() {
                       e.preventDefault();
                       setActiveIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
                     }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-navy-deep hover:text-gold shadow-lg backdrop-blur-sm flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90 border border-border/20 z-10 md:opacity-0 md:group-hover/main-img:opacity-100"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-navy-deep hover:text-primary shadow-lg backdrop-blur-sm flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90 border border-border/20 z-10 md:opacity-0 md:group-hover/main-img:opacity-100"
                     aria-label="Previous image"
                   >
                     <ChevronLeft className="h-6 w-6" />
@@ -168,7 +168,7 @@ function ProductDetails() {
                       e.preventDefault();
                       setActiveIndex((prev) => (prev + 1) % galleryItems.length);
                     }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-navy-deep hover:text-gold shadow-lg backdrop-blur-sm flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90 border border-border/20 z-10 md:opacity-0 md:group-hover/main-img:opacity-100"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-navy-deep hover:text-primary shadow-lg backdrop-blur-sm flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90 border border-border/20 z-10 md:opacity-0 md:group-hover/main-img:opacity-100"
                     aria-label="Next image"
                   >
                     <ChevronRight className="h-6 w-6" />
@@ -187,8 +187,8 @@ function ProductDetails() {
                     onClick={() => setActiveIndex(idx)}
                     className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 bg-white p-1 transition-all duration-300 cursor-pointer shrink-0 relative ${
                       activeIndex === idx
-                        ? "border-gold ring-2 ring-gold/20 scale-105 shadow-md"
-                        : "border-border/60 hover:border-gold/50"
+                        ? "border-primary ring-2 ring-primary/20 scale-105 shadow-md"
+                        : "border-border/60 hover:border-primary/50"
                     }`}
                   >
                     {item.type === "video" ? (
@@ -328,7 +328,7 @@ function ProductDetails() {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="w-full sm:flex-1 border-2 border-gold text-gold hover:bg-gold hover:text-navy-deep h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] cursor-pointer"
+                  className="w-full sm:flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-white h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] cursor-pointer"
                 >
                   <ShoppingBag className="h-4 w-4" /> Add to Cart
                 </button>
@@ -336,7 +336,7 @@ function ProductDetails() {
                 <button
                   type="button"
                   onClick={handleBuyDirectly}
-                  className="w-full sm:flex-1 bg-gradient-to-r from-[#e0b480] to-[#c1935e] text-navy-deep hover:shadow-[0_8px_30px_rgba(207,168,123,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
+                  className="w-full sm:flex-1 bg-accent hover:bg-accent/95 text-white hover:shadow-[0_8px_30px_rgba(246,166,37,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
                 >
                   Buy Now
                 </button>
@@ -517,13 +517,13 @@ function ProductDetails() {
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder="Share your experience with this product..."
                       rows={4}
-                      className="p-4 rounded-xl border border-border/80 focus:border-gold focus:ring-1 focus:ring-gold outline-none text-sm transition-all resize-none"
+                      className="p-4 rounded-xl border border-border/80 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-sm transition-all resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-8 h-12 bg-navy-deep text-gold font-bold uppercase tracking-wider text-xs rounded-full hover:bg-gold hover:text-navy-deep transition-all duration-300 shadow-md shadow-navy-deep/10"
+                    className="w-full sm:w-auto px-8 h-12 bg-primary text-white font-bold uppercase tracking-wider text-xs rounded-full hover:bg-primary/95 transition-all duration-300 shadow-md shadow-primary/10"
                   >
                     Submit Review
                   </button>
@@ -553,7 +553,7 @@ function ProductDetails() {
                           key={rev.id}
                           className="bg-white p-6 rounded-2xl border border-border/30 shadow-sm flex gap-4 items-start hover:shadow-md transition-shadow duration-300"
                         >
-                          <div className="w-10 h-10 rounded-full bg-gold/10 text-gold flex items-center justify-center font-bold text-xs shrink-0 select-none border border-gold/20">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 select-none border border-primary/20">
                             {initials}
                           </div>
                           <div className="flex-1 space-y-2">

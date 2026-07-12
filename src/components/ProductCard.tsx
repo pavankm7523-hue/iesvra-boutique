@@ -80,17 +80,17 @@ export function ProductCard({
             {product.mrp > product.price && (
               <>
                 <span className="text-navy-deep/40 text-[11px] line-through">₹{product.mrp.toFixed(2)}</span>
-                <span className="text-red-500 font-bold text-[10px] tracking-wider uppercase">({discount}% OFF)</span>
+                <span className="text-discount font-bold text-[10px] tracking-wider uppercase">({discount}% OFF)</span>
               </>
             )}
           </div>
         </div>
       </Link>
 
-      {/* Add to Cart Button - Gold/Amber to match reference */}
+      {/* Add to Cart Button - Purple to match reference */}
       <div className="p-4 pt-0 mt-auto">
         <button
-          className="w-full bg-gold text-navy-deep hover:bg-[#c5992f] h-10 rounded-lg font-bold text-xs tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+          className="w-full bg-primary text-white hover:bg-primary/90 h-10 rounded-md font-bold text-xs uppercase tracking-wider transition-colors duration-300 flex items-center justify-center cursor-pointer shadow-sm"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -100,7 +100,7 @@ export function ProductCard({
             toast.success(`Successfully added ${product.name} to your cart!`);
           }}
         >
-          <ShoppingCart className="h-4 w-4" /> Add to Cart
+          Add to Cart
         </button>
       </div>
 

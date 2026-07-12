@@ -60,7 +60,7 @@ function WishlistPage() {
             </p>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 bg-navy-deep text-gold px-8 py-3.5 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-gold hover:text-navy-deep transition-all duration-300 shadow-lg shadow-navy-deep/10"
+              className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3.5 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-primary/95 transition-all duration-300 shadow-lg shadow-primary/10"
             >
               <ShoppingBag className="h-4 w-4" />
               Explore Products
@@ -151,7 +151,7 @@ function WishlistPage() {
                           );
                           toast.success(`${item.name} added to cart!`);
                         }}
-                        className="flex-1 bg-navy-deep text-gold h-10 rounded-xl font-bold text-xs uppercase tracking-wide hover:bg-gold hover:text-navy-deep transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                        className="flex-1 bg-primary text-white h-10 rounded-xl font-bold text-xs uppercase tracking-wide hover:bg-primary/95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <ShoppingCart className="h-3.5 w-3.5" />
                         Add to Cart

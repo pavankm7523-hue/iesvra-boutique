@@ -244,6 +244,9 @@ export function validateUserCredentials(email: string, password: string): { succ
     const userIndex = users.findIndex(u => u.email.toLowerCase() === normalizedEmail);
     if (userIndex !== -1) {
       const user = users[userIndex];
+      if (user.passwordHash === "oauth-login-only" || user.passwordHash === "social-auth-bypass-pass") {
+        return { success: false, error: "This account is registered via Google/Apple. Please sign in using Google/Apple." };
+      }
       if (user.passwordHash === password || user.passwordHash === incomingHash) {
         if (user.passwordHash === password) {
           user.passwordHash = incomingHash;
@@ -262,6 +265,10 @@ export function validateUserCredentials(email: string, password: string): { succ
     return { success: false, error: "Email address not found. Please sign up." };
   }
   const user = users[userIndex];
+  if (user.passwordHash === "oauth-login-only" || user.passwordHash === "social-auth-bypass-pass") {
+    return { success: false, error: "This account is registered via Google/Apple. Please sign in using Google/Apple." };
+  }
+  
   const incomingHash = hashPassword(password);
   
   if (user.passwordHash !== password && user.passwordHash !== incomingHash) {
@@ -278,21 +285,31 @@ export function validateUserCredentials(email: string, password: string): { succ
 
 export function updateUserPassword(email: string, password: string): boolean {
   const normalizedEmail = email.trim().toLowerCase();
-  const hashed = hashPassword(password);
   
-  if (isAdminEmail(normalizedEmail)) {
-    saveAdminPassword(hashed);
-  }
-
   const users = getRegisteredUsers();
   const userIndex = users.findIndex(u => u.email.toLowerCase() === normalizedEmail);
   if (userIndex !== -1) {
+    if (users[userIndex].passwordHash === "oauth-login-only" || users[userIndex].passwordHash === "social-auth-bypass-pass") {
+      // Reject password resets for OAuth-only accounts to prevent takeovers
+      return false;
+    }
+    const hashed = hashPassword(password);
     users[userIndex].passwordHash = hashed;
     saveRegisteredUsers(users);
+    
+    if (isAdminEmail(normalizedEmail)) {
+      saveAdminPassword(hashed);
+    }
     return true;
   }
   
-  return isAdminEmail(normalizedEmail);
+  if (isAdminEmail(normalizedEmail)) {
+    const hashed = hashPassword(password);
+    saveAdminPassword(hashed);
+    return true;
+  }
+  
+  return false;
 }
 
 export function hasUserAccount(email: string): boolean {

@@ -149,12 +149,12 @@ function Shop() {
             <ul className="space-y-5">
               {["Under ₹999", "₹1,000 - ₹2,999", "₹3,000 - ₹4,999", "Above ₹5,000"].map((price) => (
                 <li key={price}>
-                  <label className="flex items-center gap-4 cursor-pointer text-[#374151] hover:text-gold font-light text-[15px] select-none transition-colors duration-200">
+                  <label className="flex items-center gap-4 cursor-pointer text-[#374151] hover:text-primary font-light text-[15px] select-none transition-colors duration-200">
                     <input
                       type="checkbox"
                       checked={selectedPrices.includes(price)}
                       onChange={() => handlePriceToggle(price)}
-                      className="w-4.5 h-4.5 rounded border border-gray-400 bg-white checked:bg-gold checked:border-gold text-gold focus:ring-0 focus:ring-offset-0 focus:outline-none transition-all cursor-pointer"
+                      className="w-4.5 h-4.5 rounded border border-gray-400 bg-white checked:bg-primary checked:border-primary text-primary focus:ring-0 focus:ring-offset-0 focus:outline-none transition-all cursor-pointer"
                     />
                     <span>{price}</span>
                   </label>

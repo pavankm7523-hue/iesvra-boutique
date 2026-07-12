@@ -114,7 +114,7 @@ export function Footer() {
               <Link to="/track-order" className="hover:text-gold transition-colors">Track Order</Link>
             </li>
             <li>
-              <a href="/mobile-app/" className="hover:text-gold transition-colors">Mobile App</a>
+              <a href="/mobile-app/index.html" className="hover:text-gold transition-colors">Mobile App</a>
             </li>
           </ul>
         </div>

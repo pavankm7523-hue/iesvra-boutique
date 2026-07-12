@@ -49,6 +49,8 @@ import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
+import { Route as ApiAuthGoogleCallbackRouteImport } from './routes/api/auth/google-callback'
+import { Route as ApiAuthGoogleRouteImport } from './routes/api/auth/google'
 import { Route as AdminProductNewRouteImport } from './routes/admin.product.new'
 import { Route as AdminProductIdRouteImport } from './routes/admin.product.$id'
 
@@ -252,6 +254,16 @@ const ApiNewsletterSubscribeRoute = ApiNewsletterSubscribeRouteImport.update({
   path: '/api/newsletter/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthGoogleCallbackRoute = ApiAuthGoogleCallbackRouteImport.update({
+  id: '/api/auth/google-callback',
+  path: '/api/auth/google-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthGoogleRoute = ApiAuthGoogleRouteImport.update({
+  id: '/api/auth/google',
+  path: '/api/auth/google',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminProductNewRoute = AdminProductNewRouteImport.update({
   id: '/product/new',
   path: '/product/new',
@@ -305,6 +317,8 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/admin/product/$id': typeof AdminProductIdRoute
   '/admin/product/new': typeof AdminProductNewRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesByTo {
@@ -348,6 +362,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/admin/product/$id': typeof AdminProductIdRoute
   '/admin/product/new': typeof AdminProductNewRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesById {
@@ -393,6 +409,8 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/admin/product/$id': typeof AdminProductIdRoute
   '/admin/product/new': typeof AdminProductNewRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRouteTypes {
@@ -439,6 +457,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/product/$id'
     | '/admin/product/new'
+    | '/api/auth/google'
+    | '/api/auth/google-callback'
     | '/api/newsletter/subscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -482,6 +502,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/product/$id'
     | '/admin/product/new'
+    | '/api/auth/google'
+    | '/api/auth/google-callback'
     | '/api/newsletter/subscribe'
   id:
     | '__root__'
@@ -526,6 +548,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/product/$id'
     | '/admin/product/new'
+    | '/api/auth/google'
+    | '/api/auth/google-callback'
     | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
 }
@@ -564,6 +588,8 @@ export interface RootRouteChildren {
   ApiUsersRoute: typeof ApiUsersRoute
   ApiVerifyPaymentRoute: typeof ApiVerifyPaymentRoute
   ProductIdRoute: typeof ProductIdRoute
+  ApiAuthGoogleRoute: typeof ApiAuthGoogleRoute
+  ApiAuthGoogleCallbackRoute: typeof ApiAuthGoogleCallbackRoute
   ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
 }
 
@@ -849,6 +875,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNewsletterSubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/google-callback': {
+      id: '/api/auth/google-callback'
+      path: '/api/auth/google-callback'
+      fullPath: '/api/auth/google-callback'
+      preLoaderRoute: typeof ApiAuthGoogleCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/google': {
+      id: '/api/auth/google'
+      path: '/api/auth/google'
+      fullPath: '/api/auth/google'
+      preLoaderRoute: typeof ApiAuthGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/product/new': {
       id: '/admin/product/new'
       path: '/product/new'
@@ -923,6 +963,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUsersRoute: ApiUsersRoute,
   ApiVerifyPaymentRoute: ApiVerifyPaymentRoute,
   ProductIdRoute: ProductIdRoute,
+  ApiAuthGoogleRoute: ApiAuthGoogleRoute,
+  ApiAuthGoogleCallbackRoute: ApiAuthGoogleCallbackRoute,
   ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,
 }
 export const routeTree = rootRouteImport

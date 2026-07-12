@@ -25,7 +25,7 @@ function AdminLayout() {
           </p>
           <Link
             to="/login"
-            className="inline-flex items-center justify-center px-8 h-12 bg-navy-deep text-gold font-bold uppercase tracking-widest text-xs rounded-full hover:bg-gold hover:text-navy-deep transition-all duration-300"
+            className="inline-flex items-center justify-center px-8 h-12 bg-primary text-white font-bold uppercase tracking-widest text-xs rounded-full hover:bg-primary/95 transition-all duration-300"
           >
             Go to Login
           </Link>
@@ -39,7 +39,7 @@ function AdminLayout() {
       {/* Sidebar */}
       <aside className="w-64 bg-navy-deep text-white flex flex-col shrink-0">
         <div className="p-6 border-b border-white/10">
-          <Link to="/" className="flex items-center gap-2 text-gold hover:text-white transition-colors">
+          <Link to="/" className="flex items-center gap-2 text-primary hover:text-white transition-colors">
             <ArrowLeft className="h-4 w-4" /> Back to Store
           </Link>
           <div className="mt-8">

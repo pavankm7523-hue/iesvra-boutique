@@ -21,6 +21,7 @@ import {
   Clock,
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
+import heroBanner from "@/assets/hero-banner.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -159,148 +160,146 @@ function Home() {
   }, [activeBanner]);
 
   const title = activeBanner?.title || "IESVRA";
-  const subtitle = activeBanner?.subtitle || "Quality Products, Best Prices, Everyday";
-  const buttonText = activeBanner?.buttonText || "SHOP NOW";
-  const buttonLink = activeBanner?.buttonLink || "/shop";
-  const backgroundImageUrl = activeBanner?.backgroundImageUrl || heroBg;
-
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % heroBanners.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + heroBanners.length) % heroBanners.length);
+  // Colorful backgrounds for category circles
+  const getCategoryBg = (index: number) => {
+    const colors = [
+      "bg-[#E2F1FF] border-[#cce6ff]",
+      "bg-[#FFE2EC] border-[#ffccd9]",
+      "bg-[#E2FFE9] border-[#ccffd6]",
+      "bg-[#FFF7E2] border-[#ffeec2]",
+      "bg-[#EBE2FF] border-[#dbccff]",
+      "bg-[#FFEBE2] border-[#ffd5cc]",
+      "bg-[#E2FFFF] border-[#ccffff]",
+      "bg-[#F5FFE2] border-[#ecffcc]"
+    ];
+    return colors[index % colors.length];
+  };
 
   return (
     <div className="bg-[#f8f9fb] text-navy-deep font-sans">
       {/* ============== HERO SECTION ============== */}
-      <section className="relative w-full h-[380px] sm:h-[450px] md:h-[520px] lg:h-[600px] bg-navy-deep overflow-hidden group">
-        
-        {/* Banners */}
-        {heroBanners.map((banner, idx) => {
-          const hasProducts = banner.productIds && banner.productIds.length > 0;
-          return (
-            <Link
-              key={banner.id}
-              to={banner.buttonLink || "/shop"}
-              search={hasProducts ? { bannerId: banner.id } : undefined}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-700 ${
-                currentSlide === idx ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-              }`}
-            >
-            <img
-              src={banner.backgroundImageUrl}
-              alt={banner.title}
-              className="w-full h-full object-cover object-center" 
+      <section className="max-w-7xl mx-auto px-4 lg:px-8 mt-6 select-none">
+        <div className="relative w-full overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+          {/* Default banner background link */}
+          <Link to="/shop" className="block w-full">
+            <img 
+              src={heroBanner} 
+              alt="IESVRA Smart Shopping Banner" 
+              className="w-full h-auto block"
+              style={{ imageRendering: "auto" }}
             />
+          </Link>
 
-            {/* Premium Layout for First Banner */}
-            {idx === 0 && (
-              <div className="absolute inset-0 z-10 flex text-left">
-                {/* Slanted Navy Background */}
-                <div 
-                  className="absolute top-0 bottom-0 left-0 w-full sm:left-[-10%] sm:w-[75%] md:w-[65%] lg:w-[55%] bg-gradient-to-r from-[#061022]/95 via-[#061022]/85 to-transparent sm:bg-[#061022] border-r-0 sm:border-r-[3px] border-[#D4AF37] z-0 shadow-none sm:shadow-[10px_0_30px_rgba(0,0,0,0.5)] transform sm:skew-x-[15deg] origin-bottom-left" 
-                ></div>
-
-                {/* Content */}
-                <div className="relative z-10 h-full flex flex-col justify-center px-5 sm:px-10 md:px-16 lg:px-20 max-w-2xl py-6 sm:py-8">
-                  <h4 className="text-[#D4AF37] font-bold uppercase tracking-[0.2em] text-[10px] md:text-xs mb-2.5">
-                    WELCOME TO
-                  </h4>
-                  <h1 className="font-display font-semibold text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-white mb-3 sm:mb-4 leading-[1.1]">
-                    IESVRA
-                  </h1>
-                  <p className="text-xs sm:text-base md:text-lg text-white/90 mb-6 sm:mb-8 max-w-[90%] sm:max-w-[80%] font-medium">
-                    Quality Products, Best Prices, Everyday
-                  </p>
-                  
-                  {/* Trust Badges */}
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 sm:flex sm:flex-wrap sm:gap-4 md:gap-6 mb-6 sm:mb-8">
-                    {[
-                      { icon: ShieldCheck, text: "Premium\nQuality" },
-                      { icon: CircleDollarSign, text: "Affordable\nPrices" },
-                      { icon: Truck, text: "Fast\nDelivery" },
-                      { icon: Award, text: "Trusted\nStore" }
-                    ].map((badge, i) => (
-                      <div key={i} className="flex items-center gap-1.5 sm:gap-2">
-                        <div className="h-6 w-6 sm:h-7 sm:w-7 md:h-9 md:w-9 rounded-full border border-white/20 flex items-center justify-center shrink-0">
-                          <badge.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-white/80" />
-                        </div>
-                        <span className="text-[8px] sm:text-[9px] md:text-[10px] text-white/80 font-bold uppercase tracking-wider leading-tight whitespace-pre-line">
-                          {badge.text}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="inline-block">
-                    <button className="bg-gradient-to-r from-[#e5c158] to-[#c59b27] text-navy-deep px-5 sm:px-8 py-2 sm:py-3 rounded-full font-bold text-[10px] sm:text-xs md:text-sm uppercase tracking-wider hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all flex items-center gap-2 group cursor-pointer">
-                      SHOP NOW
-                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-            </Link>
-          );
-        })}
-
-        {/* Left Arrow Navigation */}
-        {heroBanners.length > 1 && (
+          {/* Absolute Overlays for Action Buttons & Badges */}
+          
+          {/* 1. Badge: 15 MIN DELIVERY (Check Eligibility) */}
           <button 
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 lg:w-12 lg:h-12 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 transition-all z-20 opacity-0 group-hover:opacity-100"
-          >
-            <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6" />
-          </button>
-        )}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.dispatchEvent(new CustomEvent('open-address-modal'));
+            }}
+            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/5"
+            style={{
+              left: "4.0%",
+              top: "62.0%",
+              width: "10.5%",
+              height: "9.0%"
+            }}
+            aria-label="Check Delivery Eligibility"
+          />
 
-        {/* Right Arrow Navigation */}
-        {heroBanners.length > 1 && (
-          <button 
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 lg:w-12 lg:h-12 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 transition-all z-20 opacity-0 group-hover:opacity-100"
-          >
-            <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6" />
-          </button>
-        )}
+          {/* 2. Badge: FREE SHIPPING */}
+          <Link 
+            to="/shop" 
+            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/5"
+            style={{
+              left: "15.0%",
+              top: "62.0%",
+              width: "10.5%",
+              height: "9.0%"
+            }}
+            aria-label="Free Shipping Info"
+          />
 
-        {/* Floating Countdown Timer (If Sale Mode) */}
-        {activeBanner?.isSpecialSale && activeBanner?.saleEndDate && (
-          <div className="absolute bottom-6 left-6 z-20 flex items-center gap-3 bg-black/60 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/20 shadow-xl">
-            <div className="flex flex-col items-center">
-              <span className="text-base sm:text-lg font-bold text-white">{String(timeLeft.days).padStart(2, '0')}</span>
-              <span className="text-[9px] uppercase text-gold font-bold">Days</span>
-            </div>
-            <span className="text-white/50 font-bold">:</span>
-            <div className="flex flex-col items-center">
-              <span className="text-base sm:text-lg font-bold text-white">{String(timeLeft.hours).padStart(2, '0')}</span>
-              <span className="text-[9px] uppercase text-gold font-bold">Hrs</span>
-            </div>
-            <span className="text-white/50 font-bold">:</span>
-            <div className="flex flex-col items-center">
-              <span className="text-base sm:text-lg font-bold text-white">{String(timeLeft.mins).padStart(2, '0')}</span>
-              <span className="text-[9px] uppercase text-gold font-bold">Mins</span>
-            </div>
-            <span className="text-white/50 font-bold">:</span>
-            <div className="flex flex-col items-center">
-              <span className="text-base sm:text-lg font-bold text-white">{String(timeLeft.secs).padStart(2, '0')}</span>
-              <span className="text-[9px] uppercase text-gold font-bold">Secs</span>
-            </div>
-          </div>
-        )}
+          {/* 3. Badge: 100% SECURE PAYMENTS */}
+          <Link 
+            to="/shop" 
+            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/5"
+            style={{
+              left: "26.0%",
+              top: "62.0%",
+              width: "10.5%",
+              height: "9.0%"
+            }}
+            aria-label="Secure Payments Info"
+          />
 
-        {/* Dots */}
-        {heroBanners.length > 1 && (
-          <div className="absolute bottom-8 left-8 md:left-16 lg:left-20 flex gap-3 z-30">
-            {heroBanners.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentSlide(idx)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  currentSlide === idx ? "bg-[#dfb15b] w-6" : "bg-white/40 hover:bg-white/70 w-2"
-                }`}
-              />
-            ))}
-          </div>
-        )}
+          {/* 4. Badge: EASY RETURNS */}
+          <Link 
+            to="/shop" 
+            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/5"
+            style={{
+              left: "37.0%",
+              top: "62.0%",
+              width: "10.5%",
+              height: "9.0%"
+            }}
+            aria-label="Easy Returns Info"
+          />
+
+          {/* 5. SHOP NOW */}
+          <Link 
+            to="/shop" 
+            className="absolute z-20 cursor-pointer rounded-full transition-all hover:bg-white/10"
+            style={{
+              left: "3.8%",
+              top: "74.0%",
+              width: "12.5%",
+              height: "8.5%"
+            }}
+            aria-label="Shop Now"
+          />
+
+          {/* 6. DOWNLOAD APP */}
+          <a 
+            href="/mobile-app/index.html" 
+            className="absolute z-20 cursor-pointer rounded-full transition-all hover:bg-black/5"
+            style={{
+              left: "17.4%",
+              top: "74.0%",
+              width: "14.2%",
+              height: "8.5%"
+            }}
+            aria-label="Download App"
+          />
+
+          {/* 7. Google Play Store */}
+          <a 
+            href="/mobile-app/index.html" 
+            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/10"
+            style={{
+              left: "32.6%",
+              top: "75.0%",
+              width: "9.3%",
+              height: "6.8%"
+            }}
+            aria-label="Get it on Google Play"
+          />
+
+          {/* 8. Apple App Store */}
+          <a 
+            href="/mobile-app/index.html" 
+            className="absolute z-20 cursor-pointer rounded-lg transition-all hover:bg-black/10"
+            style={{
+              left: "42.8%",
+              top: "75.0%",
+              width: "8.5%",
+              height: "6.8%"
+            }}
+            aria-label="Download on the App Store"
+          />
+        </div>
       </section>
 
       {/* ============== LIVE SOCIAL PROOF STRIP ============== */}
@@ -378,19 +377,19 @@ function Home() {
             <h2 className="text-xl font-bold uppercase tracking-wide text-navy-deep">
               SHOP BY CATEGORY
             </h2>
-            <Link to="/shop" className="text-sm font-semibold text-navy-deep hover:text-gold flex items-center gap-1">
+            <Link to="/shop" className="text-sm font-semibold text-primary hover:text-primary/80 flex items-center gap-1">
               View All <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-none lg:grid lg:grid-cols-8 lg:gap-4 lg:overflow-visible lg:pb-0">
-            {categories.map((c) => (
+            {categories.map((c, idx) => (
               <Link
                 key={c.name}
                 to="/shop"
                 search={{ category: c.name }}
                 className="group flex flex-col items-center gap-3 cursor-pointer flex-shrink-0"
               >
-                <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden bg-white shadow-sm border border-border/40 flex items-center justify-center p-4 group-hover:border-gold group-hover:shadow-[0_8px_25px_-4px_rgba(230,185,110,0.3)] transition-all duration-500">
+                <div className={`w-20 h-20 lg:w-22 lg:h-22 rounded-full overflow-hidden flex items-center justify-center p-4 border transition-all duration-300 hover:scale-105 hover:shadow-md ${getCategoryBg(idx)}`}>
                   <img
                     src={c.image}
                     alt={c.name}
@@ -398,7 +397,7 @@ function Home() {
                     className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
-                <span className="text-xs lg:text-sm font-semibold text-center text-navy-deep/90 leading-tight group-hover:text-gold transition-colors px-1 whitespace-nowrap">
+                <span className="text-xs lg:text-sm font-semibold text-center text-navy-deep/90 leading-tight group-hover:text-primary transition-colors px-1 whitespace-nowrap">
                   {c.name}
                 </span>
               </Link>
@@ -414,7 +413,7 @@ function Home() {
             <h2 id="deals" className="text-2xl font-display font-bold text-navy-deep">
               BEST SELLERS
             </h2>
-            <Link to="/shop" className="text-sm font-semibold text-navy-deep hover:text-gold flex items-center gap-1">
+            <Link to="/shop" className="text-sm font-semibold text-primary hover:text-primary/80 flex items-center gap-1">
               View All <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -432,86 +431,54 @@ function Home() {
         </div>
       </section>
 
-      {/* ============== PROMOTIONAL BANNERS ============== */}
-      <section className="py-14 lg:py-16">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-8 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* ============== PROMOTIONAL BANNERS (DUAL-BANNER PURPLE STRIP) ============== */}
+      <section className="py-10 max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="bg-[#1D0C69] text-white rounded-2xl p-6 sm:p-8 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-xl border border-white/10">
           
-          {/* Banner 4 (NEW): Express Delivery */}
-          <div className="bg-navy-deep text-white rounded-2xl p-7 flex items-center justify-between relative overflow-hidden group border-2 border-gold shadow-[0_8px_30px_rgba(212,175,55,0.15)]">
-            <div className="absolute -right-6 -bottom-6 opacity-10">
-              <Zap className="w-40 h-40" />
+          {/* Left Side: IESVRA Plus */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 flex-1 w-full lg:border-r lg:border-b-0 border-b border-white/10 pb-6 lg:pb-0 lg:pr-8">
+            <div className="h-14 w-14 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
+              <Award className="h-8 w-8" />
             </div>
-            <div className="relative z-10 flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="h-5 w-5 text-gold fill-gold" />
-                <h3 className="text-[15px] font-bold uppercase tracking-wide text-gold">15-MIN DELIVERY</h3>
-              </div>
-              <p className="text-xs text-white/70 mb-4 leading-relaxed">Available near select<br/>warehouses</p>
-              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.dispatchEvent(new CustomEvent('open-address-modal'));
-                }}
-                className="inline-block border border-gold bg-gold/10 text-gold px-5 py-2 text-[10px] font-bold uppercase tracking-wider rounded-full hover:bg-gold hover:text-navy-deep transition-colors cursor-pointer"
-              >
-                CHECK ELIGIBILITY
-              </button>
-            </div>
-          </div>
-
-          {/* Banner 1: Free Shipping */}
-          <div className="bg-navy-deep text-white rounded-2xl p-7 flex items-center justify-between relative overflow-hidden group">
-            <div className="absolute -right-4 -bottom-4 opacity-10">
-              <Truck className="w-40 h-40" />
-            </div>
-            <div className="relative z-10 flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="h-8 w-8 rounded-full border border-gold/30 bg-gold/5 flex items-center justify-center text-gold">
-                  <Truck className="h-4 w-4" strokeWidth={1.5} />
+            <div className="text-center sm:text-left flex-1 space-y-2">
+              <h3 className="text-2xl font-bold font-display tracking-tight text-white flex items-center justify-center sm:justify-start gap-2">
+                IESVRA <span className="text-amber-400 font-serif-hero text-lg italic">Plus</span>
+              </h3>
+              <p className="text-xs text-slate-300 font-medium leading-relaxed max-w-md">
+                Unlimited Free Delivery, Extra 5% Cashback & Exclusive Member Deals
+              </p>
+              <div className="pt-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 justify-center sm:justify-start">
+                <div>
+                  <span className="text-[10px] text-slate-400 block uppercase tracking-wider font-bold">Special Membership Price</span>
+                  <span className="text-lg font-extrabold text-white">₹249 <span className="text-xs font-normal text-slate-300">/ Year</span></span>
                 </div>
-                <h3 className="text-[15px] font-bold uppercase tracking-wide">FREE SHIPPING</h3>
-              </div>
-              <p className="text-xs text-white/70 mb-4 leading-relaxed">On all orders above<br/>₹499</p>
-              <Link to="/shop" className="inline-block border border-gold text-gold px-5 py-2 text-[10px] font-bold uppercase tracking-wider rounded-full hover:bg-gold hover:text-navy-deep transition-colors">
-                SHOP NOW
-              </Link>
-            </div>
-          </div>
-
-          {/* Banner 2: New Arrivals */}
-          <div className="bg-[#fdf5f0] text-navy-deep rounded-2xl p-7 flex items-center justify-between relative overflow-hidden group">
-            <div className="relative z-10 flex-1">
-              <h3 className="text-[15px] font-bold uppercase tracking-wide mb-1">NEW ARRIVALS</h3>
-              <p className="text-xs text-navy-deep/60 mb-4 leading-relaxed">Check out our<br/>latest products</p>
-              <Link to="/shop" className="inline-block border border-navy-deep text-navy-deep px-5 py-2 text-[10px] font-bold uppercase tracking-wider rounded-full hover:bg-navy-deep hover:text-white transition-colors">
-                EXPLORE NOW
-              </Link>
-            </div>
-            <div className="w-20 h-20 flex justify-end relative z-10">
-              {categories[0] && (
-                <img src={categories[0].image} alt="New Arrivals" className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
-              )}
-            </div>
-          </div>
-
-          {/* Banner 3: Best Deals */}
-          <div className="bg-navy-deep text-white rounded-2xl p-7 flex items-center justify-between relative overflow-hidden group">
-            <div className="absolute -right-4 -bottom-4 opacity-10">
-              <Tag className="w-40 h-40" />
-            </div>
-            <div className="relative z-10 flex-1">
-              <h3 className="text-[15px] text-gold font-bold uppercase tracking-wide mb-1">BEST DEALS</h3>
-              <p className="text-xs text-white/70 mb-4 leading-relaxed">Up to <span className="font-bold text-white">70% OFF</span> on<br/>selected items</p>
-              <Link to="/shop" className="inline-block border border-gold text-gold px-5 py-2 text-[10px] font-bold uppercase tracking-wider rounded-full hover:bg-gold hover:text-navy-deep transition-colors">
-                SHOP OFFERS
-              </Link>
-            </div>
-            <div className="w-16 h-16 flex justify-end relative z-10">
-              <div className="bg-gold text-navy-deep font-bold text-3xl w-14 h-14 rounded-lg flex items-center justify-center transform rotate-12 shadow-lg shadow-gold/20">
-                %
+                <button className="bg-[#F6A623] hover:bg-[#e09117] text-white px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-md select-none mt-2 sm:mt-0">
+                  Join Now
+                </button>
               </div>
             </div>
           </div>
+
+          {/* Right Side: Bulk Orders */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 flex-1 w-full lg:pl-8">
+            <div className="h-14 w-14 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0 shadow-inner">
+              <Package className="h-8 w-8" />
+            </div>
+            <div className="text-center sm:text-left flex-1 space-y-2">
+              <h3 className="text-xl font-bold font-display tracking-tight text-white">
+                Bulk Orders for Businesses
+              </h3>
+              <p className="text-xs text-slate-300 font-medium leading-relaxed max-w-sm">
+                Get Special Discounts and Customized Delivery Plans for Corporate & Wholesale Orders.
+              </p>
+              <div className="pt-2">
+                <button className="border border-white/40 hover:border-white hover:bg-white/5 text-white px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer select-none">
+                  Contact Us
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -541,22 +508,23 @@ function Home() {
       </section>
 
       {/* ============== TRUST STRIP ============== */}
-      <section className="bg-white border-b border-border/40 py-10 lg:py-12">
+      <section className="bg-white border-b border-border/40 py-8 select-none">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 lg:gap-4">
             {[
-              { icon: ShieldCheck, title: "Secure Payments", desc: "100% safe & secure" },
-              { icon: Truck, title: isExpressLocation ? "⚡ 15-Min Delivery" : "Fast Delivery", desc: isExpressLocation ? "Available at your location" : "Pan India Delivery" },
-              { icon: RefreshCw, title: "Easy Returns", desc: "7 days return policy" },
-              { icon: Award, title: "Quality Products", desc: "Tested & trusted products" },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-center gap-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-full bg-navy-deep/5 flex items-center justify-center text-navy-deep">
-                  <Icon className="h-5 w-5" strokeWidth={1.5} />
+              { icon: Tag, title: "LIMITED TIME DEALS", desc: "Grab Best Offers Now", color: "text-amber-500 bg-amber-50 border-amber-100" },
+              { icon: ShieldCheck, title: "100% ORIGINAL PRODUCTS", desc: "Sourced from Trusted Brands", color: "text-green-500 bg-green-50 border-green-100" },
+              { icon: Truck, title: "FAST & RELIABLE DELIVERY", desc: "On-time at Your Doorstep", color: "text-blue-500 bg-blue-50 border-blue-100" },
+              { icon: CircleDollarSign, title: "SECURE PAYMENT", desc: "100% Safe & Secure", color: "text-indigo-500 bg-indigo-50 border-indigo-100" },
+              { icon: Users, title: "24x7 CUSTOMER SUPPORT", desc: "We are Always Here to Help", color: "text-purple-500 bg-purple-50 border-purple-100" },
+            ].map(({ icon: Icon, title, desc, color }) => (
+              <div key={title} className="flex items-center gap-3">
+                <div className={`flex-shrink-0 h-10 w-10 rounded-full border flex items-center justify-center ${color}`}>
+                  <Icon className="h-5 w-5" strokeWidth={2} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-navy-deep">{title}</h4>
-                  <p className="text-[12px] text-navy-deep/50">{desc}</p>
+                  <h4 className="font-bold text-xs text-slate-800 tracking-wide uppercase leading-tight">{title}</h4>
+                  <p className="text-[10px] text-slate-500 font-medium mt-0.5">{desc}</p>
                 </div>
               </div>
             ))}
