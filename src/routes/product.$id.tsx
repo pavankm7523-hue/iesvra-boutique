@@ -144,7 +144,7 @@ function ProductDetails() {
                   className="w-full h-full object-contain max-h-[85vh] transition-transform duration-500 hover:scale-105"
                 />
               )}
-              <span className="absolute top-6 left-6 bg-gold text-navy-deep text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg z-10">
+              <span className="absolute top-6 left-6 bg-gold text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg z-10">
                 {discount}% OFF
               </span>
 

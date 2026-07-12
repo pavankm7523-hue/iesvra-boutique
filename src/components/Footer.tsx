@@ -83,7 +83,7 @@ export function Footer() {
                 target={href !== "#" ? "_blank" : undefined}
                 rel={href !== "#" ? "noopener noreferrer" : undefined}
                 title={title}
-                className="h-9 w-9 rounded-full bg-white/5 border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold flex items-center justify-center transition-all duration-300"
+                className="h-9 w-9 rounded-full bg-white/5 border border-white/10 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center transition-all duration-300"
               >
                 <Icon className="h-4 w-4" />
               </a>
@@ -157,12 +157,12 @@ export function Footer() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isSubscribing}
-              className="w-full h-11 px-4 rounded-md text-white text-sm bg-white/5 border border-white/10 focus:outline-none focus:border-gold/50 transition-colors"
+              className="w-full h-11 px-4 rounded-md text-white text-sm bg-white/5 border border-white/10 focus:outline-none focus:border-primary/50 transition-colors"
             />
             <button
               type="submit"
               disabled={isSubscribing}
-              className="w-full bg-gold text-navy-deep h-11 rounded-md font-bold text-xs uppercase tracking-wider hover:bg-white transition-colors duration-300 disabled:opacity-50"
+              className="w-full bg-primary text-white h-11 rounded-md font-bold text-xs uppercase tracking-wider hover:bg-primary/95 transition-colors duration-300 disabled:opacity-50"
             >
               {isSubscribing ? "Subscribing..." : "Subscribe"}
             </button>

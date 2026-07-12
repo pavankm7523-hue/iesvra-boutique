@@ -87,7 +87,7 @@ function WishlistPage() {
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                     />
                     {discount > 0 && (
-                      <span className="absolute top-3 left-3 bg-gold text-navy-deep text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm shadow-sm">
+                      <span className="absolute top-3 left-3 bg-gold text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm shadow-sm">
                         {discount}% OFF
                       </span>
                     )}

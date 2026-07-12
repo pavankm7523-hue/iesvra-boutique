@@ -36,7 +36,7 @@ export function ProductCard({
         <div className="relative aspect-square bg-[#F7F7F7] overflow-hidden rounded-t-xl flex items-center justify-center p-6 border-b border-border/40">
           {/* Dynamic Badge */}
           {(customBadge || product.isBestSeller) && (
-            <div className="absolute top-3 left-3 z-10 bg-gold text-navy-deep text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm">
+            <div className="absolute top-3 left-3 z-10 bg-gold text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm">
               {customBadge || "Best Seller"}
             </div>
           )}

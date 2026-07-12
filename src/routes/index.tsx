@@ -482,12 +482,12 @@ function Home() {
               value={subscriberEmail}
               onChange={(e) => setSubscriberEmail(e.target.value)}
               disabled={isSubscribing}
-              className="flex-1 h-12 px-6 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-gold transition-colors"
+              className="flex-1 h-12 px-6 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-primary transition-colors"
             />
             <button
               type="submit"
               disabled={isSubscribing}
-              className="h-12 px-8 bg-gold text-navy-deep font-bold rounded-full hover:bg-white transition-colors uppercase tracking-widest text-xs flex-shrink-0 disabled:opacity-50"
+              className="h-12 px-8 bg-primary text-white font-bold rounded-full hover:bg-primary/90 transition-colors uppercase tracking-widest text-xs flex-shrink-0 disabled:opacity-50"
             >
               {isSubscribing ? "Subscribing..." : "Subscribe"}
             </button>

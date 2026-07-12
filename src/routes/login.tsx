@@ -624,9 +624,9 @@ function Login() {
                       placeholder="name@domain.com"
                       value={socialEmail}
                       onChange={(e) => setSocialEmail(e.target.value)}
-                      className="flex-1 border border-border rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-gold"
+                      className="flex-1 border border-border rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-primary"
                     />
-                    <button type="submit" className="bg-gold text-navy-deep px-4 py-1.5 rounded-md text-xs font-bold hover:bg-gold/90 transition cursor-pointer">Next</button>
+                    <button type="submit" className="bg-primary text-white px-4 py-1.5 rounded-md text-xs font-bold hover:bg-primary/90 transition cursor-pointer">Next</button>
                   </form>
                 </div>
               </div>
