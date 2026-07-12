@@ -178,8 +178,8 @@ function Home() {
   return (
     <div className="bg-[#f8f9fb] text-navy-deep font-sans">
       {/* ============== HERO SECTION ============== */}
-      <section className="max-w-7xl mx-auto px-4 lg:px-8 mt-6">
-        <div className="relative w-full bg-gradient-to-r from-[#efeefc] via-[#f5f4fd] to-[#fcfcff] overflow-hidden rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between py-10 px-6 sm:px-10 md:px-16 gap-8 min-h-[380px] sm:min-h-[440px] md:min-h-[480px]">
+      <section className="w-full bg-gradient-to-r from-[#efeefc] via-[#f5f4fd] to-[#fcfcff] border-b border-slate-100/80 overflow-hidden py-10 md:py-14">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10 w-full">
           
           {/* Left Column: Text Content & Badges */}
           <div className="flex-1 space-y-6 max-w-2xl text-left">
