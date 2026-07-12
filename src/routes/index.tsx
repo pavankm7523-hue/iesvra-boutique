@@ -307,7 +307,7 @@ function Home() {
 
           {/* Last delivery time */}
           <div className="flex items-center gap-2 text-white/90 text-xs">
-            <Truck className="h-3.5 w-3.5 text-gold shrink-0" />
+            <Truck className="h-3.5 w-3.5 text-primary shrink-0" />
             <span>Delivered <span className="font-bold text-white">{deliveryMessages[deliveryMsgIdx]}</span> near you</span>
           </div>
 
@@ -316,8 +316,8 @@ function Home() {
             <>
               <span className="hidden sm:block w-px h-4 bg-white/20" />
               <div className="flex items-center gap-2 text-white/90 text-xs">
-                <Clock className="h-3.5 w-3.5 text-gold shrink-0" />
-                <span>Order before <span className="font-bold text-gold">9 PM</span> for Next Day Delivery</span>
+                <Clock className="h-3.5 w-3.5 text-primary shrink-0" />
+                <span>Order before <span className="font-bold text-primary">9 PM</span> for Next Day Delivery</span>
               </div>
             </>
           )}
@@ -326,7 +326,7 @@ function Home() {
       
       {/* ============== 15-MIN EXPRESS DELIVERY HIGHLIGHT ============== */}
       <section className="pt-10 pb-2 px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="bg-[#0b121f] text-white rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between relative overflow-hidden border border-[#dfb15b]/40 shadow-xl group">
+        <div className="bg-[#0b121f] text-white rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between relative overflow-hidden border border-primary/30 shadow-xl group">
           {/* Large faint background watermark */}
           <div className="absolute right-0 bottom-0 top-0 w-1/2 flex items-center justify-end pr-8 sm:pr-12 md:pr-16 opacity-[0.03] select-none pointer-events-none z-0">
             <Zap className="w-56 h-56 sm:w-64 sm:h-64 text-white" />
@@ -334,8 +334,8 @@ function Home() {
 
           <div className="relative z-10 flex flex-col items-center md:items-start text-center md:text-left gap-3.5 sm:gap-4 md:gap-5 flex-1">
             <div className="flex items-center gap-3">
-              <Zap className="h-7 w-7 sm:h-8 sm:w-8 text-[#dfb15b] fill-[#dfb15b]" />
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wider text-[#dfb15b] drop-shadow-sm">
+              <Zap className="h-7 w-7 sm:h-8 sm:w-8 text-primary fill-primary" />
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wider text-primary drop-shadow-sm">
                 15-MIN DELIVERY
               </h3>
             </div>
@@ -350,7 +350,7 @@ function Home() {
                 e.preventDefault();
                 window.dispatchEvent(new CustomEvent('open-address-modal'));
               }}
-              className="inline-flex items-center justify-center border-2 border-[#dfb15b] bg-[#dfb15b]/5 text-[#dfb15b] px-8 py-3.5 text-xs sm:text-sm font-bold uppercase tracking-widest rounded-full hover:bg-[#dfb15b] hover:text-navy-deep hover:shadow-[0_0_25px_rgba(223,177,91,0.4)] transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center justify-center border-2 border-primary bg-primary/5 text-primary px-8 py-3.5 text-xs sm:text-sm font-bold uppercase tracking-widest rounded-full hover:bg-primary hover:text-white hover:shadow-[0_0_25px_rgba(107,70,193,0.4)] transition-all duration-300 cursor-pointer"
             >
               CHECK ELIGIBILITY
             </button>

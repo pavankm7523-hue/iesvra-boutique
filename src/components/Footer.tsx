@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import logo from "@/assets/ishvara-logo-clean.png";
+import logo from "@/assets/ishvara-logo.png";
 import { Facebook, Instagram, Youtube, Phone as Whatsapp } from "lucide-react";
 
 export function Footer() {

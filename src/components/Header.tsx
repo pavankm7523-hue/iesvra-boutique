@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import logo from "@/assets/ishvara-logo-clean.png";
+import logo from "@/assets/ishvara-logo.png";
 import { useCartCount } from "@/lib/cart";
 import { useCurrentUser, logoutUser } from "@/lib/auth";
 import { useState, useMemo, useEffect } from "react";
 import { fetchAddressSuggestions, checkExpressEligibility, geocodeAddress } from "@/lib/delivery";
-import { useProducts } from "@/lib/products";
+import { useProducts, useCategories } from "@/lib/products";
 import {
   Search,
   ShoppingCart,
@@ -34,6 +34,8 @@ export function Header() {
   const cartCount = useCartCount();
   const { products: allProducts } = useProducts();
   const currentUser = useCurrentUser();
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const categories = useCategories();
 
   // Header Delivery State
   const [headerAddress, setHeaderAddress] = useState("");
@@ -291,9 +293,44 @@ export function Header() {
               }}
             >
               <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg overflow-hidden h-11 w-full focus-within:border-primary/50 focus-within:bg-white transition-all shadow-sm">
-                <div className="hidden lg:flex items-center gap-1.5 px-4 text-xs font-bold text-slate-700 bg-slate-100/50 h-full border-r border-slate-200 shrink-0 cursor-pointer hover:bg-slate-100 transition-colors">
-                  <span>All Categories</span>
-                  <ChevronDown className="h-3 w-3 opacity-60" />
+                
+                {/* Category Dropdown */}
+                <div className="relative hidden lg:block h-full shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
+                    className="flex items-center gap-1.5 px-4 text-xs font-bold text-slate-700 bg-slate-100/50 h-full border-r border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+                  >
+                    <span>All Categories</span>
+                    <ChevronDown className={`h-3 w-3 opacity-60 transition-transform ${isCategoryMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {isCategoryMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-30" onClick={() => setIsCategoryMenuOpen(false)} />
+                      <div className="absolute top-full left-0 mt-1 w-52 bg-white rounded-xl shadow-2xl border border-border/50 overflow-hidden z-40 py-2 animate-in fade-in slide-in-from-top-1 duration-150 text-left">
+                        <Link
+                          to="/shop"
+                          onClick={() => setIsCategoryMenuOpen(false)}
+                          className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-primary/5 hover:text-primary transition-colors uppercase tracking-wider"
+                        >
+                          All Categories
+                        </Link>
+                        <div className="h-[1px] bg-slate-100 my-1" />
+                        {categories.map((cat) => (
+                          <Link
+                            key={cat.name}
+                            to="/shop"
+                            search={{ category: cat.name }}
+                            onClick={() => setIsCategoryMenuOpen(false)}
+                            className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-primary/5 hover:text-primary transition-colors uppercase tracking-wider"
+                          >
+                            {cat.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
                 <input
                   type="text"
