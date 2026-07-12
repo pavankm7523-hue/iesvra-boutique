@@ -500,14 +500,14 @@ function Home() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 lg:gap-4">
             {[
-              { icon: Tag, title: "LIMITED TIME DEALS", desc: "Grab Best Offers Now", color: "text-amber-500 bg-amber-50 border-amber-100" },
-              { icon: ShieldCheck, title: "100% ORIGINAL PRODUCTS", desc: "Sourced from Trusted Brands", color: "text-green-500 bg-green-50 border-green-100" },
-              { icon: Truck, title: "FAST & RELIABLE DELIVERY", desc: "On-time at Your Doorstep", color: "text-blue-500 bg-blue-50 border-blue-100" },
-              { icon: CircleDollarSign, title: "SECURE PAYMENT", desc: "100% Safe & Secure", color: "text-indigo-500 bg-indigo-50 border-indigo-100" },
-              { icon: Users, title: "24x7 CUSTOMER SUPPORT", desc: "We are Always Here to Help", color: "text-purple-500 bg-purple-50 border-purple-100" },
-            ].map(({ icon: Icon, title, desc, color }) => (
+              { icon: Tag, title: "LIMITED TIME DEALS", desc: "Grab Best Offers Now" },
+              { icon: ShieldCheck, title: "100% ORIGINAL PRODUCTS", desc: "Sourced from Trusted Brands" },
+              { icon: Truck, title: "FAST & RELIABLE DELIVERY", desc: "On-time at Your Doorstep" },
+              { icon: CircleDollarSign, title: "SECURE PAYMENT", desc: "100% Safe & Secure" },
+              { icon: Users, title: "24x7 CUSTOMER SUPPORT", desc: "We are Always Here to Help" },
+            ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-center gap-3">
-                <div className={`flex-shrink-0 h-10 w-10 rounded-full border flex items-center justify-center ${color}`}>
+                <div className="flex-shrink-0 h-10 w-10 rounded-full border border-primary/20 bg-primary/10 flex items-center justify-center text-primary">
                   <Icon className="h-5 w-5" strokeWidth={2} />
                 </div>
                 <div>

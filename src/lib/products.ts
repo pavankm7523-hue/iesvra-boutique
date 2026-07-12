@@ -94,10 +94,34 @@ export const initialCategories: Category[] = [
   { name: "Fans & Coolers", image: pFan },
 ];
 
+const categoryImageMap: Record<string, string> = {
+  "Massagers": pHead,
+  "Mobile Accessories": pAirpods,
+  "Beauty & Personal Care": pVanity,
+  "Home & Kitchen": pJar,
+  "Bags & Travel": pTravel,
+  "Drinkware": pSteel,
+  "Daily Essentials": pDish,
+  "Fans & Coolers": pFan
+};
+
+export function sanitizeCategories(cats: Category[]): Category[] {
+  if (!Array.isArray(cats)) return [];
+  return cats.map(cat => ({
+    ...cat,
+    image: categoryImageMap[cat.name] || cat.image
+  }));
+}
+
 export function getCategories(): Category[] {
   if (typeof window === "undefined") return initialCategories;
   const stored = localStorage.getItem("ishvara_categories_v2");
-  return stored ? JSON.parse(stored) : initialCategories;
+  if (!stored) return initialCategories;
+  try {
+    return sanitizeCategories(JSON.parse(stored));
+  } catch (e) {
+    return initialCategories;
+  }
 }
 
 export function saveCategories(cats: Category[]) {
@@ -119,8 +143,9 @@ export function useCategories() {
       .then((res) => res.json())
       .then((globalCats) => {
         if (Array.isArray(globalCats) && globalCats.length > 0) {
-          setCats(globalCats);
-          localStorage.setItem("ishvara_categories_v2", JSON.stringify(globalCats));
+          const sanitized = sanitizeCategories(globalCats);
+          setCats(sanitized);
+          localStorage.setItem("ishvara_categories_v2", JSON.stringify(sanitized));
         } else {
           fetch("/api/categories", {
             method: "POST",
