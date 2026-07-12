@@ -327,10 +327,6 @@ function Home() {
       {/* ============== 15-MIN EXPRESS DELIVERY HIGHLIGHT ============== */}
       <section className="pt-10 pb-2 px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="bg-[#0b121f] text-white rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between relative overflow-hidden border border-primary/30 shadow-xl group">
-          {/* Large faint background watermark */}
-          <div className="absolute right-0 bottom-0 top-0 w-1/2 flex items-center justify-end pr-8 sm:pr-12 md:pr-16 opacity-[0.03] select-none pointer-events-none z-0">
-            <Zap className="w-56 h-56 sm:w-64 sm:h-64 text-white" />
-          </div>
 
           <div className="relative z-10 flex flex-col items-center md:items-start text-center md:text-left gap-3.5 sm:gap-4 md:gap-5 flex-1">
             <div className="flex items-center gap-3">
@@ -389,6 +385,31 @@ function Home() {
                   {c.name}
                 </span>
               </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============== TRUST STRIP ============== */}
+      <section className="bg-white border-b border-border/40 py-8 select-none">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 lg:gap-4">
+            {[
+              { icon: Tag, title: "LIMITED TIME DEALS", desc: "Grab Best Offers Now" },
+              { icon: ShieldCheck, title: "100% ORIGINAL PRODUCTS", desc: "Sourced from Trusted Brands" },
+              { icon: Truck, title: "FAST & RELIABLE DELIVERY", desc: "On-time at Your Doorstep" },
+              { icon: CircleDollarSign, title: "SECURE PAYMENT", desc: "100% Safe & Secure" },
+              { icon: Users, title: "24x7 CUSTOMER SUPPORT", desc: "We are Always Here to Help" },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex items-center gap-3">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full border border-primary/20 bg-primary/10 flex items-center justify-center text-primary">
+                  <Icon className="h-5 w-5" strokeWidth={2} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-xs text-slate-800 tracking-wide uppercase leading-tight">{title}</h4>
+                  <p className="text-[10px] text-slate-500 font-medium mt-0.5">{desc}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -495,30 +516,6 @@ function Home() {
         </div>
       </section>
 
-      {/* ============== TRUST STRIP ============== */}
-      <section className="bg-white border-b border-border/40 py-8 select-none">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 lg:gap-4">
-            {[
-              { icon: Tag, title: "LIMITED TIME DEALS", desc: "Grab Best Offers Now" },
-              { icon: ShieldCheck, title: "100% ORIGINAL PRODUCTS", desc: "Sourced from Trusted Brands" },
-              { icon: Truck, title: "FAST & RELIABLE DELIVERY", desc: "On-time at Your Doorstep" },
-              { icon: CircleDollarSign, title: "SECURE PAYMENT", desc: "100% Safe & Secure" },
-              { icon: Users, title: "24x7 CUSTOMER SUPPORT", desc: "We are Always Here to Help" },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-center gap-3">
-                <div className="flex-shrink-0 h-10 w-10 rounded-full border border-primary/20 bg-primary/10 flex items-center justify-center text-primary">
-                  <Icon className="h-5 w-5" strokeWidth={2} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 tracking-wide uppercase leading-tight">{title}</h4>
-                  <p className="text-[10px] text-slate-500 font-medium mt-0.5">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
