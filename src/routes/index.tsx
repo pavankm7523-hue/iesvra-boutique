@@ -20,6 +20,7 @@ import {
   Zap,
   Users,
   Clock,
+  Crown,
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 import heroMockup from "@/assets/hero-mockup.png";
@@ -442,76 +443,104 @@ function Home() {
         </div>
       </section>
 
-      {/* ============== PROMOTIONAL BANNERS (DUAL-BANNER PURPLE STRIP) ============== */}
+      {/* ============== PROMOTIONAL BANNERS (DUAL SIDE-BY-SIDE CARDS) ============== */}
       <section className="py-10 max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="bg-[#1D0C69] text-white rounded-2xl p-6 sm:p-8 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-xl border border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          {/* Left Side: IESVRA Plus */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 flex-1 w-full lg:border-r lg:border-b-0 border-b border-white/10 pb-6 lg:pb-0 lg:pr-8">
-            <div className="h-14 w-14 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
-              <Award className="h-8 w-8" />
-            </div>
-            <div className="text-center sm:text-left flex-1 space-y-2">
-              <h3 className="text-2xl font-bold font-display tracking-tight text-white flex items-center justify-center sm:justify-start gap-2">
-                IESVRA <span className="text-amber-400 font-serif-hero text-lg italic">Plus</span>
-              </h3>
-              <p className="text-xs text-slate-300 font-medium leading-relaxed max-w-md">
-                Unlimited Free Delivery, Extra 5% Cashback & Exclusive Member Deals
-              </p>
-              <div className="pt-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 justify-center sm:justify-start">
-                <div>
-                  <span className="text-[10px] text-slate-400 block uppercase tracking-wider font-bold">Special Membership Price</span>
-                  <span className="text-lg font-extrabold text-white">₹249 <span className="text-xs font-normal text-slate-300">/ Year</span></span>
+          {/* Left Banner: IESVRA Plus */}
+          <div 
+            onClick={() => {
+              const membershipProduct = {
+                id: "iesvra-plus-membership",
+                name: "IESVRA Plus Membership",
+                sub: "1-Year Premium Subscription",
+                price: 249,
+                mrp: 499,
+                image: "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef?auto=format&fit=crop&w=150&q=80",
+                categories: ["Membership"],
+                colors: ["Gold"],
+                description: "Unlimited Free Delivery, Extra 5% Cashback & Exclusive Member Deals",
+                isDigital: true,
+                type: "membership",
+              };
+              addToCart(membershipProduct, "Gold", 1);
+              navigate({ to: "/cart" });
+              toast.success("IESVRA Plus membership added to your cart!");
+            }}
+            className="relative bg-gradient-to-br from-[#5b21b6] via-[#6d28d9] to-[#4c1d95] rounded-3xl p-6 sm:p-8 flex items-center justify-between gap-4 overflow-hidden border border-white/10 shadow-lg cursor-pointer hover:scale-[1.01] hover:shadow-xl hover:border-amber-400/30 transition-all duration-300 group select-none min-h-[220px]"
+          >
+            {/* Background design elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/5 rounded-full filter blur-2xl pointer-events-none"></div>
+            
+            <div className="flex-1 flex flex-col justify-between h-full z-10">
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5">
+                  <Crown className="h-5 w-5 text-amber-400 fill-amber-400" />
+                  <span className="text-lg font-bold tracking-tight text-white uppercase">
+                    IESVRA <span className="text-amber-400 font-serif italic normal-case">Plus</span>
+                  </span>
                 </div>
-                <button 
-                  onClick={() => {
-                    const membershipProduct = {
-                      id: "iesvra-plus-membership",
-                      name: "IESVRA Plus Membership",
-                      sub: "1-Year Premium Subscription",
-                      price: 249,
-                      mrp: 499,
-                      image: "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef?auto=format&fit=crop&w=150&q=80",
-                      categories: ["Membership"],
-                      colors: ["Gold"],
-                      description: "Unlimited Free Delivery, Extra 5% Cashback & Exclusive Member Deals",
-                      isDigital: true,
-                      type: "membership",
-                    };
-                    addToCart(membershipProduct, "Gold", 1);
-                    navigate({ to: "/cart" });
-                    toast.success("IESVRA Plus membership added to your cart!");
-                  }}
-                  className="bg-[#F6A623] hover:bg-[#e09117] text-white px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-md select-none mt-2 sm:mt-0"
-                >
-                  Join Now
-                </button>
+                <h4 className="text-sm font-bold text-slate-100">Join IESVRA Plus & Enjoy</h4>
+                <ul className="space-y-1 mt-2">
+                  {[
+                    "Extra Discounts",
+                    "Early Access to Sales",
+                    "Free Shipping Vouchers",
+                    "Priority Customer Support"
+                  ].map((benefit, idx) => (
+                    <li key={idx} className="flex items-center gap-1.5 text-xs text-slate-200">
+                      <div className="h-1.5 w-1.5 rounded-full bg-amber-400"></div>
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
               </div>
+              
+              <button className="mt-4 bg-amber-400 hover:bg-amber-500 text-purple-950 px-5 py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors shadow-md self-start">
+                Join Now
+              </button>
+            </div>
+            
+            {/* Right Graphic: Gift Box */}
+            <div className="w-28 sm:w-36 aspect-square shrink-0 flex items-center justify-center relative z-10 select-none pointer-events-none">
+              <img 
+                src="/membership-gift.png" 
+                alt="Membership Gift Box" 
+                className="w-full h-full object-contain filter drop-shadow-lg group-hover:scale-105 transition-transform duration-500" 
+              />
             </div>
           </div>
 
-          {/* Right Side: Bulk Orders */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 flex-1 w-full lg:pl-8">
-            <div className="h-14 w-14 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0 shadow-inner">
-              <Package className="h-8 w-8" />
-            </div>
-            <div className="text-center sm:text-left flex-1 space-y-2">
-              <h3 className="text-xl font-bold font-display tracking-tight text-white">
-                Bulk Orders for Businesses
-              </h3>
-              <p className="text-xs text-slate-300 font-medium leading-relaxed max-w-sm">
-                Get Special Discounts and Customized Delivery Plans for Corporate & Wholesale Orders.
-              </p>
-              <div className="pt-2">
-                <a 
-                  href="https://wa.me/917061333200?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20bulk%20orders%20for%20my%20business."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block border border-white/40 hover:border-white hover:bg-white/5 text-white px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer select-none text-center"
-                >
-                  Contact Us
-                </a>
+          {/* Right Banner: Bulk Orders */}
+          <div className="relative bg-white rounded-3xl p-6 sm:p-8 flex items-center justify-between gap-4 overflow-hidden border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 group min-h-[220px]">
+            
+            <div className="flex-1 flex flex-col justify-between h-full z-10">
+              <div className="space-y-2">
+                <h3 className="text-lg sm:text-xl font-bold font-display text-navy-deep leading-tight">
+                  Bulk Orders for Businesses
+                </h3>
+                <p className="text-xs text-navy-deep/60 leading-relaxed max-w-[240px]">
+                  Get special discounts and dedicated support for your business needs.
+                </p>
               </div>
+              
+              <a 
+                href="https://wa.me/917061333200?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20bulk%20orders%20for%20my%20business."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center border-2 border-[#5b21b6] hover:bg-[#5b21b6] text-[#5b21b6] hover:text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer select-none self-start mt-4"
+              >
+                Contact Us
+              </a>
+            </div>
+            
+            {/* Right Graphic: Cardboard Boxes */}
+            <div className="w-28 sm:w-36 aspect-square shrink-0 flex items-center justify-center relative z-10 select-none pointer-events-none">
+              <img 
+                src="/bulk-boxes.png" 
+                alt="Bulk Order Cardboard Boxes" 
+                className="w-full h-full object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-500" 
+              />
             </div>
           </div>
 
