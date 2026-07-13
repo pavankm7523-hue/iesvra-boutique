@@ -230,7 +230,7 @@ export function Header() {
       {/* ======================================================== */}
 
       {/* Main Header */}
-      <div className="bg-white py-4 lg:py-5 border-b border-slate-200/60">
+      <div className="bg-white py-3 lg:py-4 border-b border-slate-200/60">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between gap-4 lg:gap-8">
           
           {/* Logo & Delivery Indicator (Left) */}
@@ -245,7 +245,7 @@ export function Header() {
               <img
                 src={logo}
                 alt="IESVRA"
-                className="h-10 sm:h-12 w-auto object-contain"
+                className="h-12 sm:h-16 w-auto object-contain"
               />
             </Link>
 
@@ -522,7 +522,7 @@ export function Header() {
             <img
               src={logo}
               alt="IESVRA"
-              className="h-10 w-auto object-contain"
+              className="h-12 w-auto object-contain"
             />
           </Link>
           <button 
