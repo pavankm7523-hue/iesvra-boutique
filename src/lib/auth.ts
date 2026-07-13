@@ -321,11 +321,14 @@ export function hasUserAccount(email: string): boolean {
 
 
 export function useCurrentUser() {
-  const [user, setUser] = useState<User | null>(() => getCurrentUser());
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     // Sync with global database on mount
     syncAuthWithDb();
+
+    // Load initial user state on the client to avoid SSR mismatch
+    setUser(getCurrentUser());
 
     const handleUpdate = () => {
       setUser(getCurrentUser());

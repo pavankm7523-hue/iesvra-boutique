@@ -11,7 +11,6 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import logoUrl from "@/assets/ishvara-logo.png?url";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "sonner";
@@ -87,14 +86,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "IESVRA - Everyday essentials, extraordinary deals.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: logoUrl },
+      { property: "og:image", content: "https://iesvra.com/favicon.png" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "IESVRA" },
       {
         name: "twitter:description",
         content: "IESVRA - Everyday essentials, extraordinary deals.",
       },
-      { name: "twitter:image", content: logoUrl },
+      { name: "twitter:image", content: "https://iesvra.com/favicon.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -103,8 +102,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap",
       },
-      { rel: "icon", type: "image/png", href: logoUrl },
-      { rel: "apple-touch-icon", href: logoUrl },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "shortcut icon", href: "/favicon.ico" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
       {
         rel: "stylesheet",
         href: appCss,
@@ -118,10 +118,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "IESVRA",
+    "url": "https://iesvra.com",
+    "logo": "https://iesvra.com/favicon.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+91-7061333200",
+      "contactType": "customer service"
+    }
+  };
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
       <body>
         {children}

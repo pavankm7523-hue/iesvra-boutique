@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import logo from "@/assets/ishvara-logo.png";
+const logo = "/iesvra-logo.png";
 import { useCartCount } from "@/lib/cart";
 import { useCurrentUser, logoutUser } from "@/lib/auth";
 import { useState, useMemo, useEffect } from "react";
@@ -175,13 +175,13 @@ export function Header() {
     ).slice(0, 5);
   }, [searchQuery, allProducts]);
   const navLinks = [
-    { label: "Home", to: "/" },
-    { label: "All Categories", to: "/shop" },
-    { label: "Best Sellers", to: "/shop" },
-    { label: "New Arrivals", to: "/shop" },
-    { label: "Offers", to: "/#deals" },
-    { label: "Track Order", to: "/track-order" },
-    { label: "Contact Us", to: "/contact" },
+    { label: "Home", to: "/" as const },
+    { label: "All Categories", to: "/shop" as const },
+    { label: "Best Sellers", to: "/shop" as const },
+    { label: "New Arrivals", to: "/shop" as const },
+    { label: "Offers", to: "/" as const, hash: "deals" },
+    { label: "Track Order", to: "/track-order" as const },
+    { label: "Contact Us", to: "/contact" as const },
   ];
 
   return (
@@ -469,9 +469,11 @@ export function Header() {
         <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="relative group">
-              <button className="bg-primary hover:bg-primary/95 text-white px-5 py-2.5 rounded-md font-bold text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer h-10 select-none">
-                <Menu className="h-4 w-4" /> Shop by Categories
-              </button>
+              <Link to="/shop">
+                <button className="bg-primary hover:bg-primary/95 text-white px-5 py-2.5 rounded-md font-bold text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer h-10 select-none">
+                  <Menu className="h-4 w-4" /> Shop by Categories
+                </button>
+              </Link>
             </div>
             
             <div className="flex items-center gap-8">
@@ -479,6 +481,7 @@ export function Header() {
                 <Link
                   key={l.label}
                   to={l.to}
+                  hash={l.hash}
                   className="text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-primary transition-colors py-3 relative group"
                 >
                   {l.label}
@@ -555,6 +558,7 @@ export function Header() {
             <Link
               key={l.label}
               to={l.to}
+              hash={l.hash}
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-sm font-semibold tracking-wide text-white/80 hover:text-gold transition-colors py-2 border-b border-white/5 last:border-0"
             >

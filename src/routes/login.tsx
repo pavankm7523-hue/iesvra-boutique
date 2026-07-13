@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect, useRef } from "react";
-import logo from "@/assets/ishvara-logo-clean.png";
+const logo = "/iesvra-logo.png";
 import { loginUser, registerUserInDb, validateUserCredentials, updateUserPassword, hasUserAccount } from "@/lib/auth";
 import { toast } from "sonner";
 import { Check, X, Shield, Lock, Eye, EyeOff, ArrowLeft, KeyRound } from "lucide-react";

@@ -1,9 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useProducts, useCategories } from "@/lib/products";
 import { useHeroBanners } from "@/lib/hero";
 import { ProductCard } from "@/components/ProductCard";
+import { addToCart } from "@/lib/cart";
 import {
   ShieldCheck,
   Truck,
@@ -38,6 +39,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const navigate = useNavigate();
   const { isLoaded, bestSellersList, products } = useProducts();
   const { categories } = useCategories();
   const { data: banners, isLoading: isHeroLoading } = useHeroBanners();
@@ -326,7 +328,7 @@ function Home() {
       
       {/* ============== 15-MIN EXPRESS DELIVERY HIGHLIGHT ============== */}
       <section className="pt-10 pb-2 px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="bg-[#0b121f] text-white rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between relative overflow-hidden border border-primary/30 shadow-xl group">
+        <div className="bg-[#e0f2fe] text-navy-deep rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between relative overflow-hidden border border-sky-300 shadow-xl group">
 
           <div className="relative z-10 flex flex-col items-center md:items-start text-center md:text-left gap-3.5 sm:gap-4 md:gap-5 flex-1">
             <div className="flex items-center gap-3">
@@ -335,7 +337,7 @@ function Home() {
                 15-MIN DELIVERY
               </h3>
             </div>
-            <p className="text-sm sm:text-base md:text-lg text-white/80 max-w-md font-medium leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-navy-deep/80 max-w-md font-medium leading-relaxed">
               Available near select warehouses
             </p>
           </div>
@@ -461,7 +463,25 @@ function Home() {
                   <span className="text-[10px] text-slate-400 block uppercase tracking-wider font-bold">Special Membership Price</span>
                   <span className="text-lg font-extrabold text-white">₹249 <span className="text-xs font-normal text-slate-300">/ Year</span></span>
                 </div>
-                <button className="bg-[#F6A623] hover:bg-[#e09117] text-white px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-md select-none mt-2 sm:mt-0">
+                <button 
+                  onClick={() => {
+                    const membershipProduct = {
+                      id: "iesvra-plus-membership",
+                      name: "IESVRA Plus Membership",
+                      sub: "1-Year Premium Subscription",
+                      price: 249,
+                      mrp: 499,
+                      image: "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef?auto=format&fit=crop&w=150&q=80",
+                      categories: ["Membership"],
+                      colors: ["Gold"],
+                      description: "Unlimited Free Delivery, Extra 5% Cashback & Exclusive Member Deals",
+                    };
+                    addToCart(membershipProduct, "Gold", 1);
+                    navigate({ to: "/cart" });
+                    toast.success("IESVRA Plus membership added to your cart!");
+                  }}
+                  className="bg-[#F6A623] hover:bg-[#e09117] text-white px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-md select-none mt-2 sm:mt-0"
+                >
                   Join Now
                 </button>
               </div>
@@ -481,9 +501,14 @@ function Home() {
                 Get Special Discounts and Customized Delivery Plans for Corporate & Wholesale Orders.
               </p>
               <div className="pt-2">
-                <button className="border border-white/40 hover:border-white hover:bg-white/5 text-white px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer select-none">
+                <a 
+                  href="https://wa.me/917061333200?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20bulk%20orders%20for%20my%20business."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block border border-white/40 hover:border-white hover:bg-white/5 text-white px-6 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer select-none text-center"
+                >
                   Contact Us
-                </button>
+                </a>
               </div>
             </div>
           </div>
