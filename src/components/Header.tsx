@@ -246,7 +246,7 @@ export function Header() {
               <img
                 src={logo}
                 alt="IESVRA"
-                className="h-12 sm:h-16 w-auto object-contain"
+                className="h-16 sm:h-24 w-auto object-contain"
               />
             </Link>
 
