@@ -20,7 +20,6 @@ import {
   Zap,
   Users,
   Clock,
-  Crown,
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 import heroMockup from "@/assets/hero-mockup.png";
