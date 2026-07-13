@@ -3,6 +3,7 @@ const logo = "/iesvra-logo.png";
 import { useCartCount } from "@/lib/cart";
 import { useCurrentUser, logoutUser } from "@/lib/auth";
 import { useState, useMemo, useEffect } from "react";
+// IESVRA Boutique Site Header Component
 import { fetchAddressSuggestions, checkExpressEligibility, geocodeAddress } from "@/lib/delivery";
 import { useProducts, useCategories } from "@/lib/products";
 import {
