@@ -507,10 +507,16 @@ function Cart() {
     }
   }, [cartItems, shippingName, shippingEmail, shippingPhone, addressLine1, city, state, pincode]);
 
+  const physicalItems = cartItems.filter(item => item.id !== "iesvra-plus-membership" && !item.isDigital);
+  const physicalSubtotal = physicalItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const hasPhysical = physicalItems.length > 0;
+
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const FREE_SHIPPING_THRESHOLD = 499;
   // ₹59 delivery charge for orders under ₹499, free above
-  const baseShipping = subtotal < FREE_SHIPPING_THRESHOLD ? 59 : 0;
+  const baseShipping = hasPhysical 
+    ? (physicalSubtotal < FREE_SHIPPING_THRESHOLD ? 59 : 0)
+    : 0;
   const deliveryFee = baseShipping;
   const total = subtotal + deliveryFee;
 
@@ -764,6 +770,13 @@ function Cart() {
                               Color: <span className="font-medium text-foreground">{item.color}</span>
                             </div>
                           )}
+                          {(item.id === "iesvra-plus-membership" || item.isDigital) && (
+                            <div className="mt-1.5">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                                Digital Membership – No shipping required
+                              </span>
+                            </div>
+                          )}
                           <button
                             onClick={() => removeFromCart(item.id, item.color)}
                             className="text-xs text-red-500 hover:text-red-700 mt-2 flex items-center gap-1 transition"
@@ -823,23 +836,25 @@ function Cart() {
                       ₹{subtotal.toLocaleString()}
                     </span>
                   </div>
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>
-                      Shipping
-                      {deliveryFee > 0 && (
-                        <span className="block text-[10px] font-medium text-blue-500 mt-0.5">
-                          Add ₹{FREE_SHIPPING_THRESHOLD - subtotal} more for free delivery
-                        </span>
-                      )}
-                    </span>
-                    <span className="font-medium text-foreground">
-                      {deliveryFee === 0 ? (
-                        <span className="text-green-600">Free</span>
-                      ) : (
-                        `₹${deliveryFee}`
-                      )}
-                    </span>
-                  </div>
+                  {hasPhysical && (
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>
+                        Shipping
+                        {deliveryFee > 0 && (
+                          <span className="block text-[10px] font-medium text-blue-500 mt-0.5">
+                            Add ₹{FREE_SHIPPING_THRESHOLD - physicalSubtotal} more for free delivery
+                          </span>
+                        )}
+                      </span>
+                      <span className="font-medium text-foreground">
+                        {deliveryFee === 0 ? (
+                          <span className="text-green-600">Free</span>
+                        ) : (
+                          `₹${deliveryFee}`
+                        )}
+                      </span>
+                    </div>
+                  )}
                   <div className="border-t border-border pt-4 flex justify-between font-semibold text-base text-navy-deep">
                     <span>Total</span>
                     <span>₹{total.toLocaleString()}</span>

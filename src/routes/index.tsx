@@ -475,6 +475,8 @@ function Home() {
                       categories: ["Membership"],
                       colors: ["Gold"],
                       description: "Unlimited Free Delivery, Extra 5% Cashback & Exclusive Member Deals",
+                      isDigital: true,
+                      type: "membership",
                     };
                     addToCart(membershipProduct, "Gold", 1);
                     navigate({ to: "/cart" });

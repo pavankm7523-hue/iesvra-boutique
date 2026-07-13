@@ -34,6 +34,8 @@ export type Product = {
   description: string;
   isBestSeller?: boolean;
   reviews?: Review[];
+  isDigital?: boolean;
+  type?: string;
 };
 
 export const colorMap: Record<string, string> = {

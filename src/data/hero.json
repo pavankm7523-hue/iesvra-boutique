@@ -1,11 +1,14 @@
 [
   {
-    "title": "IESVRA",
-    "subtitle": "Quality Products, Best Prices, Everyday",
+    "title": "New Title",
+    "subtitle": "New Subtitle",
     "buttonText": "SHOP NOW",
     "buttonLink": "/shop",
     "backgroundImageUrl": "/hero-bg.jpg",
     "isSpecialSale": true,
+    "productIds": [],
+    "productPrices": {},
+    "exclusiveProductIds": [],
     "id": "1783414426882"
   }
 ]

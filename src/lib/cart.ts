@@ -14,6 +14,8 @@ export interface CartItem {
   bannerId?: string;
   saleEndDate?: string;
   normalPrice?: number;
+  isDigital?: boolean;
+  type?: string;
 }
 
 const CART_KEY = "ishvara_cart";
@@ -65,7 +67,9 @@ export function addToCart(product: Product, color: string, quantity = 1, bannerI
       quantity,
       bannerId,
       saleEndDate,
-      normalPrice
+      normalPrice,
+      isDigital: product.isDigital,
+      type: product.type
     });
   }
 
