@@ -241,7 +241,7 @@ export function Header() {
               <img
                 src={logo}
                 alt="IESVRA"
-                className="h-8 sm:h-9 w-auto object-contain"
+                className="h-10 sm:h-12 w-auto object-contain"
               />
             </Link>
 
@@ -518,7 +518,7 @@ export function Header() {
             <img
               src={logo}
               alt="IESVRA"
-              className="h-8 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
           </Link>
           <button 
