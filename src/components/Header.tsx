@@ -110,7 +110,7 @@ export function Header() {
     };
   }, []);
 
-  // Debounced search for suggestions
+  // Debounced search for suggestions — calls Ola Maps directly via backend proxy
   useEffect(() => {
     if (addressSearch.trim().length < 3) {
       setSuggestions([]);
@@ -120,10 +120,14 @@ export function Header() {
     setIsSearchingSuggestions(true);
     const delayDebounce = setTimeout(async () => {
       try {
-        const results = await fetchAddressSuggestions(addressSearch);
-        setSuggestions(results);
+        const res = await fetch(`/api/address-suggestions?query=${encodeURIComponent(addressSearch.trim())}`);
+        if (!res.ok) throw new Error("API error");
+        const data = await res.json();
+        const predictions: any[] = data?.predictions || [];
+        setSuggestions(predictions.map((p: any) => p.description).filter(Boolean));
       } catch (err) {
         console.error("Failed to fetch address suggestions:", err);
+        setSuggestions([]);
       } finally {
         setIsSearchingSuggestions(false);
       }
@@ -623,7 +627,7 @@ export function Header() {
                     </div>
                   )}
                   
-                  {!isSearchingSuggestions && suggestions.map((addr, i) => (
+                  {!isSearchingSuggestions && suggestions.length > 0 && suggestions.map((addr, i) => (
                     <button
                       key={i}
                       type="button"
@@ -634,6 +638,12 @@ export function Header() {
                       <span>{addr}</span>
                     </button>
                   ))}
+
+                  {!isSearchingSuggestions && suggestions.length === 0 && addressSearch.trim().length >= 3 && (
+                    <div className="py-3 px-2 text-center text-xs text-navy-deep/40 font-medium">
+                      No results found — try a different search
+                    </div>
+                  )}
                   
                   {!isSearchingSuggestions && addressSearch.trim().length >= 3 && (
                     <button

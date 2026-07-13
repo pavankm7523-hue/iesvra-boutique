@@ -188,7 +188,8 @@ function Cart() {
         
         const formatted = [savedLine1, savedLine2, savedCity, `${savedState} - ${savedPincode}`].filter(Boolean).join(", ");
         setShippingAddress(formatted);
-        setAddressSearch(formatted);
+        // Don't pre-fill the search box with saved address — keep it blank for fresh searching
+        setAddressSearch("");
         setIsAddressConfirmed(true);
         
         const isExpress = localStorage.getItem("IESVRA_is_express_eligible") === "true";
@@ -197,7 +198,7 @@ function Cart() {
       } else {
         const savedAddress = localStorage.getItem("IESVRA_delivery_address") || "";
         if (savedAddress) {
-          setAddressSearch(savedAddress);
+          // Store the parsed line1 for the address form but keep search box blank
           setAddressLine1(savedAddress.split(",")[0] || "");
         }
       }
@@ -990,7 +991,7 @@ function Cart() {
                               Searching addresses...
                             </div>
                           )}
-                          {!isSearchingSuggestions && suggestions.map((addr, i) => (
+                          {!isSearchingSuggestions && suggestions.length > 0 && suggestions.map((addr, i) => (
                             <button
                               key={i}
                               type="button"
@@ -1001,6 +1002,11 @@ function Cart() {
                               <span>{addr}</span>
                             </button>
                           ))}
+                          {!isSearchingSuggestions && suggestions.length === 0 && (
+                            <div className="py-3 px-4 text-center text-xs text-navy-deep/40 font-medium">
+                              No results found — try a different search
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
