@@ -124,8 +124,18 @@ export const Route = createFileRoute("/api/auth/google-callback")({
                       window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
                     } catch (e) {}
 
-                    // Redirect back to home/admin
-                    window.location.replace("${redirectPath}");
+                    // If opened as a popup (e.g. mobile app preview), message the opener and close
+                    if (window.opener) {
+                      window.opener.postMessage({ 
+                        type: 'GOOGLE_AUTH_SUCCESS', 
+                        name: session.name, 
+                        email: session.email 
+                      }, '*');
+                      window.close();
+                    } else {
+                      // Redirect back to home/admin for standard redirect flow
+                      window.location.replace("${redirectPath}");
+                    }
                   } catch (err) {
                     console.error("Local storage sync error:", err);
                     document.body.innerHTML = '<div style="color: red; padding: 2rem;">Authentication failed: ' + err.message + '</div>';
