@@ -4,4 +4,5 @@
     <string name="title_activity_main">IESVRA Boutique</string>
     <string name="package_name">com.iesvra.app</string>
     <string name="custom_url_scheme">com.iesvra.app</string>
+    <string name="server_client_id">825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com</string>
 </resources>

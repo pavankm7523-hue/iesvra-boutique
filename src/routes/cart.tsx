@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShoppingCart, Trash2, ArrowRight, X, CreditCard, CheckCircle, MapPin, Zap, Truck, Navigation, Locate } from "lucide-react";
 import { useCartItems, removeFromCart, updateCartQuantity } from "@/lib/cart";
 import { useState, useEffect, useRef } from "react";
+import { AddressPicker } from "@/components/AddressPicker";
 import { useCurrentUser } from "@/lib/auth";
 import { createOrder } from "@/lib/orders";
 import { toast } from "sonner";
@@ -97,6 +98,7 @@ function Cart() {
   
   // Quick-Commerce Checkout States
   const [isAddressConfirmed, setIsAddressConfirmed] = useState(false);
+  const [isAddressPickerOpen, setIsAddressPickerOpen] = useState(false);
   const [addressSearch, setAddressSearch] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [deliverySpeed, setDeliverySpeed] = useState<'express' | 'standard'>('standard');
@@ -280,203 +282,7 @@ function Cart() {
     }
   }, [currentUser]);
 
-  useEffect(() => {
-    if (!isCheckoutOpen) {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-        markerRef.current = null;
-        mapInitialized.current = false;
-      }
-      return;
-    }
 
-    let active = true;
-
-    async function initLeafletMap() {
-      setIsMapLoading(true);
-      setMapError(null);
-
-      try {
-        const L = await loadLeaflet();
-        if (!active) return;
-
-        const mapContainer = document.getElementById("checkout-map");
-        if (!mapContainer || mapInitialized.current) return;
-
-        setIsMapLoading(false);
-
-        // Geolocation or default coordinates (Patna)
-        let initialLat = 25.5941;
-        let initialLng = 85.1376;
-
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              if (!active) return;
-              initialLat = pos.coords.latitude;
-              initialLng = pos.coords.longitude;
-              setupMap(L, initialLat, initialLng);
-            },
-            () => {
-              if (!active) return;
-              setupMap(L, initialLat, initialLng);
-            },
-            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-          );
-        } else {
-          setupMap(L, initialLat, initialLng);
-        }
-      } catch (err: any) {
-        if (!active) return;
-        setIsMapLoading(false);
-        setMapError("Failed to load map. You can still fill the address manually.");
-        console.error(err);
-      }
-    }
-
-    function setupMap(L: any, lat: number, lng: number) {
-      if (mapInitialized.current) return;
-      mapInitialized.current = true;
-
-      setPinnedLat(lat);
-      setPinnedLng(lng);
-
-      const map = L.map("checkout-map").setView([lat, lng], 15);
-      mapRef.current = map;
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
-
-      const markerHtml = `
-        <div style="background-color: #0b72e7; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.4); transform: translate(-3px, -3px);"></div>
-        <div style="background-color: #0b72e7; width: 3px; height: 18px; margin-left: 5px; transform: translateY(-5px);"></div>
-      `;
-      const customIcon = L.divIcon({
-        html: markerHtml,
-        iconSize: [20, 20],
-        iconAnchor: [10, 20]
-      });
-
-      const marker = L.marker([lat, lng], {
-        draggable: true,
-        icon: customIcon
-      }).addTo(map);
-      markerRef.current = marker;
-
-      marker.on("dragend", () => {
-        const position = marker.getLatLng();
-        setPinnedLat(position.lat);
-        setPinnedLng(position.lng);
-      });
-
-      map.on("click", (e: any) => {
-        marker.setLatLng(e.latlng);
-        setPinnedLat(e.latlng.lat);
-        setPinnedLng(e.latlng.lng);
-      });
-    }
-
-    const timer = setTimeout(() => {
-      initLeafletMap();
-    }, 200);
-
-    return () => {
-      active = false;
-      clearTimeout(timer);
-    };
-  }, [isCheckoutOpen]);
-
-  const handleConfirmPinLocation = async () => {
-    if (!pinnedLat || !pinnedLng) return;
-    
-    setIsGeocoding(true);
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pinnedLat}&lon=${pinnedLng}&zoom=18&addressdetails=1`,
-        {
-          headers: {
-            "Accept-Language": "en",
-            "User-Agent": "IESVRA-Boutique-App/1.0"
-          }
-        }
-      );
-      
-      if (!res.ok) throw new Error("Reverse geocoding failed");
-      const data = await res.json();
-      
-      if (data && data.address) {
-        const addr = data.address;
-        const road = addr.road || addr.suburb || addr.neighbourhood || addr.amenity || "";
-        const cityVal = addr.city || addr.town || addr.village || addr.county || "";
-        const stateVal = addr.state || "";
-        const pincodeVal = addr.postcode || "";
-        
-        const line1 = [road, addr.house_number || ""].filter(Boolean).join(" ");
-        
-        if (line1) setAddressLine1(line1);
-        if (cityVal) setCity(cityVal);
-        if (pincodeVal && /^\d{6}$/.test(pincodeVal)) setPincode(pincodeVal);
-        
-        if (stateVal) {
-          const matchedState = INDIAN_STATES.find(
-            (s) => s.toLowerCase() === stateVal.toLowerCase() || stateVal.toLowerCase().includes(s.toLowerCase())
-          );
-          if (matchedState) {
-            setState(matchedState);
-            if (errors.state) setErrors(prev => ({ ...prev, state: "" }));
-          }
-        }
-        
-        if (line1 && errors.addressLine1) setErrors(prev => ({ ...prev, addressLine1: "" }));
-        if (cityVal && errors.city) setErrors(prev => ({ ...prev, city: "" }));
-        if (pincodeVal && errors.pincode) setErrors(prev => ({ ...prev, pincode: "" }));
-        
-        const formatted = data.display_name || "";
-        setAddressSearch(formatted);
-        
-        toast.success("Location confirmed and address autofilled!");
-      } else {
-        throw new Error("No address found for these coordinates.");
-      }
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Failed to retrieve address details. Please fill manually.");
-    } finally {
-      setIsGeocoding(false);
-    }
-  };
-
-  const handleRecenterMapOnGPS = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser.");
-      return;
-    }
-    
-    toast.info("Accessing current location...");
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setPinnedLat(lat);
-        setPinnedLng(lng);
-        
-        if (mapRef.current) {
-          mapRef.current.setView([lat, lng], 15);
-        }
-        if (markerRef.current) {
-          markerRef.current.setLatLng([lat, lng]);
-        }
-        toast.success("Location detected and map centered!");
-      },
-      (err) => {
-        toast.error("Failed to detect location. Please check permissions.");
-        console.warn("Geolocation error:", err);
-      },
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-    );
-  };
 
   // Direct checkout URL query param handler
   useEffect(() => {
@@ -1060,52 +866,44 @@ function Cart() {
                     </div>
 
                     {/* Map Pinpoint Selector Card */}
-                    <div className="flex flex-col gap-2 bg-[#f8f9fb] p-3 rounded-xl border border-border/20">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/75">Pin Exact Delivery Location</span>
-                        {pinnedLat && pinnedLng && (
-                          <span className="text-[9px] font-mono text-navy-deep/50 bg-[#e4e7eb] px-1.5 py-0.5 rounded">
-                            {pinnedLat.toFixed(5)}, {pinnedLng.toFixed(5)}
+                    <div 
+                      onClick={() => setIsAddressPickerOpen(true)}
+                      className="flex flex-col gap-2.5 bg-[#f5fbf7] hover:bg-[#ebf8f0] p-4 rounded-xl border border-[#cbeed6] hover:border-[#a3e0b4] transition-all cursor-pointer group shadow-sm active:scale-[0.99]"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex gap-2">
+                          <div className="bg-[#0c831f] text-white p-1.5 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <MapPin className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <span className="text-xs font-bold text-navy-deep group-hover:text-[#0c831f] transition-colors">Pin Exact Delivery Location</span>
+                            <p className="text-[10px] text-navy-deep/60 mt-0.5">
+                              Use search & interactive map to set perfect delivery spot
+                            </p>
+                          </div>
+                        </div>
+                        {pinnedLat && pinnedLng ? (
+                          <span className="text-[9px] font-semibold text-[#0c831f] bg-[#e6f4e8] px-2 py-0.5 rounded-full">
+                            Location Set
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full animate-pulse">
+                            Required
                           </span>
                         )}
                       </div>
                       
-                      <div className="relative w-full rounded-lg overflow-hidden border border-border/40">
-                        <div id="checkout-map" style={{ height: '180px' }} className="w-full relative z-10 bg-secondary/15 flex items-center justify-center">
-                          {isMapLoading ? (
-                            <span className="text-xs font-semibold text-navy-deep/60">Loading Interactive Map...</span>
-                          ) : mapError ? (
-                            <span className="text-xs text-red-500 font-semibold p-4 text-center">{mapError}</span>
-                          ) : null}
+                      {addressLine1 && (
+                        <div className="bg-[#f8f9fb] p-2.5 rounded-lg border border-border/20 text-[11px] text-navy-deep/75 font-semibold leading-relaxed flex gap-1.5 items-center">
+                          <span className="text-[#0c831f] font-bold">📍</span>
+                          <span className="truncate">{addressLine1}{addressLine2 ? `, ${addressLine2}` : ""}</span>
                         </div>
-                        
-                        {!isMapLoading && !mapError && (
-                          <button
-                            type="button"
-                            onClick={handleRecenterMapOnGPS}
-                            className="absolute bottom-10 right-3 z-[1000] h-10 w-10 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform cursor-pointer border-0"
-                            style={{ background: 'linear-gradient(135deg, #1a73e8, #0b5ed7)', boxShadow: '0 2px 12px rgba(11,94,215,0.45), 0 1px 4px rgba(0,0,0,0.15)' }}
-                            title="Use my exact location"
-                          >
-                            <Locate className="h-5 w-5 text-white" />
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={handleConfirmPinLocation}
-                          disabled={!pinnedLat || !pinnedLng || isGeocoding}
-                          className="flex-1 h-9 bg-[#0b72e7] hover:bg-[#095ec0] disabled:bg-gray-300 text-white rounded-lg font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center gap-1.5 animate-in fade-in duration-200"
-                        >
-                          📍 {isGeocoding ? "Confirming..." : "Confirm Pin Location"}
-                        </button>
-                      </div>
-                      <p className="text-[9px] text-navy-deep/50 leading-normal">
-                        Drag map/pin to delivery location. Click "Confirm Pin Location" to autofill fields.
-                      </p>
+                      )}
                     </div>
+
+                    {isAddressPickerOpen && (
+                      <AddressPicker onClose={() => setIsAddressPickerOpen(false)} />
+                    )}
 
                     {/* Address Fields */}
                     <div className="flex flex-col gap-1">
@@ -1531,41 +1329,3 @@ function Cart() {
   );
 }
 
-function loadLeaflet(): Promise<any> {
-  return new Promise((resolve, reject) => {
-    if (typeof window === "undefined") {
-      reject(new Error("Cannot load Leaflet in SSR environment"));
-      return;
-    }
-    if ((window as any).L) {
-      resolve((window as any).L);
-      return;
-    }
-
-    if (!document.getElementById("leaflet-css")) {
-      const link = document.createElement("link");
-      link.id = "leaflet-css";
-      link.rel = "stylesheet";
-      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-      document.head.appendChild(link);
-    }
-
-    const existingScript = document.getElementById("leaflet-js");
-    if (existingScript) {
-      existingScript.addEventListener("load", () => resolve((window as any).L));
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = "leaflet-js";
-    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-    script.async = true;
-    script.onload = () => {
-      resolve((window as any).L);
-    };
-    script.onerror = () => {
-      reject(new Error("Leaflet script failed to load"));
-    };
-    document.body.appendChild(script);
-  });
-}

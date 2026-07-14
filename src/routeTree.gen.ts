@@ -33,6 +33,8 @@ import { Route as ApiSendShippedEmailRouteImport } from './routes/api/send-shipp
 import { Route as ApiSendOtpRouteImport } from './routes/api/send-otp'
 import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
 import { Route as ApiSaveOrderRouteImport } from './routes/api/save-order'
+import { Route as ApiSaveAddressRouteImport } from './routes/api/save-address'
+import { Route as ApiReverseGeocodeRouteImport } from './routes/api/reverse-geocode'
 import { Route as ApiResolveMapsUrlRouteImport } from './routes/api/resolve-maps-url'
 import { Route as ApiProductsRouteImport } from './routes/api/products'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
@@ -42,6 +44,7 @@ import { Route as ApiDiagRouteImport } from './routes/api/diag'
 import { Route as ApiDeleteOrderRouteImport } from './routes/api/delete-order'
 import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
 import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
+import { Route as ApiAutocompleteRouteImport } from './routes/api/autocomplete'
 import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin-password'
 import { Route as ApiAddressSuggestionsRouteImport } from './routes/api/address-suggestions'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -174,6 +177,16 @@ const ApiSaveOrderRoute = ApiSaveOrderRouteImport.update({
   path: '/api/save-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSaveAddressRoute = ApiSaveAddressRouteImport.update({
+  id: '/api/save-address',
+  path: '/api/save-address',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiReverseGeocodeRoute = ApiReverseGeocodeRouteImport.update({
+  id: '/api/reverse-geocode',
+  path: '/api/reverse-geocode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiResolveMapsUrlRoute = ApiResolveMapsUrlRouteImport.update({
   id: '/api/resolve-maps-url',
   path: '/api/resolve-maps-url',
@@ -217,6 +230,11 @@ const ApiCreateOrderRoute = ApiCreateOrderRouteImport.update({
 const ApiCategoriesRoute = ApiCategoriesRouteImport.update({
   id: '/api/categories',
   path: '/api/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAutocompleteRoute = ApiAutocompleteRouteImport.update({
+  id: '/api/autocomplete',
+  path: '/api/autocomplete',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminPasswordRoute = ApiAdminPasswordRouteImport.update({
@@ -297,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
+  '/api/autocomplete': typeof ApiAutocompleteRoute
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/delete-order': typeof ApiDeleteOrderRoute
@@ -306,6 +325,8 @@ export interface FileRoutesByFullPath {
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
+  '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
+  '/api/save-address': typeof ApiSaveAddressRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -342,6 +363,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
+  '/api/autocomplete': typeof ApiAutocompleteRoute
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/delete-order': typeof ApiDeleteOrderRoute
@@ -351,6 +373,8 @@ export interface FileRoutesByTo {
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
+  '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
+  '/api/save-address': typeof ApiSaveAddressRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -389,6 +413,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
+  '/api/autocomplete': typeof ApiAutocompleteRoute
   '/api/categories': typeof ApiCategoriesRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/delete-order': typeof ApiDeleteOrderRoute
@@ -398,6 +423,8 @@ export interface FileRoutesById {
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
+  '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
+  '/api/save-address': typeof ApiSaveAddressRoute
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
@@ -437,6 +464,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/api/address-suggestions'
     | '/api/admin-password'
+    | '/api/autocomplete'
     | '/api/categories'
     | '/api/create-order'
     | '/api/delete-order'
@@ -446,6 +474,8 @@ export interface FileRouteTypes {
     | '/api/notify-admin'
     | '/api/products'
     | '/api/resolve-maps-url'
+    | '/api/reverse-geocode'
+    | '/api/save-address'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -482,6 +512,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/api/address-suggestions'
     | '/api/admin-password'
+    | '/api/autocomplete'
     | '/api/categories'
     | '/api/create-order'
     | '/api/delete-order'
@@ -491,6 +522,8 @@ export interface FileRouteTypes {
     | '/api/notify-admin'
     | '/api/products'
     | '/api/resolve-maps-url'
+    | '/api/reverse-geocode'
+    | '/api/save-address'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -528,6 +561,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/api/address-suggestions'
     | '/api/admin-password'
+    | '/api/autocomplete'
     | '/api/categories'
     | '/api/create-order'
     | '/api/delete-order'
@@ -537,6 +571,8 @@ export interface FileRouteTypes {
     | '/api/notify-admin'
     | '/api/products'
     | '/api/resolve-maps-url'
+    | '/api/reverse-geocode'
+    | '/api/save-address'
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
@@ -571,6 +607,7 @@ export interface RootRouteChildren {
   WishlistRoute: typeof WishlistRoute
   ApiAddressSuggestionsRoute: typeof ApiAddressSuggestionsRoute
   ApiAdminPasswordRoute: typeof ApiAdminPasswordRoute
+  ApiAutocompleteRoute: typeof ApiAutocompleteRoute
   ApiCategoriesRoute: typeof ApiCategoriesRoute
   ApiCreateOrderRoute: typeof ApiCreateOrderRoute
   ApiDeleteOrderRoute: typeof ApiDeleteOrderRoute
@@ -580,6 +617,8 @@ export interface RootRouteChildren {
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
   ApiProductsRoute: typeof ApiProductsRoute
   ApiResolveMapsUrlRoute: typeof ApiResolveMapsUrlRoute
+  ApiReverseGeocodeRoute: typeof ApiReverseGeocodeRoute
+  ApiSaveAddressRoute: typeof ApiSaveAddressRoute
   ApiSaveOrderRoute: typeof ApiSaveOrderRoute
   ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
   ApiSendOtpRoute: typeof ApiSendOtpRoute
@@ -763,6 +802,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSaveOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/save-address': {
+      id: '/api/save-address'
+      path: '/api/save-address'
+      fullPath: '/api/save-address'
+      preLoaderRoute: typeof ApiSaveAddressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/reverse-geocode': {
+      id: '/api/reverse-geocode'
+      path: '/api/reverse-geocode'
+      fullPath: '/api/reverse-geocode'
+      preLoaderRoute: typeof ApiReverseGeocodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/resolve-maps-url': {
       id: '/api/resolve-maps-url'
       path: '/api/resolve-maps-url'
@@ -824,6 +877,13 @@ declare module '@tanstack/react-router' {
       path: '/api/categories'
       fullPath: '/api/categories'
       preLoaderRoute: typeof ApiCategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/autocomplete': {
+      id: '/api/autocomplete'
+      path: '/api/autocomplete'
+      fullPath: '/api/autocomplete'
+      preLoaderRoute: typeof ApiAutocompleteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin-password': {
@@ -946,6 +1006,7 @@ const rootRouteChildren: RootRouteChildren = {
   WishlistRoute: WishlistRoute,
   ApiAddressSuggestionsRoute: ApiAddressSuggestionsRoute,
   ApiAdminPasswordRoute: ApiAdminPasswordRoute,
+  ApiAutocompleteRoute: ApiAutocompleteRoute,
   ApiCategoriesRoute: ApiCategoriesRoute,
   ApiCreateOrderRoute: ApiCreateOrderRoute,
   ApiDeleteOrderRoute: ApiDeleteOrderRoute,
@@ -955,6 +1016,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
   ApiProductsRoute: ApiProductsRoute,
   ApiResolveMapsUrlRoute: ApiResolveMapsUrlRoute,
+  ApiReverseGeocodeRoute: ApiReverseGeocodeRoute,
+  ApiSaveAddressRoute: ApiSaveAddressRoute,
   ApiSaveOrderRoute: ApiSaveOrderRoute,
   ApiSendConfirmationRoute: ApiSendConfirmationRoute,
   ApiSendOtpRoute: ApiSendOtpRoute,

@@ -1600,7 +1600,7 @@
       `;
 
       const initGoogle = () => {
-        const client_id = window.GOOGLE_CLIENT_ID || "1056525141674-lhfocgctskjflc2oecmrc2i2b94fep9q.apps.googleusercontent.com";
+        const client_id = window.GOOGLE_CLIENT_ID || "825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com";
         google.accounts.id.initialize({
           client_id: client_id,
           callback: (response) => {
@@ -2449,9 +2449,22 @@
       showToast("Opening Google Sign-In...");
       
       // Native Capacitor Google Auth integration
-      if (window.Capacitor && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.GoogleAuth) {
+      let googleAuth = null;
+      if (window.Capacitor && window.Capacitor.isNativePlatform()) {
         try {
-          const googleUser = await window.Capacitor.Plugins.GoogleAuth.signIn();
+          if (window.Capacitor.Plugins && window.Capacitor.Plugins.GoogleAuth) {
+            googleAuth = window.Capacitor.Plugins.GoogleAuth;
+          } else if (typeof window.Capacitor.registerPlugin === 'function') {
+            googleAuth = window.Capacitor.registerPlugin('GoogleAuth');
+          }
+        } catch (e) {
+          console.error("Failed to load/register native GoogleAuth plugin:", e);
+        }
+      }
+
+      if (googleAuth) {
+        try {
+          const googleUser = await googleAuth.signIn();
           if (googleUser && googleUser.email) {
             const name = googleUser.displayName || googleUser.email.split('@')[0];
             completeGoogleAuth(name, googleUser.email);

@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect } from "react";
 // IESVRA Boutique Site Header Component
 import { fetchAddressSuggestions, checkExpressEligibility, geocodeAddress } from "@/lib/delivery";
 import { useProducts, useCategories } from "@/lib/products";
+import { AddressPicker } from "./AddressPicker";
 import {
   Search,
   ShoppingCart,
@@ -582,84 +583,7 @@ export function Header() {
 
       {/* Address Selection Modal */}
       {isAddressModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4" onClick={() => setIsAddressModalOpen(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-            <div className="p-5 border-b border-border/40 flex items-center justify-between bg-[#f8f9fb]">
-              <h3 className="font-bold text-navy-deep flex items-center gap-2 text-lg">
-                <MapPin className="h-5 w-5 text-gold" /> Select your location
-              </h3>
-              <button onClick={() => setIsAddressModalOpen(false)} className="h-8 w-8 rounded-full bg-secondary/50 flex items-center justify-center text-navy-deep/60 hover:text-navy-deep hover:bg-secondary transition-colors cursor-pointer">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            
-            <div className="p-5 space-y-4 bg-white min-h-[300px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={addressSearch}
-                  onChange={(e) => {
-                    setAddressSearch(e.target.value);
-                    setShowSuggestions(true);
-                  }}
-                  onFocus={() => setShowSuggestions(true)}
-                  placeholder="Search area, street, landmark..."
-                  className="w-full h-12 pl-10 pr-4 bg-[#f8f9fb] border border-transparent rounded-xl focus:ring-2 focus:ring-gold/30 focus:border-gold/50 outline-none text-sm transition-all text-navy-deep font-medium placeholder:text-navy-deep/40"
-                  autoFocus
-                />
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-navy-deep/40" />
-              </div>
-
-              <button
-                type="button"
-                onClick={detectLocation}
-                disabled={isDetecting}
-                className="w-full h-11 bg-navy-deep hover:bg-navy-deep/90 disabled:bg-navy-deep/60 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-sm select-none"
-              >
-                <Navigation className={`h-4 w-4 text-gold ${isDetecting ? "animate-spin" : ""}`} />
-                {isDetecting ? "Detecting Location..." : "Auto-Detect My Location"}
-              </button>
-              
-              {showSuggestions && (
-                <div className="space-y-1 mt-4 max-h-[300px] overflow-y-auto">
-                  {isSearchingSuggestions && (
-                    <div className="py-4 text-center text-xs text-navy-deep/50 font-medium">
-                      Searching addresses...
-                    </div>
-                  )}
-                  
-                  {!isSearchingSuggestions && suggestions.length > 0 && suggestions.map((addr, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => handleAddressSelect(addr)}
-                      className="w-full text-left p-3 hover:bg-[#f8f9fb] rounded-xl text-sm text-navy-deep/80 flex items-start gap-3 transition-colors border border-transparent hover:border-border/50 cursor-pointer"
-                    >
-                      <MapPin className="h-4 w-4 text-navy-deep/30 shrink-0 mt-0.5" />
-                      <span>{addr}</span>
-                    </button>
-                  ))}
-
-                  {!isSearchingSuggestions && suggestions.length === 0 && addressSearch.trim().length >= 3 && (
-                    <div className="py-3 px-2 text-center text-xs text-navy-deep/40 font-medium">
-                      No results found — try a different search
-                    </div>
-                  )}
-                  
-                  {!isSearchingSuggestions && addressSearch.trim().length >= 3 && (
-                    <button
-                      type="button"
-                      onClick={() => handleAddressSelect(addressSearch)}
-                      className="w-full text-left p-3 hover:bg-[#f8f9fb] rounded-xl text-sm text-[#0b72e7] font-medium flex items-center gap-2 cursor-pointer border-t border-border/30 mt-1"
-                    >
-                      Use "{addressSearch}"
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <AddressPicker onClose={() => setIsAddressModalOpen(false)} />
       )}
     </header>
   );

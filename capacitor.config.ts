@@ -4,14 +4,14 @@ const config: CapacitorConfig = {
   appId: 'com.iesvra.app',
   appName: 'IESVRA Boutique',
   webDir: 'public/mobile-app',
-  server: {
-    url: 'https://www.iesvra.com/mobile-app/index.html',
-    cleartext: true
-  },
+  // server: {
+  //   url: 'https://www.iesvra.com/mobile-app/index.html',
+  //   cleartext: true
+  // },
   plugins: {
     GoogleAuth: {
       scopes: ['profile', 'email'],
-      clientId: '1056525141674-lhfocgctskjflc2oecmrc2i2b94fep9q.apps.googleusercontent.com',
+      clientId: '825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com',
       forceCodeForRefreshToken: true,
     },
   },

@@ -64,7 +64,7 @@ function Login() {
     if (socialProvider !== "Google") return;
 
     const initGoogleBtn = () => {
-      const client_id = (window as any).GOOGLE_CLIENT_ID || "1056525141674-lhfocgctskjflc2oecmrc2i2b94fep9q.apps.googleusercontent.com";
+      const client_id = (window as any).GOOGLE_CLIENT_ID || "825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com";
       (window as any).google.accounts.id.initialize({
         client_id: client_id,
         callback: (response: any) => {
