@@ -5,39 +5,39 @@
 }
 
 :root {
-  /* Default brand styling for the Mobile App (light, clean, purple-accented) */
-  --primary-bg: #F8F9FB;     /* Clean light gray background */
+  /* Redesigned brand styling for the Mobile App (clean, premium, purple-gold scheme) */
+  --primary-bg: #F4F5F8;     /* Premium soft gray background */
   --card-bg: #FFFFFF;        /* White card background */
-  --card-accent: #F1F3F7;    /* Subtle highlight background */
-  --accent-purple: #6B46C1;  /* Primary brand purple */
-  --accent-gold: #ffbe1a;    /* Accent gold/yellow */
+  --card-accent: #F8F9FA;    /* Very subtle highlight background */
+  --accent-purple: #6C2EB5;  /* New Brand Purple */
+  --accent-gold: #FFBE1A;    /* New Brand Accent Gold */
   --accent-orange: #ED8936;  /* Orange accent */
-  --text-primary: #1A202C;   /* Deep slate for primary text */
+  --text-primary: #1A202C;   /* Slate/dark primary text */
   --text-muted: #718096;     /* Muted grey for subtext */
   --white: #ffffff;
-  --green-success: #38A169;
+  --green-success: #10B981;  /* Premium green success */
   --red-error: #E53E3E;
   --font-display: 'Poppins', sans-serif;
   --font-body: 'Inter', sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --shadow-premium: 0 4px 20px rgba(0, 0, 0, 0.04);
-  --shadow-purple: 0 8px 30px rgba(107, 70, 193, 0.18);
-  --border-color: #E2E8F0;
+  --shadow-purple: 0 8px 30px rgba(108, 46, 181, 0.15);
+  --border-color: #EBF0F6;
   --border-light: #F7FAFC;
 }
 
 body.theme-light {
   /* Same variables are kept identical for consistent light/clean appearance */
-  --primary-bg: #F8F9FB;
+  --primary-bg: #F4F5F8;
   --card-bg: #FFFFFF;
-  --card-accent: #F1F3F7;
-  --accent-purple: #6B46C1;
-  --accent-gold: #ffbe1a;
+  --card-accent: #F8F9FA;
+  --accent-purple: #6C2EB5;
+  --accent-gold: #FFBE1A;
   --accent-orange: #ED8936;
   --text-primary: #1A202C;
   --text-muted: #718096;
   --white: #ffffff;
-  --green-success: #38A169;
+  --green-success: #10B981;
   --red-error: #E53E3E;
 }
 
@@ -1982,5 +1982,319 @@ body:not(.theme-light) .theme-icon-moon {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+
+/* ==================== PREMIUM REDESIGN OVERRIDES ==================== */
+
+/* Global Clean Styling */
+body {
+  background-color: var(--primary-bg);
+}
+
+.screen {
+  background-color: var(--primary-bg);
+}
+
+/* Card Tiles Redesign */
+.mobile-product-card {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+  padding: 14px !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.mobile-product-card:active {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(108, 46, 181, 0.08) !important;
+}
+
+.mobile-product-card img {
+  border-radius: 12px !important;
+  background-color: #FAF9FB !important;
+  padding: 8px;
+}
+
+.mobile-product-card .p-name {
+  font-family: var(--font-body);
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #1A202C !important;
+  margin-top: 8px;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.mobile-product-card .p-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.mobile-product-card .p-price {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #1A202C !important;
+}
+
+.mobile-product-card .p-mrp {
+  font-size: 11px !important;
+  color: #A0AEC0 !important;
+  text-decoration: line-through;
+}
+
+.mobile-product-card .p-discount {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green-success);
+  margin-left: 2px;
+}
+
+/* Rounded Add Button */
+.mobile-add-btn {
+  background-color: #ffffff !important;
+  color: var(--accent-purple) !important;
+  border: 1.5px solid var(--accent-purple) !important;
+  border-radius: 20px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  height: 30px !important;
+  transition: all 0.2s ease;
+}
+
+.mobile-add-btn:active {
+  background-color: var(--accent-purple) !important;
+  color: #ffffff !important;
+}
+
+/* Category Grid on Home */
+.category-grid-item {
+  cursor: pointer;
+}
+
+.category-grid-icon-wrap {
+  border-radius: 16px !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+/* Bottom Tab Bar */
+.bottom-nav {
+  background-color: #ffffff !important;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+.bottom-nav .nav-item {
+  color: #A0AEC0 !important;
+  transition: color 0.2s ease;
+}
+
+.bottom-nav .nav-item.active {
+  color: var(--accent-purple) !important;
+}
+
+.bottom-nav .nav-item svg {
+  stroke-width: 2.2px !important;
+}
+
+/* Search Box Scan Icon */
+.search-bar {
+  background: #ffffff !important;
+  border: 1.5px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
+  padding: 4px 14px !important;
+}
+
+.search-bar input {
+  color: #1A202C !important;
+  font-weight: 500;
+}
+
+.search-filter-btn {
+  background-color: var(--accent-purple) !important;
+  border-radius: 12px !important;
+}
+
+.search-filter-btn svg {
+  color: #ffffff !important;
+}
+
+/* Onboarding slide button */
+.onboarding-screen {
+  background: #ffffff !important;
+}
+
+.onboarding-slide h2 {
+  font-size: 26px !important;
+  color: #1A202C !important;
+}
+
+.onboarding-screen .onboard-skip-link {
+  color: var(--text-muted) !important;
+}
+
+/* Detail overlay sheet */
+.detail-sheet {
+  background-color: #ffffff !important;
+  border-top-left-radius: 28px !important;
+  border-top-right-radius: 28px !important;
+  padding-bottom: 24px !important;
+}
+
+.detail-info {
+  color: #1A202C !important;
+}
+
+.detail-info h2 {
+  color: #1A202C !important;
+  font-size: 20px !important;
+}
+
+.detail-actions {
+  display: flex !important;
+  gap: 12px !important;
+  margin-top: 20px !important;
+}
+
+.detail-actions .detail-add-btn {
+  flex: 1 !important;
+  background-color: #ffffff !important;
+  color: var(--accent-purple) !important;
+  border: 2px solid var(--accent-purple) !important;
+  border-radius: 14px !important;
+  height: 48px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.detail-actions .detail-buy-btn {
+  flex: 1 !important;
+  background-color: var(--accent-gold) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 14px !important;
+  height: 48px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+/* Color swatch indicators */
+.color-swatch {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.color-swatch:active, .color-swatch.active {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--accent-purple);
+}
+
+/* Profile screen User Stats card */
+.profile-stats-container {
+  background: linear-gradient(135deg, var(--accent-purple) 0%, #805AD5 100%) !important;
+  border-radius: 20px !important;
+  padding: 24px 20px !important;
+  margin: 16px 20px !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-purple) !important;
+}
+
+.profile-stats-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 16px;
+}
+
+.profile-stat-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.profile-stat-col strong {
+  font-size: 18px;
+  font-weight: 800;
+  font-family: var(--font-display);
+}
+
+.profile-stat-col span {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 4px;
+}
+
+/* Premium Profile Menu list */
+.profile-menu-container {
+  margin: 20px !important;
+}
+
+.profile-menu-item {
+  background-color: #ffffff !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--border-color) !important;
+  margin-bottom: 10px !important;
+  padding: 14px 18px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01) !important;
+}
+
+.profile-menu-item .item-left svg {
+  color: var(--accent-purple) !important;
+}
+
+.profile-menu-item .chevron {
+  color: #C0C8D6 !important;
+}
+
+.profile-badge {
+  background-color: rgba(108, 46, 181, 0.08) !important;
+  color: var(--accent-purple) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 4px 8px !important;
+  border-radius: 10px !important;
+}
+
+/* Coupon Copy layouts */
+.coupon-card {
+  background-color: #ffffff !important;
+  border: 1.5px dashed var(--border-color) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-premium) !important;
+}
+
+.coupon-details h4 {
+  color: var(--accent-purple) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.coupon-copy-btn {
+  background-color: var(--accent-purple) !important;
+  color: #ffffff !important;
+  border: none;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.coupon-copy-btn:active {
+  background-color: var(--accent-gold) !important;
 }
 
