@@ -1211,7 +1211,7 @@
           <span>₹${Math.max(0, totalAmount - 50)}</span>
         </div>
         
-        <button class="checkout-btn" onclick="window.checkoutCart(${Math.max(0, totalAmount - 50)})" style="width: 100%; height: 44px; border-radius: 22px; border: none; background: var(--accent-gold); color: #000000; font-family: var(--font-display); font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 12px rgba(255, 190, 26, 0.25);">
+        <button class="checkout-btn" onclick="window.checkoutCart(${Math.max(0, totalAmount - 50)})" style="width: 100%; height: 44px; border-radius: 22px; border: none; background: var(--accent-purple); color: #ffffff; font-family: var(--font-display); font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 12px rgba(108, 46, 181, 0.25);">
           Proceed to Checkout
         </button>
       </div>
