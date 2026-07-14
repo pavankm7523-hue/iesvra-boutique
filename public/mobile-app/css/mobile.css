@@ -5,12 +5,12 @@
 }
 
 :root {
-  /* Redesigned brand styling for the Mobile App (clean, premium, purple-gold scheme) */
+  /* Redesigned brand styling for the Mobile App (clean, premium, purple-white scheme) */
   --primary-bg: #F4F5F8;     /* Premium soft gray background */
   --card-bg: #FFFFFF;        /* White card background */
   --card-accent: #F8F9FA;    /* Very subtle highlight background */
   --accent-purple: #6C2EB5;  /* New Brand Purple */
-  --accent-gold: #FFBE1A;    /* New Brand Accent Gold */
+  --accent-gold: #6C2EB5;    /* Accent Gold redirected to Purple */
   --accent-orange: #ED8936;  /* Orange accent */
   --text-primary: #1A202C;   /* Slate/dark primary text */
   --text-muted: #718096;     /* Muted grey for subtext */
@@ -32,7 +32,7 @@ body.theme-light {
   --card-bg: #FFFFFF;
   --card-accent: #F8F9FA;
   --accent-purple: #6C2EB5;
-  --accent-gold: #FFBE1A;
+  --accent-gold: #6C2EB5;
   --accent-orange: #ED8936;
   --text-primary: #1A202C;
   --text-muted: #718096;
@@ -2296,5 +2296,26 @@ body {
 
 .coupon-copy-btn:active {
   background-color: #805AD5 !important;
+}
+
+/* Specific Accent Button overrides */
+.banner-order-btn {
+  background-color: #ffffff !important;
+  color: var(--accent-purple) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.join-plus-btn {
+  background-color: rgba(108, 46, 181, 0.1) !important;
+  color: var(--accent-purple) !important;
+  border: 1px solid var(--accent-purple) !important;
+}
+
+.plus-membership-banner .gold-text {
+  color: #a855f7 !important; /* Bright violet highlight */
+}
+
+.coupon-code {
+  background-color: rgba(108, 46, 181, 0.08) !important;
 }
 
