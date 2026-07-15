@@ -319,6 +319,13 @@
       });
     }
 
+    const headerDeliveryInfo = document.getElementById('headerDeliveryInfo');
+    if (headerDeliveryInfo) {
+      headerDeliveryInfo.addEventListener('click', () => {
+        window.openLocationPicker();
+      });
+    }
+
     // 1. Splash Screen Transition
     setTimeout(() => {
       const splash = document.getElementById('splash');
@@ -670,7 +677,7 @@
     if (!categoriesScroll) return;
     const categories = getCategories();
 
-    categoriesScroll.innerHTML = categories.slice(0, 8).map(cat => `
+    let html = categories.slice(0, 7).map(cat => `
       <div class="category-grid-item" onclick="window.filterHomeByCategory('${cat.name}')">
         <div class="category-grid-icon-wrap">
           <img src="${cat.image}" alt="${cat.name}" />
@@ -678,6 +685,16 @@
         <span>${cat.name}</span>
       </div>
     `).join('');
+
+    html += `
+      <div class="category-grid-item" onclick="window.switchTab('categories')">
+        <div class="category-grid-icon-wrap" style="background-color: var(--card-accent); display: flex; align-items: center; justify-content: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-purple)" stroke-width="3" style="width: 20px; height: 20px;"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </div>
+        <span>More</span>
+      </div>
+    `;
+    categoriesScroll.innerHTML = html;
   }
 
   function renderBestSellers(filterTerm = '') {
@@ -701,21 +718,27 @@
     }
 
     bestSellersRow.innerHTML = (filterTerm ? displayProducts : displayProducts.slice(0, 8)).map(product => {
-      const disc = Math.round(((product.mrp - product.price) / product.mrp) * 100);
+      const discountPercent = Math.round(((product.mrp - product.price) / product.mrp) * 100);
+      const isBestSeller = product.isBestSeller;
       return `
         <div class="mobile-product-card" onclick="window.openProductDetails('${product.id}')">
-          <div>
+          <div style="position: relative; width: 100%;">
+            ${discountPercent > 0 ? `<span class="product-card-discount-badge">${discountPercent}% OFF</span>` : ''}
             <img src="${product.image}" alt="${product.name}" />
+            ${isBestSeller ? `<span class="product-card-bestseller-tag">BEST SELLER</span>` : ''}
             <div class="p-name">${product.name}</div>
+            <div class="product-card-rating">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 10px; height: 10px; color: var(--accent-gold);"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              <span>${product.rating || '4.5'} (${product.reviewsCount || '12'})</span>
+            </div>
           </div>
           <div>
             <div class="p-price-row">
               <span class="p-price">₹${product.price}</span>
               <span class="p-mrp">₹${product.mrp}</span>
-              <span class="p-discount">${disc}% OFF</span>
             </div>
             <button class="mobile-add-btn" onclick="event.stopPropagation(); window.handleAddClick('${product.id}')">
-              Add
+              ADD
             </button>
           </div>
         </div>
@@ -971,12 +994,12 @@
     ];
 
     container.innerHTML = offers.map(coupon => `
-      <div class="coupon-card" style="margin-bottom:12px;">
+      <div class="coupon-card">
         <div class="coupon-details">
           <h4>${coupon.title}</h4>
-          <p style="margin-top:4px;">Use code: <strong style="color:var(--accent-purple);">${coupon.code}</strong> · ${coupon.desc}</p>
+          <p>${coupon.desc}</p>
         </div>
-        <button class="coupon-copy-btn" onclick="navigator.clipboard.writeText('${coupon.code}'); alert('Coupon ${coupon.code} copied successfully!')">COPY</button>
+        <div class="coupon-code">${coupon.code}</div>
       </div>
     `).join('');
   }
@@ -1005,66 +1028,42 @@
 
     if (info) {
       info.innerHTML = `
-        <span class="cat-label" style="text-transform: uppercase; font-size: 10px; font-weight: 700; color: var(--accent-purple); letter-spacing: 0.05em;">${product.categories ? product.categories[0] : "Curated"}</span>
-        <h2 style="font-size: 18px; font-weight: 700; margin: 4px 0 8px 0; line-height: 1.3; color: var(--text-primary);">${product.name}</h2>
+        <span class="cat-label">${product.categories ? product.categories[0] : "Curated"}</span>
+        <h2>${product.name}</h2>
         
-        <div class="detail-prices" style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px;">
-          <span class="dp-now" style="font-size: 20px; font-weight: 800; color: var(--accent-purple);">₹${product.price}</span>
-          <span class="dp-was" style="font-size: 13px; color: var(--text-muted); text-decoration: line-through;">MRP ₹${product.mrp}</span>
-          <span class="dp-off" style="font-size: 11px; font-weight: 700; color: var(--green-success); background: rgba(16, 185, 129, 0.08); padding: 2px 6px; border-radius: 6px;">Save ${disc}%</span>
+        <div class="detail-prices">
+          <span class="dp-now">₹${product.price}</span>
+          <span class="dp-was">₹${product.mrp}</span>
+          <span class="dp-off">Save ${disc}%</span>
         </div>
 
-        <div class="detail-rating" style="display: flex; align-items: center; gap: 6px; font-size: 12px; margin-bottom: 16px;">
-          <span class="dr-stars" style="color: var(--accent-gold);">★★★★★</span>
-          <span class="dr-text" style="font-weight: 700; color: var(--text-primary);">4.8</span>
-          <span style="color: var(--text-muted);">(12 reviews)</span>
+        <div class="detail-rating">
+          <span class="dr-stars">★★★★★</span>
+          <span class="dr-text">4.8</span>
+          <span>(12 reviews)</span>
         </div>
 
-        <div class="color-swatches-section" style="margin-bottom: 16px;">
-          <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 8px;">Select Color</span>
-          <div style="display: flex; gap: 10px;">
-            <span class="color-swatch active" style="background: #1A202C; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: inline-block;"></span>
-            <span class="color-swatch" style="background: #3182CE; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: inline-block;"></span>
-            <span class="color-swatch" style="background: #A0AEC0; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: inline-block;"></span>
-          </div>
-        </div>
-
-        <p class="detail-desc" style="font-size: 12px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px;">${product.description || "Premium quality imported essential carefully curated to match your modern standard."}</p>
+        <p class="detail-desc">${product.description || "Premium quality imported essential carefully curated to match your modern standard."}</p>
 
         <!-- Delivery Option selectors -->
-        <div class="delivery-options" style="display: flex; gap: 10px; margin-bottom: 16px;">
-          <button class="selector-btn active" id="btn-delivery-express" onclick="window.selectDeliveryOption('express')" style="flex: 1; padding: 10px; border-radius: 12px; background: #fff; border: 1.5px solid var(--accent-purple); text-align: left; cursor: pointer;">
-            <h4 style="font-size: 12px; font-weight: 700; color: var(--accent-purple); margin-bottom: 2px;">Express Delivery</h4>
-            <p style="font-size: 9px; color: var(--text-muted); margin: 0;">15-20 Minutes Delivery</p>
+        <div class="delivery-options">
+          <button class="selector-btn active" id="btn-delivery-express" onclick="window.selectDeliveryOption('express')">
+            <h4>Express Delivery</h4>
+            <p>15-20 Minutes Delivery</p>
           </button>
-          <button class="selector-btn" id="btn-delivery-standard" onclick="window.selectDeliveryOption('standard')" style="flex: 1; padding: 10px; border-radius: 12px; background: #fff; border: 1.5px solid var(--border-color); text-align: left; cursor: pointer;">
-            <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">Standard Delivery</h4>
-            <p style="font-size: 9px; color: var(--text-muted); margin: 0;">Next Day Delivery</p>
+          <button class="selector-btn" id="btn-delivery-standard" onclick="window.selectDeliveryOption('standard')">
+            <h4>Standard Delivery</h4>
+            <p>Next Day Delivery</p>
           </button>
-        </div>
-
-        <!-- Policy badges row (Screen 5) -->
-        <div class="policy-badges-row" style="display: flex; justify-content: space-between; align-items: center; background: var(--card-accent); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 16px; gap: 8px;">
-          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; gap: 4px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: var(--accent-purple);"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            <span style="font-size: 10px; font-weight: 700; color: var(--text-primary);">Free Delivery</span>
-          </div>
-          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; gap: 4px; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color);">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: var(--accent-purple);"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            <span style="font-size: 10px; font-weight: 700; color: var(--text-primary);">7 Days Return</span>
-          </div>
-          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; gap: 4px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: var(--accent-purple);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span style="font-size: 10px; font-weight: 700; color: var(--text-primary);">1 Yr Warranty</span>
-          </div>
         </div>
 
         <!-- Live Social Proof -->
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;display:none;">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">
           <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 12px;">
             <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.3);animation:pulse 2s infinite;flex-shrink:0;"></span>
             <span style="font-size:11px;color:rgba(255,255,255,0.8);font-weight:600;" id="mobileShopperCount">${Math.floor(8 + Math.random() * 22)} people viewing</span>
           </div>
+          ${new Date().getHours() < 21 ? `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:5px 12px;"><span style="font-size:10px;color:#f59e0b;">⏰</span><span style="font-size:11px;color:#f59e0b;font-weight:600;">Order before 9 PM → Next Day</span></div>` : ''}
         </div>
 
         <div class="detail-actions">
@@ -1164,57 +1163,26 @@
     const shipping = 0; // zero shipping cost
     const totalAmount = totalSellingPrice + shipping;
 
-    const shippingThreshold = 499;
-    const progressPercent = Math.min(100, (totalSellingPrice / shippingThreshold) * 100);
-    const neededForFreeShipping = Math.max(0, shippingThreshold - totalSellingPrice);
-    
     receiptSummary.innerHTML = `
-      <!-- Free Shipping Progress Bar (Screen 6) -->
-      <div class="free-shipping-progress-container" style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; margin-bottom: 14px; width: 100%;">
-        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px; font-weight:600; color:var(--text-primary);">
-          <span>${neededForFreeShipping > 0 ? `Add <strong>₹${neededForFreeShipping}</strong> more for FREE Shipping` : '🎉 You unlocked <strong>FREE Shipping!</strong>'}</span>
-          <span>₹${totalSellingPrice}/₹${shippingThreshold}</span>
-        </div>
-        <div style="background:#E2E8F0; height:6px; border-radius:3px; overflow:hidden; width: 100%;">
-          <div style="background:var(--accent-purple); height:100%; width:${progressPercent}%; transition: width 0.3s ease;"></div>
-        </div>
+      <div class="receipt-row">
+        <span>Total MRP</span>
+        <span>₹${totalMRP}</span>
       </div>
-
-      <!-- Apply Coupon Banner (Screen 6) -->
-      <div class="coupon-apply-row" style="display:flex; gap:8px; margin-bottom:14px; width: 100%;">
-        <input type="text" placeholder="Enter Coupon Code" value="FESTIVE10" readonly style="flex:1; padding:10px 12px; border:1.5px solid var(--border-color); border-radius:10px; font-size:12px; font-weight:600; background:#F8F9FA; color: var(--text-primary); outline: none;" />
-        <button style="background:var(--accent-purple); color:#fff; border:none; padding:10px 16px; border-radius:10px; font-size:11px; font-weight:700; cursor:pointer;" onclick="alert('Coupon FESTIVE10 applied!')">APPLY</button>
+      <div class="receipt-row">
+        <span>Boutique Discount</span>
+        <span style="color: var(--accent-gold);">-₹${savings}</span>
       </div>
-
-      <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; width: 100%; box-shadow: var(--shadow-premium);">
-        <h4 style="font-family: var(--font-display); font-size: 13px; font-weight: 700; margin: 0 0 12px 0; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em;">Price Details</h4>
-        
-        <div class="receipt-row" style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-muted);">
-          <span>Total MRP</span>
-          <span>₹${totalMRP}</span>
-        </div>
-        <div class="receipt-row" style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-muted);">
-          <span>Boutique Discount</span>
-          <span style="color: var(--green-success);">-₹${savings}</span>
-        </div>
-        <div class="receipt-row" style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-muted);">
-          <span>Coupon Discount (FESTIVE10)</span>
-          <span style="color: var(--green-success);">-₹50</span>
-        </div>
-        <div class="receipt-row" style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 12px; color: var(--text-muted);">
-          <span>Delivery Charges</span>
-          <span style="color: var(--green-success); font-weight: 600;">FREE</span>
-        </div>
-        
-        <div class="receipt-row total" style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; border-top: 1.5px dashed var(--border-color); padding-top: 12px; margin-bottom: 16px; color: var(--text-primary);">
-          <span>Total Amount</span>
-          <span>₹${Math.max(0, totalAmount - 50)}</span>
-        </div>
-        
-        <button class="checkout-btn" onclick="window.checkoutCart(${Math.max(0, totalAmount - 50)})" style="width: 100%; height: 44px; border-radius: 22px; border: none; background: var(--accent-purple); color: #ffffff; font-family: var(--font-display); font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 12px rgba(108, 46, 181, 0.25);">
-          Proceed to Checkout
-        </button>
+      <div class="receipt-row">
+        <span>Delivery Charges</span>
+        <span style="color: var(--green-success);">FREE</span>
       </div>
+      <div class="receipt-row total">
+        <span>Total Amount</span>
+        <span>₹${totalAmount}</span>
+      </div>
+      <button class="checkout-btn" onclick="window.checkoutCart(${totalAmount})">
+        Proceed to Checkout
+      </button>
     `;
   }
 
@@ -2567,5 +2535,71 @@
         }
       }, 800);
     }
+  };
+
+  // Location Picker Modal Functions
+  window.openLocationPicker = () => {
+    const overlay = document.getElementById('locationPickerOverlay');
+    if (overlay) {
+      overlay.style.display = 'flex';
+      overlay.offsetHeight; // Force reflow
+      overlay.classList.add('active');
+    }
+  };
+
+  window.closeLocationPicker = () => {
+    const overlay = document.getElementById('locationPickerOverlay');
+    if (overlay) {
+      overlay.classList.remove('active');
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 300);
+    }
+  };
+
+  window.selectCurrentLocation = () => {
+    const activeAddressLabel = document.getElementById('activeAddressLabel');
+    if (activeAddressLabel) {
+      activeAddressLabel.textContent = "Ramkrishan Nagar, Patna";
+    }
+    showToast("Selected current location!");
+    window.closeLocationPicker();
+  };
+
+  window.selectSavedAddress = (label) => {
+    const activeAddressLabel = document.getElementById('activeAddressLabel');
+    if (activeAddressLabel) {
+      activeAddressLabel.textContent = label + " - New Jaganpura, Patna";
+    }
+    showToast(`Selected address: ${label}`);
+    window.closeLocationPicker();
+  };
+
+  window.addNewAddressAction = () => {
+    showToast("Opening address form...");
+    window.closeLocationPicker();
+    switchTab('profile');
+    setTimeout(() => {
+      alert("Please add a new address in your profile details!");
+    }, 400);
+  };
+
+  window.requestAddressAction = () => {
+    showToast("Sharing request link via WhatsApp...");
+  };
+
+  window.importZomatoAction = () => {
+    showToast("Importing saved addresses from Zomato...");
+    setTimeout(() => {
+      showToast("Import successful: 2 addresses added!");
+    }, 1000);
+  };
+
+  window.editAddressAction = (label) => {
+    showToast(`Editing saved address: ${label}`);
+  };
+
+  window.shareAddressAction = (label) => {
+    showToast(`Sharing address: ${label}`);
   };
 })();

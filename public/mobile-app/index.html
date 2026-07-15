@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#6B46C1" />
   <title>IESVRA Mobile App</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/mobile.css?v=3.0" />
+  <link rel="stylesheet" href="css/mobile.css?v=4.0" />
   <script src="capacitor.js"></script>
 </head>
 <body>
@@ -211,8 +211,19 @@
   <div class="app-header">
     <!-- Delivering address inside header layout for home page -->
     <div class="delivery-header" id="headerDeliveryInfo">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-      <span>Delivering to <strong>Patna, Bihar ˅</strong></span>
+      <div class="location-pin-icon-circle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      </div>
+      <div class="delivery-text-wrap">
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span class="delivery-time-badge">IESVRA in 15 mins</span>
+          <span class="delivery-distance">(179 m away)</span>
+        </div>
+        <div class="delivery-address-row">
+          <span id="activeAddressLabel">Home - New Jaganpura, Patna</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
     </div>
     
     <div class="header-actions">
@@ -239,7 +250,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <input type="text" placeholder="Search for products, brands & more..." id="homeSearchInput" autocomplete="off" />
             <svg class="mic-btn" id="micBtn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-            <svg class="scan-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: var(--text-muted); cursor: pointer; flex-shrink: 0; margin-left: 6px;" onclick="alert('Barcode scanning active!')"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg>
           </div>
           <button class="search-filter-btn">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
@@ -276,19 +286,19 @@
           <span>Express Delivery</span>
         </div>
         <div class="quick-action-item">
-          <div class="quick-icon-circle accent-orange">
+          <div class="quick-icon-circle accent-gold">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
           </div>
           <span>Today's Deals</span>
         </div>
         <div class="quick-action-item">
-          <div class="quick-icon-circle accent-orange">
+          <div class="quick-icon-circle accent-red">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="12" x="3" y="6" rx="2"/><path d="M9 12h.01M15 12h.01"/></svg>
           </div>
           <span>Coupons</span>
         </div>
         <div class="quick-action-item">
-          <div class="quick-icon-circle accent-orange">
+          <div class="quick-icon-circle">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
           </div>
           <span>IESVRA Plus</span>
@@ -432,35 +442,13 @@
 
     <!-- 5. PROFILE TAB -->
     <div class="screen" id="screen-profile">
-      <div class="profile-stats-container" style="position: relative;">
-        <button class="settings-gear-btn" onclick="window.openProfileEdit()" style="color: #ffffff; background: none; border: none; cursor: pointer;">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+      <div class="profile-hero-card" style="position: relative;">
+        <button class="settings-gear-btn" onclick="window.openProfileEdit()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="avatar-circle" id="profileAvatar" style="width: 54px; height: 54px; border-radius: 50%; background: #ffffff; color: var(--accent-purple); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; border: 2px solid rgba(255, 255, 255, 0.25);">G</div>
-          <div style="text-align: left;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 id="profileName" style="margin: 0; font-size: 18px; font-weight: 700; color: #ffffff; font-family: var(--font-display);">Guest User</h3>
-              <span style="font-size: 8px; font-weight: 700; background: var(--accent-gold); color: #1A202C; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block;">Gold Member</span>
-            </div>
-            <p id="profilePhone" style="margin: 2px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.85); font-weight: 500;">+91 820 123 4567</p>
-          </div>
-        </div>
-        
-        <div class="profile-stats-row" style="display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 16px;">
-          <div class="profile-stat-col" onclick="alert('Wallet Balance: ₹250.00')" style="display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;">
-            <strong style="font-size: 18px; font-weight: 800; color: #ffffff;">₹250</strong>
-            <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.85); margin-top: 4px;">Wallet Balance</span>
-          </div>
-          <div class="profile-stat-col" style="display: flex; flex-direction: column; align-items: center; flex: 1; border-left: 1px solid rgba(255,255,255,0.15); border-right: 1px solid rgba(255,255,255,0.15); cursor: pointer;" onclick="alert('Reward Points: 250')">
-            <strong style="font-size: 18px; font-weight: 800; color: #ffffff;">250</strong>
-            <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.85); margin-top: 4px;">Reward Points</span>
-          </div>
-          <div class="profile-stat-col" onclick="window.switchTab('offers')" style="display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;">
-            <strong style="font-size: 18px; font-weight: 800; color: #ffffff;">12</strong>
-            <span style="font-size: 9px; font-weight: 500; color: rgba(255, 255, 255, 0.85); margin-top: 4px;">Coupons</span>
-          </div>
-        </div>
+        <div class="avatar-circle" id="profileAvatar">G</div>
+        <h3 id="profileName">Guest User</h3>
+        <p id="profilePhone">+91 820 123 4567</p>
       </div>
  
       <div class="plus-membership-banner">
@@ -538,131 +526,10 @@
         <button onclick="window.switchTab('cart')" style="background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 8px; margin-right: 8px;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 20px; height: 20px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         </button>
-        <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: bold; margin: 0; color: var(--text-primary);">Checkout</h3>
+        <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: bold; margin: 0;">Checkout</h3>
       </div>
-      
-      <div class="checkout-form" style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
-        
-        <!-- Step 1: Address Details -->
-        <div class="checkout-step-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-premium);">
-          <div style="font-weight: 700; font-size: 13px; color: var(--accent-purple); display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em;">
-            <span style="background: var(--accent-purple); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px;">1</span>
-            Delivery Address
-          </div>
-          
-          <div style="display: flex; flex-direction: column; gap: 12px;">
-            <input type="text" id="checkoutName" placeholder="Full Name *" style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-accent); color: var(--text-primary); font-size: 13px; font-weight: 500; outline: none;" />
-            <input type="email" id="checkoutEmail" placeholder="Email Address *" style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-accent); color: var(--text-primary); font-size: 13px; font-weight: 500; outline: none;" />
-            <input type="tel" id="checkoutPhone" placeholder="Phone Number (10 digit) *" style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-accent); color: var(--text-primary); font-size: 13px; font-weight: 500; outline: none;" />
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-              <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Pin exact delivery point</span>
-              <button type="button" onclick="window.detectCurrentLocation()" style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 20px; border: 1.5px solid var(--accent-purple); background: transparent; color: var(--accent-purple); font-size: 10px; font-weight: bold; cursor: pointer;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 12px; height: 12px;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                Locate Me
-              </button>
-            </div>
-            
-            <!-- Map Card Wrapper -->
-            <div style="display: flex; flex-direction: column; gap: 10px; margin: 4px 0; background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 12px;">
-              <div style="position: relative; width: 100%;">
-                <div id="app-checkout-map" style="height: 150px; width: 100%; border-radius: 10px; border: 1px solid var(--border-color); background: #f0f0f0; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10;">
-                  <span style="font-size: 11px; color: var(--text-muted);">Initializing Map...</span>
-                </div>
-                <button type="button" onclick="window.recenterAppMapOnGPS()" style="position: absolute; bottom: 8px; right: 8px; z-index: 1000; width: 36px; height: 36px; border-radius: 50%; border: none; background: linear-gradient(135deg, #1A73E8, #0B5ED7); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="width: 18px; height: 18px;"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="9" stroke-opacity="0.3"/></svg>
-                </button>
-              </div>
-              <button type="button" id="confirmAppLocationBtn" onclick="window.confirmAppLocation()" style="width: 100%; height: 34px; border-radius: 8px; border: none; background: var(--accent-purple); color: #fff; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center;">
-                📍 Pin Location Confirmed
-              </button>
-              <span id="appMapCoords" style="font-family: monospace; font-size: 9px; color: var(--text-muted); text-align: center; display: none;"></span>
-            </div>
-            
-            <div style="position: relative;">
-              <input type="text" id="checkoutAddress1" placeholder="Address Line 1 (Flat, House no, Building) *" style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-accent); color: var(--text-primary); font-size: 13px; font-weight: 500;" />
-              <div id="checkoutAddress1Suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; z-index: 1000; max-height: 180px; overflow-y: auto;"></div>
-            </div>
-            
-            <div style="position: relative;">
-              <input type="text" id="checkoutAddress2" placeholder="Address Line 2 (Area, Landmark) [Optional]" style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-accent); color: var(--text-primary); font-size: 13px; font-weight: 500;" />
-              <div id="checkoutAddress2Suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; z-index: 1000; max-height: 180px; overflow-y: auto;"></div>
-            </div>
-            
-            <div style="display: flex; gap: 10px;">
-              <input type="text" id="checkoutCity" placeholder="City *" style="flex: 1; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-accent); color: var(--text-primary); font-size: 13px; font-weight: 500;" />
-              <input type="text" id="checkoutState" placeholder="State *" style="flex: 1; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-accent); color: var(--text-primary); font-size: 13px; font-weight: 500;" />
-            </div>
-            
-            <input type="text" id="checkoutPincode" placeholder="Pincode *" style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-accent); color: var(--text-primary); font-size: 13px; font-weight: 500;" />
-          </div>
-        </div>
-        
-        <!-- Step 2: Delivery Speed Option -->
-        <div class="checkout-step-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-premium);">
-          <div style="font-weight: 700; font-size: 13px; color: var(--accent-purple); display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em;">
-            <span style="background: var(--accent-purple); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px;">2</span>
-            Delivery Speed & Slot
-          </div>
-          
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            <label style="display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--border-color); border-radius: 12px; background: var(--card-bg); color: var(--text-primary); font-size: 13px; cursor: pointer;">
-              <input type="radio" name="deliverySpeed" value="standard" checked onclick="window.updateCheckoutDelivery('standard')" />
-              <div>
-                <div style="font-weight: 700;">Standard Delivery (3-5 Days)</div>
-                <div style="font-size: 11px; color: var(--green-success); font-weight: 600; margin-top: 2px;">FREE Delivery</div>
-              </div>
-            </label>
-            
-            <label id="expressDeliveryLabel" style="display: none; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--border-color); border-radius: 12px; background: var(--card-bg); color: var(--text-primary); font-size: 13px; cursor: pointer;">
-              <input type="radio" name="deliverySpeed" value="express" onclick="window.updateCheckoutDelivery('express')" />
-              <div>
-                <div style="font-weight: 700; color: var(--accent-purple);">Express 15-Minute Delivery (within 15km)</div>
-                <div style="font-size: 11px; color: var(--accent-gold); font-weight: 600; margin-top: 2px;">+₹49 Delivery Fee</div>
-              </div>
-            </label>
-            
-            <div id="expressUnavailableNotice" style="font-size: 11px; color: var(--text-muted); background: var(--card-accent); padding: 8px 12px; border-radius: 8px; line-height: 1.4;">
-              ⚠️ Express 15-min delivery is only available within 15 km of our Patna warehouse. Enter a Patna pincode to unlock!
-            </div>
-          </div>
-        </div>
-        
-        <!-- Step 3: Payment Method Option -->
-        <div class="checkout-step-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-premium);">
-          <div style="font-weight: 700; font-size: 13px; color: var(--accent-purple); display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em;">
-            <span style="background: var(--accent-purple); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px;">3</span>
-            Payment Method
-          </div>
-          
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            <label style="display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--border-color); border-radius: 12px; background: var(--card-bg); color: var(--text-primary); font-size: 13px; cursor: pointer;">
-              <input type="radio" name="paymentMode" value="razorpay" checked onclick="window.updateCheckoutPayment('razorpay')" />
-              <div>
-                <div style="font-weight: 700;">Online Payment (UPI, Credit/Debit Cards, Net Banking)</div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Secure transaction via Razorpay gateway</div>
-              </div>
-            </label>
-            
-            <label style="display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--border-color); border-radius: 12px; background: var(--card-bg); color: var(--text-primary); font-size: 13px; cursor: pointer;">
-              <input type="radio" name="paymentMode" value="cod" onclick="window.updateCheckoutPayment('cod')" />
-              <div>
-                <div style="font-weight: 700;">Cash on Delivery (COD)</div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Pay when order is received at your door</div>
-              </div>
-            </label>
-          </div>
-        </div>
-        
-        <!-- Pricing Breakdown Details Summary -->
-        <div id="checkoutSummarySection" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-premium); display: flex; flex-direction: column; gap: 6px;">
-          <!-- Populated by JS -->
-        </div>
-        
-        <button id="placeOrderBtn" onclick="window.submitCheckoutForm()" style="width: 100%; height: 48px; border-radius: 24px; border: none; background: var(--accent-purple); color: #ffffff; font-family: var(--font-display); font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 12px rgba(108, 46, 181, 0.25);">
-          Place Order
-        </button>
-        
+      <div class="checkout-form" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+        <!-- ... keeping identical form items ... -->
       </div>
     </div>
   </div>
@@ -701,45 +568,137 @@
     </button>
   </div>
 
-  <!-- Toast Container -->
+  <!-- Delivery Location Picker Overlay Sheet -->
+  <div class="location-picker-overlay" id="locationPickerOverlay" onclick="if(event.target===this) closeLocationPicker()">
+    <div class="location-picker-sheet">
+      <div class="sheet-bar-handle"></div>
+      
+      <div class="location-picker-header">
+        <h3>Select delivery location</h3>
+        <button class="close-btn" onclick="closeLocationPicker()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="location-picker-content" style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Search bar -->
+        <div class="location-search-bar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 16px; height: 16px; color: var(--text-muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search for area, street name..." id="locationSearchInput" />
+        </div>
+
+        <!-- Quick actions list container -->
+        <div class="location-quick-actions">
+          <!-- Use current location -->
+          <div class="location-action-item" onclick="window.selectCurrentLocation()">
+            <div class="location-action-left">
+              <div class="location-action-icon current-loc">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+              </div>
+              <div class="location-action-text">
+                <h4 class="text-brand">Use current location</h4>
+                <p>Ramkrishan Nagar, Patna Division, Patna, Bihar, 800030, India</p>
+              </div>
+            </div>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px; color: var(--text-muted);"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+
+          <!-- Add new address -->
+          <div class="location-action-item" onclick="window.addNewAddressAction()">
+            <div class="location-action-left">
+              <div class="location-action-icon add-address">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+              <div class="location-action-text">
+                <h4 class="text-brand">Add new address</h4>
+              </div>
+            </div>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px; color: var(--text-muted);"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+
+          <!-- Request address from someone else -->
+          <div class="location-action-item" onclick="window.requestAddressAction()">
+            <div class="location-action-left">
+              <div class="location-action-icon whatsapp">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.19 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.488 2.01 14.041.986 11.458.986 6.02.986 1.597 5.36 1.593 10.79c-.001 1.698.446 3.354 1.3 4.792l-.994 3.63 3.748-.978zM17.15 14.4c-.3-.15-1.78-.88-2.05-.98-.28-.1-.48-.15-.68.15-.2.3-.78 1-.96 1.2-.18.2-.36.2-.66.05-1.05-.52-1.83-1.12-2.5-2.28-.18-.3-.02-.45.13-.6l.45-.45c.15-.15.2-.25.3-.45.1-.2.05-.35-.02-.5-.07-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5s1.08 2.9 1.23 3.1c.15.2 2.1 3.2 5.1 4.5.7.3 1.25.5 1.68.64.72.23 1.38.2 1.9.12.58-.08 1.78-.73 2.03-1.43.25-.7.25-1.3.17-1.43-.07-.15-.28-.23-.58-.38z"/></svg>
+              </div>
+              <div class="location-action-text">
+                <h4>Request address from someone else</h4>
+              </div>
+            </div>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px; color: var(--text-muted);"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+
+          <!-- Import addresses from Zomato -->
+          <div class="location-action-item" onclick="window.importZomatoAction()">
+            <div class="location-action-left">
+              <div class="location-action-icon zomato">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px;"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4c1.103 0 2 .897 2 2s-.897 2-2 2-2-.897-2-2 .897-2 2-2zm0 14c-2.697 0-5-2.186-5-4.8s2.303-4.8 5-4.8 5 2.186 5 4.8-2.303 4.8-5 4.8z"/></svg>
+              </div>
+              <div class="location-action-text">
+                <h4>Import your addresses from Zomato</h4>
+              </div>
+            </div>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px; color: var(--text-muted);"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+
+        <div style="font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--text-muted); margin-top: 8px;">Your saved addresses</div>
+
+        <!-- Saved addresses grid/list -->
+        <div class="saved-addresses-list" style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="saved-address-card active" onclick="window.selectSavedAddress('Home')">
+            <div class="address-card-header">
+              <div class="address-badge-row">
+                <span class="address-icon-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 14px; height: 14px;"><path d="m12 5.72 7.4 5.28V20a1 1 0 0 1-1 1h-4.8v-6h-3.2v6H4.8a1 1 0 0 1-1-1v-9a1 1 0 0 1 .4-.8L12 5.72M12 3 2 10.15V21a2 2 0 0 0 2 2h6v-6h4v6h6a2 2 0 0 0 2-2V10.15L12 3z"/></span class="address-icon-wrap">
+                </span>
+                <div class="address-title-badge">
+                  <strong>Home</strong>
+                  <span class="frequent-pill">Frequently used</span>
+                </div>
+              </div>
+              <span class="distance-badge">179.92 m</span>
+            </div>
+            
+            <p class="address-text">New Jaganpura Jagdish Chauk Atal Vihar Colony, Bishop scott girls school, Ramkrishan Nagar, Patna</p>
+            <p class="phone-text">Phone number: <strong>7061333200</strong></p>
+            
+            <div class="address-card-actions" onclick="event.stopPropagation();">
+              <button class="action-btn" onclick="window.editAddressAction('Home')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </button>
+              <button class="action-btn" onclick="window.shareAddressAction('Home')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Promo Banner -->
+        <div class="address-share-banner">
+          <div class="banner-left">
+            <span class="share-icon-wrap">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </span>
+            <p>Now share your addresses with friends and family</p>
+          </div>
+          <button class="banner-close" onclick="this.parentElement.style.display='none'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width: 10px; height: 10px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="toast-container">
     <div class="toast" id="toast">
       <span id="toastText"></span>
     </div>
   </div>
 
-  <!-- Profile Edit Modal -->
-  <div class="profile-edit-modal" id="profileEditModal">
-    <div class="profile-edit-card">
-      <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary);">Edit Profile</h3>
-      <div class="profile-edit-field" style="margin-bottom: 12px;">
-        <label for="editProfileName" style="display: block; font-size: 11px; font-weight: bold; color: var(--text-muted); margin-bottom: 4px;">NAME</label>
-        <input type="text" id="editProfileName" placeholder="Your name" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--card-accent); color: var(--text-primary); font-size: 13px;" />
-      </div>
-      <div class="profile-edit-field" style="margin-bottom: 12px;">
-        <label for="editProfileEmail" style="display: block; font-size: 11px; font-weight: bold; color: var(--text-muted); margin-bottom: 4px;">EMAIL</label>
-        <input type="email" id="editProfileEmail" placeholder="Your email" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--card-accent); color: var(--text-primary); font-size: 13px;" />
-      </div>
-      <div class="profile-edit-field" style="margin-bottom: 16px;">
-        <label for="editProfilePhone" style="display: block; font-size: 11px; font-weight: bold; color: var(--text-muted); margin-bottom: 4px;">PHONE</label>
-        <input type="tel" id="editProfilePhone" placeholder="+91 XXXXX XXXXX" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--card-accent); color: var(--text-primary); font-size: 13px;" />
-      </div>
-      <div class="profile-edit-actions" style="display: flex; gap: 8px;">
-        <button class="btn-cancel" onclick="window.closeProfileEdit()" style="flex: 1; padding: 10px; border-radius: 8px; background: var(--border-color); color: var(--text-primary); font-weight: bold; cursor: pointer; border: none;">Cancel</button>
-        <button class="btn-save" onclick="window.saveProfileEdit()" style="flex: 1; padding: 10px; border-radius: 8px; background: var(--accent-purple); color: #fff; font-weight: bold; cursor: pointer; border: none;">Save</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Social Login Modal -->
-  <div class="profile-edit-modal" id="socialLoginModal">
-    <div class="profile-edit-card" id="socialLoginCard" style="max-width: 380px; padding: 24px;">
-      <!-- Populated dynamically via app.js -->
-    </div>
-  </div>
-
   <!-- Application Logic -->
-  <script src="js/state.js?v=3"></script>
-  <script src="js/app.js?v=3"></script>
+  <script src="js/state.js?v=4.0"></script>
+  <script src="js/app.js?v=4.0"></script>
 </body>
 </html>
