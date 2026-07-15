@@ -2322,6 +2322,9 @@ body.home-header-active .main-content {
   box-shadow: var(--shadow-premium);
   display: none;
   animation: slideUpToast 0.3s ease-out;
+  max-width: 100%;
+  text-align: center;
+  word-wrap: break-word;
 }
 
 .toast.show {

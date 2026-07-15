@@ -22,28 +22,8 @@
       <div class="splash-divider-line"></div>
 
       <!-- Scooter Delivery Illustration -->
-      <div class="splash-scooter-illustration">
-        <svg viewBox="0 0 200 150">
-          <ellipse cx="100" cy="125" rx="65" ry="8" fill="#E2E8F0"/>
-          <!-- Scooter structure -->
-          <path d="M50 100 L70 100 L80 120 L140 120 L150 95 L135 75 L110 75 Z" fill="#ffbe1a" stroke="#ED8936" stroke-width="2" stroke-linejoin="round"/>
-          <circle cx="80" cy="120" r="16" fill="#1A202C"/>
-          <circle cx="80" cy="120" r="6" fill="#FFFFFF"/>
-          <circle cx="140" cy="120" r="16" fill="#1A202C"/>
-          <circle cx="140" cy="120" r="6" fill="#FFFFFF"/>
-          <!-- Rider -->
-          <circle cx="110" cy="55" r="10" fill="#6B46C1"/>
-          <path d="M110 65 L100 90 L120 90 Z" fill="#6B46C1"/>
-          <path d="M100 90 L85 102" stroke="#1A202C" stroke-width="3" stroke-linecap="round"/>
-          <path d="M115 70 L130 85" stroke="#1A202C" stroke-width="3" stroke-linecap="round"/>
-          <!-- Helmet -->
-          <path d="M100 51 A11 11 0 0 1 121 51 Z" fill="#ED8936"/>
-          <!-- Bags -->
-          <rect x="30" y="75" width="22" height="26" rx="3" fill="#E53E3E"/>
-          <path d="M35 75 Q41 64 47 75" stroke="#ffffff" stroke-width="2" fill="none"/>
-          <rect x="155" y="85" width="20" height="22" rx="3" fill="#3182CE"/>
-          <path d="M159 85 Q165 76 171 85" stroke="#ffffff" stroke-width="2" fill="none"/>
-        </svg>
+      <div class="splash-scooter-illustration" style="margin-top: 30px;">
+        <img src="images/delivery-scooter.png" alt="Delivery Scooter" style="max-width: 80%; max-height: 220px; object-fit: contain; border-radius: 16px;" />
       </div>
     </div>
     
@@ -337,10 +317,12 @@
 
     <!-- 2. CATEGORIES TAB -->
     <div class="screen" id="screen-categories">
-      <div class="search-section">
-        <div class="search-bar">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" placeholder="Search categories..." id="catSearchInput" />
+      <div class="search-section-new">
+        <div class="search-bar-row-new">
+          <div class="search-bar-new">
+            <svg class="search-icon-new" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Search categories..." id="catSearchInput" autocomplete="off" />
+          </div>
         </div>
       </div>
       <div class="categories-grid-container" id="categoriesListContainer"></div>
