@@ -544,7 +544,103 @@
         <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: bold; margin: 0;">Checkout</h3>
       </div>
       <div class="checkout-form" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-        <!-- ... keeping identical form items ... -->
+
+        <!-- Shipping Details -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px;">
+          <h4 style="font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--text-primary);">Shipping Details</h4>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" id="checkoutName" placeholder="Full Name" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-family: var(--font-body); background: var(--primary-bg); color: var(--text-primary); outline: none;" />
+            <input type="email" id="checkoutEmail" placeholder="Email Address" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-family: var(--font-body); background: var(--primary-bg); color: var(--text-primary); outline: none;" />
+            <input type="tel" id="checkoutPhone" placeholder="Phone Number" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-family: var(--font-body); background: var(--primary-bg); color: var(--text-primary); outline: none;" />
+          </div>
+        </div>
+
+        <!-- Delivery Address -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px;">
+          <h4 style="font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--text-primary);">Delivery Address</h4>
+
+          <!-- Address Search -->
+          <div style="position: relative; margin-bottom: 10px;">
+            <input type="text" id="checkoutAddressSearch" placeholder="🔍 Search address, paste Google Maps link, or enter coordinates..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--accent-purple); border-radius: 10px; font-size: 12px; font-family: var(--font-body); background: rgba(108,46,181,0.03); color: var(--text-primary); outline: none;" />
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative;">
+              <input type="text" id="checkoutAddress1" placeholder="Address Line 1 (House No, Street)" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-family: var(--font-body); background: var(--primary-bg); color: var(--text-primary); outline: none;" />
+              <div id="checkoutAddress1Suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 100; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; max-height: 180px; overflow-y: auto; box-shadow: 0 8px 20px rgba(0,0,0,0.1);"></div>
+            </div>
+            <div style="position: relative;">
+              <input type="text" id="checkoutAddress2" placeholder="Address Line 2 (Locality, Landmark)" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-family: var(--font-body); background: var(--primary-bg); color: var(--text-primary); outline: none;" />
+              <div id="checkoutAddress2Suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 100; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; max-height: 180px; overflow-y: auto; box-shadow: 0 8px 20px rgba(0,0,0,0.1);"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <input type="text" id="checkoutCity" placeholder="City" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-family: var(--font-body); background: var(--primary-bg); color: var(--text-primary); outline: none;" />
+              <input type="text" id="checkoutState" placeholder="State" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-family: var(--font-body); background: var(--primary-bg); color: var(--text-primary); outline: none;" />
+            </div>
+            <input type="text" id="checkoutPincode" placeholder="PIN Code" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-family: var(--font-body); background: var(--primary-bg); color: var(--text-primary); outline: none;" />
+          </div>
+
+          <!-- Map container -->
+          <div id="checkoutMapContainer" style="width: 100%; height: 150px; border-radius: 12px; margin-top: 12px; overflow: hidden; background: var(--card-accent); display: none;"></div>
+        </div>
+
+        <!-- Delivery Speed -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px;">
+          <h4 style="font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--text-primary);">Delivery Speed</h4>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--text-primary);">
+              <input type="radio" name="deliverySpeed" value="standard" checked onchange="window.updateCheckoutDelivery('standard')" style="accent-color: var(--accent-purple);" />
+              <div>
+                <div style="font-weight: 700;">Standard Delivery</div>
+                <div style="font-size: 11px; color: var(--text-muted);">2-4 business days · FREE</div>
+              </div>
+            </label>
+            <label id="expressDeliveryLabel" style="display: none; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--accent-gold); border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--text-primary); background: rgba(255,190,26,0.04);">
+              <input type="radio" name="deliverySpeed" value="express" onchange="window.updateCheckoutDelivery('express')" style="accent-color: var(--accent-gold);" />
+              <div>
+                <div style="font-weight: 700; color: var(--accent-purple);">⚡ Express 15-Min Delivery</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Lightning fast · ₹49</div>
+              </div>
+            </label>
+            <div id="expressUnavailableNotice" style="font-size: 11px; color: var(--text-muted); padding: 6px 12px; background: rgba(0,0,0,0.02); border-radius: 8px;">
+              ⚡ Express 15-Min Delivery is available for select Patna locations. Enter your address to check eligibility.
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px;">
+          <h4 style="font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--text-primary);">Payment Method</h4>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--text-primary);">
+              <input type="radio" name="paymentMode" value="razorpay" checked onchange="window.updateCheckoutPayment('razorpay')" style="accent-color: var(--accent-purple);" />
+              <div>
+                <div style="font-weight: 700;">💳 Online Payment</div>
+                <div style="font-size: 11px; color: var(--text-muted);">UPI / Cards / Net Banking via Razorpay</div>
+              </div>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--text-primary);">
+              <input type="radio" name="paymentMode" value="cod" onchange="window.updateCheckoutPayment('cod')" style="accent-color: var(--accent-purple);" />
+              <div>
+                <div style="font-weight: 700;">💵 Cash on Delivery</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Pay when your order arrives</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px;">
+          <h4 style="font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--text-primary);">Order Summary</h4>
+          <div id="checkoutSummarySection"></div>
+        </div>
+
+        <!-- Place Order Button -->
+        <button id="placeOrderBtn" onclick="window.submitCheckoutOrder()" style="width: 100%; padding: 14px; background: var(--accent-purple); color: #ffffff; border: none; border-radius: 14px; font-size: 14px; font-weight: 800; font-family: var(--font-display); cursor: pointer; box-shadow: 0 4px 16px rgba(108,46,181,0.2); transition: transform 0.15s;">
+          Pay & Place Order
+        </button>
+
       </div>
     </div>
   </div>

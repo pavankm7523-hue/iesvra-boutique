@@ -1331,6 +1331,77 @@
     }, 100);
   };
 
+  window.submitCheckoutOrder = () => {
+    const name = document.getElementById('checkoutName')?.value?.trim();
+    const email = document.getElementById('checkoutEmail')?.value?.trim();
+    const phone = document.getElementById('checkoutPhone')?.value?.trim();
+    const addr1 = document.getElementById('checkoutAddress1')?.value?.trim();
+    const city = document.getElementById('checkoutCity')?.value?.trim();
+    const state = document.getElementById('checkoutState')?.value?.trim();
+    const pincode = document.getElementById('checkoutPincode')?.value?.trim();
+
+    // Validate required fields
+    if (!name || !phone || !addr1 || !city || !pincode) {
+      showToast('Please fill in all required fields (Name, Phone, Address, City, PIN).');
+      return;
+    }
+
+    // Save shipping info for future use
+    localStorage.setItem('IESVRA_shipping_name', name);
+    if (email) localStorage.setItem('IESVRA_shipping_email', email);
+    localStorage.setItem('IESVRA_shipping_phone', phone);
+    localStorage.setItem('IESVRA_delivery_address_line1', addr1);
+    localStorage.setItem('IESVRA_delivery_address_line2', document.getElementById('checkoutAddress2')?.value?.trim() || '');
+    localStorage.setItem('IESVRA_delivery_city', city);
+    localStorage.setItem('IESVRA_delivery_state', state || '');
+    localStorage.setItem('IESVRA_delivery_pincode', pincode);
+
+    const cart = getCart();
+    if (cart.length === 0) {
+      showToast('Your cart is empty!');
+      return;
+    }
+
+    // Create order record
+    const orderId = 'ORD-' + Date.now().toString(36).toUpperCase();
+    const order = {
+      id: orderId,
+      items: [...cart],
+      subtotal: checkoutSubtotal,
+      shipping: checkoutShippingFee,
+      total: checkoutTotal,
+      deliverySpeed: checkoutDeliverySpeed,
+      paymentMode: checkoutPaymentMode,
+      address: { name, email, phone, addr1, addr2: document.getElementById('checkoutAddress2')?.value?.trim() || '', city, state, pincode },
+      status: 'placed',
+      placedAt: new Date().toISOString(),
+    };
+
+    // Save order to localStorage
+    let orders = [];
+    try {
+      const stored = localStorage.getItem('ishvara_orders');
+      if (stored) orders = JSON.parse(stored);
+    } catch(e) {}
+    orders.unshift(order);
+    localStorage.setItem('ishvara_orders', JSON.stringify(orders));
+
+    // Clear cart
+    saveCart([]);
+    updateCartBadges();
+
+    if (checkoutPaymentMode === 'razorpay') {
+      showToast(`Order ${orderId} placed! Simulating Razorpay payment of ₹${checkoutTotal}...`);
+      setTimeout(() => {
+        showToast('✅ Payment successful! Your order is confirmed.');
+        switchTab('orders');
+      }, 1500);
+    } else {
+      showToast(`✅ COD Order ${orderId} placed successfully! Total: ₹${checkoutTotal}`);
+      switchTab('orders');
+    }
+  };
+
   // ==================== ORDERS & LIVE TRACKING ====================
   function renderOrdersScreen() {
     const listContainer = document.getElementById('ordersListContainer');
