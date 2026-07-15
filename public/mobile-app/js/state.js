@@ -7,65 +7,66 @@
     { name: "Home & Kitchen", image: "/products/prod_1_1.jpg" },
     { name: "Bags & Travel", image: "/products/prod_9_1.jpeg" },
     { name: "Drinkware", image: "/products/prod_2_1.jpg" },
-    { name: "Daily Essentials", image: "/products/prod_4_1.jpeg" }
+    { name: "Daily Essentials", image: "/products/prod_4_1.jpeg" },
+    { name: "Fans & Coolers", image: "/products/prod_4_1.jpeg" }
   ];
 
   const initialProducts = [
     {
       id: "prod_drive_1",
-      name: "1pis set Plastic Square 7 Sections Multipurpose",
+      name: "7 in 1 Masala Box Airtight Container",
       sub: "Premium Quality Organiser",
-      price: 89,
-      mrp: 599,
+      price: 299,
+      mrp: 399,
       categories: ["Home & Kitchen"],
       image: "/products/prod_1_1.jpg",
       colors: [],
       description: "Imported premium product for all your household organization needs. Organize drawers, cosmetics, or tools.",
       isBestSeller: true,
-      rating: 4.7,
-      reviewsCount: 3
+      rating: 4.5,
+      reviewsCount: 128
     },
     {
       id: "prod_drive_2",
-      name: "3 PC MOTIVATION BOTTLE",
+      name: "3 PC Motivation Bottle Set",
       sub: "Premium Quality Drinkware",
       price: 499,
-      mrp: 1499,
+      mrp: 799,
       categories: ["Drinkware"],
       image: "/products/prod_2_1.jpg",
       colors: ["Midnight Black", "Blush Pink", "Forest Green"],
       description: "Imported premium water bottles. Comes as a set of 3 with motivational quotes and time markers to stay hydrated all day.",
       isBestSeller: true,
-      rating: 4.7,
-      reviewsCount: 3
+      rating: 4.6,
+      reviewsCount: 132
     },
     {
       id: "prod_drive_3",
-      name: "CYOMI 611 5 W Bluetooth Speaker",
+      name: "CYOMI Wireless Bluetooth Speaker",
       sub: "Premium Quality Audio",
-      price: 299,
+      price: 799,
       mrp: 999,
       categories: ["Mobile Accessories"],
       image: "/products/prod_3_1.jpeg",
       colors: ["Midnight Black", "Active Red", "Navy Blue"],
       description: "High bass portable wireless Bluetooth speaker. Durable build with crystal clear sound and up to 5 hours playback.",
       isBestSeller: true,
-      rating: 4.3,
-      reviewsCount: 3
+      rating: 4.4,
+      reviewsCount: 96
     },
     {
       id: "prod_drive_4",
-      name: "Solar Interaction Wall Lamp",
+      name: "Solar Outdoor Wall Lamp",
       sub: "Premium Quality Lighting",
-      price: 299,
-      mrp: 1299,
+      price: 699,
+      mrp: 999,
       categories: ["Daily Essentials"],
       image: "/products/prod_4_1.jpeg",
       colors: ["Stealth Black"],
       description: "Outdoor motion sensor solar light. Waterproof, heat-resistant, and perfect for security and pathway lighting.",
       isBestSeller: true,
-      rating: 4.7,
-      reviewsCount: 3
+      rating: 4.3,
+      reviewsCount: 88
     },
     {
       id: "prod_drive_5",
@@ -140,7 +141,7 @@
   ];
 
   function getProducts() {
-    const stored = localStorage.getItem("ishvara_products_v4");
+    const stored = localStorage.getItem("ishvara_products_v5");
     if (stored) {
       try {
         return JSON.parse(stored);
@@ -148,12 +149,12 @@
         console.error("Failed to parse products from localstorage", e);
       }
     }
-    localStorage.setItem("ishvara_products_v4", JSON.stringify(initialProducts));
+    localStorage.setItem("ishvara_products_v5", JSON.stringify(initialProducts));
     return initialProducts;
   }
 
   function getCategories() {
-    const stored = localStorage.getItem("ishvara_categories_v2");
+    const stored = localStorage.getItem("ishvara_categories_v3");
     if (stored) {
       try {
         return JSON.parse(stored);
@@ -161,7 +162,7 @@
         console.error("Failed to parse categories from localstorage", e);
       }
     }
-    localStorage.setItem("ishvara_categories_v2", JSON.stringify(initialCategories));
+    localStorage.setItem("ishvara_categories_v3", JSON.stringify(initialCategories));
     return initialCategories;
   }
 

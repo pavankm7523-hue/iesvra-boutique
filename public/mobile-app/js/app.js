@@ -714,9 +714,9 @@
     if (!categoriesScroll) return;
     const categories = getCategories();
 
-    let html = categories.slice(0, 7).map(cat => `
-      <div class="category-grid-item" onclick="window.filterHomeByCategory('${cat.name}')">
-        <div class="category-grid-icon-wrap">
+    let html = categories.slice(0, 9).map(cat => `
+      <div class="category-grid-item-new" onclick="window.filterHomeByCategory('${cat.name}')">
+        <div class="category-grid-icon-wrap-new">
           <img src="${cat.image}" alt="${cat.name}" />
         </div>
         <span>${cat.name}</span>
@@ -724,8 +724,8 @@
     `).join('');
 
     html += `
-      <div class="category-grid-item" onclick="window.switchTab('categories')">
-        <div class="category-grid-icon-wrap" style="background-color: var(--card-accent); display: flex; align-items: center; justify-content: center;">
+      <div class="category-grid-item-new" onclick="window.switchTab('categories')">
+        <div class="category-grid-icon-wrap-new" style="background-color: var(--card-accent); display: flex; align-items: center; justify-content: center;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-purple)" stroke-width="3" style="width: 20px; height: 20px;"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
         </div>
         <span>More</span>
@@ -746,35 +746,39 @@
         (p.description && p.description.toLowerCase().includes(filterTerm.toLowerCase())) ||
         (p.categories && p.categories.some(c => c.toLowerCase().includes(filterTerm.toLowerCase())))
       );
-      const titleEl = document.getElementById('bestSellersTitle');
-      if (titleEl) titleEl.textContent = `Search: "${filterTerm}"`;
     } else {
       displayProducts = products.filter(p => p.isBestSeller);
-      const titleEl = document.getElementById('bestSellersTitle');
-      if (titleEl) titleEl.textContent = `Best Sellers`;
     }
+
+    let wishlist = [];
+    try {
+      const stored = localStorage.getItem('ishvara_wishlist');
+      if (stored) wishlist = JSON.parse(stored);
+    } catch(e) {}
 
     bestSellersRow.innerHTML = (filterTerm ? displayProducts : displayProducts.slice(0, 8)).map(product => {
       const discountPercent = Math.round(((product.mrp - product.price) / product.mrp) * 100);
-      const isBestSeller = product.isBestSeller;
+      const isWishlisted = wishlist.includes(product.id);
       return `
         <div class="mobile-product-card" onclick="window.openProductDetails('${product.id}')">
           <div style="position: relative; width: 100%;">
             ${discountPercent > 0 ? `<span class="product-card-discount-badge">${discountPercent}% OFF</span>` : ''}
+            <button class="wishlist-btn-card ${isWishlisted ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleWishlist('${product.id}')">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 13px; height: 13px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
             <img src="${product.image}" alt="${product.name}" />
-            ${isBestSeller ? `<span class="product-card-bestseller-tag">BEST SELLER</span>` : ''}
             <div class="p-name">${product.name}</div>
             <div class="product-card-rating">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 10px; height: 10px; color: var(--accent-gold);"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
               <span>${product.rating || '4.5'} (${product.reviewsCount || '12'})</span>
             </div>
           </div>
-          <div>
+          <div class="p-card-bottom">
             <div class="p-price-row">
               <span class="p-price">₹${product.price}</span>
               <span class="p-mrp">₹${product.mrp}</span>
             </div>
-            <button class="mobile-add-btn" onclick="event.stopPropagation(); window.handleAddClick('${product.id}')">
+            <button class="mobile-add-btn gold" onclick="event.stopPropagation(); window.handleAddClick('${product.id}')">
               ADD
             </button>
           </div>
@@ -2635,5 +2639,28 @@
 
   window.shareAddressAction = (label) => {
     showToast(`Sharing address: ${label}`);
+  };
+
+  window.toggleWishlist = (productId) => {
+    let wishlist = [];
+    try {
+      const stored = localStorage.getItem('ishvara_wishlist');
+      if (stored) wishlist = JSON.parse(stored);
+    } catch(e) {}
+
+    const index = wishlist.indexOf(productId);
+    if (index > -1) {
+      wishlist.splice(index, 1);
+      showToast("Removed from wishlist!");
+    } else {
+      wishlist.push(productId);
+      showToast("Added to wishlist!");
+    }
+    localStorage.setItem('ishvara_wishlist', JSON.stringify(wishlist));
+    
+    // Toggle active class on matching heart buttons
+    document.querySelectorAll(`.mobile-product-card[onclick*="${productId}"] .wishlist-btn-card`).forEach(btn => {
+      btn.classList.toggle('active');
+    });
   };
 })();
