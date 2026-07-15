@@ -958,13 +958,10 @@
       }
 
       container.innerHTML = filtered.map(cat => {
-        // Count products matching category
-        const count = products.filter(p => p.categories && p.categories.some(c => c.toLowerCase() === cat.name.toLowerCase())).length;
         return `
           <div class="category-card" onclick="window.filterHomeByCategory('${cat.name}')">
             <img src="${cat.image}" alt="${cat.name}" />
             <h4>${cat.name}</h4>
-            <span>${count} items</span>
           </div>
         `;
       }).join('');
