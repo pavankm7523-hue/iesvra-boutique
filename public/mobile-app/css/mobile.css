@@ -931,20 +931,27 @@ body.home-header-active .main-content {
   margin-bottom: 2px;
 }
 
-.banner-text-new h2 {
-  font-size: 18px;
+.banner-title-italic {
+  font-style: italic;
+  font-size: 26px;
   font-weight: 900;
-  line-height: 1.2;
-  margin-bottom: 2px;
-  letter-spacing: -0.01em;
+  line-height: 1.1;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
   color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-.banner-text-new p {
-  font-size: 10px;
-  font-weight: 700;
-  opacity: 0.9;
+.banner-location-pill {
+  background-color: var(--accent-gold);
+  color: #000000;
+  font-size: 9px;
+  font-weight: 850;
+  padding: 4px 10px;
+  border-radius: 12px;
+  display: inline-block;
   margin-bottom: 12px;
+  text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
@@ -968,6 +975,16 @@ body.home-header-active .main-content {
 .banner-image-new {
   flex-shrink: 0;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-image-new img {
+  width: 125px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
 }
 
 /* 4 Promises Strip */
