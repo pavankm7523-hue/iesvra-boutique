@@ -204,33 +204,61 @@
   </div>
 
   <!-- App Header -->
-  <div class="app-header">
-    <!-- Delivering address inside header layout for home page -->
-    <div class="delivery-header" id="headerDeliveryInfo">
-      <div class="location-pin-icon-circle">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+  <div class="app-header header-home" id="appHeader">
+    <!-- 1. Home Header State (Blinkit Style) -->
+    <div class="header-home-content">
+      <div class="header-top-row">
+        <div class="delivery-header-blinkit" onclick="window.openLocationPicker()">
+          <div class="delivery-store-row">
+            <span class="store-prefix">IESVRA in</span>
+          </div>
+          <div class="delivery-time-row">
+            <span class="delivery-time-large">15 mins</span>
+            <span class="delivery-distance-pill">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 10px; height: 10px; margin-right: 3px; stroke: currentColor;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              179 m
+            </span>
+          </div>
+          <div class="delivery-address-blinkit">
+            <span id="activeAddressLabel">Home - New Jaganpura, Patna</span>
+            <svg class="chevron-down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+        
+        <div class="header-actions-blinkit">
+          <button class="header-action-btn" onclick="window.switchTab('profile')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
+          <button class="header-action-btn" onclick="window.switchTab('cart')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="cart-badge-count text-badge" id="headerCartBadgeHome">0</span>
+          </button>
+        </div>
       </div>
-      <div class="delivery-text-wrap">
-        <div style="display: flex; align-items: center; gap: 4px;">
-          <span class="delivery-time-badge">IESVRA in 15 mins</span>
-          <span class="delivery-distance">(179 m away)</span>
+
+      <!-- Search Section inside Header -->
+      <div class="search-section-blinkit">
+        <div class="search-bar-row">
+          <div class="search-bar">
+            <svg class="search-icon-blinkit" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Search for products, brands & more..." id="homeSearchInput" autocomplete="off" />
+            <svg class="scanner-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: var(--text-muted); cursor: pointer; margin-right: 8px;"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
+            <svg class="mic-btn" id="micBtn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+          </div>
         </div>
-        <div class="delivery-address-row">
-          <span id="activeAddressLabel">Home - New Jaganpura, Patna</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg>
-        </div>
+        <div class="search-results-overlay" id="searchResultsOverlay" style="display: none;"></div>
       </div>
     </div>
-    
-    <div class="header-actions">
-      <button class="hdr-btn" id="headerNotificationBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9zm-9.73 13a3 3 0 0 0 5.46 0"/></svg>
-        <span class="notification-dot"></span>
-      </button>
-      <button class="hdr-btn" id="headerCartBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-        <span class="cart-badge" id="headerCartBadge">0</span>
-      </button>
+
+    <!-- 2. Generic Header State (White with tab title) -->
+    <div class="header-generic-content" style="display: none;">
+      <h3 class="header-generic-title" id="headerGenericTitle">Categories</h3>
+      <div class="header-actions-generic">
+        <button class="header-action-btn dark" onclick="window.switchTab('cart')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge-count dark-badge" id="headerCartBadgeGeneric">0</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -239,21 +267,6 @@
 
     <!-- 1. HOME TAB -->
     <div class="screen active" id="screen-home">
-      <!-- Search input + Filter button -->
-      <div class="search-section" style="position: relative;">
-        <div class="search-bar-row">
-          <div class="search-bar">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" placeholder="Search for products, brands & more..." id="homeSearchInput" autocomplete="off" />
-            <svg class="mic-btn" id="micBtn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-          </div>
-          <button class="search-filter-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-          </button>
-        </div>
-        <!-- Search Results Dropdown -->
-        <div class="search-results-overlay" id="searchResultsOverlay" style="display: none;"></div>
-      </div>
 
       <!-- Express 15 Min Delivery Banner -->
       <div class="express-purple-banner">

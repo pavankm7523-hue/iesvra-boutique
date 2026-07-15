@@ -625,6 +625,38 @@
       activeScreen.classList.add('active');
     }
 
+    // Dynamic Header Control
+    const header = document.getElementById('appHeader');
+    const homeContent = document.querySelector('.header-home-content');
+    const genericContent = document.querySelector('.header-generic-content');
+    const genericTitle = document.getElementById('headerGenericTitle');
+
+    if (header && homeContent && genericContent) {
+      if (tabId === 'home') {
+        header.className = 'app-header header-home';
+        homeContent.style.display = 'flex';
+        genericContent.style.display = 'none';
+        document.body.classList.add('home-header-active');
+      } else {
+        header.className = 'app-header header-generic';
+        homeContent.style.display = 'none';
+        genericContent.style.display = 'flex';
+        document.body.classList.remove('home-header-active');
+        
+        // Set tab title
+        if (genericTitle) {
+          const tabNames = {
+            'categories': 'Categories',
+            'offers': 'Active Offers & Coupons',
+            'cart': 'My Cart',
+            'profile': 'My Account',
+            'orders': 'My Orders'
+          };
+          genericTitle.textContent = tabNames[tabId] || tabId;
+        }
+      }
+    }
+
     // Trigger tab-specific view renderers
     if (tabId === 'home') {
       renderCategoriesScroll();
@@ -668,8 +700,13 @@
   function updateCartBadges() {
     const cart = getCart();
     const count = cart.reduce((total, item) => total + item.quantity, 0);
-    if (headerCartBadge) headerCartBadge.textContent = count;
-    if (bottomCartBadge) bottomCartBadge.textContent = count;
+    const badgeHome = document.getElementById('headerCartBadgeHome');
+    const badgeGeneric = document.getElementById('headerCartBadgeGeneric');
+    const badgeBottom = document.getElementById('bottomCartBadge');
+    
+    if (badgeHome) badgeHome.textContent = count;
+    if (badgeGeneric) badgeGeneric.textContent = count;
+    if (badgeBottom) badgeBottom.textContent = count;
   }
 
   // ==================== HOME SCREEN ====================
