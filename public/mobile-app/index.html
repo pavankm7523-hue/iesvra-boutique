@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#6B46C1" />
   <title>IESVRA Mobile App</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/mobile.css?v=1784379449080" />
+  <link rel="stylesheet" href="css/mobile.css?v=1784379924458" />
   <script src="capacitor.js"></script>
 </head>
 <body>
@@ -878,74 +878,126 @@
 
 
     <!-- 5. PROFILE TAB -->
-    <div class="screen" id="screen-profile">
-      <div class="profile-hero-card" style="position: relative;">
-        <button class="settings-gear-btn" onclick="window.openProfileEdit()">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-        <div class="avatar-circle" id="profileAvatar">G</div>
-        <h3 id="profileName">Guest User</h3>
-        <p id="profilePhone">+91 820 123 4567</p>
+    <div class="screen" id="screen-profile" style="background:#F8F9FA; overflow-y:auto; padding-bottom:80px;">
+
+      <!-- Header label -->
+      <div style="text-align:center; padding:18px 20px 4px;">
+        <div style="font-size:11px; font-weight:700; color:#94A3B8; letter-spacing:0.12em; text-transform:uppercase;">Profile Screen</div>
       </div>
- 
-      <div class="plus-membership-banner">
-        <div>
-          <h4>IESVRA <span class="gold-text">Plus</span></h4>
-          <p>Unlimited Free delivery and extra 5% cashback</p>
+
+      <!-- User Info Card -->
+      <div onclick="window.openProfileEdit()" style="background:white; margin:10px 16px 0; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:14px; box-shadow:0 2px 10px rgba(0,0,0,0.06); cursor:pointer; border:1px solid #F1F5F9;">
+        <!-- Avatar -->
+        <div id="profileAvatar" style="width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg,#6D4FD6,#4C1D95); display:flex; align-items:center; justify-content:center; color:white; font-size:20px; font-weight:800; font-family:var(--font-display); flex-shrink:0; border:3px solid #EDE9FE;">G</div>
+        <!-- Name & email -->
+        <div style="flex:1; min-width:0;">
+          <div id="profileName" style="font-size:17px; font-weight:800; color:#1E293B; font-family:var(--font-display); line-height:1.2;">Guest User</div>
+          <div id="profilePhone" style="font-size:12px; color:#64748B; margin-top:3px;">Tap to set up your profile</div>
         </div>
-        <button class="join-plus-btn">Join Now</button>
+        <!-- Arrow -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
- 
-      <div class="profile-menu-container">
-        <div class="profile-menu-item" onclick="switchTab('orders')">
-          <div class="item-left">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
-            <span>My Orders</span>
-          </div>
-          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+
+      <!-- IESVRA Plus Banner -->
+      <div style="background:linear-gradient(135deg,#1e1b4b,#4c1d95); margin:12px 16px 0; border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:12px; position:relative; overflow:hidden;">
+        <!-- Crown icon -->
+        <div style="width:40px; height:40px; border-radius:12px; background:rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="#FCD34D" stroke="#FCD34D" stroke-width="0.5"><path d="M2 20h20v2H2zM2 6l5 6 5-8 5 8 5-6v12H2z"/></svg>
         </div>
-        <div class="profile-menu-item" onclick="alert('Addresses setting coming soon!')">
-          <div class="item-left">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>My Addresses</span>
+        <!-- Text -->
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:3px;">
+            <span style="font-size:14px; font-weight:900; color:white; font-family:var(--font-display); letter-spacing:0.02em;">IESVRA PLUS</span>
+            <span style="background:#10B981; color:white; font-size:9px; font-weight:800; padding:2px 7px; border-radius:20px; text-transform:uppercase; letter-spacing:0.05em;">Member</span>
           </div>
-          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          <div style="font-size:11px; color:#C4B5FD; line-height:1.4;">Unlimited free delivery &amp; extra 5% cashback</div>
         </div>
-        <div class="profile-menu-item" onclick="alert('Wishlist option coming soon!')">
-          <div class="item-left">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-            <span>My Wishlist</span>
+        <!-- View Benefits button -->
+        <button onclick="alert('IESVRA Plus Benefits:\n✅ Unlimited Free Delivery\n✅ Extra 5% cashback\n✅ Priority Support\n✅ Early Sale Access')" style="background:transparent; border:1.5px solid #FCD34D; color:#FCD34D; border-radius:10px; padding:7px 12px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap; flex-shrink:0;">View Benefits</button>
+      </div>
+
+      <!-- Menu List Card -->
+      <div style="background:white; margin:12px 16px 0; border-radius:16px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.06); border:1px solid #F1F5F9;">
+
+        <!-- My Orders -->
+        <div onclick="switchTab('orders')" style="display:flex; align-items:center; padding:15px 18px; cursor:pointer; border-bottom:1px solid #F8FAFC;">
+          <div style="width:36px; height:36px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-right:14px; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
           </div>
-          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          <span style="flex:1; font-size:14px; font-weight:600; color:#1E293B;">My Orders</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
         </div>
-        <div class="profile-menu-item" onclick="alert('Wallet balance: ₹250.00')">
-          <div class="item-left">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-            <span>My Wallet</span>
+
+        <!-- My Addresses -->
+        <div onclick="alert('Addresses feature coming soon!')" style="display:flex; align-items:center; padding:15px 18px; cursor:pointer; border-bottom:1px solid #F8FAFC;">
+          <div style="width:36px; height:36px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-right:14px; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
-          <div class="item-right-wrapper">
-            <span class="profile-badge">₹250</span>
-            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
+          <span style="flex:1; font-size:14px; font-weight:600; color:#1E293B;">My Addresses</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
         </div>
-        <div class="profile-menu-item" onclick="alert('Refer code: IESVRA50! Invite friends to earn!')">
-          <div class="item-left">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>Refer & Earn</span>
+
+        <!-- My Wishlist -->
+        <div onclick="alert('Wishlist feature coming soon!')" style="display:flex; align-items:center; padding:15px 18px; cursor:pointer; border-bottom:1px solid #F8FAFC;">
+          <div style="width:36px; height:36px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-right:14px; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
           </div>
-          <div class="item-right-wrapper">
-            <span class="profile-badge">Earn ₹100</span>
-            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
+          <span style="flex:1; font-size:14px; font-weight:600; color:#1E293B;">My Wishlist</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
         </div>
-        <div class="profile-menu-item" id="profileLogoutBtn" style="border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.03);">
-          <div class="item-left">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-            <span style="color: red;">Logout</span>
+
+        <!-- My Wallet -->
+        <div onclick="alert('Wallet balance: ₹250')" style="display:flex; align-items:center; padding:15px 18px; cursor:pointer; border-bottom:1px solid #F8FAFC;">
+          <div style="width:36px; height:36px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-right:14px; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
           </div>
+          <span style="flex:1; font-size:14px; font-weight:600; color:#1E293B;">My Wallet</span>
+          <span style="font-size:13px; font-weight:800; color:#6D4FD6; margin-right:8px;">₹250</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+
+        <!-- Refer & Earn -->
+        <div onclick="alert('Your referral code: IESVRA50\nShare with friends and earn ₹100 for each successful referral!')" style="display:flex; align-items:center; padding:15px 18px; cursor:pointer; border-bottom:1px solid #F8FAFC;">
+          <div style="width:36px; height:36px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-right:14px; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <span style="flex:1; font-size:14px; font-weight:600; color:#1E293B;">Refer &amp; Earn<span style="color:#94A3B8; font-weight:400;">*</span></span>
+          <span style="font-size:11px; font-weight:800; color:#10B981; background:#DCFCE7; padding:3px 9px; border-radius:20px; margin-right:8px;">Earn ₹100</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+
+        <!-- Help & Support -->
+        <div onclick="alert('Help & Support\n\nEmail: support@iesvra.com\nPhone: +91 9876543210\nHours: 9 AM - 8 PM')" style="display:flex; align-items:center; padding:15px 18px; cursor:pointer; border-bottom:1px solid #F8FAFC;">
+          <div style="width:36px; height:36px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-right:14px; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+          </div>
+          <span style="flex:1; font-size:14px; font-weight:600; color:#1E293B;">Help &amp; Support</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+
+        <!-- Settings -->
+        <div onclick="window.openProfileEdit()" style="display:flex; align-items:center; padding:15px 18px; cursor:pointer;">
+          <div style="width:36px; height:36px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-right:14px; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <span style="flex:1; font-size:14px; font-weight:600; color:#1E293B;">Settings</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+
+      </div>
+
+      <!-- Logout Card -->
+      <div id="profileLogoutBtn" style="background:white; margin:10px 16px 20px; border-radius:16px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid #FEE2E2;">
+        <div style="display:flex; align-items:center; padding:15px 18px; cursor:pointer;">
+          <div style="width:36px; height:36px; border-radius:10px; background:#FEF2F2; display:flex; align-items:center; justify-content:center; margin-right:14px; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+          </div>
+          <span style="flex:1; font-size:14px; font-weight:700; color:#EF4444;">Logout</span>
         </div>
       </div>
+
     </div>
+
 
     <!-- 6. CART TAB -->
     <div class="screen" id="screen-cart" style="overflow-y: auto; padding-bottom: 80px;">
@@ -1243,7 +1295,7 @@
   </div>
 
   <!-- Application Logic -->
-  <script src="js/state.js?v=1784379449081"></script>
-  <script src="js/app.js?v=1784379449081"></script>
+  <script src="js/state.js?v=1784379924458"></script>
+  <script src="js/app.js?v=1784379924458"></script>
 </body>
 </html>
