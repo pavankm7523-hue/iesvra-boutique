@@ -625,6 +625,17 @@
       activeScreen.classList.add('active');
     }
 
+    // Toggle bottom-nav and stickyCheckoutBar
+    const bottomNav = document.querySelector('.bottom-nav');
+    const stickyBar = document.getElementById('stickyCheckoutBar');
+    if (tabId === 'checkout') {
+      if (bottomNav) bottomNav.style.display = 'none';
+      if (stickyBar) stickyBar.style.display = 'block';
+    } else {
+      if (bottomNav) bottomNav.style.display = 'flex';
+      if (stickyBar) stickyBar.style.display = 'none';
+    }
+
     // Dynamic Header Control
     const header = document.getElementById('appHeader');
     const homeContent = document.querySelector('.header-home-content');
@@ -1571,6 +1582,23 @@
     if (placeBtn) {
       placeBtn.innerText = checkoutPaymentMode === 'razorpay' ? `Pay & Place Order (₹${checkoutTotal})` : `Place COD Order (₹${checkoutTotal})`;
     }
+
+    // Sync elements inside the Blinkit/Zomato style sticky bottom bar
+    const stickyTotal = document.getElementById('checkoutStickyTotalAmount');
+    if (stickyTotal) stickyTotal.textContent = `₹${checkoutTotal}`;
+
+    const stickyPayTitle = document.getElementById('checkoutStickyPaymentTitle');
+    if (stickyPayTitle) {
+      stickyPayTitle.textContent = checkoutPaymentMode === 'razorpay' ? 'PhonePe UPI' : 'Cash on Delivery';
+    }
+
+    const stickyAddressText = document.getElementById('checkoutStickyAddressText');
+    if (stickyAddressText) {
+      const addr1 = document.getElementById('checkoutAddress1')?.value || '';
+      const addr2 = document.getElementById('checkoutAddress2')?.value || '';
+      const fullAddr = [addr1, addr2].filter(Boolean).join(', ') || 'Enter delivery address';
+      stickyAddressText.textContent = fullAddr;
+    }
   };
 
   window.checkoutCart = (amount) => {
@@ -1627,6 +1655,12 @@
       initCheckoutAddressAutocomplete();
       if (pin) {
         pin.addEventListener('blur', triggerManualAddressCheck);
+      }
+      if (a1) {
+        a1.addEventListener('input', () => window.updateCheckoutSummary());
+      }
+      if (a2) {
+        a2.addEventListener('input', () => window.updateCheckoutSummary());
       }
       window.initAppCheckoutMap();
     }, 100);
