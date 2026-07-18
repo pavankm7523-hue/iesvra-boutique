@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#6B46C1" />
   <title>IESVRA Mobile App</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/mobile.css?v=1784380646297" />
+  <link rel="stylesheet" href="css/mobile.css?v=1784381358818" />
   <script src="capacitor.js"></script>
 </head>
 <body>
@@ -1222,11 +1222,12 @@
       </div>
 
       <div class="location-picker-content" style="display: flex; flex-direction: column; gap: 14px;">
-        <!-- Search bar -->
         <div class="location-search-bar">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 16px; height: 16px; color: var(--text-muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <input type="text" placeholder="Search for area, street name..." id="locationSearchInput" />
         </div>
+        <!-- Address search suggestions -->
+        <div id="locationSuggestionsContainer" style="display: none; background: white; border-radius: 12px; max-height: 250px; overflow-y: auto; border: 1px solid #E2E8F0; padding: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-top: -6px; z-index: 100;"></div>
 
         <!-- Quick actions list container -->
         <div class="location-quick-actions">
@@ -1313,7 +1314,7 @@
   </div>
 
   <!-- Application Logic -->
-  <script src="js/state.js?v=1784380646298"></script>
-  <script src="js/app.js?v=1784380646298"></script>
+  <script src="js/state.js?v=1784381358818"></script>
+  <script src="js/app.js?v=1784381358818"></script>
 </body>
 </html>

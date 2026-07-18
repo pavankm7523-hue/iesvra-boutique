@@ -2700,10 +2700,14 @@
     try {
       const L = await loadLeafletForApp();
       
-      let initialLat = 25.5941; // Patna default
-      let initialLng = 85.1376;
+      const savedLat = localStorage.getItem('iesvra_lat');
+      const savedLng = localStorage.getItem('iesvra_lng');
+      let initialLat = savedLat ? parseFloat(savedLat) : 25.5941; // Patna default
+      let initialLng = savedLng ? parseFloat(savedLng) : 85.1376;
       
-      if (navigator.geolocation) {
+      if (savedLat && savedLng) {
+        setupMobileMap(L, initialLat, initialLng);
+      } else if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
             initialLat = pos.coords.latitude;
@@ -3047,12 +3051,120 @@
   };
 
   window.selectCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      showToast("Geolocation is not supported by your browser");
+      return;
+    }
+    showToast("Detecting your location...");
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        try {
+          const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}`);
+          if (!res.ok) throw new Error("Failed to reverse geocode");
+          const data = await res.json();
+          const address = data?.results?.[0]?.formatted_address || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+          
+          const activeAddressLabel = document.getElementById('activeAddressLabel');
+          if (activeAddressLabel) {
+            activeAddressLabel.textContent = address;
+          }
+          const checkoutAddr1 = document.getElementById('checkoutAddress1');
+          if (checkoutAddr1) {
+            checkoutAddr1.value = address;
+          }
+          
+          // Save coordinates for the checkout map
+          localStorage.setItem('iesvra_lat', lat);
+          localStorage.setItem('iesvra_lng', lng);
+          
+          showToast("Location updated successfully!");
+          window.updateCheckoutSummary();
+          window.closeLocationPicker();
+        } catch (e) {
+          console.error("Reverse geocoding error:", e);
+          showToast("Failed to fetch address details. Please search manually.");
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        showToast("Unable to retrieve location. Please search manually.");
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  };
+
+  // Setup search suggestions inside location picker
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('locationSearchInput');
+    const container = document.getElementById('locationSuggestionsContainer');
+    if (!searchInput || !container) return;
+
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const query = searchInput.value.trim();
+      if (query.length < 3) {
+        container.innerHTML = '';
+        container.style.display = 'none';
+        return;
+      }
+
+      debounceTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/address-suggestions?query=${encodeURIComponent(query)}`);
+          if (!res.ok) throw new Error("Autocomplete API failed");
+          const data = await res.json();
+          const predictions = data?.predictions || [];
+          
+          if (predictions.length === 0) {
+            container.innerHTML = '<div style="padding: 10px; font-size: 13px; color: var(--text-muted);">No suggestions found</div>';
+            container.style.display = 'block';
+            return;
+          }
+
+          container.innerHTML = predictions.map(pred => `
+            <div class="suggestion-item" style="padding: 10px 14px; border-bottom: 1px solid #F1F5F9; cursor: pointer; font-size: 13px; color: var(--text-primary);" onclick="window.selectSuggestedLocation('${pred.description.replace(/'/g, "\\'")}', ${pred.geometry?.location?.lat || 'null'}, ${pred.geometry?.location?.lng || 'null'})">
+              <div style="font-weight: bold; margin-bottom: 2px;">${pred.structured_formatting?.main_text || pred.description.split(',')[0]}</div>
+              <div style="font-size: 11px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${pred.description}</div>
+            </div>
+          `).join('');
+          container.style.display = 'block';
+        } catch (e) {
+          console.error("Failed to fetch address suggestions:", e);
+        }
+      }, 300);
+    });
+  });
+
+  window.selectSuggestedLocation = (description, lat, lng) => {
     const activeAddressLabel = document.getElementById('activeAddressLabel');
     if (activeAddressLabel) {
-      activeAddressLabel.textContent = "Ramkrishan Nagar, Patna";
+      activeAddressLabel.textContent = description;
     }
-    showToast("Selected current location!");
+    const checkoutAddr1 = document.getElementById('checkoutAddress1');
+    if (checkoutAddr1) {
+      checkoutAddr1.value = description;
+    }
+    if (lat && lng) {
+      localStorage.setItem('iesvra_lat', lat);
+      localStorage.setItem('iesvra_lng', lng);
+    }
+    showToast("Address selected!");
+    window.updateCheckoutSummary();
     window.closeLocationPicker();
+    
+    // Clear suggestion container
+    const container = document.getElementById('locationSuggestionsContainer');
+    const searchInput = document.getElementById('locationSearchInput');
+    if (container) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+    }
+    if (searchInput) {
+      searchInput.value = '';
+    }
   };
 
   window.selectSavedAddress = (label) => {
@@ -3060,28 +3172,23 @@
     if (activeAddressLabel) {
       activeAddressLabel.textContent = label + " - New Jaganpura, Patna";
     }
+    const checkoutAddr1 = document.getElementById('checkoutAddress1');
+    if (checkoutAddr1) {
+      checkoutAddr1.value = "New Jaganpura Jagdish Chauk Atal Vihar Colony, Ramkrishan Nagar, Patna";
+    }
     showToast(`Selected address: ${label}`);
+    window.updateCheckoutSummary();
     window.closeLocationPicker();
   };
 
   window.addNewAddressAction = () => {
     showToast("Opening address form...");
     window.closeLocationPicker();
-    switchTab('profile');
+    switchTab('checkout');
     setTimeout(() => {
-      alert("Please add a new address in your profile details!");
+      const checkoutAddress1 = document.getElementById('checkoutAddress1');
+      if (checkoutAddress1) checkoutAddress1.focus();
     }, 400);
-  };
-
-  window.requestAddressAction = () => {
-    showToast("Sharing request link via WhatsApp...");
-  };
-
-  window.importZomatoAction = () => {
-    showToast("Importing saved addresses from Zomato...");
-    setTimeout(() => {
-      showToast("Import successful: 2 addresses added!");
-    }, 1000);
   };
 
   window.editAddressAction = (label) => {
