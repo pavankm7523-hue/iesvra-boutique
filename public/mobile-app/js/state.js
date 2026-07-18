@@ -137,11 +137,67 @@
       isBestSeller: false,
       rating: 4.5,
       reviewsCount: 2
+    },
+    {
+      id: "prod-headphones",
+      name: "Wireless Headphones",
+      sub: "Premium Audio",
+      price: 1299,
+      mrp: 1999,
+      categories: ["Daily Essentials"],
+      image: "/products/wireless-headphones.jpg",
+      colors: ["Purple"],
+      description: "Premium wireless bluetooth headphones with passive noise isolation and deep bass.",
+      isBestSeller: true,
+      rating: 4.6,
+      reviewsCount: 42
+    },
+    {
+      id: "prod-watch",
+      name: "Smart Watch",
+      sub: "Wearable Tech",
+      price: 2499,
+      mrp: 4999,
+      categories: ["Daily Essentials"],
+      image: "/products/smart-watch.jpg",
+      colors: ["Black"],
+      description: "Sleek fitness smartwatch with heart rate monitoring, sleep tracker, and custom watch faces.",
+      isBestSeller: true,
+      rating: 4.5,
+      reviewsCount: 88
+    },
+    {
+      id: "prod-bottle",
+      name: "Water Bottle",
+      sub: "Hydration Gear",
+      price: 399,
+      mrp: 599,
+      categories: ["Drinkware"],
+      image: "/products/water-bottle.jpg",
+      colors: ["Purple"],
+      description: "Leak-proof motivational water bottle with time markers to keep you hydrated all day.",
+      isBestSeller: true,
+      rating: 4.7,
+      reviewsCount: 110
+    },
+    {
+      id: "prod-plant",
+      name: "Decorative Plant",
+      sub: "Home Decor",
+      price: 299,
+      mrp: 499,
+      categories: ["Home & Kitchen"],
+      image: "/products/decorative-plant.jpg",
+      colors: ["Green"],
+      description: "Mini artificial potted plant in a beautiful purple pot, perfect for home or office desk decor.",
+      isBestSeller: false,
+      rating: 4.4,
+      reviewsCount: 36
     }
   ];
 
   function getProducts() {
-    const stored = localStorage.getItem("ishvara_products_v5");
+    const stored = localStorage.getItem("ishvara_products_v7");
     if (stored) {
       try {
         return JSON.parse(stored);
@@ -149,7 +205,7 @@
         console.error("Failed to parse products from localstorage", e);
       }
     }
-    localStorage.setItem("ishvara_products_v5", JSON.stringify(initialProducts));
+    localStorage.setItem("ishvara_products_v7", JSON.stringify(initialProducts));
     return initialProducts;
   }
 

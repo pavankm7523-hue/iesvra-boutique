@@ -1,6 +1,6 @@
 (function() {
   // Retrieve functions from global AppState to bypass WebView module restrictions
-  const { getProducts, getCategories, getCart, addToCart, updateCartQty } = window.AppState;
+  const { getProducts, getCategories, getCart, saveCart, addToCart, updateCartQty } = window.AppState;
 
   // DOM elements
   const categoriesScroll = document.getElementById('categoriesScroll');
@@ -633,27 +633,18 @@
 
     if (header && homeContent && genericContent) {
       if (tabId === 'home') {
+        header.style.display = 'block';
         header.className = 'app-header header-home';
         homeContent.style.display = 'flex';
         genericContent.style.display = 'none';
         document.body.classList.add('home-header-active');
+        document.body.classList.remove('no-app-header');
       } else {
-        header.className = 'app-header header-generic';
+        header.style.display = 'none';
         homeContent.style.display = 'none';
-        genericContent.style.display = 'flex';
+        genericContent.style.display = 'none';
         document.body.classList.remove('home-header-active');
-        
-        // Set tab title
-        if (genericTitle) {
-          const tabNames = {
-            'categories': 'Categories',
-            'offers': 'Active Offers & Coupons',
-            'cart': 'My Cart',
-            'profile': 'My Account',
-            'orders': 'My Orders'
-          };
-          genericTitle.textContent = tabNames[tabId] || tabId;
-        }
+        document.body.classList.add('no-app-header');
       }
     }
 
@@ -700,14 +691,15 @@
   function updateCartBadges() {
     const cart = getCart();
     const count = cart.reduce((total, item) => total + item.quantity, 0);
-    const badgeHome = document.getElementById('headerCartBadgeHome');
-    const badgeGeneric = document.getElementById('headerCartBadgeGeneric');
-    const badgeBottom = document.getElementById('bottomCartBadge');
-    
-    if (badgeHome) badgeHome.textContent = count;
-    if (badgeGeneric) badgeGeneric.textContent = count;
-    if (badgeBottom) badgeBottom.textContent = count;
+    const ids = ['headerCartBadgeHome','headerCartBadgeGeneric','bottomCartBadge',
+                 'cartScreenHeaderBadge','offersScreenHeaderBadge','catScreenCartBadge',
+                 'ordersScreenCartBadge','ordersTrackingCartBadge'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = count;
+    });
   }
+
 
   // ==================== HOME SCREEN ====================
   function renderCategoriesScroll() {
@@ -910,6 +902,14 @@
     return `${before}<strong style="color:var(--accent-gold)">${match}</strong>${after}`;
   }
 
+  // Global coupon copy handler — available on all tabs
+  window.copyCouponCode = (code) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).catch(() => {});
+    }
+    window.showToast(`Code "${code}" copied! 🎉`);
+  };
+
   window.filterHomeByCategory = (categoryName) => {
     switchTab('home');
     const input = document.getElementById('homeSearchInput');
@@ -988,9 +988,29 @@
   function renderCategoriesScreen() {
     const container = document.getElementById('categoriesListContainer');
     if (!container) return;
-    
+
     const categories = getCategories();
     const products = getProducts();
+
+    // Sync cart badge on cat screen
+    const catBadge = document.getElementById('catScreenCartBadge');
+    if (catBadge) {
+      const cart = getCart();
+      catBadge.textContent = cart.reduce((t, i) => t + i.quantity, 0);
+    }
+
+    // Color palette for count pills — cycles through per category
+    const pillColors = [
+      { bg: '#EDE9FE', text: '#6D4FD6' },
+      { bg: '#FEF9C3', text: '#B45309' },
+      { bg: '#DCFCE7', text: '#15803D' },
+      { bg: '#DBEAFE', text: '#1D4ED8' },
+      { bg: '#FCE7F3', text: '#9D174D' },
+      { bg: '#FEF3C7', text: '#92400E' },
+    ];
+
+    // Arrow circle colors cycling
+    const arrowColors = ['#6D4FD6', '#D97706', '#15803D', '#1D4ED8', '#9D174D', '#92400E'];
 
     const renderGrid = (filterTerm = '') => {
       let filtered = categories;
@@ -998,26 +1018,42 @@
         filtered = categories.filter(c => c.name.toLowerCase().includes(filterTerm.toLowerCase()));
       }
 
-      container.innerHTML = filtered.map(cat => {
+      const pastels = ['#F5F3FF', '#FEF9C3', '#DCFCE7', '#DBEAFE', '#FCE7F3', '#FEF3C7'];
+
+      container.innerHTML = filtered.map((cat, index) => {
+        const imgBg = pastels[index % pastels.length];
+        const pill = pillColors[index % pillColors.length];
+        const arrowColor = arrowColors[index % arrowColors.length];
+        const catProducts = products.filter(p => p.category === cat.name);
+        const count = catProducts.length || (24 + index * 30);
         return `
-          <div class="category-card" onclick="window.filterHomeByCategory('${cat.name}')">
-            <img src="${cat.image}" alt="${cat.name}" />
-            <h4>${cat.name}</h4>
+          <div onclick="window.filterHomeByCategory('${cat.name}')" style="background:white; border-radius:16px; padding:14px 12px 36px; display:flex; flex-direction:column; align-items:center; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06); border:1px solid #F1F5F9; position:relative; cursor:pointer; transition:transform 0.2s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
+            <div style="background:${imgBg}; width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:10px;">
+              <img src="${cat.image}" alt="${cat.name}" style="width:56px; height:56px; object-fit:contain;" />
+            </div>
+            <h4 style="font-size:12px; font-weight:700; color:var(--text-primary); margin:0 0 8px; font-family:var(--font-display); line-height:1.3;">${cat.name}</h4>
+            <div style="font-size:9px; font-weight:700; color:${pill.text}; background:${pill.bg}; padding:3px 8px; border-radius:10px;">${count} Products</div>
+            <div style="position:absolute; bottom:10px; right:10px; width:26px; height:26px; border-radius:50%; background:${pill.bg}; display:flex; align-items:center; justify-content:center; color:${arrowColor};">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
           </div>
         `;
       }).join('');
+      container.style.cssText = 'display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:8px 16px 16px;';
     };
 
     renderGrid();
 
-    // Category search
+    // Search
     const catSearch = document.getElementById('catSearchInput');
     if (catSearch) {
-      catSearch.addEventListener('input', (e) => {
-        renderGrid(e.target.value);
-      });
+      // remove old listener by cloning
+      const newInput = catSearch.cloneNode(true);
+      catSearch.parentNode.replaceChild(newInput, catSearch);
+      newInput.addEventListener('input', (e) => renderGrid(e.target.value));
     }
   }
+
 
   // ==================== OFFERS SCREEN ====================
   function renderOffersScreen() {
@@ -1025,19 +1061,121 @@
     if (!container) return;
 
     const offers = [
-      { code: "FIRST15", title: "Flat 15% OFF", desc: "Valid on your first boutique checkouts" },
-      { code: "FREESHIP", title: "Free Shipping", desc: "No shipping cost on order sizes above ₹499" },
-      { code: "FESTIVE10", title: "Festive Save 10%", desc: "Extra 10% instant discount up to ₹250" },
-      { code: "IESVRAPLUS", title: "IESVRA Plus", desc: "Buy 3 items or more to unlock Plus member perks" }
+      {
+        code: "FIRST15",
+        title: "Flat 15% OFF",
+        desc: "Valid on your first boutique checkouts",
+        date: "Valid till 31 May 2024",
+        grad: "linear-gradient(135deg, #7B5FE0, #C4B5FD)",
+        sash: "Best Seller",
+        sashBg: "#6D4FD6",
+        copyColor: "#6D4FD6",
+        btnBg: "var(--accent-purple)",
+        dateColor: "var(--accent-purple)",
+        icon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.5 2.5 C13 2 13.8 2 14.3 2.5 L21.5 9.7 C22 10.2 22 11 21.5 11.5 L11.5 21.5 C11 22 10.2 22 9.7 21.5 L2.5 14.3 C2 13.8 2 13 2.5 12.5 Z" fill="#FFE082" />
+          <path d="M11 4 L20 13 L13 20 L4 11 Z" fill="#FFC107" />
+          <circle cx="7.5" cy="7.5" r="1.5" fill="#FFF" />
+          <text x="12" y="15.5" fill="#FFF" font-size="9" font-weight="900" text-anchor="middle" font-family="sans-serif" transform="rotate(-45 12 15)">%</text>
+        </svg>`
+      },
+      {
+        code: "FREESHIP",
+        title: "Free Shipping",
+        desc: "No shipping cost on order sizes above ₹499",
+        date: "Valid till 31 May 2024",
+        grad: "linear-gradient(135deg, #F59E0B, #FDE68A)",
+        sash: "Free Delivery",
+        sashBg: "#D97706",
+        copyColor: "#D97706",
+        btnBg: "#F59E0B",
+        dateColor: "#D97706",
+        icon: `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="6" width="13" height="9" rx="1.5" fill="#FFE082" />
+          <rect x="3" y="7" width="11" height="7" rx="0.5" fill="#FFB300" />
+          <path d="M15 8 H19 L22 11 V15 H15 Z" fill="#FFA000" />
+          <polygon points="18,9 21,11 18,11" fill="#FFF" opacity="0.6" />
+          <circle cx="6" cy="17" r="2.5" fill="#374151" stroke="#FFF" stroke-width="1" />
+          <circle cx="16" cy="17" r="2.5" fill="#374151" stroke="#FFF" stroke-width="1" />
+          <circle cx="6" cy="17" r="0.8" fill="#FFF" />
+          <circle cx="16" cy="17" r="0.8" fill="#FFF" />
+        </svg>`
+      },
+      {
+        code: "FESTIVE10",
+        title: "Festive Save 10%",
+        desc: "Extra 10% instant discount up to ₹250",
+        date: "Valid till 31 May 2024",
+        grad: "linear-gradient(135deg, #10B981, #A7F3D0)",
+        sash: "Limited Time",
+        sashBg: "#059669",
+        copyColor: "#059669",
+        btnBg: "#10B981",
+        dateColor: "#059669",
+        icon: `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2 L14 4 L16.5 3.5 L17.5 5.5 L20 6 L20 8.5 L21.5 10 L20.5 12.2 L21.5 14.5 L20 16 L20 18.5 L17.5 19 L16.5 21 L14 20.5 L12 22 L10 20.5 L7.5 21 L6.5 19 L4 18.5 L4 16 L2.5 14.5 L3.5 12.2 L2.5 10 L4 8.5 L4 6 L6.5 5.5 L7.5 3.5 L10 4 Z" fill="#A7F3D0" />
+          <circle cx="12" cy="12" r="7" fill="#10B981" />
+          <text x="12" y="15" fill="#FFF" font-size="9" font-weight="900" text-anchor="middle" font-family="sans-serif">%</text>
+        </svg>`
+      },
+      {
+        code: "IESVRAPLUS",
+        title: "IESVRA Plus",
+        isPlus: true,
+        desc: "Buy 3 items or more to unlock Plus member perks",
+        date: "Valid Membership",
+        grad: "linear-gradient(135deg, #4F46E5, #C7D2FE)",
+        sash: "Member Only",
+        sashBg: "#4338CA",
+        copyColor: "#4338CA",
+        btnBg: "#4F46E5",
+        dateColor: "#4338CA",
+        icon: `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 18 L4 10 L8 14 L12 6 L16 14 L20 10 L22 18 Z" fill="#FCD34D" />
+          <path d="M4 18 L5.5 11 L8.5 14 L12 7 L15.5 14 L18.5 11 L20 18 Z" fill="#F59E0B" />
+          <rect x="2" y="18" width="20" height="2.5" rx="1" fill="#D97706" />
+          <circle cx="2" cy="10" r="1" fill="#FFF" />
+          <circle cx="8" cy="14" r="1" fill="#FFF" />
+          <circle cx="12" cy="6" r="1.2" fill="#FFF" />
+          <circle cx="16" cy="14" r="1" fill="#FFF" />
+          <circle cx="22" cy="10" r="1" fill="#FFF" />
+        </svg>`
+      }
     ];
 
     container.innerHTML = offers.map(coupon => `
-      <div class="coupon-card">
-        <div class="coupon-details">
-          <h4>${coupon.title}</h4>
-          <p>${coupon.desc}</p>
+      <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
+        <div class="coupon-left-new" style="width: 85px; display: flex; align-items: center; justify-content: center; background: ${coupon.grad};">
+          ${coupon.icon}
         </div>
-        <div class="coupon-code">${coupon.code}</div>
+        
+        <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
+          <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0;">${coupon.title}</h4>
+              ${coupon.isPlus ? `<span style="background: #6366F1; color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Plus</span>` : ''}
+            </div>
+            <p style="font-size: 10px; color: var(--text-muted); margin: 4px 0 8px 0; line-height: 1.3;">${coupon.desc}</p>
+            <div style="font-size: 9px; font-weight: 700; color: ${coupon.dateColor}; display: flex; align-items: center; gap: 4px;">
+              ${coupon.isPlus ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2 L2 7 L12 12 L22 7 Z M2 17 L12 22 L22 17"/></svg>' : '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'}
+              ${coupon.date}
+            </div>
+          </div>
+          
+          <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
+            <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+          </div>
+          
+          <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
+            <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: ${coupon.sashBg}; color: white; font-size: 6px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">${coupon.sash}</div>
+            <button onclick="window.copyCouponCode('${coupon.code}')" class="coupon-code-pill-new" style="background: ${coupon.btnBg}; color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">${coupon.code}</button>
+            <div onclick="window.copyCouponCode('${coupon.code}')" style="font-size: 9px; font-weight: 800; color: ${coupon.copyColor}; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+              Copy Code
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </div>
+          </div>
+        </div>
       </div>
     `).join('');
   }
@@ -1166,10 +1304,173 @@
 
     if (cart.length === 0) {
       itemsContainer.innerHTML = `
-        <div style="padding: 60px 24px; text-align: center; color: var(--text-muted);">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 64px; height: 64px; margin-bottom: 16px; color: rgba(255,255,255,0.1);"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-          <h3 style="color: white; margin-bottom: 8px;">Your Cart is Empty</h3>
-          <p style="font-size: 13px;">Discover premium products and add them here.</p>
+        <!-- Rounded Card container -->
+        <div style="background: white; border-radius: 24px; padding: 24px; text-align: center; border: 1.5px solid #F1F3F7; box-shadow: var(--shadow-premium); display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px;">
+          <!-- 3D Illustration Graphic (SVG vector cart + bag + plane) -->
+          <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 12px;">
+            <!-- Dotted path for paper airplane -->
+            <path d="M120 70 C140 60 160 55 170 50 C155 70 145 90 140 100" stroke="#CBC5EA" stroke-width="1.5" stroke-dasharray="3 3" stroke-linecap="round"/>
+            <!-- Paper airplane -->
+            <g transform="translate(145, 45) rotate(-15)">
+              <polygon points="0,0 24,10 8,14" fill="#6D4FD6" />
+              <polygon points="0,0 8,14 6,20" fill="#5A3EB2" />
+              <polygon points="8,14 24,10 6,20" fill="#8B70EC" />
+            </g>
+            <!-- Shadows under wheels -->
+            <ellipse cx="85" cy="170" rx="14" ry="4" fill="#E2E8F0" />
+            <ellipse cx="120" cy="170" rx="14" ry="4" fill="#E2E8F0" />
+            <ellipse cx="102" cy="172" rx="35" ry="6" fill="#F1F3F7" />
+            
+            <!-- Shopping Cart Body -->
+            <path d="M60 90 H136 L124 140 H68 Z" fill="rgba(109, 79, 214, 0.08)" stroke="#6D4FD6" stroke-width="3.5" stroke-linejoin="round"/>
+            <!-- Basket grid lines -->
+            <line x1="72" y1="90" x2="76" y2="140" stroke="#8B70EC" stroke-width="2"/>
+            <line x1="88" y1="90" x2="88" y2="140" stroke="#8B70EC" stroke-width="2"/>
+            <line x1="104" y1="90" x2="100" y2="140" stroke="#8B70EC" stroke-width="2"/>
+            <line x1="120" y1="90" x2="112" y2="140" stroke="#8B70EC" stroke-width="2"/>
+            <line x1="60" y1="105" x2="132" y2="105" stroke="#8B70EC" stroke-width="2"/>
+            <line x1="62" y1="122" x2="128" y2="122" stroke="#8B70EC" stroke-width="2"/>
+            
+            <!-- Cart Handle and Frame -->
+            <path d="M50 78 C55 78 58 84 60 90 L68 140 L124 140" stroke="#6D4FD6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M48 78 H58" stroke="#FFBE1A" stroke-width="5" stroke-linecap="round"/>
+            <!-- Bottom support -->
+            <path d="M68 140 L76 160 H124" stroke="#6D4FD6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M124 140 L120 160" stroke="#6D4FD6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            
+            <!-- Wheels -->
+            <circle cx="76" cy="165" r="7" fill="#6D4FD6" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="76" cy="165" r="2" fill="#fff"/>
+            <circle cx="120" cy="165" r="7" fill="#6D4FD6" stroke="#fff" stroke-width="2.5"/>
+            <circle cx="120" cy="165" r="2" fill="#fff"/>
+
+            <!-- Purple Shopping Bag with Gold V logo inside cart -->
+            <g transform="translate(80, 68) rotate(3)">
+              <path d="M12 18 C12 6 28 6 28 18" stroke="#FFBE1A" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M16 18 C16 9 24 9 24 18" stroke="#E2C044" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <rect x="5" y="16" width="30" height="38" rx="5" fill="#6D4FD6" />
+              <path d="M14 26 L20 35 L26 26" stroke="#FFBE1A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            
+            <!-- Sparkles -->
+            <g transform="translate(48, 120)"><path d="M0,4 L4,0 L8,4 L4,8 Z" fill="#FFBE1A"/></g>
+            <g transform="translate(155, 110)"><path d="M0,3 L3,0 L6,3 L3,6 Z" fill="#FFBE1A"/></g>
+            <g transform="translate(52, 60)"><path d="M0,3 L3,0 L6,3 L3,6 Z" fill="#8B70EC"/></g>
+          </svg>
+          
+          <h2 style="color: var(--text-primary); font-family: var(--font-display); font-size: 24px; font-weight: 800; margin: 0 0 10px 0;">Your Cart is <span style="color: var(--accent-purple);">Empty</span></h2>
+          <p style="font-size: 13px; color: var(--text-muted); max-width: 250px; line-height: 1.5; margin: 0 0 24px 0;">Looks like you haven't added anything yet.<br>Explore our premium products and add them to your cart.</p>
+          
+          <!-- Continue Shopping Button with shopping bag icon -->
+          <button onclick="window.switchTab('categories')" style="background: linear-gradient(135deg, #6D4FD6, #5B21B6); color: white; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 700; border: none; padding: 12px 28px; border-radius: 16px; cursor: pointer; width: auto; box-shadow: 0 4px 15px rgba(109, 79, 214, 0.2);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            Continue Shopping
+          </button>
+        </div>
+
+        <!-- 4 Column Badges Row -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 16px 0; border-top: 1.5px solid #F1F3F7; border-bottom: 1.5px solid #F1F3F7; margin-bottom: 24px;">
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="background: rgba(109, 79, 214, 0.08); color: var(--accent-purple); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div style="font-size: 9px; font-weight: 700; color: var(--text-primary); line-height: 1.2;">100% Secure<br>Payments</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="background: rgba(255, 190, 26, 0.1); color: var(--accent-gold); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div style="font-size: 9px; font-weight: 700; color: var(--text-primary); line-height: 1.2;">Best Quality<br>Products</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="background: rgba(109, 79, 214, 0.08); color: var(--accent-purple); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </div>
+            <div style="font-size: 9px; font-weight: 700; color: var(--text-primary); line-height: 1.2;">Easy Returns<br>& Refunds</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="background: rgba(255, 190, 26, 0.1); color: var(--accent-gold); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </div>
+            <div style="font-size: 9px; font-weight: 700; color: var(--text-primary); line-height: 1.2;">24/7 Customer<br>Support</div>
+          </div>
+        </div>
+
+        <!-- You May Like Section with 4 columns -->
+        <div style="margin-bottom: 80px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--text-primary); margin: 0;">You May Like</h3>
+            <a href="#" onclick="window.switchTab('home')" style="color: var(--accent-purple); font-size: 12px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 2px;">
+              View All
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+            <!-- Wireless Headphones -->
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+              <button onclick="showToast('Added to Wishlist!')" style="position: absolute; top: 4px; right: 4px; background: none; border: none; padding: 2px; color: #718096; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+              <img src="/products/wireless-headphones.jpg" alt="Wireless Headphones" style="width: 100%; height: 50px; object-fit: contain; margin-bottom: 6px;" />
+              <div style="font-size: 9px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">Wireless Headphones</div>
+              <div style="font-size: 8px; color: #d97706; font-weight: bold; margin-bottom: 4px;">★ 4.6</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-primary);">₹1,299</span>
+                <button onclick="window.handleAddClick('prod-headphones')" style="background: rgba(109, 79, 214, 0.08); color: var(--accent-purple); border: none; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Smart Watch -->
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+              <button onclick="showToast('Added to Wishlist!')" style="position: absolute; top: 4px; right: 4px; background: none; border: none; padding: 2px; color: #718096; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+              <img src="/products/smart-watch.jpg" alt="Smart Watch" style="width: 100%; height: 50px; object-fit: contain; margin-bottom: 6px;" />
+              <div style="font-size: 9px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">Smart Watch</div>
+              <div style="font-size: 8px; color: #d97706; font-weight: bold; margin-bottom: 4px;">★ 4.5</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-primary);">₹2,499</span>
+                <button onclick="window.handleAddClick('prod-watch')" style="background: rgba(109, 79, 214, 0.08); color: var(--accent-purple); border: none; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Water Bottle -->
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+              <button onclick="showToast('Added to Wishlist!')" style="position: absolute; top: 4px; right: 4px; background: none; border: none; padding: 2px; color: #718096; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+              <img src="/products/water-bottle.jpg" alt="Water Bottle" style="width: 100%; height: 50px; object-fit: contain; margin-bottom: 6px;" />
+              <div style="font-size: 9px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">Water Bottle</div>
+              <div style="font-size: 8px; color: #d97706; font-weight: bold; margin-bottom: 4px;">★ 4.7</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-primary);">₹399</span>
+                <button onclick="window.handleAddClick('prod-bottle')" style="background: rgba(109, 79, 214, 0.08); color: var(--accent-purple); border: none; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Decorative Plant -->
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+              <button onclick="showToast('Added to Wishlist!')" style="position: absolute; top: 4px; right: 4px; background: none; border: none; padding: 2px; color: #718096; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+              <img src="/products/decorative-plant.jpg" alt="Decorative Plant" style="width: 100%; height: 50px; object-fit: contain; margin-bottom: 6px;" />
+              <div style="font-size: 9px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">Decorative Plant</div>
+              <div style="font-size: 8px; color: #d97706; font-weight: bold; margin-bottom: 4px;">★ 4.4</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-primary);">₹299</span>
+                <button onclick="window.handleAddClick('prod-plant')" style="background: rgba(109, 79, 214, 0.08); color: var(--accent-purple); border: none; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       `;
       receiptSummary.style.display = 'none';
@@ -1366,25 +1667,29 @@
     const orderId = 'ORD-' + Date.now().toString(36).toUpperCase();
     const order = {
       id: orderId,
+      orderId: orderId,
       items: [...cart],
+      itemsCount: cart.reduce((sum, item) => sum + item.quantity, 0),
       subtotal: checkoutSubtotal,
       shipping: checkoutShippingFee,
       total: checkoutTotal,
+      amount: checkoutTotal,
       deliverySpeed: checkoutDeliverySpeed,
       paymentMode: checkoutPaymentMode,
       address: { name, email, phone, addr1, addr2: document.getElementById('checkoutAddress2')?.value?.trim() || '', city, state, pincode },
-      status: 'placed',
+      status: 'Placed',
+      date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
       placedAt: new Date().toISOString(),
     };
 
     // Save order to localStorage
     let orders = [];
     try {
-      const stored = localStorage.getItem('ishvara_orders');
+      const stored = localStorage.getItem('iesvra_orders');
       if (stored) orders = JSON.parse(stored);
     } catch(e) {}
     orders.unshift(order);
-    localStorage.setItem('ishvara_orders', JSON.stringify(orders));
+    localStorage.setItem('iesvra_orders', JSON.stringify(orders));
 
     // Clear cart
     saveCart([]);
@@ -1428,28 +1733,36 @@
       return;
     }
 
-    listContainer.innerHTML = orders.map(order => `
-      <div class="order-history-card">
-        <div class="order-history-header">
-          <span>Order ID: <strong>${order.orderId}</strong></span>
-          <span>Date: <strong>${order.date}</strong></span>
-        </div>
-        <div class="order-history-body">
-          <div class="order-details">
-            <h4>₹${order.amount}</h4>
-            <p>${order.itemsCount} items · Status: <span style="color: ${order.status === 'Cancelled' ? '#ef4444' : 'var(--accent-gold)'}; font-weight: 700;">${order.status}</span></p>
+    const statusColors = { 'Placed': '#D97706', 'Confirmed': '#6D4FD6', 'Packed': '#1D4ED8', 'Out for Delivery': '#0369A1', 'Delivered': '#059669', 'Cancelled': '#DC2626' };
+
+    listContainer.innerHTML = orders.slice().reverse().map(order => {
+      const color = statusColors[order.status] || '#6D4FD6';
+      const statusBg = order.status === 'Cancelled' ? '#FEE2E2' : order.status === 'Delivered' ? '#DCFCE7' : '#EDE9FE';
+      return `
+      <div class="order-card-new">
+        <div class="order-card-new-header">
+          <div>
+            <div style="font-size:11px; color:var(--text-muted); font-weight:600;">ORDER ID</div>
+            <div style="font-size:13px; font-weight:800; color:var(--text-primary); font-family:var(--font-display);">${order.orderId}</div>
           </div>
-          <button class="track-btn" onclick="window.trackMobileOrder('${order.orderId}')">
-            Track Order
-          </button>
-          ${(order.status === "Placed" || order.status === "Confirmed") ? `
-            <button class="cancel-btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; margin-left: 8px; width: auto;" onclick="window.cancelMobileOrder('${order.orderId}')">
-              Cancel
+          <span style="background:${statusBg}; color:${color}; font-size:10px; font-weight:800; padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.05em;">${order.status}</span>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding-top:12px; border-top:1px solid #F1F5F9;">
+          <div>
+            <div style="font-size:18px; font-weight:900; color:var(--text-primary); font-family:var(--font-display);">₹${order.amount}</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${order.itemsCount} item${order.itemsCount > 1 ? 's' : ''} · ${order.date}</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            ${(order.status === 'Placed' || order.status === 'Confirmed') ? `<button onclick="window.cancelMobileOrder('${order.orderId}')" style="background:#FEE2E2; color:#DC2626; border:1px solid #FECACA; border-radius:10px; padding:8px 12px; font-size:11px; font-weight:800; cursor:pointer;">Cancel</button>` : ''}
+            <button onclick="window.trackMobileOrder('${order.orderId}')" style="background:var(--accent-purple); color:white; border:none; border-radius:10px; padding:10px 16px; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:5px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Track Order
             </button>
-          ` : ''}
+          </div>
         </div>
       </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   window.trackMobileOrder = (orderId) => {
@@ -1515,7 +1828,6 @@
   };
 
   function animateTrackingFlow(order) {
-    const scooter = document.getElementById('mapScooter');
     const stepPlaced = document.getElementById('step-placed');
     const stepConfirmed = document.getElementById('step-confirmed');
     const stepPacked = document.getElementById('step-packed');
@@ -1523,27 +1835,62 @@
     const stepDelivered = document.getElementById('step-delivered');
     const btnCancel = document.getElementById('trackingCancelBtn');
 
+    // Update Est Delivery Date
+    const placedDate = new Date(order.placedAt || Date.now());
+    placedDate.setDate(placedDate.getDate() + 4);
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    const estDateText = placedDate.toLocaleDateString('en-IN', options);
+    const trackEstDate = document.getElementById('trackEstDate');
+    if (trackEstDate) trackEstDate.textContent = estDateText;
+
+    const fill = document.getElementById('trackProgressFill');
+    const nodeWarehouse = document.getElementById('node-warehouse');
+    const nodeTransit = document.getElementById('node-transit');
+    const nodeHome = document.getElementById('node-home');
+
+    function updateHorizontalBar(status) {
+      if (!fill) return;
+      if (nodeWarehouse) nodeWarehouse.classList.remove('active');
+      if (nodeTransit) nodeTransit.classList.remove('active');
+      if (nodeHome) nodeHome.classList.remove('active');
+
+      if (status === 'Placed' || status === 'placed') {
+        fill.style.width = '0%';
+        if (nodeWarehouse) nodeWarehouse.classList.add('active');
+      } else if (status === 'Confirmed') {
+        fill.style.width = '25%';
+        if (nodeWarehouse) nodeWarehouse.classList.add('active');
+      } else if (status === 'Packed') {
+        fill.style.width = '50%';
+        if (nodeWarehouse) nodeWarehouse.classList.add('active');
+        if (nodeTransit) nodeTransit.classList.add('active');
+      } else if (status === 'Out for Delivery') {
+        fill.style.width = '75%';
+        if (nodeWarehouse) nodeWarehouse.classList.add('active');
+        if (nodeTransit) nodeTransit.classList.add('active');
+      } else if (status === 'Delivered') {
+        fill.style.width = '100%';
+        if (nodeWarehouse) nodeWarehouse.classList.add('active');
+        if (nodeTransit) nodeTransit.classList.add('active');
+        if (nodeHome) nodeHome.classList.add('active');
+      }
+    }
+
     // Reset status steps visual styling
     const steps = [stepPlaced, stepConfirmed, stepPacked, stepTransit, stepDelivered];
     steps.forEach(s => {
       if (s) s.classList.remove('completed');
     });
 
-    if (scooter) {
-      scooter.setAttribute('transform', 'translate(45, 80)');
-      scooter.style.transition = 'transform 6s linear';
-      scooter.style.opacity = '1';
-    }
-
     // If already Cancelled, show visual indication instead
     if (order.status === "Cancelled") {
       if (btnCancel) btnCancel.style.display = 'none';
-      if (scooter) scooter.style.opacity = '0.3';
       return;
     }
 
     // Step 1: Placed (Immediate)
     if (stepPlaced) stepPlaced.classList.add('completed');
+    updateHorizontalBar('Placed');
 
     // Step 2: Confirmed (1.5s)
     setTimeout(() => {
@@ -1553,6 +1900,7 @@
 
       if (stepConfirmed) stepConfirmed.classList.add('completed');
       updateOrderLiveStatus(order.orderId, "Confirmed");
+      updateHorizontalBar('Confirmed');
     }, 1500);
 
     // Step 3: Packed (3s)
@@ -1563,10 +1911,11 @@
 
       if (stepPacked) stepPacked.classList.add('completed');
       updateOrderLiveStatus(order.orderId, "Packed");
+      updateHorizontalBar('Packed');
       if (btnCancel) btnCancel.style.display = 'none'; // Can't cancel after packed
     }, 3000);
 
-    // Step 4: Out for Delivery (4.5s) & start scooter animation
+    // Step 4: Out for Delivery (4.5s)
     setTimeout(() => {
       const orders = JSON.parse(localStorage.getItem('iesvra_orders') || '[]');
       const currentOrder = orders.find(o => o.orderId === order.orderId);
@@ -1574,11 +1923,7 @@
 
       if (stepTransit) stepTransit.classList.add('completed');
       updateOrderLiveStatus(order.orderId, "Out for Delivery");
-
-      // Scooter travels across road vector map
-      if (scooter) {
-        scooter.setAttribute('transform', 'translate(270, 80)');
-      }
+      updateHorizontalBar('Out for Delivery');
     }, 4500);
 
     // Step 5: Delivered (7.5s)
@@ -1589,6 +1934,7 @@
 
       if (stepDelivered) stepDelivered.classList.add('completed');
       updateOrderLiveStatus(order.orderId, "Delivered");
+      updateHorizontalBar('Delivered');
     }, 7500);
   }
 

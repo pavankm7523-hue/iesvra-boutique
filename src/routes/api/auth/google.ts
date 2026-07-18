@@ -24,7 +24,11 @@ export const Route = createFileRoute("/api/auth/google")({
         }
 
         const url = new URL(request.url);
-        const origin = url.origin;
+        let origin = url.origin;
+        const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+        const proto = request.headers.get("x-forwarded-proto") || "http";
+        if (host) origin = `${proto}://${host}`;
+        
         const redirectUri = `${origin}/api/auth/google-callback`;
 
         const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");

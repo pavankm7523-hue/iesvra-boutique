@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#6B46C1" />
   <title>IESVRA Mobile App</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/mobile.css?v=4.0" />
+  <link rel="stylesheet" href="css/mobile.css?v=1784379003561" />
   <script src="capacitor.js"></script>
 </head>
 <body>
@@ -315,127 +315,567 @@
       <div class="trending-scroll-row" id="bestSellersRow"></div>
     </div>
 
+    
     <!-- 2. CATEGORIES TAB -->
-    <div class="screen" id="screen-categories">
-      <div class="search-section-new">
-        <div class="search-bar-row-new">
-          <div class="search-bar-new">
-            <svg class="search-icon-new" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" placeholder="Search categories..." id="catSearchInput" autocomplete="off" />
+    <div class="screen" id="screen-categories" style="background:#f8f9fa; overflow-y:auto; padding-bottom:80px; position:relative;">
+
+      <!-- Top header row -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding: 20px 20px 0;">
+        <div>
+          <h2 style="font-family:var(--font-display); font-size:24px; font-weight:800; color:var(--text-primary); margin:0;">Categories</h2>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Explore. Choose. Enjoy Premium.</div>
+        </div>
+        <div onclick="window.switchTab('cart')" style="position:relative; cursor:pointer;">
+          <div style="width:40px; height:40px; border-radius:50%; background:#F1F3F7; display:flex; align-items:center; justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <span id="catScreenCartBadge" style="position:absolute; top:-5px; right:-5px; background:var(--accent-purple); color:white; font-size:10px; font-weight:800; border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center; border:2px solid white;">0</span>
+        </div>
+      </div>
+
+      <!-- Hero Banner -->
+      <div style="background:linear-gradient(135deg,#1e1b4b,#4c1d95); border-radius:20px; margin:16px; padding:20px 16px 0; position:relative; overflow:hidden; color:white; box-shadow:0 12px 30px rgba(76,29,149,0.3); min-height:160px;">
+        <div style="font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#FCD34D; margin-bottom:6px;">Premium Quality</div>
+        <div style="font-family:var(--font-display); font-size:20px; font-weight:800; line-height:1.25; max-width:58%; margin-bottom:20px;">
+          Everything you need,<br><span style="color:#FCD34D;">all in one place.</span>
+        </div>
+
+        <!-- 3D product composition -->
+        <div style="position:absolute; right:-8px; bottom:0; width:165px; height:140px;">
+          <svg viewBox="0 0 165 140" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <!-- Shopping bag -->
+            <rect x="55" y="35" width="68" height="80" rx="8" fill="#5B21B6"/>
+            <rect x="55" y="35" width="68" height="80" rx="8" fill="url(#bagGrad)"/>
+            <path d="M71 35 V25 C71 16 94 16 94 25 V35" stroke="#FCD34D" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <text x="89" y="85" fill="#FCD34D" font-size="26" font-weight="900" font-family="Georgia,serif" text-anchor="middle">V</text>
+            <!-- Headphones -->
+            <ellipse cx="30" cy="75" rx="18" ry="18" fill="#7C3AED" opacity="0.9"/>
+            <path d="M16 70 Q17 58 30 57 Q43 58 44 70" stroke="#A78BFA" stroke-width="3" fill="none"/>
+            <rect x="13" y="68" width="7" height="13" rx="3" fill="#C4B5FD"/>
+            <rect x="38" y="68" width="7" height="13" rx="3" fill="#C4B5FD"/>
+            <!-- Watch -->
+            <rect x="115" y="60" width="28" height="32" rx="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="2"/>
+            <rect x="121" y="56" width="16" height="5" rx="2" fill="#6D4FD6"/>
+            <rect x="121" y="91" width="16" height="5" rx="2" fill="#6D4FD6"/>
+            <circle cx="129" cy="76" r="9" fill="#2D2060"/>
+            <path d="M129 70 V76 L133 79" stroke="#FCD34D" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Plant -->
+            <ellipse cx="147" cy="115" rx="10" ry="5" fill="#374151"/>
+            <rect x="143" y="100" width="8" height="15" rx="2" fill="#4B5563"/>
+            <ellipse cx="147" cy="99" rx="12" ry="10" fill="#059669"/>
+            <ellipse cx="138" cy="95" rx="8" ry="7" fill="#10B981"/>
+            <ellipse cx="156" cy="95" rx="8" ry="7" fill="#10B981"/>
+            <defs>
+              <linearGradient id="bagGrad" x1="55" y1="35" x2="123" y2="115" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7C3AED"/>
+                <stop offset="100%" stop-color="#4C1D95"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Search bar docked at bottom of banner -->
+        <div style="background:white; border-radius:14px; padding:4px; display:flex; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,0.15); margin:0 -4px; position:relative; z-index:2;">
+          <svg style="margin-left:10px; flex-shrink:0;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search categories..." id="catSearchInput" autocomplete="off" style="flex:1; border:none; background:transparent; padding:10px 8px; font-size:13px; outline:none; color:var(--text-primary);" />
+          <div style="background:var(--accent-purple); width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </div>
         </div>
       </div>
-      <div class="categories-grid-container" id="categoriesListContainer"></div>
+
+      <!-- Categories Grid -->
+      <div id="categoriesListContainer" style="padding:8px 16px 16px;"></div>
+
+      <!-- Trust Footer -->
+      <div style="background:linear-gradient(135deg,#1A0B40,#3B1B7D); border-radius:18px; padding:18px 14px; margin:8px 16px 16px; position:relative; overflow:hidden; box-shadow:var(--shadow-premium);">
+        <div style="position:absolute; top:8px; right:10px; opacity:0.3; color:gold; font-size:18px;">✨</div>
+        <div style="position:absolute; bottom:8px; left:10px; opacity:0.3; color:gold; font-size:18px;">✨</div>
+        <div style="font-family:var(--font-display); font-size:12px; font-weight:800; color:#FCD34D; text-align:center; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:14px;">Why shop with IESVRA?</div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
+          <div style="display:flex; flex-direction:column; align-items:center; text-align:center; color:white;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:6px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div style="font-size:8px; font-weight:700; line-height:1.3;">100% Secure<br>Payments</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; text-align:center; color:white;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:6px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <div style="font-size:8px; font-weight:700; line-height:1.3;">Best Quality<br>Products</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; text-align:center; color:white;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:6px;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <div style="font-size:8px; font-weight:700; line-height:1.3;">Easy Returns<br>&amp; Refunds</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; text-align:center; color:white;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:6px;"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <div style="font-size:8px; font-weight:700; line-height:1.3;">24/7 Customer<br>Support</div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
+    
     <!-- 3. OFFERS TAB -->
-    <div class="screen" id="screen-offers">
-      <div class="offers-container">
-        <div class="section-title">Active Coupons</div>
-        <div class="coupon-list" id="couponListContainer">
-          <!-- Populated by JS -->
+    <div class="screen" id="screen-offers" style="background: #f8f9fa; overflow-y: auto; padding-bottom: 80px; position: relative;">
+      <!-- Shopping Bag Badge in Top Right -->
+      <div style="position: absolute; top: 16px; right: 20px; z-index: 10;" onclick="window.switchTab('cart')">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: #F1F3F7; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <span class="cart-badge-count-new" id="offersScreenHeaderBadge" style="position: absolute; top: -5px; right: -5px; background: var(--accent-purple); color: white; font-size: 10px; font-weight: 800; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 2px solid white;">0</span>
+      </div>
+
+      <div class="deals-header-premium" style="display: flex; align-items: center; justify-content: space-between; padding: 24px 20px 12px; margin-top: 10px;">
+        <div class="deals-header-text">
+          <h2 style="font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0;">Deals & Coupons</h2>
+          <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Exclusive offers for you ✨</p>
+        </div>
+        <div class="deals-header-gfx" style="width: 100px; height: 80px;">
+          <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+            <ellipse cx="25" cy="70" rx="10" ry="4" fill="#D97706" />
+            <ellipse cx="25" cy="67" rx="10" ry="4" fill="#F59E0B" />
+            <ellipse cx="25" cy="64" rx="10" ry="4" fill="#FCD34D" />
+            <ellipse cx="15" cy="80" rx="8" ry="3" fill="#D97706" />
+            <ellipse cx="15" cy="77" rx="8" ry="3" fill="#F59E0B" />
+            <g transform="translate(68, 45)">
+              <rect x="0" y="24" width="34" height="6" fill="rgba(0,0,0,0.1)" rx="3" />
+              <rect x="2" y="6" width="30" height="20" fill="#6D4FD6" rx="3" />
+              <rect x="0" y="2" width="34" height="6" fill="#8B70EC" rx="2" />
+              <rect x="15" y="2" width="4" height="24" fill="#FFD700" />
+              <rect x="2" y="13" width="30" height="4" fill="#FFD700" />
+              <path d="M12 2 C8 -3 14 -5 17 2 C20 -5 26 -3 22 2 Z" fill="#FFD700" />
+            </g>
+            <g transform="translate(42, 22) rotate(-12)">
+              <rect x="0" y="0" width="55" height="34" rx="4" fill="#8B70EC" />
+              <path d="M0 17 A4 4 0 0 1 4 13 V21 A4 4 0 0 1 0 17 Z" fill="#F8F9FA" />
+              <path d="M55 17 A4 4 0 0 0 51 13 V21 A4 4 0 0 0 55 17 Z" fill="#F8F9FA" />
+              <line x1="38" y1="2" x2="38" y2="32" stroke="#FFF" stroke-width="1.5" stroke-dasharray="2 2" />
+              <text x="18" y="24" fill="#FFF" font-size="18" font-weight="900" text-anchor="middle" font-family="sans-serif">%</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Tab selector pills -->
+      <div class="deals-toggle-wrap" style="display: flex; gap: 12px; padding: 0 20px; margin-bottom: 20px;">
+        <div class="deals-toggle-btn active" style="flex: 1; background: linear-gradient(135deg, #6D4FD6, #5B21B6); color: white; border: none; border-radius: 14px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(109, 79, 214, 0.15);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          Active Offers
+        </div>
+        <div class="deals-toggle-btn" style="flex: 1; background: #FFF; color: #718096; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+          My Coupons
+        </div>
+      </div>
+
+      <div class="coupon-list" id="couponListContainer" style="display: flex; flex-direction: column; gap: 16px;">
+        <!-- Card 1: Flat 15% OFF -->
+        <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
+          <div class="coupon-left-new purple-grad" style="width: 85px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #7B5FE0, #C4B5FD);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.5 2.5 C13 2 13.8 2 14.3 2.5 L21.5 9.7 C22 10.2 22 11 21.5 11.5 L11.5 21.5 C11 22 10.2 22 9.7 21.5 L2.5 14.3 C2 13.8 2 13 2.5 12.5 Z" fill="#FFE082" />
+              <path d="M11 4 L20 13 L13 20 L4 11 Z" fill="#FFC107" />
+              <circle cx="7.5" cy="7.5" r="1.5" fill="#FFF" />
+              <text x="12" y="15.5" fill="#FFF" font-size="9" font-weight="900" text-anchor="middle" font-family="sans-serif" transform="rotate(-45 12 15)">%</text>
+            </svg>
+          </div>
+          
+          <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
+            <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
+              <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px 0;">Flat 15% OFF</h4>
+              <p style="font-size: 10px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.3;">Valid on your first boutique checkouts</p>
+              <div style="font-size: 9px; font-weight: 700; color: var(--accent-purple); display: flex; align-items: center; gap: 4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Valid till 31 May 2024
+              </div>
+            </div>
+            
+            <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
+              <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+              <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            </div>
+            
+            <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
+              <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: #6D4FD6; color: white; font-size: 7px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">Best Seller</div>
+              <button onclick="window.copyCouponCode('FIRST15')" class="coupon-code-pill-new" style="background: var(--accent-purple); color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">FIRST15</button>
+              <div onclick="window.copyCouponCode('FIRST15')" style="font-size: 9px; font-weight: 800; color: #6D4FD6; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+                Copy Code
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Free Shipping -->
+        <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
+          <div class="coupon-left-new orange-grad" style="width: 85px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #F59E0B, #FDE68A);">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="6" width="13" height="9" rx="1.5" fill="#FFE082" />
+              <rect x="3" y="7" width="11" height="7" rx="0.5" fill="#FFB300" />
+              <path d="M15 8 H19 L22 11 V15 H15 Z" fill="#FFA000" />
+              <polygon points="18,9 21,11 18,11" fill="#FFF" opacity="0.6" />
+              <circle cx="6" cy="17" r="2.5" fill="#374151" stroke="#FFF" stroke-width="1" />
+              <circle cx="16" cy="17" r="2.5" fill="#374151" stroke="#FFF" stroke-width="1" />
+              <circle cx="6" cy="17" r="0.8" fill="#FFF" />
+              <circle cx="16" cy="17" r="0.8" fill="#FFF" />
+            </svg>
+          </div>
+          
+          <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
+            <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
+              <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px 0;">Free Shipping</h4>
+              <p style="font-size: 10px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.3;">No shipping cost on order sizes above ₹499</p>
+              <div style="font-size: 9px; font-weight: 700; color: #D97706; display: flex; align-items: center; gap: 4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Valid till 31 May 2024
+              </div>
+            </div>
+            
+            <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
+              <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+              <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            </div>
+            
+            <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
+              <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: #D97706; color: white; font-size: 6px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">Free Delivery</div>
+              <button onclick="window.copyCouponCode('FREESHIP')" class="coupon-code-pill-new" style="background: #F59E0B; color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">FREESHIP</button>
+              <div onclick="window.copyCouponCode('FREESHIP')" style="font-size: 9px; font-weight: 800; color: #D97706; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+                Copy Code
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Festive Save 10% -->
+        <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
+          <div class="coupon-left-new green-grad" style="width: 85px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #10B981, #A7F3D0);">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2 L14 4 L16.5 3.5 L17.5 5.5 L20 6 L20 8.5 L21.5 10 L20.5 12.2 L21.5 14.5 L20 16 L20 18.5 L17.5 19 L16.5 21 L14 20.5 L12 22 L10 20.5 L7.5 21 L6.5 19 L4 18.5 L4 16 L2.5 14.5 L3.5 12.2 L2.5 10 L4 8.5 L4 6 L6.5 5.5 L7.5 3.5 L10 4 Z" fill="#A7F3D0" />
+              <circle cx="12" cy="12" r="7" fill="#10B981" />
+              <text x="12" y="15" fill="#FFF" font-size="9" font-weight="900" text-anchor="middle" font-family="sans-serif">%</text>
+            </svg>
+          </div>
+          
+          <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
+            <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
+              <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px 0;">Festive Save 10%</h4>
+              <p style="font-size: 10px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.3;">Extra 10% instant discount up to ₹250</p>
+              <div style="font-size: 9px; font-weight: 700; color: #059669; display: flex; align-items: center; gap: 4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Valid till 31 May 2024
+              </div>
+            </div>
+            
+            <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
+              <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+              <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            </div>
+            
+            <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
+              <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: #059669; color: white; font-size: 6px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">Limited Time</div>
+              <button onclick="window.copyCouponCode('FESTIVE10')" class="coupon-code-pill-new" style="background: #10B981; color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">FESTIVE10</button>
+              <div onclick="window.copyCouponCode('FESTIVE10')" style="font-size: 9px; font-weight: 800; color: #059669; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+                Copy Code
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: IESVRA Plus -->
+        <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
+          <div class="coupon-left-new indigo-grad" style="width: 85px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #4F46E5, #C7D2FE);">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 18 L4 10 L8 14 L12 6 L16 14 L20 10 L22 18 Z" fill="#FCD34D" />
+              <path d="M4 18 L5.5 11 L8.5 14 L12 7 L15.5 14 L18.5 11 L20 18 Z" fill="#F59E0B" />
+              <rect x="2" y="18" width="20" height="2.5" rx="1" fill="#D97706" />
+              <circle cx="2" cy="10" r="1" fill="#FFF" />
+              <circle cx="8" cy="14" r="1" fill="#FFF" />
+              <circle cx="12" cy="6" r="1.2" fill="#FFF" />
+              <circle cx="16" cy="14" r="1" fill="#FFF" />
+              <circle cx="22" cy="10" r="1" fill="#FFF" />
+            </svg>
+          </div>
+          
+          <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
+            <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0;">IESVRA Plus</h4>
+                <span style="background: #6366F1; color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Plus</span>
+              </div>
+              <p style="font-size: 10px; color: var(--text-muted); margin: 4px 0 8px 0; line-height: 1.3;">Buy 3 items or more to unlock Plus member perks</p>
+              <div style="font-size: 9px; font-weight: 700; color: #4338CA; display: flex; align-items: center; gap: 4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2 L2 7 L12 12 L22 7 Z M2 17 L12 22 L22 17"/></svg>
+                Valid Membership
+              </div>
+            </div>
+            
+            <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
+              <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+              <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            </div>
+            
+            <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
+              <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: #4338CA; color: white; font-size: 6px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">Member Only</div>
+              <button onclick="window.copyCouponCode('IESVRAPLUS')" class="coupon-code-pill-new" style="background: #4F46E5; color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">IESVRAPLUS</button>
+              <div onclick="window.copyCouponCode('IESVRAPLUS')" style="font-size: 9px; font-weight: 800; color: #4338CA; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+                Copy Code
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Trust Indicator Footer Banner -->
+      <div style="background: linear-gradient(135deg, #1A0B40, #3B1B7D); border-radius: 18px; padding: 18px 14px; margin: 24px 16px 16px; position: relative; overflow: hidden; box-shadow: var(--shadow-premium);">
+        <div style="position: absolute; top: 10px; right: 10px; opacity: 0.3; color: gold;">✨</div>
+        <div style="position: absolute; bottom: 10px; left: 10px; opacity: 0.3; color: gold;">✨</div>
+        <div style="font-family: var(--font-display); font-size: 13px; font-weight: 800; color: #FCD34D; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">Why shop with IESVRA?</div>
+        
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; color: white;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-bottom: 6px; opacity: 0.95;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div style="font-size: 8px; font-weight: 700; line-height: 1.2;">100% Secure<br>Payments</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; color: white;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-bottom: 6px; opacity: 0.95;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <div style="font-size: 8px; font-weight: 700; line-height: 1.2;">Best Quality<br>Products</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; color: white;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-bottom: 6px; opacity: 0.95;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <div style="font-size: 8px; font-weight: 700; line-height: 1.2;">Easy Returns<br>& Refunds</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; color: white;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-bottom: 6px; opacity: 0.95;"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <div style="font-size: 8px; font-weight: 700; line-height: 1.2;">24/7 Customer<br>Support</div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- 4. ORDERS TAB -->
-    <div class="screen" id="screen-orders">
-      <div class="orders-list-view" id="ordersListView">
-        <div class="section-title">Your Order History</div>
-        <div class="orders-list-container" id="ordersListContainer">
-          <!-- Populated by JS -->
+    <div class="screen" id="screen-orders" style="background:#f8f9fa; overflow-y:auto; padding-bottom:80px;">
+
+      <!-- Orders List View -->
+      <div id="ordersListView">
+        <!-- Header -->
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 20px 12px; background:white; border-bottom:1px solid #F1F5F9;">
+          <div>
+            <h2 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--text-primary); margin:0;">My Orders</h2>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Track and manage your order</div>
+          </div>
+          <div onclick="window.switchTab('cart')" style="position:relative; cursor:pointer;">
+            <div style="width:40px; height:40px; border-radius:50%; background:#F1F3F7; display:flex; align-items:center; justify-content:center;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <span id="ordersScreenCartBadge" style="position:absolute; top:-5px; right:-5px; background:var(--accent-purple); color:white; font-size:10px; font-weight:800; border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center; border:2px solid white;">0</span>
+          </div>
         </div>
+        <div id="ordersListContainer" style="padding:16px;"></div>
       </div>
 
-      <!-- Live Tracking Detail Sub-view -->
-      <div class="order-tracking-view" id="orderTrackingView" style="display: none;">
-        <div class="tracking-back-header" style="display: flex; align-items: center; justify-content: space-between; padding-right: 16px; width: 100%;">
-          <button class="back-btn" id="trackingBackBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+      <!-- Tracking Detail Sub-view -->
+      <div id="orderTrackingView" style="display:none;">
+
+        <!-- Back header -->
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:white; border-bottom:1px solid #F1F5F9;">
+          <div>
+            <h2 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--text-primary); margin:0;">My Orders</h2>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Track and manage your order</div>
+          </div>
+          <div onclick="window.switchTab('cart')" style="position:relative; cursor:pointer;">
+            <div style="width:40px; height:40px; border-radius:50%; background:#F1F3F7; display:flex; align-items:center; justify-content:center;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <span id="ordersTrackingCartBadge" style="position:absolute; top:-5px; right:-5px; background:var(--accent-purple); color:white; font-size:10px; font-weight:800; border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center; border:2px solid white;">0</span>
+          </div>
+        </div>
+
+        <!-- Back to Orders link -->
+        <div style="padding:12px 20px;">
+          <button id="trackingBackBtn" style="background:none; border:none; display:flex; align-items:center; gap:6px; color:var(--accent-purple); font-size:13px; font-weight:700; cursor:pointer; padding:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
             Back to Orders
           </button>
-          <button class="back-btn" id="trackingCancelBtn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 20px; padding: 6px 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; display: none;">
-            Cancel Order
+        </div>
+
+        <!-- Delivery Estimate Card -->
+        <div style="background:linear-gradient(135deg,#1e1b4b,#4c1d95); border-radius:20px; margin:0 16px 16px; padding:20px; position:relative; overflow:hidden; color:white; min-height:170px;">
+          <!-- Sparkle dots -->
+          <div style="position:absolute; top:12px; right:180px; width:5px; height:5px; background:#FCD34D; border-radius:50%; opacity:0.6;"></div>
+          <div style="position:absolute; top:30px; right:160px; width:3px; height:3px; background:#FCD34D; border-radius:50%; opacity:0.4;"></div>
+
+          <div style="font-size:11px; color:#C4B5FD; font-weight:600; margin-bottom:4px;">Estimated Delivery</div>
+          <div id="trackEstDate" style="font-family:var(--font-display); font-size:24px; font-weight:900; margin-bottom:4px;">24 May, 2024</div>
+          <div style="font-size:11px; color:#C4B5FD;">Between 10:00 AM - 08:00 PM</div>
+
+          <!-- Truck illustration -->
+          <div style="position:absolute; right:-10px; top:10px; width:180px; height:110px;">
+            <svg viewBox="0 0 180 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+              <!-- Truck body -->
+              <rect x="20" y="30" width="110" height="55" rx="6" fill="#5B21B6"/>
+              <rect x="20" y="30" width="110" height="55" rx="6" fill="url(#truckBodyGrad)"/>
+              <!-- Cab -->
+              <rect x="108" y="42" width="40" height="43" rx="5" fill="#4C1D95"/>
+              <rect x="112" y="46" width="28" height="18" rx="3" fill="#7C3AED" opacity="0.8"/>
+              <!-- IESVRA text on truck -->
+              <text x="60" y="55" fill="white" font-size="9" font-weight="900" font-family="sans-serif" text-anchor="middle" opacity="0.4">IESVRA</text>
+              <!-- M logo circle -->
+              <circle cx="60" cy="68" r="14" fill="#6D28D9"/>
+              <text x="60" y="73" fill="#FCD34D" font-size="16" font-weight="900" font-family="sans-serif" text-anchor="middle">M</text>
+              <!-- Headlights -->
+              <circle cx="150" cy="65" r="5" fill="#FCD34D" opacity="0.8"/>
+              <!-- Wheels -->
+              <circle cx="40" cy="88" r="10" fill="#1E1B4B" stroke="#7C3AED" stroke-width="3"/>
+              <circle cx="40" cy="88" r="4" fill="#6D28D9"/>
+              <circle cx="110" cy="88" r="10" fill="#1E1B4B" stroke="#7C3AED" stroke-width="3"/>
+              <circle cx="110" cy="88" r="4" fill="#6D28D9"/>
+              <circle cx="140" cy="88" r="8" fill="#1E1B4B" stroke="#7C3AED" stroke-width="3"/>
+              <circle cx="140" cy="88" r="3" fill="#6D28D9"/>
+              <!-- Boxes -->
+              <rect x="152" y="50" width="22" height="20" rx="2" fill="#B45309" opacity="0.9"/>
+              <rect x="155" y="45" width="18" height="8" rx="2" fill="#D97706"/>
+              <rect x="152" y="70" width="14" height="14" rx="2" fill="#92400E" opacity="0.9"/>
+              <!-- Road line -->
+              <line x1="0" y1="99" x2="180" y2="99" stroke="#4C1D95" stroke-width="2"/>
+              <defs>
+                <linearGradient id="truckBodyGrad" x1="20" y1="30" x2="130" y2="85" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.5"/>
+                  <stop offset="100%" stop-color="transparent"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <!-- Progress bar nodes -->
+          <div style="margin-top:24px; position:relative;">
+            <div style="height:3px; background:rgba(255,255,255,0.15); border-radius:3px; position:relative; margin:0 28px;">
+              <div id="trackProgressFill" style="height:100%; background:white; border-radius:3px; width:25%; transition:width 1s ease;"></div>
+            </div>
+            <!-- Warehouse node -->
+            <div id="node-warehouse" style="position:absolute; left:0; top:-13px; display:flex; flex-direction:column; align-items:center;">
+              <div style="width:28px; height:28px; border-radius:50%; background:#FCD34D; display:flex; align-items:center; justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e1b4b" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+            </div>
+            <!-- Transit node -->
+            <div id="node-transit" style="position:absolute; left:50%; transform:translateX(-50%); top:-13px; display:flex; flex-direction:column; align-items:center;">
+              <div style="width:28px; height:28px; border-radius:50%; background:white; border:3px solid #6D4FD6; display:flex; align-items:center; justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              </div>
+            </div>
+            <!-- Home node -->
+            <div id="node-home" style="position:absolute; right:0; top:-13px; display:flex; flex-direction:column; align-items:center;">
+              <div style="width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.2); border:2px dashed rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Node labels -->
+          <div style="display:flex; justify-content:space-between; margin-top:20px;">
+            <div style="text-align:center;">
+              <div style="font-size:8px; font-weight:900; color:#FCD34D; letter-spacing:0.08em; text-transform:uppercase;">Warehouse</div>
+              <div style="font-size:9px; color:#C4B5FD; margin-top:1px;">Order Confirmed</div>
+            </div>
+            <div style="text-align:center;">
+              <div id="trackStatusLabel" style="font-size:9px; font-weight:800; color:#10B981; letter-spacing:0.05em; text-transform:uppercase;">Home</div>
+              <div style="font-size:9px; color:#C4B5FD; margin-top:1px;">Delivery Address</div>
+            </div>
+          </div>
+
+          <!-- Cancel button -->
+          <button id="trackingCancelBtn" style="display:none; position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); color:#FCA5A5; border-radius:20px; padding:5px 12px; font-size:10px; font-weight:800; text-transform:uppercase; cursor:pointer;">Cancel Order</button>
+        </div>
+
+        <!-- Timeline Card -->
+        <div id="trackingTimelineCard" style="background:white; border-radius:16px; margin:0 16px 16px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+          <!-- Step: Placed -->
+          <div id="step-placed" class="timeline-step-new">
+            <div class="ts-icon-wrap ts-purple"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="ts-line"></div>
+            <div class="ts-content">
+              <div class="ts-title" style="color:var(--accent-purple);">Order Placed</div>
+              <div class="ts-desc">We have received your order request</div>
+            </div>
+            <div class="ts-time" id="time-placed">20 May, 10:30 AM</div>
+          </div>
+          <!-- Step: Confirmed -->
+          <div id="step-confirmed" class="timeline-step-new">
+            <div class="ts-icon-wrap ts-purple"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="ts-line"></div>
+            <div class="ts-content">
+              <div class="ts-title" style="color:var(--accent-purple);">Order Confirmed</div>
+              <div class="ts-desc">Verified and payment processed</div>
+            </div>
+            <div class="ts-time" id="time-confirmed">20 May, 10:35 AM</div>
+          </div>
+          <!-- Step: Packed -->
+          <div id="step-packed" class="timeline-step-new">
+            <div class="ts-icon-wrap ts-purple">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+            </div>
+            <div class="ts-line"></div>
+            <div class="ts-content">
+              <div class="ts-title">Order Packed</div>
+              <div class="ts-desc">Your item has been carefully packed</div>
+            </div>
+            <div class="ts-time" id="time-packed">21 May, 09:15 AM</div>
+          </div>
+          <!-- Step: Out for Delivery -->
+          <div id="step-transit" class="timeline-step-new">
+            <div class="ts-icon-wrap ts-purple">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <div class="ts-line"></div>
+            <div class="ts-content">
+              <div class="ts-title">Out for Delivery</div>
+              <div class="ts-desc">Delivery rider moving to your address</div>
+            </div>
+            <div class="ts-time" id="time-transit">24 May, 09:20 AM</div>
+          </div>
+          <!-- Step: Delivered -->
+          <div id="step-delivered" class="timeline-step-new" style="margin-bottom:0;">
+            <div class="ts-icon-wrap ts-green"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="ts-content" style="margin-left:12px;">
+              <div class="ts-title" style="color:#059669;">Delivered</div>
+              <div class="ts-desc">Order delivered successfully</div>
+            </div>
+            <div class="ts-time" id="time-delivered" style="color:#059669;">24 May, 12:45 PM</div>
+          </div>
+        </div>
+
+        <!-- Rider Card -->
+        <div style="background:white; border-radius:16px; margin:0 16px 12px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,0.06); display:flex; align-items:center; gap:12px;">
+          <div style="width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,#6D4FD6,#4C1D95); display:flex; align-items:center; justify-content:center; color:white; font-size:16px; font-weight:800; font-family:var(--font-display); flex-shrink:0;">RK</div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:14px; font-weight:800; color:var(--text-primary);">Rahul Kumar</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:1px;">Delivery Partner · Patna, South</div>
+            <div style="font-size:11px; color:#D97706; font-weight:700; margin-top:3px;">★ 4.8 <span style="color:var(--text-muted); font-weight:500;">(230+ Deliveries)</span></div>
+          </div>
+          <button onclick="alert('Calling Delivery Partner: +91 9988776655')" style="width:38px; height:38px; border-radius:50%; background:#F5F3FF; border:1px solid #EDE9FE; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           </button>
-        </div>
-        <div class="tracking-map-container" id="trackingMapContainer">
-          <svg class="vector-map" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 90h300M160 10v160M80 10v160M240 10v160" stroke="#E2E8F0" stroke-width="4" fill="none" />
-            <rect x="40" y="75" width="30" height="30" rx="6" fill="#F4A623" />
-            <text x="44" y="65" fill="#F4A623" font-size="10" font-weight="800">WAREHOUSE</text>
-            <circle cx="280" cy="90" r="10" fill="#10b981" />
-            <text x="250" y="65" fill="#10b981" font-size="10" font-weight="800">HOME</text>
-            <g id="mapScooter" transform="translate(45, 80)">
-              <circle cx="12" cy="12" r="11" fill="#6B46C1" stroke="#F4A623" stroke-width="2" />
-              <path d="M7 14h10M14 10l2 4" stroke="#FFF" stroke-width="1.5" />
-            </g>
-          </svg>
+          <button onclick="alert('Calling Delivery Partner: +91 9988776655')" style="background:var(--accent-purple); color:white; border:none; border-radius:12px; padding:10px 16px; font-size:12px; font-weight:800; cursor:pointer; flex-shrink:0;">Call Partner</button>
         </div>
 
-        <div id="mobileTrackingDetailsCard" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin: 16px; display: none; color: var(--text-primary);">
-          <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); display: block; margin-bottom: 4px;">Amazon Shipping Tracking ID</span>
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <strong id="mobileTrackingIdText" style="font-family: monospace; font-size: 16px; color: var(--accent-purple);"></strong>
-            <button onclick="window.copyMobileTrackingId()" style="background: transparent; border: none; color: var(--accent-purple); font-size: 11px; text-decoration: underline; cursor: pointer; padding: 4px;">Copy</button>
+        <!-- Secure Delivery Card -->
+        <div style="background:white; border-radius:16px; margin:0 16px 16px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,0.06); display:flex; align-items:center; gap:14px; cursor:pointer;">
+          <div style="width:44px; height:44px; border-radius:14px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
           </div>
-          <a id="mobileTrackingUrlLink" href="#" target="_blank" rel="noopener noreferrer" class="btn" style="display: block; text-align: center; margin-top: 12px; font-size: 11px; font-weight: bold; background: var(--accent-purple); color: #FFF; text-transform: uppercase; letter-spacing: 0.05em; padding: 10px; border-radius: 10px; text-decoration: none;">
-            Track on Amazon Shipping
-          </a>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:800; color:var(--text-primary);">100% Safe &amp; Secure Delivery</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Your order is protected and insured</div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
         </div>
 
-        <div class="timeline-container">
-          <div class="timeline-step" id="step-placed">
-            <div class="step-icon">✓</div>
-            <div class="step-details">
-              <h4>Order Placed</h4>
-              <p>We have received your order request</p>
-            </div>
-          </div>
-          <div class="timeline-step" id="step-confirmed">
-            <div class="step-icon">✓</div>
-            <div class="step-details">
-              <h4>Order Confirmed</h4>
-              <p>Verified and payment processed</p>
-            </div>
-          </div>
-          <div class="timeline-step" id="step-packed">
-            <div class="step-icon">✓</div>
-            <div class="step-details">
-              <h4>Order Packed</h4>
-              <p>Handed over to courier partner</p>
-            </div>
-          </div>
-          <div class="timeline-step" id="step-transit">
-            <div class="step-icon">✓</div>
-            <div class="step-details">
-              <h4>Out for Delivery</h4>
-              <p>Delivery rider moving to your address</p>
-            </div>
-          </div>
-          <div class="timeline-step" id="step-delivered">
-            <div class="step-icon">✓</div>
-            <div class="step-details">
-              <h4>Delivered</h4>
-              <p>Order delivered successfully</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="rider-card">
-          <div class="rider-info">
-            <div class="rider-avatar">DP</div>
-            <div>
-              <h4>Rahul Kumar</h4>
-              <p>Delivery Partner · Patna South</p>
-            </div>
-          </div>
-          <button class="rider-call-btn" onclick="alert('Calling Delivery Rider: +91 9988776655')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            Call Partner
-          </button>
-        </div>
       </div>
     </div>
+
 
     <!-- 5. PROFILE TAB -->
     <div class="screen" id="screen-profile">
@@ -508,8 +948,20 @@
     </div>
 
     <!-- 6. CART TAB -->
-    <div class="screen" id="screen-cart">
-      <div class="cart-items-container" id="cartItemsContainer">
+    <div class="screen" id="screen-cart" style="overflow-y: auto; padding-bottom: 80px;">
+      <div class="cart-screen-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 8px;">
+        <div>
+          <h2 style="font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0;">My Cart</h2>
+          <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Review your items and place your order</p>
+        </div>
+        <div style="position: relative;" onclick="window.switchTab('cart')">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: #F1F3F7; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <span class="cart-badge-count-new" id="cartScreenHeaderBadge" style="position: absolute; top: -5px; right: -5px; background: var(--accent-purple); color: white; font-size: 10px; font-weight: 800; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 2px solid white;">0</span>
+        </div>
+      </div>
+      <div class="cart-items-container" id="cartItemsContainer" style="padding: 0 16px;">
         <!-- Placed by JS -->
       </div>
       <div class="receipt-summary" id="receiptSummary">
@@ -791,7 +1243,7 @@
   </div>
 
   <!-- Application Logic -->
-  <script src="js/state.js?v=4.0"></script>
-  <script src="js/app.js?v=4.0"></script>
+  <script src="js/state.js?v=1784379003562"></script>
+  <script src="js/app.js?v=1784379003561"></script>
 </body>
 </html>
