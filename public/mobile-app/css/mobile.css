@@ -1639,7 +1639,7 @@ body.home-header-active .main-content {
 .cart-item-price {
   font-size: 13px;
   font-weight: 700;
-  color: var(--accent-gold);
+  color: var(--accent-purple);
 }
 
 .qty-controls {
@@ -1692,7 +1692,7 @@ body.home-header-active .main-content {
 }
 
 .checkout-btn {
-  background-color: var(--accent-gold);
+  background-color: var(--accent-purple);
   color: var(--white);
   height: 52px;
   border-radius: 14px;
@@ -1700,9 +1700,13 @@ body.home-header-active .main-content {
   font-weight: 700;
   border: none;
   cursor: pointer;
-  box-shadow: var(--shadow-gold);
+  box-shadow: 0 4px 20px rgba(109,79,214,0.35);
   width: 100%;
   margin-top: 8px;
+  transition: background 0.2s;
+}
+.checkout-btn:active {
+  background-color: #4C1D95;
 }
 
 /* ==================== TRACK ORDER & ORDERS HISTORY ==================== */

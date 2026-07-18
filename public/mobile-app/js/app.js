@@ -1509,7 +1509,7 @@
       </div>
       <div class="receipt-row">
         <span>Boutique Discount</span>
-        <span style="color: var(--accent-gold);">-₹${savings}</span>
+        <span style="color: var(--accent-purple);">-₹${savings}</span>
       </div>
       <div class="receipt-row">
         <span>Delivery Charges</span>
