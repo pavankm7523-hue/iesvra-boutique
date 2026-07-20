@@ -22,6 +22,10 @@ import {
   MapPin,
   ChevronRight,
   Sparkles,
+  Building2,
+  PhoneCall,
+  CheckCircle2,
+  X,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -43,6 +47,13 @@ export function Home() {
   const { isLoaded, bestSellersList, products } = useProducts();
   const { categories } = useCategories();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isPlusModalOpen, setIsPlusModalOpen] = useState(false);
+  const [isPlusMember, setIsPlusMember] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("iesvra_plus_member") === "true";
+    }
+    return false;
+  });
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -455,6 +466,121 @@ export function Home() {
 
 
       {/* ========================================================
+          8.5. SIDE-BY-SIDE CARDS: IESVRA PLUS & BULK CORPORATE ORDERS
+         ======================================================== */}
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          {/* Card 1: IESVRA Plus Membership */}
+          <div className="bg-gradient-to-br from-[#1E1B4B] via-[#311075] to-[#4C1D95] rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-purple-500/20 flex flex-col justify-between">
+            <div className="absolute -right-6 -bottom-6 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
+            
+            <div className="space-y-4 relative z-10">
+              <div className="flex items-center justify-between">
+                <span className="bg-amber-400/20 border border-amber-300/40 text-amber-300 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest">
+                  {isPlusMember ? "MEMBER ACTIVE" : "VIP MEMBERSHIP"}
+                </span>
+                <span className="text-xl font-black text-amber-300">₹299 / yr</span>
+              </div>
+
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black font-display text-white tracking-tight">
+                  Join IESVRA Plus & Enjoy Extra Savings
+                </h3>
+                <p className="text-xs text-purple-200 mt-1 font-medium">
+                  Unlock premium perks, priority shipping & extra cashbacks on every order.
+                </p>
+              </div>
+
+              {/* Benefits list */}
+              <ul className="space-y-2.5 text-xs font-semibold text-purple-100">
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  Extra Discounts & 5% Instant Cashback
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  Unlimited Free Express Delivery Vouchers
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  Early Access to Flash Sales & New Drops
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  24/7 Priority VIP Customer Support
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-6 relative z-10">
+              <button
+                onClick={() => setIsPlusModalOpen(true)}
+                className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-purple-950 px-7 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Crown className="h-4 w-4 fill-purple-950" />
+                {isPlusMember ? "View Membership Benefits" : "Join Now — ₹299"}
+              </button>
+            </div>
+          </div>
+
+          {/* Card 2: Bulk Orders for Businesses */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 text-slate-900 relative overflow-hidden shadow-xl border border-slate-200/80 flex flex-col justify-between">
+            <div className="space-y-4 relative z-10">
+              <div className="flex items-center justify-between">
+                <span className="bg-purple-50 text-[#6B46C1] border border-purple-200 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest">
+                  CORPORATE & WHOLESALE
+                </span>
+                <Building2 className="h-6 w-6 text-[#6B46C1]" />
+              </div>
+
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black font-display text-slate-900 tracking-tight">
+                  Bulk Orders for Businesses
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 font-medium">
+                  Special wholesale pricing, customized branding & GST invoice for business buyers.
+                </p>
+              </div>
+
+              {/* Benefits list */}
+              <ul className="space-y-2.5 text-xs font-semibold text-slate-700">
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-[#6B46C1] shrink-0" />
+                  Up to 40% Off Bulk Tier Quantity Pricing
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-[#6B46C1] shrink-0" />
+                  Customized Gifting & Logo Branding Available
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-[#6B46C1] shrink-0" />
+                  GST Invoice & Tax Input Credit Support
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-[#6B46C1] shrink-0" />
+                  Dedicated Key Account Manager
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-6 relative z-10">
+              <a
+                href="https://wa.me/917061333200?text=Hi,%20I%20am%20interested%20in%20Bulk%20Corporate%20Orders"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto inline-flex bg-[#380E83] hover:bg-purple-900 text-white px-7 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer items-center justify-center gap-2"
+              >
+                <PhoneCall className="h-4 w-4" /> CONTACT US
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ========================================================
           9. NEWSLETTER SUBSCRIPTION STRIP
          ======================================================== */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-12 mb-6">
@@ -487,6 +613,96 @@ export function Home() {
           </form>
         </div>
       </section>
+
+
+      {/* ========================================================
+          10. WEBSITE IESVRA PLUS MEMBERSHIP SUBSCRIPTION MODAL
+         ======================================================== */}
+      {isPlusModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-100 overflow-hidden">
+            <button
+              onClick={() => setIsPlusModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition-colors cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#1E1B4B] to-[#4C1D95] flex items-center justify-center text-amber-300 shadow-md">
+                <Crown className="h-5 w-5 fill-amber-300" />
+              </div>
+              <div>
+                <h3 className="font-display font-black text-slate-900 text-lg">
+                  IESVRA VIP Membership
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  Exclusive 1-year shopping privileges
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-[#1E1B4B] via-[#311075] to-[#4C1D95] rounded-2xl p-5 text-white mb-5 shadow-lg relative overflow-hidden">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <span className="bg-amber-400/20 border border-amber-300/40 text-amber-300 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    VIP PASS
+                  </span>
+                  <h4 className="font-display font-black text-xl text-white mt-1">
+                    IESVRA PLUS
+                  </h4>
+                </div>
+                <div className="text-right">
+                  <div className="text-xl font-black text-amber-300 font-display">
+                    ₹299
+                  </div>
+                  <div className="text-[10px] text-purple-200">per year</div>
+                </div>
+              </div>
+
+              <div className="space-y-2 text-xs font-semibold text-purple-100 mt-4">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  Unlimited Free Delivery on all orders
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  Extra 5% Instant Cashback on boutique checkouts
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  Early Access to Flash Sales & New Collections
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  24/7 VIP Priority Customer Support
+                </div>
+              </div>
+            </div>
+
+            {isPlusMember ? (
+              <button
+                disabled
+                className="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-default"
+              >
+                <CheckCircle2 className="h-4 w-4" /> Membership Active
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  localStorage.setItem("iesvra_plus_member", "true");
+                  setIsPlusMember(true);
+                  toast.success("🎉 Congratulations! You are now an IESVRA Plus Member!");
+                  setIsPlusModalOpen(false);
+                }}
+                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-purple-950 font-black py-3.5 rounded-2xl text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Crown className="h-4 w-4 fill-purple-950" /> Subscribe for ₹299
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -3536,10 +3536,11 @@ body:not(.theme-light) .theme-icon-moon {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: 4px;
+  margin-top: 6px;
   padding-top: 2px;
+  padding-right: 12px;
   position: relative;
-  z-index: 2;
+  z-index: 5;
   white-space: nowrap;
 }
 
@@ -3590,7 +3591,7 @@ body:not(.theme-light) .theme-icon-moon {
 
 .coupon-sash-new {
   position: absolute;
-  top: 9px;
+  top: 7px;
   right: -26px;
   color: white;
   font-size: 6.5px;
@@ -3600,7 +3601,7 @@ body:not(.theme-light) .theme-icon-moon {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 

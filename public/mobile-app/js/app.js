@@ -674,6 +674,7 @@
       renderOrdersScreen();
     } else if (tabId === 'profile') {
       updateProfileDisplay();
+      if (window.updatePlusMemberUI) window.updatePlusMemberUI();
       
       // Wire Logout action
       const logoutBtn = document.getElementById('profileLogoutBtn');
@@ -3224,5 +3225,72 @@
     document.querySelectorAll(`.mobile-product-card[onclick*="${productId}"] .wishlist-btn-card`).forEach(btn => {
       btn.classList.toggle('active');
     });
+  };
+
+  window.updatePlusMemberUI = function() {
+    const isMember = localStorage.getItem('iesvra_plus_member') === 'true';
+    const badge = document.getElementById('iesvraPlusMemberBadge');
+    const btn = document.getElementById('iesvraPlusActionBtn');
+    if (badge) {
+      if (isMember) {
+        badge.textContent = 'MEMBER';
+        badge.style.background = '#10B981';
+      } else {
+        badge.textContent = 'JOIN TODAY';
+        badge.style.background = '#F59E0B';
+      }
+    }
+    if (btn) {
+      if (isMember) {
+        btn.textContent = 'View Benefits';
+        btn.style.background = 'transparent';
+        btn.style.border = '1.5px solid #FCD34D';
+        btn.style.color = '#FCD34D';
+        btn.style.boxShadow = 'none';
+      } else {
+        btn.textContent = 'Join Now — ₹299';
+        btn.style.background = '#FCD34D';
+        btn.style.border = 'none';
+        btn.style.color = '#1E1B4B';
+        btn.style.boxShadow = '0 4px 12px rgba(252,211,77,0.35)';
+      }
+    }
+  };
+
+  window.openPlusMembershipModal = function() {
+    const modal = document.getElementById('iesvraPlusModalOverlay');
+    if (modal) {
+      modal.style.display = 'flex';
+      window.updatePlusMemberUI();
+      const isMember = localStorage.getItem('iesvra_plus_member') === 'true';
+      const cta = document.getElementById('iesvraPlusModalSubscribeBtn');
+      if (cta) {
+        if (isMember) {
+          cta.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#FFF" stroke="none"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg> Active Member — Enjoy Perks!`;
+          cta.style.background = '#10B981';
+        } else {
+          cta.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#FFF" stroke="none"><path d="M2 20h20v2H2zM2 6l5 6 5-8 5 8 5-6v12H2z"/></svg> Subscribe for ₹299`;
+          cta.style.background = 'linear-gradient(135deg, #F59E0B, #D97706)';
+        }
+      }
+    }
+  };
+
+  window.closePlusMembershipModal = function() {
+    const modal = document.getElementById('iesvraPlusModalOverlay');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.subscribePlusMember = function() {
+    const isMember = localStorage.getItem('iesvra_plus_member') === 'true';
+    if (isMember) {
+      showToast("Your IESVRA Plus VIP membership is already active!");
+      window.closePlusMembershipModal();
+      return;
+    }
+    localStorage.setItem('iesvra_plus_member', 'true');
+    window.updatePlusMemberUI();
+    showToast("🎉 Congratulations! You are now an IESVRA Plus Member!");
+    window.closePlusMembershipModal();
   };
 })();
