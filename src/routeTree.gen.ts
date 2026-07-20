@@ -37,6 +37,7 @@ import { Route as ApiSaveAddressRouteImport } from './routes/api/save-address'
 import { Route as ApiReverseGeocodeRouteImport } from './routes/api/reverse-geocode'
 import { Route as ApiResolveMapsUrlRouteImport } from './routes/api/resolve-maps-url'
 import { Route as ApiProductsRouteImport } from './routes/api/products'
+import { Route as ApiPlusMembershipRouteImport } from './routes/api/plus-membership'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
 import { Route as ApiGetOrderRouteImport } from './routes/api/get-order'
 import { Route as ApiGeocodeRouteImport } from './routes/api/geocode'
@@ -197,6 +198,11 @@ const ApiProductsRoute = ApiProductsRouteImport.update({
   path: '/api/products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPlusMembershipRoute = ApiPlusMembershipRouteImport.update({
+  id: '/api/plus-membership',
+  path: '/api/plus-membership',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiNotifyAdminRoute = ApiNotifyAdminRouteImport.update({
   id: '/api/notify-admin',
   path: '/api/notify-admin',
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
   '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
@@ -371,6 +378,7 @@ export interface FileRoutesByTo {
   '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
   '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
   '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/api/geocode'
     | '/api/get-order'
     | '/api/notify-admin'
+    | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
     | '/api/reverse-geocode'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/api/geocode'
     | '/api/get-order'
     | '/api/notify-admin'
+    | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
     | '/api/reverse-geocode'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/api/geocode'
     | '/api/get-order'
     | '/api/notify-admin'
+    | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
     | '/api/reverse-geocode'
@@ -615,6 +627,7 @@ export interface RootRouteChildren {
   ApiGeocodeRoute: typeof ApiGeocodeRoute
   ApiGetOrderRoute: typeof ApiGetOrderRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
+  ApiPlusMembershipRoute: typeof ApiPlusMembershipRoute
   ApiProductsRoute: typeof ApiProductsRoute
   ApiResolveMapsUrlRoute: typeof ApiResolveMapsUrlRoute
   ApiReverseGeocodeRoute: typeof ApiReverseGeocodeRoute
@@ -830,6 +843,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/plus-membership': {
+      id: '/api/plus-membership'
+      path: '/api/plus-membership'
+      fullPath: '/api/plus-membership'
+      preLoaderRoute: typeof ApiPlusMembershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/notify-admin': {
       id: '/api/notify-admin'
       path: '/api/notify-admin'
@@ -1014,6 +1034,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGeocodeRoute: ApiGeocodeRoute,
   ApiGetOrderRoute: ApiGetOrderRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
+  ApiPlusMembershipRoute: ApiPlusMembershipRoute,
   ApiProductsRoute: ApiProductsRoute,
   ApiResolveMapsUrlRoute: ApiResolveMapsUrlRoute,
   ApiReverseGeocodeRoute: ApiReverseGeocodeRoute,

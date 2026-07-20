@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useProducts, useCategories } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { addToCart } from "@/lib/cart";
+import { getCurrentUser } from "@/lib/auth";
 import {
   ShieldCheck,
   Truck,
@@ -57,6 +58,25 @@ export function Home() {
   const [isPlusPaymentProcessing, setIsPlusPaymentProcessing] = useState(false);
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
+
+  // ── Sync Plus membership from DB on mount (if user is logged in) ─────────
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (!user?.email) return;
+    fetch(`/api/plus-membership?email=${encodeURIComponent(user.email)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.isMember) {
+          localStorage.setItem("iesvra_plus_member", "true");
+          setIsPlusMember(true);
+        } else if (data.isMember === false) {
+          // Only clear if server explicitly says false (expired or not found)
+          localStorage.removeItem("iesvra_plus_member");
+          setIsPlusMember(false);
+        }
+      })
+      .catch(() => {/* silently fall back to localStorage */});
+  }, []);
 
   // ── Razorpay script loader ───────────────────────────────────────────────
   const loadRazorpayScript = (): Promise<boolean> =>
@@ -122,9 +142,32 @@ export function Home() {
             if (!verifyRes.ok || !verifyData.verified) {
               throw new Error(verifyData.error || "Payment verification failed.");
             }
-            // Activate membership
+
+            const paymentId = response.razorpay_payment_id;
+
+            // Always store locally first (works even if user is not logged in)
             localStorage.setItem("iesvra_plus_member", "true");
+            localStorage.setItem("iesvra_plus_payment_id", paymentId);
             setIsPlusMember(true);
+
+            // Persist to DB if user is logged in
+            const currentUser = getCurrentUser();
+            if (currentUser?.email) {
+              fetch("/api/plus-membership", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: currentUser.email,
+                  razorpay_payment_id: paymentId,
+                }),
+              })
+                .then(r => r.json())
+                .then(d => {
+                  if (d.success) console.log("[plus] Membership saved to DB", d.expiry);
+                })
+                .catch(err => console.warn("[plus] DB save failed:", err));
+            }
+
             toast.success("🎉 Welcome to IESVRA Plus! Your membership is now active.");
             setIsPlusModalOpen(false);
           } catch (e: any) {

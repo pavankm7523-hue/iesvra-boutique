@@ -567,6 +567,19 @@
             // Notify other pages
             window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
 
+            // Migrate any guest Plus membership to DB
+            (function() {
+              const hasMember = localStorage.getItem('iesvra_plus_member') === 'true';
+              const payId = localStorage.getItem('iesvra_plus_payment_id') || '';
+              if (hasMember && payId.startsWith('pay_')) {
+                fetch('/api/plus-membership', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email: username, razorpay_payment_id: payId }),
+                }).catch(function() {});
+              }
+            })();
+
             showToast("Sign up successful! Welcome.");
             loginScreen.style.opacity = '0';
             setTimeout(() => {
@@ -586,6 +599,19 @@
             
             // Notify other pages
             window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
+
+            // Migrate any guest Plus membership to DB
+            (function() {
+              const hasMember = localStorage.getItem('iesvra_plus_member') === 'true';
+              const payId = localStorage.getItem('iesvra_plus_payment_id') || '';
+              if (hasMember && payId.startsWith('pay_')) {
+                fetch('/api/plus-membership', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email: username, razorpay_payment_id: payId }),
+                }).catch(function() {});
+              }
+            })();
 
             showToast("Welcome back!");
             loginScreen.style.opacity = '0';
@@ -675,6 +701,26 @@
     } else if (tabId === 'profile') {
       updateProfileDisplay();
       if (window.updatePlusMemberUI) window.updatePlusMemberUI();
+      // Sync Plus membership status from DB if user is logged in
+      (function() {
+        try {
+          const rawAuth = localStorage.getItem('ishvara_auth');
+          if (!rawAuth) return;
+          const auth = JSON.parse(rawAuth);
+          if (!auth || !auth.email) return;
+          fetch('/api/plus-membership?email=' + encodeURIComponent(auth.email))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.isMember) {
+                localStorage.setItem('iesvra_plus_member', 'true');
+              } else if (data.isMember === false) {
+                localStorage.removeItem('iesvra_plus_member');
+              }
+              if (window.updatePlusMemberUI) window.updatePlusMemberUI();
+            })
+            .catch(function() {/* silently fall back to localStorage */});
+        } catch(e) {}
+      })();
       
       // Wire Logout action
       const logoutBtn = document.getElementById('profileLogoutBtn');
@@ -3354,9 +3400,34 @@
             if (!verifyRes.ok || !verifyData.verified) {
               throw new Error(verifyData.error || 'Payment verification failed.');
             }
-            // ✅ Activate membership
+
+            const paymentId = response.razorpay_payment_id;
+
+            // ✅ Always activate locally first
             localStorage.setItem('iesvra_plus_member', 'true');
+            localStorage.setItem('iesvra_plus_payment_id', paymentId);
             window.updatePlusMemberUI();
+
+            // Persist to DB if user is logged in
+            try {
+              const rawAuth = localStorage.getItem('ishvara_auth');
+              if (rawAuth) {
+                const auth = JSON.parse(rawAuth);
+                if (auth && auth.email) {
+                  fetch('/api/plus-membership', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: auth.email, razorpay_payment_id: paymentId }),
+                  })
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) {
+                      if (d.success) console.log('[plus] Membership saved to DB:', d.expiry);
+                    })
+                    .catch(function(err) { console.warn('[plus] DB save failed:', err); });
+                }
+              }
+            } catch(authErr) {}
+
             showToast('🎉 Welcome to IESVRA Plus! Your membership is now active.');
             window.closePlusMembershipModal();
           } catch(e) {

@@ -24,6 +24,8 @@ export function loginUser(name: string, email: string, role: 'user' | 'admin' = 
   const user: User = { name, email, role };
   localStorage.setItem(AUTH_KEY, JSON.stringify(user));
   window.dispatchEvent(new CustomEvent(AUTH_EVENT));
+  // Migrate any guest localStorage-only Plus membership to DB
+  migratePlusMembershipToDb(email);
 }
 
 export function logoutUser() {
@@ -37,6 +39,8 @@ export interface RegisteredUser {
   email: string;
   passwordHash: string;
   role: 'user' | 'admin';
+  isPlusMember?: boolean;
+  plusExpiry?: string; // ISO date string
 }
 
 const USERS_KEY = "ishvara_registered_users";
@@ -86,6 +90,35 @@ export function saveAdminPassword(password: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password })
   }).catch(console.error);
+}
+
+/**
+ * If a guest paid for IESVRA Plus (localStorage only, with a real Razorpay pay_ ID),
+ * migrate their membership to the DB when they subsequently log in.
+ * The pay_ prefix is used as a trust anchor — only real Razorpay payments generate these.
+ */
+export function migratePlusMembershipToDb(email: string) {
+  if (typeof window === "undefined") return;
+  const isMember = localStorage.getItem("iesvra_plus_member") === "true";
+  const paymentId = localStorage.getItem("iesvra_plus_payment_id") || "";
+  // Only migrate if there's a real Razorpay payment ID
+  if (!isMember || !paymentId.startsWith("pay_")) return;
+
+  fetch("/api/plus-membership", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: email.trim().toLowerCase(),
+      razorpay_payment_id: paymentId,
+    }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        console.log("[plus] Guest membership migrated to DB for:", email);
+      }
+    })
+    .catch(err => console.warn("[plus] Migration to DB failed:", err));
 }
 
 export function syncAuthWithDb() {
