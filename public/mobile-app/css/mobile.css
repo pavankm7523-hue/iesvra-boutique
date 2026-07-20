@@ -310,16 +310,16 @@ html, body {
 }
 
 body.home-header-active .main-content {
-  padding-top: 148px;
+  padding-top: 0px;
 }
 
 body.no-app-header .main-content {
-  padding-top: 0;
+  padding-top: 0px !important;
 }
 
 /* ==================== SCREENS ROUTING ==================== */
 .main-content {
-  padding-top: 72px;
+  padding-top: 0px !important;
   padding-bottom: calc(76px + var(--safe-bottom));
   min-height: 100%;
 }
