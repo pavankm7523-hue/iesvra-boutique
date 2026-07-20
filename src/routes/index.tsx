@@ -124,29 +124,7 @@ export function Home() {
     }
   };
 
-  // Quick categories fallback mapping for the 5-item quick section
-  const quickCategories = [
-    {
-      name: "Mobiles",
-      image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=120&auto=format&fit=crop&q=80",
-      categoryName: "Mobile Accessories",
-    },
-    {
-      name: "Home & Kitchen",
-      image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=120&auto=format&fit=crop&q=80",
-      categoryName: "Home & Kitchen",
-    },
-    {
-      name: "Beauty",
-      image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=120&auto=format&fit=crop&q=80",
-      categoryName: "Beauty & Personal Care",
-    },
-    {
-      name: "Electronics",
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=120&auto=format&fit=crop&q=80",
-      categoryName: "Mobile Accessories",
-    },
-  ];
+
 
   return (
     <div className="bg-[#F6F7FB] text-slate-800 font-sans pb-20 md:pb-12">
@@ -362,45 +340,7 @@ export function Home() {
       </section>
 
 
-      {/* ========================================================
-          5. QUICK CATEGORIES GRID (5 COLUMNS MATCHING SCREENSHOT)
-         ======================================================== */}
-      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-5">
-        <div className="grid grid-cols-5 gap-2 sm:gap-4">
-          {quickCategories.map((item) => (
-            <Link
-              key={item.name}
-              to="/shop"
-              search={{ category: item.categoryName }}
-              className="group bg-white rounded-2xl p-2.5 sm:p-4 border border-slate-100 shadow-xs flex flex-col items-center justify-center text-center transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
-            >
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden mb-2 bg-slate-50 flex items-center justify-center p-1">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover rounded-lg group-hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-              <span className="text-[10px] sm:text-xs font-bold text-slate-800 group-hover:text-[#6B46C1] transition-colors leading-tight line-clamp-1">
-                {item.name}
-              </span>
-            </Link>
-          ))}
 
-          {/* View All (3 Dots Icon Card) */}
-          <Link
-            to="/shop"
-            className="group bg-white rounded-2xl p-2.5 sm:p-4 border border-slate-100 shadow-xs flex flex-col items-center justify-center text-center transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
-          >
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-purple-50 text-[#6B46C1] flex items-center justify-center mb-2 group-hover:bg-[#6B46C1] group-hover:text-white transition-colors">
-              <MoreHorizontal className="h-6 w-6 stroke-[2.5]" />
-            </div>
-            <span className="text-[10px] sm:text-xs font-bold text-slate-800 group-hover:text-[#6B46C1] transition-colors leading-tight">
-              View All
-            </span>
-          </Link>
-        </div>
-      </section>
 
 
       {/* ========================================================
