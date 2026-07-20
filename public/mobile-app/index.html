@@ -235,67 +235,151 @@
     <div class="screen active" id="screen-home">
 
 
-      <!-- Express 15 Min Delivery Banner -->
-      <div class="express-purple-banner-new">
-        <div class="banner-text-new">
-          <span class="banner-sub-header">YOUR TIME MATTERS</span>
-          <h2 class="banner-title-italic">15 MIN<br/>DELIVERY</h2>
-          <div class="banner-location-pill">ON ALL ORDERS IN PATNA</div>
-          <button class="banner-order-btn-new" onclick="alert('Instant Express delivery active for Patna!')">ORDER NOW &rarr;</button>
+      <!-- 1. Hero 3D Purple Banner -->
+      <div class="express-purple-banner-new" style="background: linear-gradient(135deg, #2D1263 0%, #380E83 50%, #5B21B6 100%); border-radius: 20px; padding: 18px; margin: 12px 16px; position: relative; overflow: hidden; color: white; box-shadow: 0 10px 25px rgba(56,14,131,0.3);">
+        <div style="max-width: 60%; position: relative; z-index: 2;">
+          <div style="font-size: 10px; font-weight: 800; color: #FCD34D; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">IESVRA® — India's Smartest Shopping App</div>
+          <h2 style="font-family: var(--font-display); font-size: 20px; font-weight: 900; line-height: 1.15; margin: 0 0 6px 0; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">SMART SHOPPING,<br/><span style="color: #FCD34D; font-style: italic;">FASTER DELIVERY!</span></h2>
+          <div style="display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); padding: 4px 10px; border-radius: 12px; font-size: 9px; font-weight: 800; border: 1px solid rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.04em;">SHOP MORE, <span style="color: #FCD34D;">SAVE MORE</span>, GET MORE!</div>
         </div>
-        <div class="banner-image-new">
-          <img src="images/delivery-scooter.png" alt="15 Min Delivery" />
+        <img src="images/delivery-scooter.png" alt="3D Scooter Delivery" style="position: absolute; right: -10px; bottom: -10px; width: 155px; height: auto; object-fit: contain; z-index: 1; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));" />
+      </div>
+
+      <!-- 2. 4 SLA Delivery Cards -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 0 16px; margin-bottom: 12px;">
+        <div style="background: white; border: 1.5px solid #F472B6; border-radius: 14px; padding: 10px 4px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #FDF2F8; color: #EC4899; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px auto;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <div style="font-size: 8px; font-weight: 800; color: #DB2777; text-transform: uppercase;">UNDER 15 KM</div>
+          <div style="font-size: 11px; font-weight: 900; color: #1E293B; margin-top: 1px;">15 MIN</div>
+          <div style="font-size: 8px; font-weight: 700; color: #64748B;">DELIVERY</div>
+        </div>
+        <div style="background: white; border: 1.5px solid #60A5FA; border-radius: 14px; padding: 10px 4px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px auto;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="16" height="12" x="2" y="4" rx="2"/><path d="M22 8h-4v8h4V8Z"/><circle cx="6" cy="18" r="2"/><circle cx="14" cy="18" r="2"/></svg>
+          </div>
+          <div style="font-size: 8px; font-weight: 800; color: #2563EB; text-transform: uppercase;">IN CITY</div>
+          <div style="font-size: 11px; font-weight: 900; color: #1E293B; margin-top: 1px;">1 DAY</div>
+          <div style="font-size: 8px; font-weight: 700; color: #64748B;">DELIVERY</div>
+        </div>
+        <div style="background: white; border: 1.5px solid #818CF8; border-radius: 14px; padding: 10px 4px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #EEF2FF; color: #4F46E5; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px auto;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div style="font-size: 8px; font-weight: 800; color: #4F46E5; text-transform: uppercase;">ALL INDIA</div>
+          <div style="font-size: 11px; font-weight: 900; color: #1E293B; margin-top: 1px;">2-3 DAYS</div>
+          <div style="font-size: 8px; font-weight: 700; color: #64748B;">DELIVERY</div>
+        </div>
+        <div style="background: white; border: 1.5px solid #34D399; border-radius: 14px; padding: 10px 4px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px auto;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+          </div>
+          <div style="font-size: 8px; font-weight: 800; color: #059669; text-transform: uppercase;">WORLDWIDE</div>
+          <div style="font-size: 11px; font-weight: 900; color: #1E293B; margin-top: 1px;">4-5 DAYS</div>
+          <div style="font-size: 8px; font-weight: 700; color: #64748B;">DELIVERY</div>
         </div>
       </div>
 
-      <!-- 4 Brand Promises Icon Strip -->
-      <div class="promises-strip-new">
-        <div class="promise-item-new">
-          <div class="promise-icon-circle accent-orange">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          </div>
-          <div class="promise-texts">
-            <strong>Express Delivery</strong>
-            <span>15 Mins</span>
+      <!-- 3. Trust Ribbon -->
+      <div style="background: linear-gradient(135deg, #1E1B4B 0%, #311075 100%); border-radius: 14px; padding: 10px 12px; margin: 0 16px 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; color: white; text-align: center; box-shadow: 0 4px 12px rgba(30,27,75,0.2);">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span style="font-size: 8px; font-weight: 800; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.02em;">SAFE & SECURE</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span style="font-size: 8px; font-weight: 800; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.02em;">BEST PRICES</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span style="font-size: 8px; font-weight: 800; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.02em;">EASY RETURNS</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span style="font-size: 8px; font-weight: 800; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.02em;">24/7 SUPPORT</span>
+        </div>
+      </div>
+
+      <!-- 4. Pill Search Bar -->
+      <div class="search-section-new" style="padding: 0 16px; margin-bottom: 16px;">
+        <div class="search-bar-row-new">
+          <div class="search-bar-new" style="background: white; border-radius: 9999px; padding: 4px 14px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border: 1.5px solid #E2E8F0;">
+            <svg class="search-icon-new" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B46C1" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Search 50,000+ Products..." id="homeSearchInput" autocomplete="off" style="flex: 1; border: none; background: transparent; padding: 10px 10px; font-size: 13px; outline: none; color: #1E293B; font-weight: 500;" />
+            <svg class="mic-btn-new" id="micBtn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
           </div>
         </div>
-        <div class="promise-item-new">
-          <div class="promise-icon-circle accent-purple">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <div class="search-results-overlay" id="searchResultsOverlay" style="display: none;"></div>
+      </div>
+
+      <!-- 5. Quick 5 Categories Row -->
+      <div class="categories-grid-new" id="quickCategoriesRow" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 0 16px; margin-bottom: 16px;">
+        <div onclick="window.switchTab('categories')" style="background: white; border-radius: 16px; padding: 10px 4px; text-align: center; cursor: pointer; border: 1px solid #F1F5F9; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+          <div style="width: 44px; height: 44px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center;">
+            <img src="logo.png" alt="Mobiles" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
           </div>
-          <div class="promise-texts">
-            <strong>Best Prices</strong>
-            <span>Lowest Prices</span>
-          </div>
+          <div style="font-size: 10px; font-weight: 700; color: #334155; line-height: 1.2;">Mobiles</div>
         </div>
-        <div class="promise-item-new">
-          <div class="promise-icon-circle accent-yellow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        <div onclick="window.switchTab('categories')" style="background: white; border-radius: 16px; padding: 10px 4px; text-align: center; cursor: pointer; border: 1px solid #F1F5F9; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+          <div style="width: 44px; height: 44px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center;">
+            <img src="logo.png" alt="Home & Kitchen" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
           </div>
-          <div class="promise-texts">
-            <strong>Easy Returns</strong>
-            <span>7 Days Return</span>
-          </div>
+          <div style="font-size: 10px; font-weight: 700; color: #334155; line-height: 1.2;">Home & Kitchen</div>
         </div>
-        <div class="promise-item-new">
-          <div class="promise-icon-circle accent-blue">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div onclick="window.switchTab('categories')" style="background: white; border-radius: 16px; padding: 10px 4px; text-align: center; cursor: pointer; border: 1px solid #F1F5F9; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+          <div style="width: 44px; height: 44px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center;">
+            <img src="logo.png" alt="Beauty" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
           </div>
-          <div class="promise-texts">
-            <strong>IESVRA Plus</strong>
-            <span>Extra Savings</span>
+          <div style="font-size: 10px; font-weight: 700; color: #334155; line-height: 1.2;">Beauty</div>
+        </div>
+        <div onclick="window.switchTab('categories')" style="background: white; border-radius: 16px; padding: 10px 4px; text-align: center; cursor: pointer; border: 1px solid #F1F5F9; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+          <div style="width: 44px; height: 44px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center;">
+            <img src="logo.png" alt="Electronics" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+          </div>
+          <div style="font-size: 10px; font-weight: 700; color: #334155; line-height: 1.2;">Electronics</div>
+        </div>
+        <div onclick="window.switchTab('categories')" style="background: white; border-radius: 16px; padding: 10px 4px; text-align: center; cursor: pointer; border: 1px solid #F1F5F9; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+          <div style="width: 44px; height: 44px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; background: #F8FAFC; border-radius: 50%;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B46C1" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </div>
+          <div style="font-size: 10px; font-weight: 800; color: #6B46C1; line-height: 1.2;">View All</div>
+        </div>
+      </div>
+
+      <!-- 6. Download App Banner -->
+      <div style="background: linear-gradient(135deg, #2D1263 0%, #4C1D95 100%); border-radius: 18px; padding: 16px; margin: 0 16px 20px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px rgba(76,29,149,0.25);">
+        <div style="flex: 1;">
+          <div style="font-size: 8px; font-weight: 800; text-transform: uppercase; color: #FCD34D; letter-spacing: 0.05em; margin-bottom: 2px;">DOWNLOAD THE</div>
+          <div style="font-family: var(--font-display); font-size: 15px; font-weight: 900; margin-bottom: 2px;">IESVRA APP</div>
+          <p style="font-size: 9px; opacity: 0.85; margin: 0 0 10px 0; line-height: 1.3;">EXPERIENCE SMART SHOPPING LIKE NEVER BEFORE!</p>
+          <div style="display: flex; gap: 6px;">
+            <a href="#" style="background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px; font-size: 8px; font-weight: 700; color: white; text-decoration: none; display: flex; align-items: center; gap: 4px; border: 1px solid rgba(255,255,255,0.2);">
+              <span>GET IT ON</span> <strong style="font-size: 9px;">Google Play</strong>
+            </a>
+            <a href="#" style="background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px; font-size: 8px; font-weight: 700; color: white; text-decoration: none; display: flex; align-items: center; gap: 4px; border: 1px solid rgba(255,255,255,0.2);">
+              <span>Download on the</span> <strong style="font-size: 9px;">App Store</strong>
+            </a>
           </div>
         </div>
       </div>
 
+      <!-- 7. Shop by Category Grid Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 16px; margin-bottom: 12px;">
+        <div class="section-title-new" style="font-family: var(--font-display); font-size: 16px; font-weight: 800; color: #0F172A;">Shop by Category</div>
+        <a href="#" onclick="window.switchTab('categories')" style="color: var(--accent-purple); font-size: 11px; font-weight: 800; text-decoration: none;">View All &rarr;</a>
+      </div>
 
+      <!-- Categories Grid -->
+      <div class="categories-grid-new" id="categoriesScroll" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 0 16px; margin-bottom: 20px;"></div>
 
       <!-- Trending Now Header -->
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 16px; margin-bottom: 12px; margin-top: 24px;">
-        <div class="section-title-new">Trending Now</div>
-        <a href="#" onclick="window.switchTab('categories')" style="color: var(--accent-purple); font-size: 11px; font-weight: 700; text-decoration: none;">View All &rarr;</a>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 16px; margin-bottom: 12px;">
+        <div class="section-title-new" style="font-family: var(--font-display); font-size: 16px; font-weight: 800; color: #0F172A;">Trending Now</div>
+        <a href="#" onclick="window.switchTab('categories')" style="color: var(--accent-purple); font-size: 11px; font-weight: 800; text-decoration: none;">View All &rarr;</a>
       </div>
       <div class="trending-scroll-row" id="bestSellersRow"></div>
+    </div>
     </div>
 
     
