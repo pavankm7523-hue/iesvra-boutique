@@ -3281,16 +3281,107 @@
     if (modal) modal.style.display = 'none';
   };
 
-  window.subscribePlusMember = function() {
+  // ── Razorpay script loader ─────────────────────────────────────────────────
+  function loadRazorpaySDK() {
+    return new Promise(function(resolve) {
+      if (window.Razorpay) return resolve(true);
+      var s = document.createElement('script');
+      s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      s.onload = function() { resolve(true); };
+      s.onerror = function() { resolve(false); };
+      document.body.appendChild(s);
+    });
+  }
+
+  window.subscribePlusMember = async function() {
     const isMember = localStorage.getItem('iesvra_plus_member') === 'true';
     if (isMember) {
-      showToast("Your IESVRA Plus VIP membership is already active!");
+      showToast('Your IESVRA Plus membership is already active!');
       window.closePlusMembershipModal();
       return;
     }
-    localStorage.setItem('iesvra_plus_member', 'true');
-    window.updatePlusMemberUI();
-    showToast("🎉 Congratulations! You are now an IESVRA Plus Member!");
-    window.closePlusMembershipModal();
+
+    // Disable button & show loading
+    const btn = document.getElementById('iesvraPlusModalSubscribeBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<svg style="width:18px;height:18px;animation:spin 1s linear infinite" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="3" stroke-dasharray="31.4" stroke-dashoffset="10"/></svg> Processing...';
+    }
+
+    try {
+      // 1. Create Razorpay order — ₹299 = 29900 paise
+      const createRes = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: 29900 }),
+      });
+      const createData = await createRes.json();
+
+      if (!createRes.ok || !createData.order_id) {
+        showToast('Could not initiate payment. Please try again.');
+        if (btn) { btn.disabled = false; btn.innerHTML = '&#128081; Subscribe for ₹299'; }
+        return;
+      }
+
+      // 2. Load Razorpay SDK
+      const sdkLoaded = await loadRazorpaySDK();
+      if (!sdkLoaded) {
+        showToast('Payment SDK unavailable. Please try again.');
+        if (btn) { btn.disabled = false; btn.innerHTML = '&#128081; Subscribe for ₹299'; }
+        return;
+      }
+
+      // 3. Open Razorpay checkout popup
+      const options = {
+        key: createData.key_id,
+        amount: 29900,
+        currency: 'INR',
+        name: 'IESVRA',
+        description: 'IESVRA Plus Membership — 1 Year',
+        order_id: createData.order_id,
+        handler: async function(response) {
+          try {
+            const verifyRes = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok || !verifyData.verified) {
+              throw new Error(verifyData.error || 'Payment verification failed.');
+            }
+            // ✅ Activate membership
+            localStorage.setItem('iesvra_plus_member', 'true');
+            window.updatePlusMemberUI();
+            showToast('🎉 Welcome to IESVRA Plus! Your membership is now active.');
+            window.closePlusMembershipModal();
+          } catch(e) {
+            showToast(e.message || 'Payment done but verification failed. Contact support.');
+          }
+        },
+        prefill: {},
+        theme: { color: '#4C1D95' },
+        modal: {
+          ondismiss: function() {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = '&#128081; Subscribe for ₹299';
+            }
+            showToast('Payment cancelled.');
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
+    } catch(err) {
+      showToast(err.message || 'Payment failed. Please try again.');
+      if (btn) { btn.disabled = false; btn.innerHTML = '&#128081; Subscribe for ₹299'; }
+    }
   };
 })();

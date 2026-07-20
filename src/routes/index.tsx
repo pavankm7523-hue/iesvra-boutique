@@ -54,8 +54,102 @@ export function Home() {
     }
     return false;
   });
+  const [isPlusPaymentProcessing, setIsPlusPaymentProcessing] = useState(false);
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
+
+  // ── Razorpay script loader ───────────────────────────────────────────────
+  const loadRazorpayScript = (): Promise<boolean> =>
+    new Promise((resolve) => {
+      if ((window as any).Razorpay) return resolve(true);
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+
+  // ── IESVRA Plus Razorpay Payment Handler ─────────────────────────────────
+  const handlePlusPayment = async () => {
+    if (isPlusMember) {
+      toast.info("Your IESVRA Plus membership is already active!");
+      return;
+    }
+    setIsPlusPaymentProcessing(true);
+    try {
+      // 1. Create Razorpay order — ₹299 → 29900 paise
+      const createRes = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 29900 }),
+      });
+      const createData = await createRes.json();
+
+      if (!createRes.ok || !createData.order_id) {
+        toast.error("Could not initiate payment. Please try again.");
+        setIsPlusPaymentProcessing(false);
+        return;
+      }
+
+      // 2. Load Razorpay SDK
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        toast.error("Razorpay SDK unavailable. Please try again.");
+        setIsPlusPaymentProcessing(false);
+        return;
+      }
+
+      // 3. Open Razorpay checkout
+      const options = {
+        key: createData.key_id,
+        amount: 29900,
+        currency: "INR",
+        name: "IESVRA",
+        description: "IESVRA Plus Membership — 1 Year",
+        order_id: createData.order_id,
+        handler: async (response: any) => {
+          try {
+            const verifyRes = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok || !verifyData.verified) {
+              throw new Error(verifyData.error || "Payment verification failed.");
+            }
+            // Activate membership
+            localStorage.setItem("iesvra_plus_member", "true");
+            setIsPlusMember(true);
+            toast.success("🎉 Welcome to IESVRA Plus! Your membership is now active.");
+            setIsPlusModalOpen(false);
+          } catch (e: any) {
+            toast.error(e.message || "Payment succeeded but verification failed.");
+          } finally {
+            setIsPlusPaymentProcessing(false);
+          }
+        },
+        prefill: {},
+        theme: { color: "#4C1D95" },
+        modal: {
+          ondismiss: () => {
+            setIsPlusPaymentProcessing(false);
+            toast.info("Payment cancelled.");
+          },
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (err: any) {
+      toast.error(err.message || "Payment failed. Please try again.");
+      setIsPlusPaymentProcessing(false);
+    }
+  };
   const [isListening, setIsListening] = useState(false);
 
   // Voice Search Handler
@@ -689,15 +783,21 @@ export function Home() {
               </button>
             ) : (
               <button
-                onClick={() => {
-                  localStorage.setItem("iesvra_plus_member", "true");
-                  setIsPlusMember(true);
-                  toast.success("🎉 Congratulations! You are now an IESVRA Plus Member!");
-                  setIsPlusModalOpen(false);
-                }}
-                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-purple-950 font-black py-3.5 rounded-2xl text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                onClick={handlePlusPayment}
+                disabled={isPlusPaymentProcessing}
+                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 disabled:opacity-70 disabled:cursor-not-allowed text-purple-950 font-black py-3.5 rounded-2xl text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <Crown className="h-4 w-4 fill-purple-950" /> Subscribe for ₹299
+                {isPlusPaymentProcessing ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Processing Payment...
+                  </>
+                ) : (
+                  <><Crown className="h-4 w-4 fill-purple-950" /> Pay ₹299 & Subscribe</>
+                )}
               </button>
             )}
           </div>
