@@ -470,8 +470,8 @@
 
       <div class="coupon-list" id="couponListContainer" style="display: flex; flex-direction: column; gap: 16px;">
         <!-- Card 1: Flat 15% OFF -->
-        <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
-          <div class="coupon-left-new purple-grad" style="width: 85px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #7B5FE0, #C4B5FD);">
+        <div class="coupon-ticket-new">
+          <div class="coupon-left-new purple-grad" style="background: linear-gradient(135deg, #7B5FE0, #C4B5FD);">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12.5 2.5 C13 2 13.8 2 14.3 2.5 L21.5 9.7 C22 10.2 22 11 21.5 11.5 L11.5 21.5 C11 22 10.2 22 9.7 21.5 L2.5 14.3 C2 13.8 2 13 2.5 12.5 Z" fill="#FFE082" />
               <path d="M11 4 L20 13 L13 20 L4 11 Z" fill="#FFC107" />
@@ -480,25 +480,27 @@
             </svg>
           </div>
           
-          <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
-            <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
-              <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px 0;">Flat 15% OFF</h4>
-              <p style="font-size: 10px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.3;">Valid on your first boutique checkouts</p>
-              <div style="font-size: 9px; font-weight: 700; color: var(--accent-purple); display: flex; align-items: center; gap: 4px;">
+          <div class="coupon-right-new">
+            <div class="coupon-details-new">
+              <div>
+                <h4>Flat 15% OFF</h4>
+                <p>Valid on your first boutique checkouts</p>
+              </div>
+              <div class="coupon-validity-new" style="color: var(--accent-purple);">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Valid till 31 May 2024
               </div>
             </div>
             
-            <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
-              <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
-              <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            <div class="coupon-notch-divider">
+              <div class="coupon-notch-circle-top"></div>
+              <div class="coupon-notch-circle-bottom"></div>
             </div>
             
-            <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
-              <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: #6D4FD6; color: white; font-size: 7px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">Best Seller</div>
-              <button onclick="window.copyCouponCode('FIRST15')" class="coupon-code-pill-new" style="background: var(--accent-purple); color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">FIRST15</button>
-              <div onclick="window.copyCouponCode('FIRST15')" style="font-size: 9px; font-weight: 800; color: #6D4FD6; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+            <div class="coupon-actions-new">
+              <div class="coupon-sash-new" style="background: #6D4FD6;">Best Seller</div>
+              <button onclick="window.copyCouponCode('FIRST15')" class="coupon-code-pill-new" style="background: var(--accent-purple);">FIRST15</button>
+              <div onclick="window.copyCouponCode('FIRST15')" class="coupon-copy-text-new" style="color: #6D4FD6;">
                 Copy Code
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               </div>
@@ -507,8 +509,8 @@
         </div>
 
         <!-- Card 2: Free Shipping -->
-        <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
-          <div class="coupon-left-new orange-grad" style="width: 85px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #F59E0B, #FDE68A);">
+        <div class="coupon-ticket-new">
+          <div class="coupon-left-new orange-grad" style="background: linear-gradient(135deg, #F59E0B, #FDE68A);">
             <svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="2" y="6" width="13" height="9" rx="1.5" fill="#FFE082" />
               <rect x="3" y="7" width="11" height="7" rx="0.5" fill="#FFB300" />
@@ -521,25 +523,27 @@
             </svg>
           </div>
           
-          <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
-            <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
-              <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px 0;">Free Shipping</h4>
-              <p style="font-size: 10px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.3;">No shipping cost on order sizes above ₹499</p>
-              <div style="font-size: 9px; font-weight: 700; color: #D97706; display: flex; align-items: center; gap: 4px;">
+          <div class="coupon-right-new">
+            <div class="coupon-details-new">
+              <div>
+                <h4>Free Shipping</h4>
+                <p>No shipping cost on order sizes above ₹499</p>
+              </div>
+              <div class="coupon-validity-new" style="color: #D97706;">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Valid till 31 May 2024
               </div>
             </div>
             
-            <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
-              <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
-              <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            <div class="coupon-notch-divider">
+              <div class="coupon-notch-circle-top"></div>
+              <div class="coupon-notch-circle-bottom"></div>
             </div>
             
-            <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
-              <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: #D97706; color: white; font-size: 6px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">Free Delivery</div>
-              <button onclick="window.copyCouponCode('FREESHIP')" class="coupon-code-pill-new" style="background: #F59E0B; color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">FREESHIP</button>
-              <div onclick="window.copyCouponCode('FREESHIP')" style="font-size: 9px; font-weight: 800; color: #D97706; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+            <div class="coupon-actions-new">
+              <div class="coupon-sash-new" style="background: #D97706;">Free Delivery</div>
+              <button onclick="window.copyCouponCode('FREESHIP')" class="coupon-code-pill-new" style="background: #F59E0B;">FREESHIP</button>
+              <div onclick="window.copyCouponCode('FREESHIP')" class="coupon-copy-text-new" style="color: #D97706;">
                 Copy Code
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               </div>
@@ -548,8 +552,8 @@
         </div>
 
         <!-- Card 3: Festive Save 10% -->
-        <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
-          <div class="coupon-left-new green-grad" style="width: 85px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #10B981, #A7F3D0);">
+        <div class="coupon-ticket-new">
+          <div class="coupon-left-new green-grad" style="background: linear-gradient(135deg, #10B981, #A7F3D0);">
             <svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2 L14 4 L16.5 3.5 L17.5 5.5 L20 6 L20 8.5 L21.5 10 L20.5 12.2 L21.5 14.5 L20 16 L20 18.5 L17.5 19 L16.5 21 L14 20.5 L12 22 L10 20.5 L7.5 21 L6.5 19 L4 18.5 L4 16 L2.5 14.5 L3.5 12.2 L2.5 10 L4 8.5 L4 6 L6.5 5.5 L7.5 3.5 L10 4 Z" fill="#A7F3D0" />
               <circle cx="12" cy="12" r="7" fill="#10B981" />
@@ -557,25 +561,27 @@
             </svg>
           </div>
           
-          <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
-            <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
-              <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px 0;">Festive Save 10%</h4>
-              <p style="font-size: 10px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.3;">Extra 10% instant discount up to ₹250</p>
-              <div style="font-size: 9px; font-weight: 700; color: #059669; display: flex; align-items: center; gap: 4px;">
+          <div class="coupon-right-new">
+            <div class="coupon-details-new">
+              <div>
+                <h4>Festive Save 10%</h4>
+                <p>Extra 10% instant discount up to ₹250</p>
+              </div>
+              <div class="coupon-validity-new" style="color: #059669;">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Valid till 31 May 2024
               </div>
             </div>
             
-            <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
-              <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
-              <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            <div class="coupon-notch-divider">
+              <div class="coupon-notch-circle-top"></div>
+              <div class="coupon-notch-circle-bottom"></div>
             </div>
             
-            <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
-              <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: #059669; color: white; font-size: 6px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">Limited Time</div>
-              <button onclick="window.copyCouponCode('FESTIVE10')" class="coupon-code-pill-new" style="background: #10B981; color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">FESTIVE10</button>
-              <div onclick="window.copyCouponCode('FESTIVE10')" style="font-size: 9px; font-weight: 800; color: #059669; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+            <div class="coupon-actions-new">
+              <div class="coupon-sash-new" style="background: #059669;">Limited Time</div>
+              <button onclick="window.copyCouponCode('FESTIVE10')" class="coupon-code-pill-new" style="background: #10B981;">FESTIVE10</button>
+              <div onclick="window.copyCouponCode('FESTIVE10')" class="coupon-copy-text-new" style="color: #059669;">
                 Copy Code
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               </div>
@@ -584,8 +590,8 @@
         </div>
 
         <!-- Card 4: IESVRA Plus -->
-        <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
-          <div class="coupon-left-new indigo-grad" style="width: 85px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #4F46E5, #C7D2FE);">
+        <div class="coupon-ticket-new">
+          <div class="coupon-left-new indigo-grad" style="background: linear-gradient(135deg, #4F46E5, #C7D2FE);">
             <svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M2 18 L4 10 L8 14 L12 6 L16 14 L20 10 L22 18 Z" fill="#FCD34D" />
               <path d="M4 18 L5.5 11 L8.5 14 L12 7 L15.5 14 L18.5 11 L20 18 Z" fill="#F59E0B" />
@@ -598,28 +604,30 @@
             </svg>
           </div>
           
-          <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
-            <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0;">IESVRA Plus</h4>
-                <span style="background: #6366F1; color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Plus</span>
+          <div class="coupon-right-new">
+            <div class="coupon-details-new">
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <h4>IESVRA Plus</h4>
+                  <span style="background: #6366F1; color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Plus</span>
+                </div>
+                <p>Buy 3 items or more to unlock Plus member perks</p>
               </div>
-              <p style="font-size: 10px; color: var(--text-muted); margin: 4px 0 8px 0; line-height: 1.3;">Buy 3 items or more to unlock Plus member perks</p>
-              <div style="font-size: 9px; font-weight: 700; color: #4338CA; display: flex; align-items: center; gap: 4px;">
+              <div class="coupon-validity-new" style="color: #4338CA;">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2 L2 7 L12 12 L22 7 Z M2 17 L12 22 L22 17"/></svg>
                 Valid Membership
               </div>
             </div>
             
-            <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
-              <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
-              <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+            <div class="coupon-notch-divider">
+              <div class="coupon-notch-circle-top"></div>
+              <div class="coupon-notch-circle-bottom"></div>
             </div>
             
-            <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
-              <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: #4338CA; color: white; font-size: 6px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">Member Only</div>
-              <button onclick="window.copyCouponCode('IESVRAPLUS')" class="coupon-code-pill-new" style="background: #4F46E5; color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">IESVRAPLUS</button>
-              <div onclick="window.copyCouponCode('IESVRAPLUS')" style="font-size: 9px; font-weight: 800; color: #4338CA; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+            <div class="coupon-actions-new">
+              <div class="coupon-sash-new" style="background: #4338CA;">Member Only</div>
+              <button onclick="window.copyCouponCode('IESVRAPLUS')" class="coupon-code-pill-new" style="background: #4F46E5;">IESVRAPLUS</button>
+              <div onclick="window.copyCouponCode('IESVRAPLUS')" class="coupon-copy-text-new" style="color: #4338CA;">
                 Copy Code
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               </div>

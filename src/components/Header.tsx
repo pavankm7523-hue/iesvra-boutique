@@ -25,6 +25,8 @@ import {
   Package,
   Navigation,
   Smartphone,
+  Bell,
+  ShoppingBag,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -37,7 +39,7 @@ export function Header() {
   const { products: allProducts } = useProducts();
   const currentUser = useCurrentUser();
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
-  const categories = useCategories();
+  const { categories } = useCategories();
 
   // Header Delivery State
   const [headerAddress, setHeaderAddress] = useState("");
@@ -230,6 +232,50 @@ export function Header() {
         </div>
       </div>
       {/* ======================================================== */}
+
+      {/* MOBILE TOP LOCATION & NOTIFICATION BAR (Matching Screenshot) */}
+      <div className="sm:hidden bg-white px-4 py-2.5 border-b border-slate-100 flex items-center justify-between shadow-xs">
+        <button
+          onClick={() => setIsAddressModalOpen(true)}
+          className="flex items-center gap-2.5 text-left group cursor-pointer"
+        >
+          <div className="w-9 h-9 rounded-full bg-[#F0EBFF] text-[#6B46C1] flex items-center justify-center shrink-0 shadow-xs border border-[#E0D5FF]">
+            <MapPin className="h-4 w-4 stroke-[2.5]" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-0.5">
+              DELIVERING TO
+            </span>
+            <div className="flex items-center gap-1 font-extrabold text-slate-800 text-xs leading-tight">
+              <span className="truncate max-w-[170px]">
+                {headerAddress || "New Jaganpura, Patna"}
+              </span>
+              <ChevronDown className="h-3.5 w-3.5 text-[#6B46C1] shrink-0" />
+            </div>
+          </div>
+        </button>
+
+        <div className="flex items-center gap-3">
+          {/* Bell Notifications */}
+          <button className="relative w-9 h-9 rounded-full bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-[#6B46C1] transition cursor-pointer">
+            <Bell className="h-4.5 w-4.5 stroke-[2]" />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-extrabold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white">
+              2
+            </span>
+          </button>
+
+          {/* Cart Bag */}
+          <Link
+            to="/cart"
+            className="relative w-9 h-9 rounded-full bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-700 hover:text-[#6B46C1] transition"
+          >
+            <ShoppingBag className="h-4.5 w-4.5 stroke-[2]" />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-extrabold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white">
+              {cartCount}
+            </span>
+          </Link>
+        </div>
+      </div>
 
       {/* Main Header */}
       <div className="bg-white py-3 lg:py-4 border-b border-slate-200/60">

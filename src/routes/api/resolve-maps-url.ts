@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/api/resolve-maps-url")(({
   server: {
     handlers: {
-      GET: async ({ request }) => {
+      GET: async ({ request }: { request: Request }) => {
         try {
           const urlObj = new URL(request.url);
           const targetUrl = urlObj.searchParams.get("url");

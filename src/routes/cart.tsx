@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ShoppingCart, Trash2, ArrowRight, X, CreditCard, CheckCircle, MapPin, Zap, Truck, Navigation, Locate } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowRight, X, CreditCard, CheckCircle, MapPin, Zap, Truck, Navigation, Locate, Tag } from "lucide-react";
 import { useCartItems, removeFromCart, updateCartQuantity } from "@/lib/cart";
 import { useState, useEffect, useRef } from "react";
 import { AddressPicker } from "@/components/AddressPicker";
@@ -314,6 +314,34 @@ function Cart() {
     }
   }, [cartItems, shippingName, shippingEmail, shippingPhone, addressLine1, city, state, pincode]);
 
+  // Coupon Code States
+  const [couponCodeInput, setCouponCodeInput] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("IESVRA_applied_coupon") || "";
+  });
+  const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("IESVRA_applied_coupon") || null;
+  });
+  const [couponError, setCouponError] = useState<string | null>(null);
+
+  // Sync coupon with localStorage changes
+  useEffect(() => {
+    const handleCouponSync = () => {
+      const savedCode = localStorage.getItem("IESVRA_applied_coupon");
+      if (savedCode) {
+        setAppliedCouponCode(savedCode);
+        setCouponCodeInput(savedCode);
+      }
+    };
+    window.addEventListener("iesvra-coupon-updated", handleCouponSync);
+    window.addEventListener("storage", handleCouponSync);
+    return () => {
+      window.removeEventListener("iesvra-coupon-updated", handleCouponSync);
+      window.removeEventListener("storage", handleCouponSync);
+    };
+  }, []);
+
   const physicalItems = cartItems.filter(item => item.id !== "iesvra-plus-membership" && !item.isDigital);
   const physicalSubtotal = physicalItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const hasPhysical = physicalItems.length > 0;
@@ -324,8 +352,99 @@ function Cart() {
   const baseShipping = hasPhysical 
     ? (physicalSubtotal < FREE_SHIPPING_THRESHOLD ? 59 : 0)
     : 0;
-  const deliveryFee = baseShipping;
-  const total = subtotal + deliveryFee;
+
+  // Coupon Rules Definition
+  const VALID_COUPONS: Record<string, {
+    code: string;
+    title: string;
+    getDiscount: (sub: number, baseShip: number) => { discount: number; isFreeShipping?: boolean; description: string };
+  }> = {
+    FIRST15: {
+      code: "FIRST15",
+      title: "Flat 15% OFF",
+      getDiscount: (sub) => ({
+        discount: Math.round(sub * 0.15),
+        description: "Flat 15% OFF applied on subtotal!",
+      }),
+    },
+    FREESHIP: {
+      code: "FREESHIP",
+      title: "Free Shipping",
+      getDiscount: (_, baseShip) => ({
+        discount: baseShip,
+        isFreeShipping: true,
+        description: "Free shipping applied! Delivery fee waived.",
+      }),
+    },
+    FESTIVE10: {
+      code: "FESTIVE10",
+      title: "Festive Save 10%",
+      getDiscount: (sub) => ({
+        discount: Math.min(250, Math.round(sub * 0.10)),
+        description: "Festive 10% instant discount applied!",
+      }),
+    },
+    IESVRAPLUS: {
+      code: "IESVRAPLUS",
+      title: "IESVRA Plus Perk",
+      getDiscount: (sub) => ({
+        discount: Math.min(sub, 100),
+        description: "IESVRA Plus member discount applied (₹100 OFF)!",
+      }),
+    },
+  };
+
+  let couponDiscount = 0;
+  let isCouponFreeShipping = false;
+  let activeCouponInfo: { code: string; title: string; description: string } | null = null;
+
+  if (appliedCouponCode) {
+    const normalized = appliedCouponCode.trim().toUpperCase();
+    const config = VALID_COUPONS[normalized];
+    if (config) {
+      const res = config.getDiscount(subtotal, baseShipping);
+      couponDiscount = res.discount;
+      if (res.isFreeShipping) isCouponFreeShipping = true;
+      activeCouponInfo = {
+        code: config.code,
+        title: config.title,
+        description: res.description,
+      };
+    }
+  }
+
+  const deliveryFee = isCouponFreeShipping ? 0 : baseShipping;
+  const total = Math.max(0, subtotal + deliveryFee - couponDiscount);
+
+  const handleApplyCoupon = (codeToApply?: string) => {
+    const targetCode = (codeToApply || couponCodeInput).trim().toUpperCase();
+    if (!targetCode) {
+      setCouponError("Please enter a coupon code.");
+      return;
+    }
+
+    if (!VALID_COUPONS[targetCode]) {
+      setCouponError(`Invalid coupon code "${targetCode}". Try FIRST15, FREESHIP, FESTIVE10, or IESVRAPLUS.`);
+      toast.error(`Invalid coupon code "${targetCode}"`);
+      return;
+    }
+
+    setCouponError(null);
+    setAppliedCouponCode(targetCode);
+    setCouponCodeInput(targetCode);
+    localStorage.setItem("IESVRA_applied_coupon", targetCode);
+    window.dispatchEvent(new Event("iesvra-coupon-updated"));
+    toast.success(`Coupon "${targetCode}" applied! 🎉`);
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCouponCode(null);
+    setCouponCodeInput("");
+    setCouponError(null);
+    localStorage.removeItem("IESVRA_applied_coupon");
+    window.dispatchEvent(new Event("iesvra-coupon-updated"));
+    toast.info("Coupon removed.");
+  };
 
   const handleAddressSelect = async (addr: string) => {
     setShowSuggestions(false);
@@ -647,21 +766,126 @@ function Cart() {
                     <div className="flex justify-between text-muted-foreground">
                       <span>
                         Shipping
-                        {deliveryFee > 0 && (
+                        {baseShipping > 0 && !isCouponFreeShipping && (
                           <span className="block text-[10px] font-medium text-blue-500 mt-0.5">
-                            Add ₹{FREE_SHIPPING_THRESHOLD - physicalSubtotal} more for free delivery
+                            Add ₹{Math.max(0, FREE_SHIPPING_THRESHOLD - physicalSubtotal)} more for free delivery
                           </span>
                         )}
                       </span>
                       <span className="font-medium text-foreground">
                         {deliveryFee === 0 ? (
-                          <span className="text-green-600">Free</span>
+                          <span className="text-green-600 font-bold">Free</span>
                         ) : (
                           `₹${deliveryFee}`
                         )}
                       </span>
                     </div>
                   )}
+
+                  {/* Coupon Applied Discount Row */}
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-emerald-600 font-semibold pt-1">
+                      <span className="flex items-center gap-1">
+                        <Tag className="h-3.5 w-3.5" /> Coupon Discount ({appliedCouponCode})
+                      </span>
+                      <span>- ₹{couponDiscount.toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  {/* Coupon Application Block */}
+                  <div className="border-t border-border/60 pt-4 my-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-bold text-navy-deep uppercase tracking-wider flex items-center gap-1.5">
+                        <Tag className="h-3.5 w-3.5 text-primary" /> Coupon Code
+                      </label>
+                      {appliedCouponCode && (
+                        <button
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          className="text-[10px] font-bold text-red-500 hover:underline cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+
+                    {appliedCouponCode && activeCouponInfo ? (
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">
+                            %
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-emerald-900 flex items-center gap-1">
+                              <span>{activeCouponInfo.code}</span>
+                              <span className="text-[10px] font-normal text-emerald-700">({activeCouponInfo.title})</span>
+                            </div>
+                            <p className="text-[10px] text-emerald-700 font-medium leading-tight">{activeCouponInfo.description}</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          className="text-emerald-700 hover:text-red-600 transition p-1 cursor-pointer"
+                          title="Remove Coupon"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={couponCodeInput}
+                            onChange={(e) => {
+                              setCouponCodeInput(e.target.value);
+                              setCouponError(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleApplyCoupon();
+                              }
+                            }}
+                            placeholder="Enter code (e.g. FIRST15)"
+                            className="flex-1 h-9 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold uppercase placeholder:normal-case placeholder:font-normal focus:outline-none focus:border-primary focus:bg-white transition"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleApplyCoupon()}
+                            className="h-9 px-4 bg-primary text-white text-xs font-bold uppercase rounded-lg hover:bg-primary/95 transition cursor-pointer shrink-0"
+                          >
+                            Apply
+                          </button>
+                        </div>
+
+                        {couponError && (
+                          <p className="text-[11px] font-semibold text-red-500">{couponError}</p>
+                        )}
+
+                        {/* Quick Coupon Chips */}
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {[
+                            { code: "FIRST15", label: "15% OFF" },
+                            { code: "FREESHIP", label: "FREE SHIP" },
+                            { code: "FESTIVE10", label: "10% OFF" },
+                            { code: "IESVRAPLUS", label: "PLUS PERK" },
+                          ].map((c) => (
+                            <button
+                              key={c.code}
+                              type="button"
+                              onClick={() => handleApplyCoupon(c.code)}
+                              className="text-[10px] font-extrabold px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200/80 hover:bg-purple-600 hover:text-white transition cursor-pointer"
+                            >
+                              {c.code} ({c.label})
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="border-t border-border pt-4 flex justify-between font-semibold text-base text-navy-deep">
                     <span>Total</span>
                     <span>₹{total.toLocaleString()}</span>
@@ -1064,6 +1288,99 @@ function Cart() {
                         </div>
                       </label>
                     </div>
+                  </div>
+
+                  {/* COUPON SECTION IN CHECKOUT DRAWER */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-border/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-navy-deep flex items-center gap-2 text-sm">
+                        <Tag className="h-4 w-4 text-primary" /> Apply Coupon
+                      </h4>
+                      {appliedCouponCode && (
+                        <button
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          className="text-[10px] font-bold text-red-500 hover:underline cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+
+                    {appliedCouponCode && activeCouponInfo ? (
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">
+                            %
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-emerald-900 flex items-center gap-1">
+                              <span>{activeCouponInfo.code}</span>
+                              <span className="text-[10px] font-normal text-emerald-700">({activeCouponInfo.title})</span>
+                            </div>
+                            <p className="text-[10px] text-emerald-700 font-medium leading-tight">{activeCouponInfo.description}</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          className="text-emerald-700 hover:text-red-600 transition p-1 cursor-pointer"
+                          title="Remove Coupon"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={couponCodeInput}
+                            onChange={(e) => {
+                              setCouponCodeInput(e.target.value);
+                              setCouponError(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleApplyCoupon();
+                              }
+                            }}
+                            placeholder="Enter code (e.g. FIRST15)"
+                            className="flex-1 h-9 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold uppercase placeholder:normal-case placeholder:font-normal focus:outline-none focus:border-primary focus:bg-white transition"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleApplyCoupon()}
+                            className="h-9 px-4 bg-primary text-white text-xs font-bold uppercase rounded-lg hover:bg-primary/95 transition cursor-pointer shrink-0"
+                          >
+                            Apply
+                          </button>
+                        </div>
+
+                        {couponError && (
+                          <p className="text-[11px] font-semibold text-red-500">{couponError}</p>
+                        )}
+
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {[
+                            { code: "FIRST15", label: "15% OFF" },
+                            { code: "FREESHIP", label: "FREE SHIP" },
+                            { code: "FESTIVE10", label: "10% OFF" },
+                            { code: "IESVRAPLUS", label: "PLUS PERK" },
+                          ].map((c) => (
+                            <button
+                              key={c.code}
+                              type="button"
+                              onClick={() => handleApplyCoupon(c.code)}
+                              className="text-[10px] font-extrabold px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200/80 hover:bg-purple-600 hover:text-white transition cursor-pointer"
+                            >
+                              {c.code} ({c.label})
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* STEP 3: PAYMENT SECTION */}

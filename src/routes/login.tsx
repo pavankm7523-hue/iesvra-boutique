@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect, useRef } from "react";
 const logo = "/iesvra-logo.png";
-import { loginUser, registerUserInDb, validateUserCredentials, updateUserPassword, hasUserAccount } from "@/lib/auth";
+import { loginUser, registerUserInDb, validateUserCredentials, updateUserPassword, hasUserAccount, getRegisteredUsers, saveRegisteredUsers } from "@/lib/auth";
 import { toast } from "sonner";
 import { Check, X, Shield, Lock, Eye, EyeOff, ArrowLeft, KeyRound } from "lucide-react";
 
@@ -43,7 +43,7 @@ function Login() {
 
     const users = getRegisteredUsers();
     const normalizedEmail = emailVal.trim().toLowerCase();
-    if (!users.some(u => u.email.toLowerCase() === normalizedEmail)) {
+    if (!users.some((u: any) => u.email.toLowerCase() === normalizedEmail)) {
       users.push({
         name: nameVal,
         email: normalizedEmail,

@@ -13,6 +13,7 @@ import {
 import appCss from "../styles.css?url";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { BottomNav } from "@/components/BottomNav";
 import { Toaster } from "sonner";
 
 function NotFoundComponent() {
@@ -187,6 +188,7 @@ function RootComponent() {
           <Outlet />
         </main>
         <Footer />
+        <BottomNav />
         <Toaster position="bottom-right" richColors closeButton />
 
         {/* Floating WhatsApp Button */}

@@ -918,7 +918,9 @@
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(code).catch(() => {});
     }
-    window.showToast(`Code "${code}" copied! 🎉`);
+    localStorage.setItem('IESVRA_applied_coupon', code);
+    window.dispatchEvent(new Event('iesvra-coupon-updated'));
+    window.showToast(`Code "${code}" copied & applied for checkout! 🎉`);
   };
 
   window.filterHomeByCategory = (categoryName) => {
@@ -1155,33 +1157,35 @@
     ];
 
     container.innerHTML = offers.map(coupon => `
-      <div class="coupon-ticket-new" style="display: flex; margin: 0 16px; height: 110px; background: white; border-radius: 16px; box-shadow: var(--shadow-premium); overflow: hidden; position: relative;">
-        <div class="coupon-left-new" style="width: 85px; display: flex; align-items: center; justify-content: center; background: ${coupon.grad};">
+      <div class="coupon-ticket-new">
+        <div class="coupon-left-new" style="background: ${coupon.grad};">
           ${coupon.icon}
         </div>
         
-        <div class="coupon-right-new" style="flex: 1; display: flex; padding: 12px 16px; position: relative; overflow: hidden;">
-          <div class="coupon-details-new" style="flex: 1.3; display: flex; flex-direction: column; justify-content: center;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0;">${coupon.title}</h4>
-              ${coupon.isPlus ? `<span style="background: #6366F1; color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Plus</span>` : ''}
+        <div class="coupon-right-new">
+          <div class="coupon-details-new">
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 2px 0;">${coupon.title}</h4>
+                ${coupon.isPlus ? `<span style="background: #6366F1; color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Plus</span>` : ''}
+              </div>
+              <p style="font-size: 10px; color: var(--text-muted); margin: 2px 0 6px 0; line-height: 1.3;">${coupon.desc}</p>
             </div>
-            <p style="font-size: 10px; color: var(--text-muted); margin: 4px 0 8px 0; line-height: 1.3;">${coupon.desc}</p>
-            <div style="font-size: 9px; font-weight: 700; color: ${coupon.dateColor}; display: flex; align-items: center; gap: 4px;">
+            <div class="coupon-validity-new" style="color: ${coupon.dateColor};">
               ${coupon.isPlus ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2 L2 7 L12 12 L22 7 Z M2 17 L12 22 L22 17"/></svg>' : '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'}
               ${coupon.date}
             </div>
           </div>
           
-          <div style="width: 1px; border-left: 1.5px dashed #E2E8F0; margin: 4px 0; position: relative;">
-            <div style="content: ''; position: absolute; top: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
-            <div style="content: ''; position: absolute; bottom: -20px; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #f8f9fa; z-index: 3;"></div>
+          <div class="coupon-notch-divider">
+            <div class="coupon-notch-circle-top"></div>
+            <div class="coupon-notch-circle-bottom"></div>
           </div>
           
-          <div class="coupon-actions-new" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-left: 8px; position: relative;">
-            <div class="coupon-sash-new" style="position: absolute; top: 8px; right: -25px; background: ${coupon.sashBg}; color: white; font-size: 6px; font-weight: 900; padding: 2px 24px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 0.05em;">${coupon.sash}</div>
-            <button onclick="window.copyCouponCode('${coupon.code}')" class="coupon-code-pill-new" style="background: ${coupon.btnBg}; color: white; border: 1.5px dashed rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 800; width: 85%; margin-bottom: 6px; cursor: pointer; text-align: center;">${coupon.code}</button>
-            <div onclick="window.copyCouponCode('${coupon.code}')" style="font-size: 9px; font-weight: 800; color: ${coupon.copyColor}; display: flex; align-items: center; gap: 3px; cursor: pointer; text-transform: uppercase;">
+          <div class="coupon-actions-new">
+            <div class="coupon-sash-new" style="background: ${coupon.sashBg};">${coupon.sash}</div>
+            <button onclick="window.copyCouponCode('${coupon.code}')" class="coupon-code-pill-new" style="background: ${coupon.btnBg};">${coupon.code}</button>
+            <div onclick="window.copyCouponCode('${coupon.code}')" class="coupon-copy-text-new" style="color: ${coupon.copyColor};">
               Copy Code
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             </div>

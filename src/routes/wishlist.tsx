@@ -111,7 +111,7 @@ function WishlistPage() {
                   <div className="p-4 flex flex-col gap-3 flex-1">
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-gold">
-                        {item.categories?.[0] || "Uncategorized"}
+                        {(item as any).categories?.[0] || item.category || "Uncategorized"}
                       </span>
                       <Link to="/product/$id" params={{ id: item.id }}>
                         <h3 className="font-display font-semibold text-sm text-navy-deep hover:text-gold transition-colors line-clamp-2 leading-snug mt-0.5">
@@ -144,7 +144,7 @@ function WishlistPage() {
                               price: item.price,
                               mrp: item.mrp,
                               image: item.image,
-                              category: item.categories?.[0] || "Uncategorized",
+                              category: (item as any).categories?.[0] || item.category || "Uncategorized",
                             } as any,
                             "Standard",
                             1
