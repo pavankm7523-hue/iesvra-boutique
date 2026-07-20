@@ -176,11 +176,19 @@ export function Header() {
 
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
-    const q = searchQuery.toLowerCase();
-    return allProducts.filter(p => 
-      p.name.toLowerCase().includes(q) || 
-      p.categories.some(cat => cat.toLowerCase().includes(q))
-    ).slice(0, 5);
+    const q = searchQuery.toLowerCase().trim();
+    const qStem = q.replace(/(?:ers|es|s)$/, '');
+    
+    return allProducts.filter(p => {
+      const name = p.name.toLowerCase();
+      const sub = (p.sub || "").toLowerCase();
+      const desc = (p.description || "").toLowerCase();
+      const cats = (p.categories || []).map(c => c.toLowerCase());
+      
+      if (name.includes(q) || sub.includes(q) || desc.includes(q) || cats.some(c => c.includes(q))) return true;
+      if (qStem.length >= 3 && (name.includes(qStem) || sub.includes(qStem) || desc.includes(qStem) || cats.some(c => c.includes(qStem)))) return true;
+      return false;
+    }).slice(0, 6);
   }, [searchQuery, allProducts]);
   const navLinks = [
     { label: "Home", to: "/" as const },
