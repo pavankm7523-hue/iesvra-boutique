@@ -304,40 +304,7 @@ export function Home() {
       </section>
 
 
-      {/* ========================================================
-          4. SEARCH BAR (MATCHING SCREENSHOT)
-         ======================================================== */}
-      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-5">
-        <form onSubmit={handleSearchSubmit} className="relative w-full">
-          <div className="flex items-center bg-white border-2 border-purple-200 hover:border-[#6B46C1] focus-within:border-[#6B46C1] rounded-full px-4 py-2.5 sm:py-3 shadow-[0_4px_20px_rgba(107,70,193,0.08)] transition-all">
-            {/* Search Icon */}
-            <Search className="h-5 w-5 text-[#6B46C1] shrink-0 mr-3" />
-            
-            {/* Search Input */}
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search 50,000+ Products..."
-              className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-400 text-sm font-medium focus:outline-none"
-            />
 
-            {/* Voice Microphone Icon */}
-            <button
-              type="button"
-              onClick={handleVoiceSearch}
-              title="Voice Search"
-              className={`p-1.5 rounded-full transition-colors cursor-pointer ${
-                isListening
-                  ? "bg-red-100 text-red-600 animate-pulse"
-                  : "text-[#6B46C1] hover:bg-purple-50"
-              }`}
-            >
-              <Mic className="h-5 w-5 stroke-[2]" />
-            </button>
-          </div>
-        </form>
-      </section>
 
 
 
