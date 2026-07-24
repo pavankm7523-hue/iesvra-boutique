@@ -4860,7 +4860,7 @@
     "status": "success",
     "url": "https://www.amazon.in/dp/B0GKVHP7Q8"
   }
-;
+];
 
   function getProducts() {
     const stored = localStorage.getItem("ishvara_products_v11");

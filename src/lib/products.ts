@@ -5046,7 +5046,7 @@ export const initialProducts: Product[] = [
     "status": "success",
     "url": "https://www.amazon.in/dp/B0GKVHP7Q8"
   }
-;
+];
 
   import { useState, useEffect } from "react";
 
