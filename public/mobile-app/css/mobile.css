@@ -338,79 +338,94 @@ body.no-app-header .main-content {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ==================== SPLASH SCREEN ==================== */
+/* ==================== SPLASH SCREEN (BLINKIT STYLE) ==================== */
 .splash-screen {
   position: fixed;
   inset: 0;
   z-index: 2100;
-  background: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 80px 24px 40px;
-  transition: opacity 0.5s ease;
-}
-
-.splash-content {
+  background: #ffffff !important;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  padding: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-.brand-logo-img {
-  height: 52px;
-  width: auto;
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;
-}
-
-.brand-logo-img.large {
-  height: 72px;
-  margin-bottom: 8px;
-}
-
-.splash-tagline {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: #718096;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-top: 8px;
-}
-
-.splash-divider-line {
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, #ffbe1a 0%, #3B82F6 50%, #10B981 100%);
-  margin: 16px 0;
-  border-radius: 2px;
-}
-
-.splash-scooter-illustration {
-  margin-top: 32px;
-  width: 240px;
-  height: 180px;
-}
-
-.splash-store-badges {
+.splash-content-blinkit {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  width: 100%;
+  justify-content: center;
+  text-align: center;
 }
-.splash-store-badges .badge-label {
-  font-size: 11px;
-  color: #A0AEC0;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+
+.splash-logo-wrap {
+  animation: blinkitLogoIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.splash-logo-img {
+  height: 64px;
+  width: auto;
+  object-fit: contain;
+}
+
+.splash-tagline-blinkit {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
   font-weight: 600;
+  color: #475569;
+  letter-spacing: -0.01em;
+  margin-top: 12px;
+  opacity: 0;
+  animation: blinkitTaglineIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
 }
+
+.splash-spinner-blinkit {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid #EDE9FE;
+  border-top-color: #6D4FD6;
+  border-radius: 50%;
+  margin-top: 28px;
+  opacity: 0;
+  animation: blinkitTaglineIn 0.4s ease-out 0.35s forwards, blinkitSpin 0.8s linear infinite;
+}
+
+@keyframes blinkitLogoIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes blinkitTaglineIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blinkitSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Home Purple Banner Padding & Heading Clearance Fix */
+.express-purple-banner-new {
+  padding-top: 40px !important;
+  margin-top: 20px !important;
+}
+
 .splash-store-badges .badge-row {
   display: flex;
   gap: 12px;

@@ -254,8 +254,9 @@
       .then(res => res.json())
       .then(globalProducts => {
         if (Array.isArray(globalProducts) && globalProducts.length > 0) {
-          localStorage.setItem("ishvara_products_v4", JSON.stringify(globalProducts));
-          if (typeof renderHomeScreen === 'function') renderHomeScreen();
+          localStorage.setItem("ishvara_products_v11", JSON.stringify(globalProducts));
+          if (typeof renderBestSellers === 'function') renderBestSellers();
+          if (typeof renderCategoriesScroll === 'function') renderCategoriesScroll();
         }
       })
       .catch(err => console.error("Failed to sync global products:", err));
@@ -265,7 +266,7 @@
       .then(res => res.json())
       .then(globalCategories => {
         if (Array.isArray(globalCategories) && globalCategories.length > 0) {
-          localStorage.setItem("ishvara_categories_v2", JSON.stringify(globalCategories));
+          localStorage.setItem("ishvara_categories_v3", JSON.stringify(globalCategories));
           if (typeof renderCategoriesScreen === 'function') renderCategoriesScreen();
         }
       })
@@ -326,17 +327,18 @@
       });
     }
 
-    // 1. Splash Screen Transition
+    // 1. Splash Screen Transition (Blinkit style ~1.6s duration)
     setTimeout(() => {
       const splash = document.getElementById('splash');
       if (splash) {
         splash.style.opacity = '0';
+        splash.style.transform = 'scale(1.03)';
         setTimeout(() => {
           splash.style.display = 'none';
           checkNavigationState();
-        }, 500);
+        }, 400);
       }
-    }, 2000);
+    }, 1600);
   }
 
   // ==================== AUTH DATA MIGRATION ====================
@@ -705,20 +707,30 @@
       (function() {
         try {
           const rawAuth = localStorage.getItem('ishvara_auth');
-          if (!rawAuth) return;
+          if (!rawAuth) {
+            localStorage.removeItem('iesvra_plus_member');
+            if (window.updatePlusMemberUI) window.updatePlusMemberUI();
+            return;
+          }
           const auth = JSON.parse(rawAuth);
-          if (!auth || !auth.email) return;
+          if (!auth || !auth.email) {
+            localStorage.removeItem('iesvra_plus_member');
+            if (window.updatePlusMemberUI) window.updatePlusMemberUI();
+            return;
+          }
           fetch('/api/plus-membership?email=' + encodeURIComponent(auth.email))
             .then(function(r) { return r.json(); })
             .then(function(data) {
               if (data.isMember) {
                 localStorage.setItem('iesvra_plus_member', 'true');
-              } else if (data.isMember === false) {
+              } else {
                 localStorage.removeItem('iesvra_plus_member');
               }
               if (window.updatePlusMemberUI) window.updatePlusMemberUI();
             })
-            .catch(function() {/* silently fall back to localStorage */});
+            .catch(function() {
+              if (window.updatePlusMemberUI) window.updatePlusMemberUI();
+            });
         } catch(e) {}
       })();
       
@@ -1084,7 +1096,7 @@
         const imgBg = pastels[index % pastels.length];
         const pill = pillColors[index % pillColors.length];
         const arrowColor = arrowColors[index % arrowColors.length];
-        const catProducts = products.filter(p => p.category === cat.name);
+        const catProducts = products.filter(p => p.categories && p.categories.includes(cat.name));
         const count = catProducts.length || (24 + index * 30);
         return `
           <div onclick="window.filterHomeByCategory('${cat.name}')" style="background:white; border-radius:16px; padding:14px 12px 36px; display:flex; flex-direction:column; align-items:center; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06); border:1px solid #F1F5F9; position:relative; cursor:pointer; transition:transform 0.2s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">

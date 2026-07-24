@@ -17,7 +17,8 @@ export const Route = createFileRoute("/api/verify-payment")({
             );
           }
 
-          const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
+          // Strip UTF-8 BOM (\uFEFF) that PowerShell/Windows may add to env vars
+          const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").replace(/^\uFEFF/, "").trim();
           if (!keySecret) {
             return new Response(
               JSON.stringify({ error: "Razorpay secret key is not configured." }),

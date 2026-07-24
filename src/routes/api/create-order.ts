@@ -2,17 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import Razorpay from "razorpay";
 import process from "node:process";
 
+// Strip UTF-8 BOM (ï»¿ / \uFEFF) that PowerShell/Windows sometimes adds when piping strings
+const stripBom = (s: string) => s.replace(/^\uFEFF/, "").trim();
+
 // Helper to construct Razorpay client dynamically using process.env
 const getRazorpayInstance = () => {
-  const keyId = (process.env.RAZORPAY_KEY_ID || "").trim();
-  const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
+  const keyId = stripBom(process.env.RAZORPAY_KEY_ID || "");
+  const keySecret = stripBom(process.env.RAZORPAY_KEY_SECRET || "");
   if (!keyId || !keySecret) {
     throw new Error("Razorpay API keys are not configured in environment variables.");
   }
-  return new Razorpay({
-    key_id: keyId,
-    key_secret: keySecret,
-  });
+  return { instance: new Razorpay({ key_id: keyId, key_secret: keySecret }), keyId };
 };
 
 export const Route = createFileRoute("/api/create-order")({
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/api/create-order")({
             );
           }
 
-          const razorpay = getRazorpayInstance();
+          const { instance: razorpay, keyId } = getRazorpayInstance();
 
           const options = {
             amount: Math.round(amount),
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/api/create-order")({
 
           const order = await razorpay.orders.create(options);
 
-          return new Response(JSON.stringify({ order_id: order.id, key_id: process.env.RAZORPAY_KEY_ID || "" }), {
+          return new Response(JSON.stringify({ order_id: order.id, key_id: keyId }), {
             status: 200,
             headers: { "Content-Type": "application/json" },
           });
