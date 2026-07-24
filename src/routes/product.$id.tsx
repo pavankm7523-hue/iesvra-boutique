@@ -130,18 +130,18 @@ function ProductDetails() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           {/* Left Column: Image & Gallery */}
           <div className="space-y-6">
-            <div className="bg-white rounded-[2rem] border border-border/30 overflow-hidden shadow-2xl shadow-navy-deep/5 aspect-square relative flex items-center justify-center p-8 group/main-img">
+            <div className="bg-white rounded-[2rem] border border-border/30 overflow-hidden shadow-2xl shadow-navy-deep/5 w-full max-w-[500px] mx-auto aspect-square relative flex items-center justify-center p-8 group/main-img">
               {galleryItems[activeIndex]?.type === "video" ? (
                 <video
                   src={galleryItems[activeIndex]?.url}
                   controls
-                  className="w-full h-full object-contain max-h-[85vh]"
+                  className="max-w-full max-h-full object-contain"
                 />
               ) : (
                 <img
                   src={galleryItems[activeIndex]?.url || product.image}
                   alt={product.name}
-                  className="w-full h-full object-contain max-h-[85vh] transition-transform duration-500 hover:scale-105"
+                  className="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-105"
                 />
               )}
               <span className="absolute top-6 left-6 bg-gold text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg z-10">

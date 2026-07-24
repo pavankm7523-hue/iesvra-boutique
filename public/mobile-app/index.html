@@ -18,14 +18,29 @@
   <!-- Splash Screen Overlay (Blinkit Style) -->
   <div class="splash-screen blinkit-splash" id="splash">
     <div class="splash-content-blinkit">
-      <!-- Multicolor Logo -->
-      <div class="splash-logo-wrap">
-        <img src="logo.png" alt="IESVRA Logo" class="splash-logo-img" />
+      <!-- Shopping bag animated icon above the text -->
+      <div class="splash-bag-animation">
+        <svg class="splash-bag-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <!-- Floating items falling into the bag -->
+        <span class="floating-item item-1">🍅</span>
+        <span class="floating-item item-2">🥛</span>
+        <span class="floating-item item-3">🧴</span>
       </div>
-      <!-- Tagline -->
-      <div class="splash-tagline-blinkit">India's smartest shopping app</div>
-      <!-- Brand Purple Thin Spinner -->
-      <div class="splash-spinner-blinkit"></div>
+      <!-- Letter by letter animation for IESVRA -->
+      <h1 class="splash-brand-text">
+        <span class="letter">I</span>
+        <span class="letter">E</span>
+        <span class="letter">S</span>
+        <span class="letter">V</span>
+        <span class="letter">R</span>
+        <span class="letter">A</span>
+      </h1>
+      <!-- Tagline sliding/fading in -->
+      <div class="splash-tagline">Everything you need, in minutes</div>
     </div>
   </div>
 
@@ -1436,6 +1451,15 @@
   <div class="toast-container">
     <div class="toast" id="toast">
       <span id="toastText"></span>
+    </div>
+  </div>
+
+  <!-- Reusable Preloader/Loader Screen (Blinkit Style) -->
+  <div class="preloader-screen" id="preloader" style="display: none; opacity: 0; transition: opacity 0.3s ease;">
+    <div class="preloader-content">
+      <!-- Rotating/Cycling 3D icon container -->
+      <div class="preloader-icon-wrap" id="preloaderIconWrap"></div>
+      <p class="preloader-text">Everything you need,<br/>delivered at your doorstep</p>
     </div>
   </div>
 

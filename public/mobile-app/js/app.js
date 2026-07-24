@@ -327,7 +327,7 @@
       });
     }
 
-    // 1. Splash Screen Transition (Blinkit style ~1.6s duration)
+    // 1. Splash Screen Transition (Blinkit style ~2.3s duration for animated sequence)
     setTimeout(() => {
       const splash = document.getElementById('splash');
       if (splash) {
@@ -338,7 +338,7 @@
           checkNavigationState();
         }, 400);
       }
-    }, 1600);
+    }, 2300);
   }
 
   // ==================== AUTH DATA MIGRATION ====================
@@ -632,6 +632,16 @@
 
   // ==================== TAB NAVIGATION ROUTER ====================
   function switchTab(tabId) {
+    // Programmatically trigger custom 3D preloader screen
+    if (typeof window.showPreloader === 'function') {
+      window.showPreloader('navigating');
+      setTimeout(() => {
+        if (typeof window.hidePreloader === 'function') {
+          window.hidePreloader();
+        }
+      }, 500);
+    }
+
     // Close detail overlay if open
     closeProductDetails();
 
@@ -3012,6 +3022,53 @@
         switchTab('home');
       }, 300);
     }
+  };
+
+  // Reusable Preloader Helpers (3D Flat Vectors)
+  let preloaderInterval = null;
+  const preloaderIcons = [
+    // Grooming/Trimmer
+    `<svg class="preloader-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="trimGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#EC4899"/></linearGradient></defs><rect x="22" y="24" width="20" height="32" rx="4" fill="url(#trimGrad)" /><rect x="26" y="28" width="12" height="12" rx="2" fill="#FFFFFF" opacity="0.2" /><path d="M16 12 L48 12 L42 24 L22 24 Z" fill="#6B7280" /><path d="M18 8 L22 12 M22 8 L26 12 M26 8 L30 12 M30 8 L34 12 M34 8 L38 12 M38 8 L42 12 M42 8 L46 12" stroke="#D1D5DB" stroke-width="2.5" stroke-linecap="round" /><circle cx="32" cy="48" r="3" fill="#FFFFFF" opacity="0.8" /></svg>`,
+    // Groceries Basket
+    `<svg class="preloader-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="grocGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#3B82F6"/></linearGradient></defs><path d="M12 28 L52 28 L46 56 L18 56 Z" fill="url(#grocGrad)" /><path d="M8 24 H56 V28 H8 Z" fill="#059669" /><path d="M20 24 Q32 8 44 24" stroke="#10B981" stroke-width="4" stroke-linecap="round" fill="none" /><circle cx="26" cy="20" r="8" fill="#EF4444" /><path d="M26 12 Q28 8 30 10" stroke="#059669" stroke-width="2" stroke-linecap="round" fill="none" /><rect x="34" y="14" width="12" height="12" rx="1.5" fill="#FFFFFF" /><path d="M34 18 H46" stroke="#3B82F6" stroke-width="2" /></svg>`,
+    // Electronics/Smartphone
+    `<svg class="preloader-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="elecGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#7C3AED"/></linearGradient></defs><rect x="18" y="8" width="28" height="48" rx="5" fill="url(#elecGrad)" stroke="#1D4ED8" stroke-width="1.5" /><rect x="21" y="12" width="22" height="36" rx="2" fill="#1E293B" /><rect x="29" y="10" width="6" height="1.5" rx="0.75" fill="#FFFFFF" opacity="0.5" /><circle cx="32" cy="51" r="2.5" fill="#FFFFFF" opacity="0.3" /><circle cx="26" cy="18" r="2" fill="#EF4444" /><circle cx="32" cy="18" r="2" fill="#10B981" /><circle cx="38" cy="18" r="2" fill="#F59E0B" /><circle cx="26" cy="24" r="2" fill="#3B82F6" /><circle cx="32" cy="24" r="2" fill="#8B5CF6" /><circle cx="38" cy="24" r="2" fill="#EC4899" /></svg>`,
+    // Home Essentials/Spray
+    `<svg class="preloader-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="homeGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#EF4444"/></linearGradient></defs><path d="M24 28 L40 28 L38 56 L26 56 Z" fill="url(#homeGrad)" /><rect x="28" y="18" width="8" height="10" fill="#F3F4F6" stroke="#D1D5DB" stroke-width="1" /><path d="M26 12 H36 V18 H26 Z" fill="#EF4444" /><path d="M22 14 H26 V16 H22 Z" fill="#D1D5DB" /><path d="M30 18 L26 24" stroke="#374151" stroke-width="2.5" stroke-linecap="round" /></svg>`
+  ];
+
+  window.showPreloader = (context) => {
+    const preloader = document.getElementById('preloader');
+    const iconWrap = document.getElementById('preloaderIconWrap');
+    if (!preloader || !iconWrap) return;
+
+    if (preloaderInterval) clearInterval(preloaderInterval);
+
+    let currentIdx = 0;
+    iconWrap.innerHTML = preloaderIcons[currentIdx];
+
+    preloaderInterval = setInterval(() => {
+      currentIdx = (currentIdx + 1) % preloaderIcons.length;
+      iconWrap.innerHTML = preloaderIcons[currentIdx];
+    }, 450);
+
+    preloader.style.display = 'flex';
+    preloader.offsetHeight; // trigger reflow
+    preloader.style.opacity = '1';
+  };
+
+  window.hidePreloader = () => {
+    const preloader = document.getElementById('preloader');
+    if (!preloader) return;
+
+    preloader.style.opacity = '0';
+    setTimeout(() => {
+      preloader.style.display = 'none';
+      if (preloaderInterval) {
+        clearInterval(preloaderInterval);
+        preloaderInterval = null;
+      }
+    }, 300);
   };
 
   // Expose routing helpers globally
