@@ -974,7 +974,6 @@
           <img src="${p.image}" alt="${p.name}" style="width:50px;height:50px;object-fit:contain;border-radius:8px;background:#f8fafc;flex-shrink:0;" />
           <div style="flex:1;min-width:0;">
             <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${highlightMatch(p.name, query)}</div>
-            <div style="font-size:10px;color:#64748b;font-weight:500;">${(p.categories || []).join(', ')}</div>
           </div>
           <div style="font-size:13px;font-weight:700;color:#6B46C1;flex-shrink:0;">₹${p.price}</div>
         </div>
@@ -1141,8 +1140,7 @@
                 <img src="${p.image}" alt="${p.name}" style="max-width:90px; max-height:94px; object-fit:contain;" />
               </div>
               <div style="padding:8px 10px 10px;">
-                <div style="font-size:11px; color:#718096; font-weight:500; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${(p.categories||[]).join(', ')}</div>
-                <div style="font-size:12px; font-weight:700; color:#1A202C; line-height:1.3; margin-bottom:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</div>
+                <div style="font-size:12px;font-weight:700;color:#1A202C;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${p.name}</div>
                 ${p.sub ? `<div style="font-size:10px; color:#94A3B8; margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.sub}</div>` : ''}
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
                   <div>
@@ -1353,7 +1351,6 @@
 
     if (info) {
       info.innerHTML = `
-        <span class="cat-label">${product.categories ? product.categories[0] : "Curated"}</span>
         <h2>${product.name}</h2>
         
         <div class="detail-prices">
