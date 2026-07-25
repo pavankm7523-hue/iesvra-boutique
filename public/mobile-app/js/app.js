@@ -327,10 +327,20 @@
       });
     }
 
-    // Splash Screen disabled - open app immediately
-    const splash = document.getElementById('splash');
-    if (splash) splash.style.display = 'none';
-    checkNavigationState();
+    // 1. Splash Screen Transition (Blinkit style ~2.3s duration for animated sequence)
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.transform = 'scale(1.03)';
+        setTimeout(() => {
+          splash.style.display = 'none';
+          checkNavigationState();
+        }, 400);
+      } else {
+        checkNavigationState();
+      }
+    }, 2300);
   }
 
   // ==================== AUTH DATA MIGRATION ====================
