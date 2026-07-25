@@ -333,6 +333,13 @@ body.no-app-header .main-content {
   animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Categories screen uses flex layout to enable split-pane */
+#screen-categories.active {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px); /* subtract bottom nav height */
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }

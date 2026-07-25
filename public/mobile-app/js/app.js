@@ -1084,75 +1084,129 @@
     }
   };
 
-  // ==================== CATEGORIES GRID SCREEN ====================
+  // ==================== CATEGORIES SPLIT-PANE SCREEN (BLINKIT STYLE) ====================
   function renderCategoriesScreen() {
-    const container = document.getElementById('categoriesListContainer');
-    if (!container) return;
+    const sidebar = document.getElementById('catSidebar');
+    const productsPanel = document.getElementById('catProductsPanel');
+    if (!sidebar || !productsPanel) return;
 
     const categories = getCategories();
     const products = getProducts();
 
-    // Sync cart badge on cat screen
+    // Sync cart badge
     const catBadge = document.getElementById('catScreenCartBadge');
     if (catBadge) {
       const cart = getCart();
       catBadge.textContent = cart.reduce((t, i) => t + i.quantity, 0);
     }
 
-    // Color palette for count pills — cycles through per category
-    const pillColors = [
-      { bg: '#EDE9FE', text: '#6D4FD6' },
-      { bg: '#FEF9C3', text: '#B45309' },
-      { bg: '#DCFCE7', text: '#15803D' },
-      { bg: '#DBEAFE', text: '#1D4ED8' },
-      { bg: '#FCE7F3', text: '#9D174D' },
-      { bg: '#FEF3C7', text: '#92400E' },
-    ];
+    let activeCat = categories[0]?.name || '';
 
-    // Arrow circle colors cycling
-    const arrowColors = ['#6D4FD6', '#D97706', '#15803D', '#1D4ED8', '#9D174D', '#92400E'];
+    const bgPastels = ['#F5F3FF','#FEF9C3','#DCFCE7','#DBEAFE','#FCE7F3','#FEF3C7','#FFF7ED','#ECFDF5'];
 
-    const renderGrid = (filterTerm = '') => {
-      let filtered = categories;
-      if (filterTerm) {
-        filtered = categories.filter(c => c.name.toLowerCase().includes(filterTerm.toLowerCase()));
+    // Render left sidebar
+    function renderSidebar(filter = '') {
+      let list = categories;
+      if (filter) list = categories.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+      sidebar.innerHTML = list.map((cat, i) => {
+        const isActive = cat.name === activeCat;
+        return `
+          <div id="catItem_${i}" onclick="window._selectCat('${cat.name.replace(/'/g,"\\'")}', ${i})"
+            style="padding:12px 4px 10px; display:flex; flex-direction:column; align-items:center; cursor:pointer; border-left:3px solid ${isActive ? '#6D4FD6' : 'transparent'}; background:${isActive ? '#F5F3FF' : 'transparent'}; transition:all 0.15s; gap:4px;">
+            <div style="width:54px; height:54px; border-radius:12px; background:${isActive ? '#EDE9FE' : bgPastels[i % bgPastels.length]}; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+              <img src="${cat.image}" alt="${cat.name}" style="width:38px; height:38px; object-fit:contain;" onerror="this.style.display='none'" />
+            </div>
+            <div style="font-size:9.5px; font-weight:${isActive ? '700' : '600'}; color:${isActive ? '#6D4FD6' : '#4A5568'}; text-align:center; line-height:1.25; padding:0 2px; word-break:break-word;">${cat.name}</div>
+          </div>`;
+      }).join('');
+    }
+
+    // Render right product grid for selected category
+    function renderProducts(catName) {
+      const catProds = products.filter(p => p.categories && p.categories.includes(catName));
+
+      if (catProds.length === 0) {
+        productsPanel.innerHTML = `
+          <div style="padding:20px 12px 8px; font-size:14px; font-weight:800; color:#1A202C;">${catName}</div>
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; color:#94A3B8; text-align:center;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px; opacity:0.4;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <div style="font-size:13px; font-weight:600;">No products yet in this category</div>
+            <div style="font-size:11px; margin-top:4px; color:#CBD5E1;">Check back soon!</div>
+          </div>`;
+        return;
       }
 
-      const pastels = ['#F5F3FF', '#FEF9C3', '#DCFCE7', '#DBEAFE', '#FCE7F3', '#FEF3C7'];
+      productsPanel.innerHTML = `
+        <div style="padding:14px 12px 6px; font-size:15px; font-weight:800; color:#1A202C;">${catName} <span style="font-size:11px; font-weight:600; color:#6D4FD6; background:#EDE9FE; padding:2px 8px; border-radius:20px; margin-left:4px;">${catProds.length} items</span></div>
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; padding:0 10px 16px;">
+          ${catProds.map(p => {
+            const discount = p.mrp && p.mrp > p.price ? Math.round((1 - p.price / p.mrp) * 100) : 0;
+            return `
+            <div style="background:white; border-radius:14px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.06); cursor:pointer; position:relative;" onclick="window.openProductDetails('${p.id}')">
+              ${discount > 0 ? `<div style="position:absolute; top:8px; left:8px; background:#256FEF; color:white; font-size:9px; font-weight:800; padding:3px 6px; border-radius:6px; z-index:1; line-height:1.2;">${discount}%<br>OFF</div>` : ''}
+              <div style="background:#F8F9FF; height:110px; display:flex; align-items:center; justify-content:center; padding:8px;">
+                <img src="${p.image}" alt="${p.name}" style="max-width:90px; max-height:94px; object-fit:contain;" />
+              </div>
+              <div style="padding:8px 10px 10px;">
+                <div style="font-size:11px; color:#718096; font-weight:500; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${(p.categories||[]).join(', ')}</div>
+                <div style="font-size:12px; font-weight:700; color:#1A202C; line-height:1.3; margin-bottom:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</div>
+                ${p.sub ? `<div style="font-size:10px; color:#94A3B8; margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.sub}</div>` : ''}
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
+                  <div>
+                    <div style="font-size:13px; font-weight:800; color:#1A202C;">₹${p.price}</div>
+                    ${p.mrp && p.mrp > p.price ? `<div style="font-size:10px; color:#94A3B8; text-decoration:line-through;">₹${p.mrp}</div>` : ''}
+                  </div>
+                  <button onclick="event.stopPropagation(); window.addToCartFromCategories('${p.id}')" style="background:white; border:1.5px solid #6D4FD6; color:#6D4FD6; font-size:12px; font-weight:800; padding:5px 14px; border-radius:8px; cursor:pointer; letter-spacing:0.03em; transition:all 0.15s;" onmouseover="this.style.background='#6D4FD6'; this.style.color='white'" onmouseout="this.style.background='white'; this.style.color='#6D4FD6'">ADD</button>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`;
+    }
 
-      container.innerHTML = filtered.map((cat, index) => {
-        const imgBg = pastels[index % pastels.length];
-        const pill = pillColors[index % pillColors.length];
-        const arrowColor = arrowColors[index % arrowColors.length];
-        const catProducts = products.filter(p => p.categories && p.categories.includes(cat.name));
-        const count = catProducts.length || (24 + index * 30);
-        return `
-          <div onclick="window.filterHomeByCategory('${cat.name}')" style="background:white; border-radius:16px; padding:14px 12px 36px; display:flex; flex-direction:column; align-items:center; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06); border:1px solid #F1F5F9; position:relative; cursor:pointer; transition:transform 0.2s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
-            <div style="background:${imgBg}; width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:10px;">
-              <img src="${cat.image}" alt="${cat.name}" style="width:56px; height:56px; object-fit:contain;" />
-            </div>
-            <h4 style="font-size:12px; font-weight:700; color:var(--text-primary); margin:0 0 8px; font-family:var(--font-display); line-height:1.3;">${cat.name}</h4>
-            <div style="font-size:9px; font-weight:700; color:${pill.text}; background:${pill.bg}; padding:3px 8px; border-radius:10px;">${count} Products</div>
-            <div style="position:absolute; bottom:10px; right:10px; width:26px; height:26px; border-radius:50%; background:${pill.bg}; display:flex; align-items:center; justify-content:center; color:${arrowColor};">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-            </div>
-          </div>
-        `;
-      }).join('');
-      container.style.cssText = 'display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:8px 16px 16px;';
+    // Expose select function globally
+    window._selectCat = (catName, idx) => {
+      activeCat = catName;
+      renderSidebar();
+      renderProducts(catName);
     };
 
-    renderGrid();
-
-    // Search
+    // Wire search filter
     const catSearch = document.getElementById('catSearchInput');
     if (catSearch) {
-      // remove old listener by cloning
       const newInput = catSearch.cloneNode(true);
       catSearch.parentNode.replaceChild(newInput, catSearch);
-      newInput.addEventListener('input', (e) => renderGrid(e.target.value));
+      newInput.addEventListener('input', (e) => {
+        renderSidebar(e.target.value);
+        // If active cat filtered out, pick first
+        const filtered = categories.filter(c => c.name.toLowerCase().includes(e.target.value.toLowerCase()));
+        if (filtered.length && !filtered.find(c => c.name === activeCat)) {
+          activeCat = filtered[0].name;
+        }
+        renderProducts(activeCat);
+      });
     }
+
+    renderSidebar();
+    renderProducts(activeCat);
   }
+
+  // Global ADD handler from categories screen
+  window.addToCartFromCategories = (productId) => {
+    const products = getProducts();
+    const p = products.find(p => p.id === productId);
+    if (!p) return;
+    window.AppState.addToCart({ ...p, color: 'Standard', quantity: 1 });
+    window.dispatchEvent(new Event('ishvara_cart_changed'));
+    showToast(`✓ ${p.name.slice(0, 28)}... added!`);
+    // Refresh badge
+    const catBadge = document.getElementById('catScreenCartBadge');
+    if (catBadge) {
+      const cart = getCart();
+      catBadge.textContent = cart.reduce((t, i) => t + i.quantity, 0);
+    }
+  };
+
 
 
   // ==================== OFFERS SCREEN ====================
