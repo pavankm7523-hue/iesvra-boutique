@@ -1809,7 +1809,7 @@
     }, 100);
   };
 
-  window.submitCheckoutOrder = () => {
+  window.submitCheckoutOrder = async () => {
     const name = document.getElementById('checkoutName')?.value?.trim();
     const email = document.getElementById('checkoutEmail')?.value?.trim();
     const phone = document.getElementById('checkoutPhone')?.value?.trim();
@@ -1821,6 +1821,16 @@
     // Validate required fields
     if (!name || !phone || !addr1 || !city || !pincode) {
       showToast('Please fill in all required fields (Name, Phone, Address, City, PIN).');
+      return;
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      showToast('Please enter a valid 10-digit phone number.');
+      return;
+    }
+
+    if (!/^\d{6}$/.test(pincode)) {
+      showToast('Please enter a valid 6-digit pincode.');
       return;
     }
 
@@ -1840,11 +1850,17 @@
       return;
     }
 
-    // Create order record
+    const fullAddress = [addr1, document.getElementById('checkoutAddress2')?.value?.trim(), city, `${state} - ${pincode}`].filter(Boolean).join(", ");
     const orderId = 'ORD-' + Date.now().toString(36).toUpperCase();
-    const order = {
+    const formattedDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    const orderData = {
       id: orderId,
       orderId: orderId,
+      customerName: name,
+      customerEmail: email || 'customer@iesvra.com',
+      customerPhone: phone,
+      shippingAddress: fullAddress,
       items: [...cart],
       itemsCount: cart.reduce((sum, item) => sum + item.quantity, 0),
       subtotal: checkoutSubtotal,
@@ -1855,32 +1871,144 @@
       paymentMode: checkoutPaymentMode,
       address: { name, email, phone, addr1, addr2: document.getElementById('checkoutAddress2')?.value?.trim() || '', city, state, pincode },
       status: 'Placed',
-      date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      date: formattedDate,
       placedAt: new Date().toISOString(),
+      source: 'mobile',
+      latitude: appPinnedLat,
+      longitude: appPinnedLng
     };
 
-    // Save order to localStorage
-    let orders = [];
-    try {
-      const stored = localStorage.getItem('iesvra_orders');
-      if (stored) orders = JSON.parse(stored);
-    } catch(e) {}
-    orders.unshift(order);
-    localStorage.setItem('iesvra_orders', JSON.stringify(orders));
+    if (checkoutPaymentMode === 'cod') {
+      orderData.paymentStatus = 'Pending - COD';
+      try {
+        showToast("Saving order...");
+        const res = await fetch("/api/save-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData)
+        });
+        const saved = res.ok ? await res.json() : orderData;
 
-    // Clear cart
-    saveCart([]);
-    updateCartBadges();
+        // Save order to localStorage
+        let orders = [];
+        try {
+          const stored = localStorage.getItem('iesvra_orders');
+          if (stored) orders = JSON.parse(stored);
+        } catch(e) {}
+        orders.unshift(saved);
+        localStorage.setItem('iesvra_orders', JSON.stringify(orders));
 
-    if (checkoutPaymentMode === 'razorpay') {
-      showToast(`Order ${orderId} placed! Simulating Razorpay payment of ₹${checkoutTotal}...`);
-      setTimeout(() => {
-        showToast('✅ Payment successful! Your order is confirmed.');
+        // Clear cart
+        saveCart([]);
+        updateCartBadges();
+
+        showToast(`✅ COD Order ${orderId} placed successfully!`);
         switchTab('orders');
-      }, 1500);
+        if (window.trackMobileOrder) window.trackMobileOrder(saved.id);
+      } catch (err) {
+        console.error("COD Order save error:", err);
+        showToast("Failed to place COD order. Please try again.");
+      }
     } else {
-      showToast(`✅ COD Order ${orderId} placed successfully! Total: ₹${checkoutTotal}`);
-      switchTab('orders');
+      // Real Razorpay Online Payment Flow
+      try {
+        showToast("Initiating secure payment...");
+
+        const createRes = await fetch("/api/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: Math.round(checkoutTotal * 100) })
+        });
+
+        if (!createRes.ok) {
+          const errData = await createRes.json();
+          throw new Error(errData.error || "Failed to initiate payment gateway");
+        }
+
+        const { order_id, key_id } = await createRes.json();
+
+        const sdkLoaded = await loadRazorpayScript();
+        if (!sdkLoaded) throw new Error("Payment gateway SDK failed to load. Check connection.");
+
+        const options = {
+          key: key_id,
+          amount: Math.round(checkoutTotal * 100),
+          currency: "INR",
+          name: "IESVRA",
+          description: `Order ${orderId}`,
+          order_id: order_id,
+          handler: async function (response) {
+            try {
+              showToast("Verifying payment...");
+              const vRes = await fetch("/api/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })
+              });
+
+              const vData = await vRes.json();
+              if (!vRes.ok || !vData.verified) throw new Error("Payment verification failed");
+
+              orderData.paymentStatus = 'Paid';
+              orderData.razorpayPaymentId = response.razorpay_payment_id;
+
+              // Save order to DB
+              const sRes = await fetch("/api/save-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderData)
+              });
+              const saved = sRes.ok ? await sRes.json() : orderData;
+
+              // Save order locally
+              let orders = [];
+              try {
+                const stored = localStorage.getItem('iesvra_orders');
+                if (stored) orders = JSON.parse(stored);
+              } catch(e) {}
+              orders.unshift(saved);
+              localStorage.setItem('iesvra_orders', JSON.stringify(orders));
+
+              // Clear cart
+              saveCart([]);
+              updateCartBadges();
+
+              showToast("🎉 Payment successful & order confirmed!");
+              switchTab('orders');
+              if (window.trackMobileOrder) window.trackMobileOrder(saved.id);
+            } catch (e) {
+              console.error("Payment verification/save error:", e);
+              showToast(e.message || "Payment done but order verification failed.");
+            }
+          },
+          prefill: {
+            name: name,
+            email: email,
+            contact: phone
+          },
+          theme: {
+            color: "#6D4FD6"
+          },
+          modal: {
+            ondismiss: function() {
+              showToast("Payment cancelled.");
+            }
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+          showToast("Payment failed: " + (response.error?.description || "Transaction declined"));
+        });
+        rzp.open();
+      } catch (e) {
+        console.error("Razorpay initiation error:", e);
+        showToast(e.message || "Failed to start Razorpay payment.");
+      }
     }
   };
 
