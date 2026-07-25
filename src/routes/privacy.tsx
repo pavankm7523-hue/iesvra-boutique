@@ -9,73 +9,67 @@ export const Route = createFileRoute("/privacy")({
 
 function Privacy() {
   return (
-    <div className="bg-background text-foreground min-h-screen py-16">
+    <div className="bg-background text-foreground min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-4 lg:px-8">
-        <h1 className="font-display text-4xl text-navy-deep mb-8 font-semibold">Privacy Policy</h1>
+        <h1 className="font-display text-3xl sm:text-4xl text-navy-deep mb-4 font-bold">Privacy Policy</h1>
+        <p className="text-sm text-muted-foreground mb-8">Effective Date: June 1, 2026 | Last Updated: July 25, 2026</p>
 
-        <div className="space-y-6 text-muted-foreground leading-relaxed">
-          <p>Last updated: June 1, 2026</p>
+        <div className="space-y-6 text-slate-700 leading-relaxed text-sm sm:text-base">
+          <section className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 className="text-lg font-bold text-navy-deep mb-3">1. Overview & Data Controller</h2>
+            <p>
+              IESVRA ("we", "our", or "us") operates the IESVRA web platform and mobile application. We are committed to safeguarding your privacy and ensuring transparency regarding how your personal information is collected, stored, and processed.
+            </p>
+          </section>
 
-          <h2 className="text-xl text-navy-deep font-semibold mt-8 mb-4">1. Introduction</h2>
-          <p>
-            Welcome to IESVRA. We respect your privacy and are committed to protecting your
-            personal data. This privacy policy will inform you as to how we look after your personal
-            data when you visit our website (regardless of where you visit it from) and tell you
-            about your privacy rights and how the law protects you.
-          </p>
+          <section className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 className="text-lg font-bold text-navy-deep mb-3">2. Data We Collect & How We Collect It</h2>
+            <p className="mb-3">Based on your interactions with our app and services, we collect the following data types:</p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Contact & Profile Info:</strong> Full Name, Email Address, and Mobile Phone Number provided during user registration, guest checkout, or profile updates.</li>
+              <li><strong>Delivery & Location Data:</strong> Physical Shipping Address, City, Postal/PIN Code, and Precise GPS Coordinates / Geolocation (collected via device location services or map pinpoint for order delivery validation).</li>
+              <li><strong>Transaction & Purchase History:</strong> Order IDs, items purchased, subtotal, delivery preferences, coupon codes, and membership status (IESVRA Plus).</li>
+              <li><strong>Payment Information:</strong> Online payment transaction reference IDs and payment method selected. <em>Note: Full credit/debit card numbers, UPI PINs, and banking credentials are handled directly by Razorpay and are never stored on IESVRA servers.</em></li>
+            </ul>
+          </section>
 
-          <h2 className="text-xl text-navy-deep font-semibold mt-8 mb-4">
-            2. The data we collect about you
-          </h2>
-          <p>
-            Personal data, or personal information, means any information about an individual from
-            which that person can be identified. We may collect, use, store and transfer different
-            kinds of personal data about you which we have grouped together as follows:
-          </p>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>
-              <strong>Identity Data</strong> includes first name, last name, username or similar
-              identifier.
-            </li>
-            <li>
-              <strong>Contact Data</strong> includes billing address, delivery address, email
-              address and telephone numbers.
-            </li>
-            <li>
-              <strong>Financial Data</strong> includes payment card details.
-            </li>
-            <li>
-              <strong>Transaction Data</strong> includes details about payments to and from you and
-              other details of products you have purchased from us.
-            </li>
-          </ul>
+          <section className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 className="text-lg font-bold text-navy-deep mb-3">3. Third-Party Service Providers</h2>
+            <p className="mb-3">We share necessary data with trusted third-party service providers solely to perform essential app functions:</p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Supabase Inc. (Cloud Database & Auth):</strong> Encrypted PostgreSQL cloud storage for account data, order history, and product catalog.</li>
+              <li><strong>Razorpay Software Private Limited (Payments):</strong> Payment processing gateway for credit/debit cards, NetBanking, UPI, and Wallet payments.</li>
+              <li><strong>Google LLC (Google Sign-In):</strong> Optional single-sign-on OAuth authentication.</li>
+              <li><strong>OpenStreetMap / Nominatim (Geocoding):</strong> Reverse geocoding for delivery address autocomplete and pin placement.</li>
+            </ul>
+          </section>
 
-          <h2 className="text-xl text-navy-deep font-semibold mt-8 mb-4">
-            3. How we use your personal data
-          </h2>
-          <p>
-            We will only use your personal data when the law allows us to. Most commonly, we will
-            use your personal data in the following circumstances:
-          </p>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>
-              Where we need to perform the contract we are about to enter into or have entered into
-              with you.
-            </li>
-            <li>
-              Where it is necessary for our legitimate interests (or those of a third party) and
-              your interests and fundamental rights do not override those interests.
-            </li>
-            <li>Where we need to comply with a legal obligation.</li>
-          </ul>
+          <section className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 className="text-lg font-bold text-navy-deep mb-3">4. Data Retention & Security</h2>
+            <p>
+              Your data is stored securely in our Supabase cloud database with Industry-standard SSL/TLS encryption in transit and at rest. Account and order records are retained for as long as your account remains active or as required by law for tax and accounting compliance.
+            </p>
+          </section>
 
-          <h2 className="text-xl text-navy-deep font-semibold mt-8 mb-4">4. Data Security</h2>
-          <p>
-            We have put in place appropriate security measures to prevent your personal data from
-            being accidentally lost, used or accessed in an unauthorised way, altered or disclosed.
-            In addition, we limit access to your personal data to those employees, agents,
-            contractors and other third parties who have a business need to know.
-          </p>
+          <section className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 className="text-lg font-bold text-navy-deep mb-3">5. Your Privacy Rights</h2>
+            <p className="mb-2">You have the right to:</p>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>Access, edit, or delete your personal account data via the Profile screen.</li>
+              <li>Request full account and data deletion by contacting our privacy team at <a href="mailto:privacy@iesvra.com" className="text-purple-600 font-semibold underline">privacy@iesvra.com</a>.</li>
+              <li>Opt-out of non-essential marketing communications at any time.</li>
+            </ul>
+          </section>
+
+          <section className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 className="text-lg font-bold text-navy-deep mb-3">6. Contact Us</h2>
+            <p>
+              For any questions or concerns regarding this Privacy Policy, please contact us at:<br/>
+              <strong>IESVRA Support Team</strong><br/>
+              Email: <a href="mailto:support@iesvra.com" className="text-purple-600 font-semibold underline">support@iesvra.com</a><br/>
+              Address: New Jaganpura, Patna, Bihar, India - 800027
+            </p>
+          </section>
         </div>
       </div>
     </div>
