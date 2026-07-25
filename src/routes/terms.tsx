@@ -54,7 +54,16 @@ function Terms() {
           <h2 className="text-xl text-navy-deep font-semibold mt-8 mb-4">5. Governing Law</h2>
           <p>
             These Terms and Conditions and any separate agreements whereby we provide you services
-            shall be governed by and construed in accordance with the laws of India.
+            shall be governed by and construed in accordance with the laws of India, subject to the jurisdiction of the Courts of Patna, Bihar, India.
+          </p>
+
+          <h2 className="text-xl text-navy-deep font-semibold mt-8 mb-4">6. Contact Information</h2>
+          <p>
+            Questions about the Terms and Conditions should be sent to us at <strong>support@iesvra.com</strong> or by phone at <strong>+91 9876543210</strong>.
+          </p>
+          <p className="mt-4">
+            IESVRA is operated by <strong>AR ENTERPRISES</strong>.<br />
+            GSTIN: <strong>10PRJPK7587M1ZU</strong>
           </p>
         </div>
       </div>

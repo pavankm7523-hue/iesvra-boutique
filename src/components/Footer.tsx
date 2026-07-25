@@ -122,7 +122,7 @@ export function Footer() {
         {/* Customer Service */}
         <div>
           <h4 className="text-white font-semibold mb-6 tracking-wide text-sm uppercase">Customer Service</h4>
-          <ul className="space-y-3.5 text-sm">
+          <ul className="space-y-3.5 text-sm mb-8">
             <li>
               <Link to="/contact" className="hover:text-gold transition-colors">Contact Us</Link>
             </li>
@@ -142,6 +142,17 @@ export function Footer() {
               <Link to="/faq" className="hover:text-gold transition-colors">FAQ's</Link>
             </li>
           </ul>
+
+          <div className="space-y-2 text-sm text-white/70">
+            <p className="flex items-center gap-2">
+              <span className="font-semibold text-white/90">Email:</span>
+              <a href="mailto:support@iesvra.com" className="hover:text-gold transition-colors">support@iesvra.com</a>
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="font-semibold text-white/90">Phone:</span>
+              <a href="tel:+919876543210" className="hover:text-gold transition-colors">+91 9876543210</a>
+            </p>
+          </div>
         </div>
 
         {/* Newsletter */}
@@ -173,7 +184,10 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/50">
-          <p>© 2026 IESVRA. All rights reserved.</p>
+          <div className="flex flex-col gap-1 text-center md:text-left">
+            <p>© 2026 IESVRA. All rights reserved.</p>
+            <p>Operated by <strong>AR ENTERPRISES</strong> | GSTIN: <strong>10PRJPK7587M1ZU</strong></p>
+          </div>
           <div className="flex items-center gap-2">
             {["UPI", "VISA", "MASTER", "RuPay"].map((p) => (
               <span key={p} className="bg-white/5 border border-white/10 px-3 py-1.5 rounded text-[10px] font-bold text-white/70">

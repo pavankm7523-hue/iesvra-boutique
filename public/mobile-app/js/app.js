@@ -331,10 +331,10 @@
     setTimeout(() => {
       const splash = document.getElementById('splash');
       if (splash) {
-        splash.style.opacity = '0';
-        splash.style.transform = 'scale(1.03)';
+        splash.style.setProperty('opacity', '0', 'important');
+        splash.style.setProperty('transform', 'scale(1.03)', 'important');
         setTimeout(() => {
-          splash.style.display = 'none';
+          splash.style.setProperty('display', 'none', 'important');
           checkNavigationState();
         }, 400);
       } else {
