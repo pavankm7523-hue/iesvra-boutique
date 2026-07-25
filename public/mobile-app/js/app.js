@@ -327,18 +327,10 @@
       });
     }
 
-    // 1. Splash Screen Transition (Blinkit style ~2.3s duration for animated sequence)
-    setTimeout(() => {
-      const splash = document.getElementById('splash');
-      if (splash) {
-        splash.style.opacity = '0';
-        splash.style.transform = 'scale(1.03)';
-        setTimeout(() => {
-          splash.style.display = 'none';
-          checkNavigationState();
-        }, 400);
-      }
-    }, 2300);
+    // Splash Screen disabled - open app immediately
+    const splash = document.getElementById('splash');
+    if (splash) splash.style.display = 'none';
+    checkNavigationState();
   }
 
   // ==================== AUTH DATA MIGRATION ====================
@@ -632,16 +624,6 @@
 
   // ==================== TAB NAVIGATION ROUTER ====================
   function switchTab(tabId) {
-    // Programmatically trigger custom 3D preloader screen
-    if (typeof window.showPreloader === 'function') {
-      window.showPreloader('navigating');
-      setTimeout(() => {
-        if (typeof window.hidePreloader === 'function') {
-          window.hidePreloader();
-        }
-      }, 500);
-    }
-
     // Close detail overlay if open
     closeProductDetails();
 
@@ -3103,39 +3085,8 @@
     `<svg class="preloader-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="homeGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#EF4444"/></linearGradient></defs><path d="M24 28 L40 28 L38 56 L26 56 Z" fill="url(#homeGrad)" /><rect x="28" y="18" width="8" height="10" fill="#F3F4F6" stroke="#D1D5DB" stroke-width="1" /><path d="M26 12 H36 V18 H26 Z" fill="#EF4444" /><path d="M22 14 H26 V16 H22 Z" fill="#D1D5DB" /><path d="M30 18 L26 24" stroke="#374151" stroke-width="2.5" stroke-linecap="round" /></svg>`
   ];
 
-  window.showPreloader = (context) => {
-    const preloader = document.getElementById('preloader');
-    const iconWrap = document.getElementById('preloaderIconWrap');
-    if (!preloader || !iconWrap) return;
-
-    if (preloaderInterval) clearInterval(preloaderInterval);
-
-    let currentIdx = 0;
-    iconWrap.innerHTML = preloaderIcons[currentIdx];
-
-    preloaderInterval = setInterval(() => {
-      currentIdx = (currentIdx + 1) % preloaderIcons.length;
-      iconWrap.innerHTML = preloaderIcons[currentIdx];
-    }, 450);
-
-    preloader.style.display = 'flex';
-    preloader.offsetHeight; // trigger reflow
-    preloader.style.opacity = '1';
-  };
-
-  window.hidePreloader = () => {
-    const preloader = document.getElementById('preloader');
-    if (!preloader) return;
-
-    preloader.style.opacity = '0';
-    setTimeout(() => {
-      preloader.style.display = 'none';
-      if (preloaderInterval) {
-        clearInterval(preloaderInterval);
-        preloaderInterval = null;
-      }
-    }, 300);
-  };
+  window.showPreloader = () => {};
+  window.hidePreloader = () => {};
 
   // Expose routing helpers globally
   window.switchTab = switchTab;
