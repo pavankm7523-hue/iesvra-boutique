@@ -952,21 +952,39 @@
       (p.categories && p.categories.some(c => c.toLowerCase().includes(q)))
     );
 
+    // Apply overlay container styles inline for reliability across deployments
+    Object.assign(overlay.style, {
+      display: 'none',
+      position: 'absolute',
+      top: '100%',
+      left: '0',
+      right: '0',
+      background: '#ffffff',
+      borderRadius: '16px',
+      boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+      border: '1px solid rgba(0,0,0,0.06)',
+      maxHeight: '380px',
+      overflowY: 'auto',
+      zIndex: '1000',
+      marginTop: '8px',
+      padding: '8px'
+    });
+
     if (matches.length === 0) {
       overlay.innerHTML = `
-        <div class="search-no-results">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <div>No products found for "${query}"</div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;text-align:center;color:#64748b;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;margin-bottom:10px;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <div style="font-size:12px;font-weight:600;">No products found for "${query}"</div>
         </div>`;
     } else {
       overlay.innerHTML = matches.slice(0, 8).map(p => `
-        <div class="search-result-item" onclick="window.openProductDetails('${p.id}')">
-          <img src="${p.image}" alt="${p.name}" />
-          <div class="search-result-info">
-            <div class="sr-name">${highlightMatch(p.name, query)}</div>
-            <div class="sr-category">${(p.categories || []).join(', ')}</div>
+        <div onclick="window.openProductDetails('${p.id}')" style="display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;border-radius:10px;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+          <img src="${p.image}" alt="${p.name}" style="width:50px;height:50px;object-fit:contain;border-radius:8px;background:#f8fafc;flex-shrink:0;" />
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${highlightMatch(p.name, query)}</div>
+            <div style="font-size:10px;color:#64748b;font-weight:500;">${(p.categories || []).join(', ')}</div>
           </div>
-          <div class="search-result-price">₹${p.price}</div>
+          <div style="font-size:13px;font-weight:700;color:#6B46C1;flex-shrink:0;">₹${p.price}</div>
         </div>
       `).join('');
     }
