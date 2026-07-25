@@ -645,15 +645,23 @@
       }
     });
 
-    // Toggle visible screens
+    // Toggle visible screens with strict display:none isolation
     document.querySelectorAll('.screen').forEach(screen => {
       screen.classList.remove('active');
+      screen.style.setProperty('display', 'none', 'important');
     });
 
     const activeScreen = document.getElementById(`screen-${tabId}`);
     if (activeScreen) {
       activeScreen.classList.add('active');
+      if (tabId === 'categories') {
+        activeScreen.style.setProperty('display', 'flex', 'important');
+      } else {
+        activeScreen.style.setProperty('display', 'block', 'important');
+      }
+      activeScreen.scrollTop = 0;
     }
+    window.scrollTo(0, 0);
 
     // Toggle bottom-nav and stickyCheckoutBar
     const bottomNav = document.querySelector('.bottom-nav');

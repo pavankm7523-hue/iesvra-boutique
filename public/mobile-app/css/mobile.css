@@ -318,26 +318,27 @@ body.no-app-header .main-content {
 }
 
 /* ==================== SCREENS ROUTING ==================== */
-.main-content {
-  padding-top: 68px !important;
-  padding-bottom: calc(76px + var(--safe-bottom));
-  min-height: 100%;
-}
-
-.screen {
-  display: none;
-}
-
-.screen.active {
-  display: block;
-  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Categories screen uses flex layout to enable split-pane */
-#screen-categories.active {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 64px); /* subtract bottom nav height */
+  .main-content {
+    padding-top: 68px !important;
+    padding-bottom: calc(76px + var(--safe-bottom));
+    min-height: 100%;
+  }
+  
+  .screen {
+    display: none !important;
+  }
+  
+  .screen.active {
+    display: block !important;
+    animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  /* Categories screen uses flex layout to enable split-pane */
+  #screen-categories.active {
+    display: flex !important;
+    flex-direction: column;
+    height: calc(100vh - 64px); /* subtract bottom nav height */
+  }
 }
 
 @keyframes fadeIn {
