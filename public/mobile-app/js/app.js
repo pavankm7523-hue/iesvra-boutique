@@ -2824,13 +2824,6 @@
     }
   };
 
-  // Start app
-  if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
   // ==================== MOBILE APP PINPOINT MAP SYSTEM ====================
   let appPinnedLat = null;
   let appPinnedLng = null;
@@ -3597,4 +3590,11 @@
       if (btn) { btn.disabled = false; btn.innerHTML = '&#128081; Subscribe for ₹299'; }
     }
   };
+
+  // Start app (placed at end of IIFE after all methods & window globals are registered)
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
