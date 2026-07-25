@@ -1011,13 +1011,14 @@
   };
 
   window.filterHomeByCategory = (categoryName) => {
-    switchTab('home');
-    const input = document.getElementById('homeSearchInput');
-    if (input) {
-      input.value = categoryName;
-      input.dispatchEvent(new Event('input'));
-    }
-    renderBestSellers(categoryName);
+    // Switch to Categories tab and auto-select the chosen category
+    switchTab('categories');
+    // After the categories screen renders, select this specific category
+    setTimeout(() => {
+      if (typeof window._selectCat === 'function') {
+        window._selectCat(categoryName, 0);
+      }
+    }, 50);
   };
 
   // ==================== PROFILE EDIT ====================
