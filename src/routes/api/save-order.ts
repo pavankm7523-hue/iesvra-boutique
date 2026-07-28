@@ -25,6 +25,35 @@ export const Route = createFileRoute("/api/save-order")({
             );
           }
 
+          // Server-side Plus Membership Validation for IESVRAPLUS coupon
+          const appliedCoupon = String(order.appliedCoupon || order.couponCode || "").toUpperCase();
+          if (appliedCoupon.includes("IESVRAPLUS")) {
+            const customerEmail = (order.customerEmail || "").trim().toLowerCase();
+            try {
+              const membersRes = await fetch(`${url}/rest/v1/plus_members?email=eq.${encodeURIComponent(customerEmail)}`, {
+                headers: { apikey: key, Authorization: `Bearer ${key}` }
+              });
+              let isMember = false;
+              if (membersRes.ok) {
+                const members = await membersRes.json();
+                if (Array.isArray(members) && members.length > 0) {
+                  const record = members[0];
+                  if (record.member_expiry && new Date(record.member_expiry) > new Date()) {
+                    isMember = true;
+                  }
+                }
+              }
+              if (!isMember) {
+                return new Response(
+                  JSON.stringify({ error: "The IESVRAPLUS coupon is exclusive to active IESVRA PLUS members." }),
+                  { status: 400, headers: { "Content-Type": "application/json" } }
+                );
+              }
+            } catch (err) {
+              console.warn("[save-order] Membership check error:", err);
+            }
+          }
+
           // Convert camelCase order to snake_case for Supabase
           const dbData = {
             id: order.id,

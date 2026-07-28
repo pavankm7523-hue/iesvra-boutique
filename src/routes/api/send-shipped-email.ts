@@ -102,7 +102,7 @@ export const Route = createFileRoute("/api/send-shipped-email")({
                       <!-- Footer -->
                       <tr>
                         <td align="center" style="background-color: #f8f9fb; padding: 30px 20px; border-top: 1px solid #e5e7eb;">
-                          <p style="margin: 0 0 10px 0; font-size: 14px; color: #13192b; font-weight: 700; letter-spacing: 0.05em;">IESVRA BOUTIQUE</p>
+                          <p style="margin: 0 0 10px 0; font-size: 14px; color: #13192b; font-weight: 700; letter-spacing: 0.05em;">IESVRA</p>
                           <p style="margin: 0; font-size: 11px; color: #9ca3af; line-height: 1.5;">
                             This email was sent to ${order.customerEmail}. If you have any questions or require assistance, please reply to this email or contact support.
                           </p>

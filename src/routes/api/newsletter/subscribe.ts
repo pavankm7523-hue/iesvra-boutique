@@ -119,7 +119,7 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Welcome to the IESVRA Boutique</title>
+              <title>Welcome to IESVRA</title>
             </head>
             <body style="margin: 0; padding: 0; background-color: #f8f9fb; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8f9fb; padding: 40px 0;">
@@ -143,7 +143,7 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
                           </p>
                           <p style="margin: 0 0 20px 0; font-size: 15px; color: #475569; line-height: 1.6; font-weight: 300;">
                             <strong>About Our Store:</strong><br>
-                            At <strong>IESVRA</strong>, we curate high-quality products across multiple categories including trendy gadgets, premium home & kitchen essentials, beauty, personal care, and fashion accessories. Our mission is to make premium boutique shopping accessible with top-tier customer service and fast delivery options.
+                            At <strong>IESVRA</strong>, we curate high-quality products across multiple categories including trendy gadgets, premium home & kitchen essentials, beauty, personal care, and fashion accessories. Our mission is to make premium shopping accessible with top-tier customer service and fast delivery options.
                           </p>
                           <p style="margin: 0 0 30px 0; font-size: 15px; color: #475569; line-height: 1.6; font-weight: 300;">
                             We promise to bring you only the finest details: exclusive early sale access, new curated product drops, and insights into premium essentials.
@@ -155,7 +155,7 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
                               <td>
                                 <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px;">Your Welcome Coupon</span>
                                 <strong style="font-size: 24px; color: #c9a55c; font-family: 'Outfit', sans-serif; display: block; margin-bottom: 8px;">FIRST15</strong>
-                                <span style="font-size: 13px; color: #0b121e; font-weight: 500;">Enjoy 15% OFF on your first boutique checkouts!</span>
+                                <span style="font-size: 13px; color: #0b121e; font-weight: 500;">Enjoy 15% OFF on your first checkouts!</span>
                               </td>
                             </tr>
                           </table>
@@ -174,7 +174,7 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
                       <!-- Footer -->
                       <tr>
                         <td align="center" style="background-color: #f8f9fb; padding: 30px 20px; border-top: 1px solid #e5e7eb;">
-                          <p style="margin: 0 0 10px 0; font-size: 13px; color: #0b121e; font-weight: 700; letter-spacing: 0.05em;">IESVRA BOUTIQUE</p>
+                          <p style="margin: 0 0 10px 0; font-size: 13px; color: #0b121e; font-weight: 700; letter-spacing: 0.05em;">IESVRA</p>
                           <p style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.5;">
                             You received this email because you subscribed to our updates. If you wish to unsubscribe, you can do so by replying to this email.
                           </p>

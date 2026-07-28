@@ -804,7 +804,7 @@ export function Home() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                  Extra 5% Instant Cashback on boutique checkouts
+                  Extra 5% Instant Cashback on all checkouts
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />

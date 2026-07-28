@@ -87,14 +87,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "IESVRA - Everyday essentials, extraordinary deals.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://iesvra.com/favicon.png" },
+      { property: "og:image", content: "https://iesvra.com/iesvra-logo.png" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "IESVRA" },
       {
         name: "twitter:description",
         content: "IESVRA - Everyday essentials, extraordinary deals.",
       },
-      { name: "twitter:image", content: "https://iesvra.com/favicon.png" },
+      { name: "twitter:image", content: "https://iesvra.com/iesvra-logo.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -103,9 +103,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap",
       },
+      { rel: "shortcut icon", href: "/favicon.ico" },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
       { rel: "icon", type: "image/png", href: "/favicon-32x32.png", sizes: "32x32" },
-      { rel: "apple-touch-icon", href: "/favicon-192x192.png" },
+      { rel: "icon", type: "image/png", href: "/favicon-192x192.png", sizes: "192x192" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/favicon-192x192.png" },
       {
         rel: "stylesheet",
         href: appCss,
@@ -124,7 +126,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
     "@type": "Organization",
     "name": "IESVRA",
     "url": "https://iesvra.com",
-    "logo": "https://iesvra.com/favicon.png",
+    "logo": "https://iesvra.com/iesvra-logo.png",
     "contactPoint": {
       "@type": "ContactPoint",
       "telephone": "+91-7061333200",

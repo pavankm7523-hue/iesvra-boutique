@@ -1001,6 +1001,13 @@
 
   // Global coupon copy handler — available on all tabs
   window.copyCouponCode = (code) => {
+    if (code === 'IESVRAPLUS') {
+      const isMember = localStorage.getItem('iesvra_plus_member') === 'true';
+      if (!isMember) {
+        window.showToast('This coupon is exclusive to IESVRA PLUS members 🔒');
+        return;
+      }
+    }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(code).catch(() => {});
     }

@@ -90,7 +90,7 @@ export const Route = createFileRoute("/api/resolve-maps-url")(({
           const reverseUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=en&addressdetails=1`;
           const reverseRes = await fetch(reverseUrl, {
             headers: {
-              "User-Agent": "IESVRA-Boutique-App/1.0",
+              "User-Agent": "IESVRA-App/1.0",
             },
           });
 

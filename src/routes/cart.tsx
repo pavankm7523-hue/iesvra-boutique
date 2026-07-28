@@ -314,6 +314,31 @@ function Cart() {
     }
   }, [cartItems, shippingName, shippingEmail, shippingPhone, addressLine1, city, state, pincode]);
 
+  // Plus Membership state for coupon validation
+  const [isPlusMember, setIsPlusMember] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("iesvra_plus_member") === "true";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (currentUser?.email) {
+      fetch(`/api/plus-membership?email=${encodeURIComponent(currentUser.email)}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.isMember) {
+            localStorage.setItem("iesvra_plus_member", "true");
+            setIsPlusMember(true);
+          } else if (data.isMember === false) {
+            localStorage.removeItem("iesvra_plus_member");
+            setIsPlusMember(false);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [currentUser?.email]);
+
   // Coupon Code States
   const [couponCodeInput, setCouponCodeInput] = useState(() => {
     if (typeof window === "undefined") return "";
@@ -357,6 +382,7 @@ function Cart() {
   const VALID_COUPONS: Record<string, {
     code: string;
     title: string;
+    requiresPlus?: boolean;
     getDiscount: (sub: number, baseShip: number) => { discount: number; isFreeShipping?: boolean; description: string };
   }> = {
     FIRST15: {
@@ -387,9 +413,10 @@ function Cart() {
     IESVRAPLUS: {
       code: "IESVRAPLUS",
       title: "IESVRA Plus Perk",
+      requiresPlus: true,
       getDiscount: (sub) => ({
-        discount: Math.min(sub, 100),
-        description: "IESVRA Plus member discount applied (₹100 OFF)!",
+        discount: Math.min(sub, 50),
+        description: "IESVRA Plus member discount applied (₹50 OFF)!",
       }),
     },
   };
@@ -402,14 +429,19 @@ function Cart() {
     const normalized = appliedCouponCode.trim().toUpperCase();
     const config = VALID_COUPONS[normalized];
     if (config) {
-      const res = config.getDiscount(subtotal, baseShipping);
-      couponDiscount = res.discount;
-      if (res.isFreeShipping) isCouponFreeShipping = true;
-      activeCouponInfo = {
-        code: config.code,
-        title: config.title,
-        description: res.description,
-      };
+      if (config.requiresPlus && !isPlusMember) {
+        couponDiscount = 0;
+        activeCouponInfo = null;
+      } else {
+        const res = config.getDiscount(subtotal, baseShipping);
+        couponDiscount = res.discount;
+        if (res.isFreeShipping) isCouponFreeShipping = true;
+        activeCouponInfo = {
+          code: config.code,
+          title: config.title,
+          description: res.description,
+        };
+      }
     }
   }
 
@@ -423,9 +455,17 @@ function Cart() {
       return;
     }
 
-    if (!VALID_COUPONS[targetCode]) {
-      setCouponError(`Invalid coupon code "${targetCode}". Try FIRST15, FREESHIP, FESTIVE10, or IESVRAPLUS.`);
+    const config = VALID_COUPONS[targetCode];
+    if (!config) {
+      setCouponError(`Invalid coupon code "${targetCode}". Try FIRST15, FREESHIP, or FESTIVE10.`);
       toast.error(`Invalid coupon code "${targetCode}"`);
+      return;
+    }
+
+    if (config.requiresPlus && !isPlusMember) {
+      const errorMsg = "This coupon is exclusive to IESVRA PLUS members";
+      setCouponError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
@@ -870,7 +910,7 @@ function Cart() {
                             { code: "FIRST15", label: "15% OFF" },
                             { code: "FREESHIP", label: "FREE SHIP" },
                             { code: "FESTIVE10", label: "10% OFF" },
-                            { code: "IESVRAPLUS", label: "PLUS PERK" },
+                            ...(isPlusMember ? [{ code: "IESVRAPLUS", label: "PLUS PERK" }] : []),
                           ].map((c) => (
                             <button
                               key={c.code}
@@ -1367,7 +1407,7 @@ function Cart() {
                             { code: "FIRST15", label: "15% OFF" },
                             { code: "FREESHIP", label: "FREE SHIP" },
                             { code: "FESTIVE10", label: "10% OFF" },
-                            { code: "IESVRAPLUS", label: "PLUS PERK" },
+                            ...(isPlusMember ? [{ code: "IESVRAPLUS", label: "PLUS PERK" }] : []),
                           ].map((c) => (
                             <button
                               key={c.code}

@@ -28,7 +28,7 @@ function About() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="font-display text-3xl font-semibold text-navy-deep mb-6">
-              More than just a boutique
+              More than just a store
             </h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
