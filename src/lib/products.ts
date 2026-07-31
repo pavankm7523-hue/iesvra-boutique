@@ -4057,7 +4057,6 @@ export function useProducts() {
     topDealsList: products.slice(0, 6),
     bestSellersList: (() => {
       const best = products.filter((p) => p.isBestSeller);
-      if (best.length >= 10) return best.slice(0, 10);
       const remaining = products.filter((p) => !p.isBestSeller);
       return [...best, ...remaining].slice(0, 10);
     })(),
