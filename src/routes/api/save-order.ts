@@ -45,7 +45,7 @@ export const Route = createFileRoute("/api/save-order")({
               }
               if (!isMember) {
                 return new Response(
-                  JSON.stringify({ error: "The IESVRAPLUS coupon is exclusive to active IESVRA PLUS members." }),
+                  JSON.stringify({ error: "This coupon is exclusive to IESVRA Plus members — Join Plus to unlock this discount" }),
                   { status: 400, headers: { "Content-Type": "application/json" } }
                 );
               }

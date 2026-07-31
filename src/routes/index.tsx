@@ -48,6 +48,7 @@ export function Home() {
   const { isLoaded, bestSellersList, products } = useProducts();
   const { categories } = useCategories();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAllProducts, setShowAllProducts] = useState(false);
   const [isPlusModalOpen, setIsPlusModalOpen] = useState(false);
   const [isPlusMember, setIsPlusMember] = useState(() => {
     if (typeof window !== "undefined") {
@@ -527,12 +528,16 @@ export function Home() {
           <h2 className="text-lg sm:text-xl font-bold font-display text-slate-900 tracking-tight">
             Shop by Category
           </h2>
-          <Link
-            to="/shop"
-            className="text-xs sm:text-sm font-bold text-[#6B46C1] hover:text-purple-800 flex items-center gap-1 transition-colors"
+          <button
+            onClick={() => {
+              setShowAllProducts(true);
+              const el = document.getElementById("best-sellers-section");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="text-xs sm:text-sm font-bold text-[#6B46C1] hover:text-purple-800 flex items-center gap-1 transition-colors cursor-pointer bg-transparent border-none"
           >
-            View All <ArrowRight className="h-4 w-4" />
-          </Link>
+            View All Products <ArrowRight className="h-4 w-4" />
+          </button>
         </div>
 
         {/* Categories Grid */}
@@ -562,43 +567,72 @@ export function Home() {
 
 
       {/* ========================================================
-          8. BEST SELLERS SECTION
+          8. BEST SELLERS & EXPANDED CATALOG SECTION
          ======================================================== */}
-      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-10">
+      <section id="best-sellers-section" className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-10">
         <div className="flex items-center justify-between mb-6 border-b border-slate-200/60 pb-3">
           <h2 className="text-lg sm:text-xl font-bold font-display text-slate-900 tracking-tight flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-500 fill-amber-500" />
-            Best Sellers & Top Deals
+            {showAllProducts ? "All Products Catalog" : "Best Sellers & Top Deals"}
+            <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full ml-1 font-sans">
+              {showAllProducts ? `${products.length} Products` : `${bestSellersList.slice(0, 10).length} Featured`}
+            </span>
           </h2>
-          <Link
-            to="/shop"
-            className="text-xs sm:text-sm font-bold text-[#6B46C1] hover:text-purple-800 flex items-center gap-1 transition-colors"
+          <button
+            onClick={() => setShowAllProducts(!showAllProducts)}
+            className="text-xs sm:text-sm font-bold text-[#6B46C1] hover:text-purple-800 flex items-center gap-1 transition-colors cursor-pointer bg-purple-50 hover:bg-purple-100 px-3.5 py-1.5 rounded-full border border-purple-200/60"
           >
-            Explore All <ArrowRight className="h-4 w-4" />
-          </Link>
+            {showAllProducts ? (
+              <>Show Less</>
+            ) : (
+              <>Explore All ({products.length} Products) <ArrowRight className="h-4 w-4" /></>
+            )}
+          </button>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
           {!isLoaded
             ? null
-            : bestSellersList.slice(0, 10).map((product, idx) => (
+            : (showAllProducts ? products : bestSellersList.slice(0, 10)).map((product, idx) => (
                 <ProductCard
                   key={product.id}
                   product={product}
                   customBadge={
-                    idx === 0
+                    !showAllProducts && idx === 0
                       ? "Best Seller"
-                      : idx === 1
+                      : !showAllProducts && idx === 1
                       ? "Trending"
-                      : idx === 2
+                      : !showAllProducts && idx === 2
                       ? "New"
-                      : idx === 3
+                      : !showAllProducts && idx === 3
                       ? "15 Min Fast"
                       : undefined
                   }
                 />
               ))}
         </div>
+
+        {/* Bottom Expand / Collapse Button */}
+        {isLoaded && products.length > 10 && (
+          <div className="mt-8 text-center border-t border-slate-200/60 pt-6">
+            <button
+              onClick={() => {
+                setShowAllProducts(!showAllProducts);
+                if (showAllProducts) {
+                  const el = document.getElementById("best-sellers-section");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className="inline-flex items-center gap-2 bg-[#6B46C1] hover:bg-[#5A38A8] text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg cursor-pointer uppercase tracking-wider"
+            >
+              {showAllProducts ? (
+                <>Show Top 10 Featured Only</>
+              ) : (
+                <>Explore All {products.length} Products <ArrowRight className="h-4 w-4" /></>
+              )}
+            </button>
+          </div>
+        )}
       </section>
 
 

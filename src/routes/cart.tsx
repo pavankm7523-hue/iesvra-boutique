@@ -463,7 +463,7 @@ function Cart() {
     }
 
     if (config.requiresPlus && !isPlusMember) {
-      const errorMsg = "This coupon is exclusive to IESVRA PLUS members";
+      const errorMsg = "This coupon is exclusive to IESVRA Plus members — Join Plus to unlock this discount";
       setCouponError(errorMsg);
       toast.error(errorMsg);
       return;

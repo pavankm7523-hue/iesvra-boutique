@@ -35,6 +35,7 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const cartCount = useCartCount();
   const { products: allProducts } = useProducts();
   const currentUser = useCurrentUser();
@@ -465,20 +466,36 @@ export function Header() {
             {/* User / Login */}
             {currentUser ? (
               <div className="relative group">
-                <button className="flex flex-col items-center gap-1 hover:text-primary transition group/btn cursor-pointer">
+                <button 
+                  type="button"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex flex-col items-center gap-1 hover:text-primary transition group/btn cursor-pointer"
+                >
                   <User className="h-5 w-5 lg:h-6 lg:w-6 group-hover/btn:scale-110 transition-transform" />
                   <span className="text-[10px] font-bold hidden sm:block truncate max-w-[75px]">
                     My Account
                   </span>
                 </button>
+                {/* Backdrop for mobile / outside tap */}
+                {isUserMenuOpen && (
+                  <div 
+                    className="fixed inset-0 z-[190]" 
+                    onClick={() => setIsUserMenuOpen(false)} 
+                  />
+                )}
                 {/* Dropdown */}
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-border/50 overflow-hidden z-[200] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <div 
+                  className={`absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-border/50 overflow-hidden z-[200] transition-all duration-200 ${
+                    isUserMenuOpen ? "opacity-100 visible" : "opacity-0 invisible group-hover:opacity-100 group-hover:visible"
+                  }`}
+                >
                   <div className="px-4 py-3 border-b border-border/40 bg-secondary/10">
                     <p className="text-xs font-bold text-navy-deep truncate">{currentUser.name}</p>
                     <p className="text-[10px] text-navy-deep/50 truncate">{currentUser.email}</p>
                   </div>
                   <Link
                     to="/my-orders"
+                    onClick={() => setIsUserMenuOpen(false)}
                     className="flex items-center gap-2 px-4 py-3 text-sm text-navy-deep hover:bg-primary/5 hover:text-primary transition-colors"
                   >
                     <Package className="h-4 w-4" /> My Orders
@@ -486,14 +503,19 @@ export function Header() {
                   {currentUser.role === 'admin' && (
                     <Link
                       to="/admin"
+                      onClick={() => setIsUserMenuOpen(false)}
                       className="flex items-center gap-2 px-4 py-3 text-sm text-navy-deep hover:bg-primary/5 hover:text-primary transition-colors border-t border-border/30"
                     >
                       <Settings className="h-4 w-4" /> Admin Panel
                     </Link>
                   )}
                   <button
-                    onClick={() => { logoutUser(); navigate({ to: "/" }); }}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors border-t border-border/30 cursor-pointer"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      logoutUser();
+                      navigate({ to: "/" });
+                    }}
+                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors border-t border-border/30 cursor-pointer text-left"
                   >
                     <LogOut className="h-4 w-4" /> Sign Out
                   </button>
@@ -613,7 +635,60 @@ export function Header() {
         </form>
 
         {/* Mobile Navigation Links */}
-        <nav className="flex flex-col gap-4 mt-4">
+        <nav className="flex flex-col gap-4 mt-2">
+          {/* Mobile User Profile Section */}
+          <div className="bg-white/5 rounded-xl p-3 border border-white/10 mb-1">
+            {currentUser ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-400/20 border border-amber-400/30 text-amber-400 flex items-center justify-center font-bold text-sm shrink-0">
+                    {currentUser.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-white truncate">{currentUser.name}</p>
+                    <p className="text-[10px] text-white/50 truncate">{currentUser.email}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-1 pt-2 border-t border-white/10 text-xs font-semibold">
+                  <Link
+                    to="/my-orders"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-2 text-white/80 hover:text-amber-400 py-1.5 px-2 rounded-lg hover:bg-white/5 transition-colors"
+                  >
+                    <Package className="h-4 w-4 text-amber-400" /> My Orders
+                  </Link>
+                  {currentUser.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-2 text-white/80 hover:text-amber-400 py-1.5 px-2 rounded-lg hover:bg-white/5 transition-colors"
+                    >
+                      <Settings className="h-4 w-4 text-amber-400" /> Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      logoutUser();
+                      setIsMobileMenuOpen(false);
+                      navigate({ to: "/" });
+                    }}
+                    className="flex items-center gap-2 text-red-400 hover:text-red-300 py-1.5 px-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer w-full text-left"
+                  >
+                    <LogOut className="h-4 w-4" /> Sign Out
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 bg-amber-400/20 hover:bg-amber-400/30 text-amber-400 py-2.5 px-4 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors"
+              >
+                <User className="h-4 w-4" /> Sign In / Register
+              </Link>
+            )}
+          </div>
+
           {navLinks.map((l) => (
             <Link
               key={l.label}
