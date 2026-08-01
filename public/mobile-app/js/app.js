@@ -850,7 +850,8 @@
               <span class="p-price">₹${product.price}</span>
               <span class="p-mrp">₹${product.mrp}</span>
             </div>
-            <button class="mobile-add-btn gold" onclick="event.stopPropagation(); window.handleAddClick('${product.id}')">
+            <div style="font-size: 8px; font-weight: 800; color: #6366F1; margin-top: 2px;">👑 Plus Perk: ₹100 OFF in Cart</div>
+            <button class="mobile-add-btn gold" style="margin-top: 4px;" onclick="event.stopPropagation(); window.handleAddClick('${product.id}')">
               ADD
             </button>
           </div>

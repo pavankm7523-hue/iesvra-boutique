@@ -84,6 +84,11 @@ export function ProductCard({
               </>
             )}
           </div>
+
+          {/* Plus Member Savings Badge */}
+          <div className="mt-1 flex items-center gap-1.5 bg-purple-50 text-purple-800 border border-purple-200/80 px-2 py-0.5 rounded-md text-[10px] font-bold w-fit">
+            <span>👑 Plus Perk: Automatic ₹100 OFF at Cart</span>
+          </div>
         </div>
       </Link>
 
