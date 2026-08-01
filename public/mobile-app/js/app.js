@@ -1662,18 +1662,28 @@
     const totalSellingPrice = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     const savings = totalMRP - totalSellingPrice;
 
-    // Check Plus Member status for automatic member discount
+    // Check Plus Member status for automatic member discount & 100% free delivery
     const isPlusMember = localStorage.getItem('iesvra_plus_member') === 'true';
     const plusDiscount = isPlusMember ? Math.min(totalSellingPrice, 100) : 0;
+
+    // First-order and Festival checks
+    const userOrderCount = parseInt(localStorage.getItem('IESVRA_completed_orders_count') || '0', 10);
+    const isFestivalActive = false; // Set to true by admin during active festival sales
 
     // Applied promo coupon
     const appliedCoupon = (localStorage.getItem('IESVRA_applied_coupon') || '').toUpperCase();
     let promoDiscount = 0;
-    if (appliedCoupon === 'FIRST15') promoDiscount = Math.round(totalSellingPrice * 0.15);
-    else if (appliedCoupon === 'FESTIVE10') promoDiscount = Math.min(250, Math.round(totalSellingPrice * 0.10));
+
+    if ((appliedCoupon === 'FIRST15' || appliedCoupon === 'WELCOME10') && userOrderCount === 0) {
+      const pct = appliedCoupon === 'FIRST15' ? 0.15 : 0.10;
+      promoDiscount = Math.round(totalSellingPrice * pct);
+    } else if (appliedCoupon === 'FESTIVE10' && isFestivalActive) {
+      promoDiscount = Math.min(250, Math.round(totalSellingPrice * 0.10));
+    }
 
     const isCouponFreeShipping = appliedCoupon === 'FREESHIP';
-    const shipping = (isCouponFreeShipping || (isPlusMember && totalSellingPrice >= 299) || totalSellingPrice >= 499) ? 0 : 59;
+    // Plus Members get 100% FREE SHIPPING on every order unconditionally!
+    const shipping = (isCouponFreeShipping || isPlusMember || totalSellingPrice >= 499) ? 0 : 59;
     const totalAmount = Math.max(0, totalSellingPrice + shipping - plusDiscount - promoDiscount);
 
     receiptSummary.innerHTML = `

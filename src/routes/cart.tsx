@@ -367,6 +367,41 @@ function Cart() {
     };
   }, []);
 
+  // First-order eligibility check for new customers
+  const [userOrderCount, setUserOrderCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (currentUser?.email) {
+      import("@/lib/orders").then(({ getOrders }) => {
+        getOrders().then((allOrders) => {
+          const userOrders = allOrders.filter(
+            (o) => o.customerEmail?.toLowerCase() === currentUser.email?.toLowerCase() && o.status !== "Cancelled"
+          );
+          setUserOrderCount(userOrders.length);
+        }).catch(() => setUserOrderCount(0));
+      });
+    } else {
+      const savedCount = localStorage.getItem("IESVRA_completed_orders_count");
+      setUserOrderCount(savedCount ? parseInt(savedCount, 10) : 0);
+    }
+  }, [currentUser?.email]);
+
+  // Configurable Festival Sale window for FESTIVE10
+  const FESTIVAL_CONFIG = {
+    active: false, // Set to true by admin during an active festival sale
+    name: "Festival Sale",
+    startDate: "2026-10-01",
+    endDate: "2026-11-15",
+  };
+
+  const isFestivalActive = () => {
+    if (!FESTIVAL_CONFIG.active) return false;
+    const now = new Date();
+    const start = new Date(FESTIVAL_CONFIG.startDate);
+    const end = new Date(FESTIVAL_CONFIG.endDate);
+    return now >= start && now <= end;
+  };
+
   const physicalItems = cartItems.filter(item => item.id !== "iesvra-plus-membership" && !item.isDigital);
   const physicalSubtotal = physicalItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const hasPhysical = physicalItems.length > 0;
@@ -378,23 +413,35 @@ function Cart() {
   const plusDiscount = isPlusMember ? Math.min(subtotal, PLUS_MEMBER_DISCOUNT) : 0;
 
   const FREE_SHIPPING_THRESHOLD = 499;
-  // ₹59 delivery charge for orders under ₹499, free for Plus members or orders above threshold
+  // IESVRA Plus Members get 100% FREE SHIPPING on EVERY order unconditionally!
   const baseShipping = hasPhysical 
-    ? ((physicalSubtotal < FREE_SHIPPING_THRESHOLD && !(isPlusMember && physicalSubtotal >= 299)) ? 59 : 0)
+    ? (isPlusMember ? 0 : (physicalSubtotal < FREE_SHIPPING_THRESHOLD ? 59 : 0))
     : 0;
 
   // Stackable Coupon Rules Definition
   const VALID_COUPONS: Record<string, {
     code: string;
     title: string;
+    requiresFirstOrder?: boolean;
+    requiresFestival?: boolean;
     getDiscount: (sub: number, baseShip: number) => { discount: number; isFreeShipping?: boolean; description: string };
   }> = {
     FIRST15: {
       code: "FIRST15",
-      title: "Flat 15% OFF",
+      title: "15% OFF (1st Order)",
+      requiresFirstOrder: true,
       getDiscount: (sub) => ({
         discount: Math.round(sub * 0.15),
-        description: "Flat 15% OFF applied on subtotal!",
+        description: "Flat 15% OFF applied on your 1st order!",
+      }),
+    },
+    WELCOME10: {
+      code: "WELCOME10",
+      title: "10% OFF (1st Order)",
+      requiresFirstOrder: true,
+      getDiscount: (sub) => ({
+        discount: Math.round(sub * 0.10),
+        description: "10% OFF new customer welcome discount applied!",
       }),
     },
     FREESHIP: {
@@ -409,6 +456,7 @@ function Cart() {
     FESTIVE10: {
       code: "FESTIVE10",
       title: "Festive Save 10%",
+      requiresFestival: true,
       getDiscount: (sub) => ({
         discount: Math.min(250, Math.round(sub * 0.10)),
         description: "Festive 10% instant discount applied!",
@@ -427,14 +475,22 @@ function Cart() {
     } else {
       const config = VALID_COUPONS[normalized];
       if (config) {
-        const res = config.getDiscount(subtotal, baseShipping);
-        couponDiscount = res.discount;
-        if (res.isFreeShipping) isCouponFreeShipping = true;
-        activeCouponInfo = {
-          code: config.code,
-          title: config.title,
-          description: res.description,
-        };
+        if (config.requiresFestival && !isFestivalActive()) {
+          couponDiscount = 0;
+          activeCouponInfo = null;
+        } else if (config.requiresFirstOrder && userOrderCount !== null && userOrderCount > 0) {
+          couponDiscount = 0;
+          activeCouponInfo = null;
+        } else {
+          const res = config.getDiscount(subtotal, baseShipping);
+          couponDiscount = res.discount;
+          if (res.isFreeShipping) isCouponFreeShipping = true;
+          activeCouponInfo = {
+            code: config.code,
+            title: config.title,
+            description: res.description,
+          };
+        }
       }
     }
   }
@@ -451,8 +507,8 @@ function Cart() {
 
     if (targetCode === "IESVRAPLUS") {
       if (isPlusMember) {
-        toast.info("Your IESVRA Plus ₹100 member discount is already applied automatically! Feel free to enter a promo coupon like FIRST15 for additional savings.");
-        setCouponError("Plus discount is already automatically applied!");
+        toast.info("Your IESVRA Plus ₹100 member discount and FREE shipping are already applied automatically!");
+        setCouponError("Plus benefits are already automatically applied!");
         return;
       } else {
         const errorMsg = "This discount is exclusive to IESVRA Plus members — Join Plus to unlock automatic member discounts!";
@@ -462,9 +518,23 @@ function Cart() {
       }
     }
 
+    if (targetCode === "FESTIVE10" && !isFestivalActive()) {
+      const msg = "FESTIVE10 is currently inactive. It is only available during active festival sales.";
+      setCouponError(msg);
+      toast.error(msg);
+      return;
+    }
+
+    if ((targetCode === "FIRST15" || targetCode === "FIRST10" || targetCode === "WELCOME10") && userOrderCount !== null && userOrderCount > 0) {
+      const msg = "First-order discounts are exclusive to new customers on their very 1st order.";
+      setCouponError(msg);
+      toast.error(msg);
+      return;
+    }
+
     const config = VALID_COUPONS[targetCode];
     if (!config) {
-      setCouponError(`Invalid coupon code "${targetCode}". Try FIRST15, FREESHIP, or FESTIVE10.`);
+      setCouponError(`Invalid coupon code "${targetCode}". Try FIRST15, WELCOME10, or FREESHIP.`);
       toast.error(`Invalid coupon code "${targetCode}"`);
       return;
     }
@@ -931,9 +1001,14 @@ function Cart() {
                         {/* Quick Coupon Chips */}
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {[
-                            { code: "FIRST15", label: "15% OFF" },
+                            ...((userOrderCount === null || userOrderCount === 0)
+                              ? [
+                                  { code: "FIRST15", label: "15% OFF (1st Order)" },
+                                  { code: "WELCOME10", label: "10% OFF (1st Order)" },
+                                ]
+                              : []),
                             { code: "FREESHIP", label: "FREE SHIP" },
-                            { code: "FESTIVE10", label: "10% OFF" },
+                            ...(isFestivalActive() ? [{ code: "FESTIVE10", label: "10% OFF (Festival)" }] : []),
                           ].map((c) => (
                             <button
                               key={c.code}
