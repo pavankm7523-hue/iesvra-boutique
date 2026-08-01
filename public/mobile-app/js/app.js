@@ -1660,21 +1660,41 @@
     const totalMRP = cart.reduce((total, item) => total + (item.mrp * item.quantity), 0);
     const totalSellingPrice = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     const savings = totalMRP - totalSellingPrice;
-    const shipping = 0; // zero shipping cost
-    const totalAmount = totalSellingPrice + shipping;
+
+    // Check Plus Member status for automatic member discount
+    const isPlusMember = localStorage.getItem('iesvra_plus_member') === 'true';
+    const plusDiscount = isPlusMember ? Math.min(totalSellingPrice, 100) : 0;
+
+    // Applied promo coupon
+    const appliedCoupon = (localStorage.getItem('IESVRA_applied_coupon') || '').toUpperCase();
+    let promoDiscount = 0;
+    if (appliedCoupon === 'FIRST15') promoDiscount = Math.round(totalSellingPrice * 0.15);
+    else if (appliedCoupon === 'FESTIVE10') promoDiscount = Math.min(250, Math.round(totalSellingPrice * 0.10));
+
+    const isCouponFreeShipping = appliedCoupon === 'FREESHIP';
+    const shipping = (isCouponFreeShipping || (isPlusMember && totalSellingPrice >= 299) || totalSellingPrice >= 499) ? 0 : 59;
+    const totalAmount = Math.max(0, totalSellingPrice + shipping - plusDiscount - promoDiscount);
 
     receiptSummary.innerHTML = `
       <div class="receipt-row">
-        <span>Total MRP</span>
-        <span>₹${totalMRP}</span>
+        <span>Subtotal</span>
+        <span>₹${totalSellingPrice}</span>
       </div>
-      <div class="receipt-row">
-        <span>Boutique Discount</span>
-        <span style="color: var(--accent-purple);">-₹${savings}</span>
-      </div>
+      ${isPlusMember && plusDiscount > 0 ? `
+        <div class="receipt-row" style="color: #6366F1; font-weight: 700; font-size: 13px;">
+          <span>👑 IESVRA Plus Member Savings</span>
+          <span>-₹${plusDiscount}</span>
+        </div>
+      ` : ''}
+      ${appliedCoupon && promoDiscount > 0 ? `
+        <div class="receipt-row" style="color: #10B981; font-weight: 700; font-size: 13px;">
+          <span>🏷️ Promo Coupon (${appliedCoupon})</span>
+          <span>-₹${promoDiscount}</span>
+        </div>
+      ` : ''}
       <div class="receipt-row">
         <span>Delivery Charges</span>
-        <span style="color: var(--green-success);">FREE</span>
+        <span>${shipping === 0 ? '<span style="color: var(--green-success);">FREE</span>' : '₹' + shipping}</span>
       </div>
       <div class="receipt-row total">
         <span>Total Amount</span>

@@ -372,17 +372,21 @@ function Cart() {
   const hasPhysical = physicalItems.length > 0;
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  // Automatic Plus Member Discount (₹100 OFF applied unconditionally for members)
+  const PLUS_MEMBER_DISCOUNT = 100;
+  const plusDiscount = isPlusMember ? Math.min(subtotal, PLUS_MEMBER_DISCOUNT) : 0;
+
   const FREE_SHIPPING_THRESHOLD = 499;
-  // ₹59 delivery charge for orders under ₹499, free above
+  // ₹59 delivery charge for orders under ₹499, free for Plus members or orders above threshold
   const baseShipping = hasPhysical 
-    ? (physicalSubtotal < FREE_SHIPPING_THRESHOLD ? 59 : 0)
+    ? ((physicalSubtotal < FREE_SHIPPING_THRESHOLD && !(isPlusMember && physicalSubtotal >= 299)) ? 59 : 0)
     : 0;
 
-  // Coupon Rules Definition
+  // Stackable Coupon Rules Definition
   const VALID_COUPONS: Record<string, {
     code: string;
     title: string;
-    requiresPlus?: boolean;
     getDiscount: (sub: number, baseShip: number) => { discount: number; isFreeShipping?: boolean; description: string };
   }> = {
     FIRST15: {
@@ -410,15 +414,6 @@ function Cart() {
         description: "Festive 10% instant discount applied!",
       }),
     },
-    IESVRAPLUS: {
-      code: "IESVRAPLUS",
-      title: "IESVRA Plus Perk",
-      requiresPlus: true,
-      getDiscount: (sub) => ({
-        discount: Math.min(sub, 50),
-        description: "IESVRA Plus member discount applied (₹50 OFF)!",
-      }),
-    },
   };
 
   let couponDiscount = 0;
@@ -427,12 +422,11 @@ function Cart() {
 
   if (appliedCouponCode) {
     const normalized = appliedCouponCode.trim().toUpperCase();
-    const config = VALID_COUPONS[normalized];
-    if (config) {
-      if (config.requiresPlus && !isPlusMember) {
-        couponDiscount = 0;
-        activeCouponInfo = null;
-      } else {
+    if (normalized === "IESVRAPLUS") {
+      // Handled automatically as plusDiscount, ignore if stored as a promo code
+    } else {
+      const config = VALID_COUPONS[normalized];
+      if (config) {
         const res = config.getDiscount(subtotal, baseShipping);
         couponDiscount = res.discount;
         if (res.isFreeShipping) isCouponFreeShipping = true;
@@ -446,13 +440,26 @@ function Cart() {
   }
 
   const deliveryFee = isCouponFreeShipping ? 0 : baseShipping;
-  const total = Math.max(0, subtotal + deliveryFee - couponDiscount);
+  const total = Math.max(0, subtotal + deliveryFee - plusDiscount - couponDiscount);
 
   const handleApplyCoupon = (codeToApply?: string) => {
     const targetCode = (codeToApply || couponCodeInput).trim().toUpperCase();
     if (!targetCode) {
       setCouponError("Please enter a coupon code.");
       return;
+    }
+
+    if (targetCode === "IESVRAPLUS") {
+      if (isPlusMember) {
+        toast.info("Your IESVRA Plus ₹100 member discount is already applied automatically! Feel free to enter a promo coupon like FIRST15 for additional savings.");
+        setCouponError("Plus discount is already automatically applied!");
+        return;
+      } else {
+        const errorMsg = "This discount is exclusive to IESVRA Plus members — Join Plus to unlock automatic member discounts!";
+        setCouponError(errorMsg);
+        toast.error(errorMsg);
+        return;
+      }
     }
 
     const config = VALID_COUPONS[targetCode];
@@ -462,19 +469,12 @@ function Cart() {
       return;
     }
 
-    if (config.requiresPlus && !isPlusMember) {
-      const errorMsg = "This coupon is exclusive to IESVRA Plus members — Join Plus to unlock this discount";
-      setCouponError(errorMsg);
-      toast.error(errorMsg);
-      return;
-    }
-
     setCouponError(null);
     setAppliedCouponCode(targetCode);
     setCouponCodeInput(targetCode);
     localStorage.setItem("IESVRA_applied_coupon", targetCode);
     window.dispatchEvent(new Event("iesvra-coupon-updated"));
-    toast.success(`Coupon "${targetCode}" applied! 🎉`);
+    toast.success(`Coupon "${targetCode}" applied on top of your Plus savings! 🎉`);
   };
 
   const handleRemoveCoupon = () => {
@@ -802,6 +802,30 @@ function Cart() {
                       ₹{subtotal.toLocaleString()}
                     </span>
                   </div>
+
+                  {/* Automatic IESVRA Plus Member Discount */}
+                  {isPlusMember && plusDiscount > 0 && (
+                    <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200/80 rounded-xl p-3 flex items-center justify-between my-1">
+                      <div className="flex items-center gap-2">
+                        <span className="bg-purple-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          PLUS MEMBER
+                        </span>
+                        <span className="text-xs font-bold text-purple-900">
+                          Automatic Member Savings
+                        </span>
+                      </div>
+                      <span className="font-bold text-purple-700 text-sm">
+                        - ₹{plusDiscount.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+
+                  {!isPlusMember && (
+                    <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 text-[11px] text-amber-900">
+                      👑 Join <strong className="font-bold">IESVRA Plus</strong> (₹299/yr) for automatic <strong className="font-bold">₹100 OFF</strong> on every order!
+                    </div>
+                  )}
+
                   {hasPhysical && (
                     <div className="flex justify-between text-muted-foreground">
                       <span>
@@ -822,11 +846,11 @@ function Cart() {
                     </div>
                   )}
 
-                  {/* Coupon Applied Discount Row */}
-                  {couponDiscount > 0 && (
+                  {/* Stacked Coupon Applied Discount Row */}
+                  {couponDiscount > 0 && activeCouponInfo && (
                     <div className="flex justify-between text-emerald-600 font-semibold pt-1">
                       <span className="flex items-center gap-1">
-                        <Tag className="h-3.5 w-3.5" /> Coupon Discount ({appliedCouponCode})
+                        <Tag className="h-3.5 w-3.5" /> Coupon ({activeCouponInfo.code})
                       </span>
                       <span>- ₹{couponDiscount.toLocaleString()}</span>
                     </div>
@@ -910,7 +934,6 @@ function Cart() {
                             { code: "FIRST15", label: "15% OFF" },
                             { code: "FREESHIP", label: "FREE SHIP" },
                             { code: "FESTIVE10", label: "10% OFF" },
-                            ...(isPlusMember ? [{ code: "IESVRAPLUS", label: "PLUS PERK" }] : []),
                           ].map((c) => (
                             <button
                               key={c.code}
