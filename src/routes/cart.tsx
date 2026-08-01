@@ -1205,7 +1205,7 @@ function Cart() {
                             setShippingPhone(e.target.value);
                             if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
                           }}
-                          placeholder="e.g. 9876543210"
+                          placeholder="e.g. 7061333200"
                           className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
                         />
                         {errors.phone && <span className="text-[9px] text-red-500 font-semibold">{errors.phone}</span>}
