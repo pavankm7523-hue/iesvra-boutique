@@ -340,7 +340,7 @@ export function Home() {
       {/* ========================================================
           2. DELIVERY SLA BADGES STRIP (4 PILLARS)
          ======================================================== */}
-      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 -mt-4 sm:-mt-6 relative z-20">
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-6 relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
           
           {/* Badge 1: 15 Min Delivery */}
