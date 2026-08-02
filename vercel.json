@@ -1,4 +1,8 @@
 {
+  "rewrites": [
+    { "source": "/mobile-app", "destination": "/mobile-app/index.html" },
+    { "source": "/mobile-app/", "destination": "/mobile-app/index.html" }
+  ],
   "headers": [
     {
       "source": "/mobile-app",
