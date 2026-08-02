@@ -898,45 +898,6 @@
       if (q.length > 0) showSearchResults(q, overlay);
     });
 
-    // Close overlay when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!overlay.contains(e.target) && e.target !== newInput && !e.target.closest('.mic-btn')) {
-        overlay.style.display = 'none';
-      }
-    });
-  }
-
-  let mobileTickerInterval = null;
-  function initMobileLiveTicker() {
-    const tickerText = document.getElementById('mobileTickerText');
-    if (!tickerText) return;
-    if (mobileTickerInterval) clearInterval(mobileTickerInterval);
-
-    const locations = ["Boring Road, Patna", "Kankarbagh, Patna", "Bailey Road, Patna", "Danapur, Patna", "Patliputra Colony, Patna", "Rajendra Nagar, Patna", "Anisabad, Patna", "Frazer Road, Patna"];
-    const names = ["Priya S.", "Rahul M.", "Ananya K.", "Vikram R.", "Sneha P.", "Aarav M.", "Pooja R.", "Amit K."];
-    
-    let tickerIdx = 0;
-    const updateTicker = () => {
-      const prods = getProducts();
-      if (!prods || prods.length === 0) return;
-      const p = prods[tickerIdx % prods.length];
-      const loc = locations[tickerIdx % locations.length];
-      const name = names[tickerIdx % names.length];
-      const mins = Math.floor((tickerIdx % 8) * 3) + 2;
-
-      tickerText.style.opacity = '0';
-      setTimeout(() => {
-        const shortName = p.name.length > 32 ? p.name.slice(0, 32) + '...' : p.name;
-        tickerText.textContent = `${name} from ${loc} bought "${shortName}" — ${mins} mins ago`;
-        tickerText.style.opacity = '1';
-        tickerIdx = (tickerIdx + 1) % prods.length;
-      }, 300);
-    };
-
-    updateTicker();
-    mobileTickerInterval = setInterval(updateTicker, 4000);
-  }
-
     // Voice Search (Web Speech API)
     if (micBtn) {
       const newMic = micBtn.cloneNode(true);
@@ -981,6 +942,37 @@
         };
       });
     }
+  }
+
+  let mobileTickerInterval = null;
+  function initMobileLiveTicker() {
+    const tickerText = document.getElementById('mobileTickerText');
+    if (!tickerText) return;
+    if (mobileTickerInterval) clearInterval(mobileTickerInterval);
+
+    const locations = ["Boring Road, Patna", "Kankarbagh, Patna", "Bailey Road, Patna", "Danapur, Patna", "Patliputra Colony, Patna", "Rajendra Nagar, Patna", "Anisabad, Patna", "Frazer Road, Patna"];
+    const names = ["Priya S.", "Rahul M.", "Ananya K.", "Vikram R.", "Sneha P.", "Aarav M.", "Pooja R.", "Amit K."];
+    
+    let tickerIdx = 0;
+    const updateTicker = () => {
+      const prods = getProducts();
+      if (!prods || prods.length === 0) return;
+      const p = prods[tickerIdx % prods.length];
+      const loc = locations[tickerIdx % locations.length];
+      const name = names[tickerIdx % names.length];
+      const mins = Math.floor((tickerIdx % 8) * 3) + 2;
+
+      tickerText.style.opacity = '0';
+      setTimeout(() => {
+        const shortName = p.name.length > 32 ? p.name.slice(0, 32) + '...' : p.name;
+        tickerText.textContent = `${name} from ${loc} bought "${shortName}" — ${mins} mins ago`;
+        tickerText.style.opacity = '1';
+        tickerIdx = (tickerIdx + 1) % prods.length;
+      }, 300);
+    };
+
+    updateTicker();
+    mobileTickerInterval = setInterval(updateTicker, 4000);
   }
 
   function showSearchResults(query, overlay) {
