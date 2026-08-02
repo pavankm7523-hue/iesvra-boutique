@@ -22,6 +22,7 @@ function EditProduct() {
     sub: "",
     price: "",
     mrp: "",
+    stock: "50",
     categories: [] as string[],
     description: "",
     colors: [] as string[],
@@ -37,6 +38,7 @@ function EditProduct() {
         sub: product.sub,
         price: product.price.toString(),
         mrp: product.mrp.toString(),
+        stock: (product.stock ?? 50).toString(),
         categories: product.categories || [],
         description: product.description,
         colors: product.colors || [],
@@ -57,6 +59,7 @@ function EditProduct() {
       sub: formData.sub,
       price: Number(formData.price),
       mrp: Number(formData.mrp),
+      stock: Math.max(0, parseInt(formData.stock, 10) || 0),
       image: gallery.length > 0 ? gallery[0].url : "https://placehold.co/800x800?text=No+Image",
       gallery: gallery,
       categories: formData.categories.length > 0 ? formData.categories : ["Uncategorized"],
@@ -92,7 +95,7 @@ function EditProduct() {
               <input type="text" value={formData.sub} onChange={e => setFormData({...formData, sub: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-navy-deep">Selling Price (₹)</label>
                 <input required type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
@@ -101,6 +104,11 @@ function EditProduct() {
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-navy-deep">MRP (₹)</label>
                 <input required type="number" min="0" value={formData.mrp} onChange={e => setFormData({...formData, mrp: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-navy-deep">Stock Quantity</label>
+                <input required type="number" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
               </div>
             </div>
 

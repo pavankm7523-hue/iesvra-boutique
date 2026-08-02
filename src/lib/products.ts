@@ -42,6 +42,7 @@ export type Product = {
   url?: string;
   isDigital?: boolean;
   type?: string;
+  stock?: number;
 };
 
 export const colorMap: Record<string, string> = {
@@ -3939,28 +3940,32 @@ export function useProducts() {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        localList = parsed.map((p: any) => {
-          if (!p.categories) {
-            return {
-              ...p,
-              categories: p.category ? [p.category] : ["Uncategorized"],
-            };
-          }
-          return p;
-        });
+        localList = parsed.map((p: any) => ({
+          ...p,
+          categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
+          stock: typeof p.stock === "number" ? p.stock : 50,
+        }));
       } catch (e) {
         console.error("Failed to parse local products", e);
       }
     }
-    setProducts(localList);
+    const normalizedInitial = localList.map(p => ({
+      ...p,
+      stock: typeof p.stock === "number" ? p.stock : 50,
+    }));
+    setProducts(normalizedInitial);
 
     // 2. Fetch globally in background
     fetch("/api/products")
       .then((res) => res.json())
       .then((globalList) => {
         if (Array.isArray(globalList) && globalList.length > 0) {
-          setProducts(globalList);
-          localStorage.setItem("ishvara_products_v11", JSON.stringify(globalList));
+          const normalizedGlobal = globalList.map((p: any) => ({
+            ...p,
+            stock: typeof p.stock === "number" ? p.stock : 50,
+          }));
+          setProducts(normalizedGlobal);
+          localStorage.setItem("ishvara_products_v11", JSON.stringify(normalizedGlobal));
         } else {
           // If first run (no global data), initialize global list with local data
           fetch("/api/products", {

@@ -702,6 +702,7 @@
       renderCategoriesScroll();
       renderBestSellers();
       initHomeSearch();
+      initMobileLiveTicker();
     } else if (tabId === 'categories') {
       renderCategoriesScreen();
     } else if (tabId === 'offers') {
@@ -851,9 +852,15 @@
               <span class="p-mrp">₹${product.mrp}</span>
             </div>
             <div style="font-size: 8px; font-weight: 800; color: #6366F1; margin-top: 2px;">👑 Plus Perk: ₹100 OFF in Cart</div>
-            <button class="mobile-add-btn gold" style="margin-top: 4px;" onclick="event.stopPropagation(); window.handleAddClick('${product.id}')">
-              ADD
-            </button>
+            ${product.stock === 0 ? `
+              <button class="mobile-add-btn disabled" style="margin-top: 4px; background: #E2E8F0; color: #64748B; border-color: #CBD5E1; cursor: not-allowed;" disabled onclick="event.stopPropagation();">
+                OUT OF STOCK
+              </button>
+            ` : `
+              <button class="mobile-add-btn gold" style="margin-top: 4px;" onclick="event.stopPropagation(); window.handleAddClick('${product.id}')">
+                ADD
+              </button>
+            `}
           </div>
         </div>
       `;
@@ -897,6 +904,38 @@
         overlay.style.display = 'none';
       }
     });
+  }
+
+  let mobileTickerInterval = null;
+  function initMobileLiveTicker() {
+    const tickerText = document.getElementById('mobileTickerText');
+    if (!tickerText) return;
+    if (mobileTickerInterval) clearInterval(mobileTickerInterval);
+
+    const locations = ["Boring Road, Patna", "Kankarbagh, Patna", "Bailey Road, Patna", "Danapur, Patna", "Patliputra Colony, Patna", "Rajendra Nagar, Patna", "Anisabad, Patna", "Frazer Road, Patna"];
+    const names = ["Priya S.", "Rahul M.", "Ananya K.", "Vikram R.", "Sneha P.", "Aarav M.", "Pooja R.", "Amit K."];
+    
+    let tickerIdx = 0;
+    const updateTicker = () => {
+      const prods = getProducts();
+      if (!prods || prods.length === 0) return;
+      const p = prods[tickerIdx % prods.length];
+      const loc = locations[tickerIdx % locations.length];
+      const name = names[tickerIdx % names.length];
+      const mins = Math.floor((tickerIdx % 8) * 3) + 2;
+
+      tickerText.style.opacity = '0';
+      setTimeout(() => {
+        const shortName = p.name.length > 32 ? p.name.slice(0, 32) + '...' : p.name;
+        tickerText.textContent = `${name} from ${loc} bought "${shortName}" — ${mins} mins ago`;
+        tickerText.style.opacity = '1';
+        tickerIdx = (tickerIdx + 1) % prods.length;
+      }, 300);
+    };
+
+    updateTicker();
+    mobileTickerInterval = setInterval(updateTicker, 4000);
+  }
 
     // Voice Search (Web Speech API)
     if (micBtn) {
@@ -1163,7 +1202,11 @@
                     <div style="font-size:13px; font-weight:800; color:#1A202C;">₹${p.price}</div>
                     ${p.mrp && p.mrp > p.price ? `<div style="font-size:10px; color:#94A3B8; text-decoration:line-through;">₹${p.mrp}</div>` : ''}
                   </div>
-                  <button onclick="event.stopPropagation(); window.addToCartFromCategories('${p.id}')" style="background:white; border:1.5px solid #6D4FD6; color:#6D4FD6; font-size:12px; font-weight:800; padding:5px 14px; border-radius:8px; cursor:pointer; letter-spacing:0.03em; transition:all 0.15s;" onmouseover="this.style.background='#6D4FD6'; this.style.color='white'" onmouseout="this.style.background='white'; this.style.color='#6D4FD6'">ADD</button>
+                  ${p.stock === 0 ? `
+                    <button disabled style="background:#E2E8F0; border:1.5px solid #CBD5E1; color:#64748B; font-size:10px; font-weight:800; padding:5px 8px; border-radius:8px; cursor:not-allowed;">OUT OF STOCK</button>
+                  ` : `
+                    <button onclick="event.stopPropagation(); window.addToCartFromCategories('${p.id}')" style="background:white; border:1.5px solid #6D4FD6; color:#6D4FD6; font-size:12px; font-weight:800; padding:5px 14px; border-radius:8px; cursor:pointer; letter-spacing:0.03em; transition:all 0.15s;" onmouseover="this.style.background='#6D4FD6'; this.style.color='white'" onmouseout="this.style.background='white'; this.style.color='#6D4FD6'">ADD</button>
+                  `}
                 </div>
               </div>
             </div>`;
@@ -1203,6 +1246,10 @@
     const products = getProducts();
     const p = products.find(p => p.id === productId);
     if (!p) return;
+    if (p.stock === 0) {
+      showToast("Sorry, this item is out of stock.");
+      return;
+    }
     window.AppState.addToCart({ ...p, color: 'Standard', quantity: 1 });
     window.dispatchEvent(new Event('ishvara_cart_changed'));
     showToast(`✓ ${p.name.slice(0, 28)}... added!`);

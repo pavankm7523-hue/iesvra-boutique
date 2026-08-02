@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
+import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
 
 export const Route = createFileRoute("/api/save-order")({
   server: {
@@ -77,6 +78,35 @@ export const Route = createFileRoute("/api/save-order")({
 
           const list = await res.json();
           const savedRow = list && list.length > 0 ? list[0] : dbData;
+
+          // Decrement product stock for each ordered item
+          try {
+            const currentProducts = await getMetadataFromDb("global_products");
+            if (Array.isArray(currentProducts) && currentProducts.length > 0) {
+              const orderItems = Array.isArray(order.items) ? order.items : [];
+              let updated = false;
+              const updatedProducts = currentProducts.map((p: any) => {
+                const matchItem = orderItems.find(
+                  (it: any) => String(it.id || it.productId) === String(p.id)
+                );
+                if (matchItem) {
+                  const qty = Number(matchItem.quantity) || 1;
+                  const currentStock = typeof p.stock === "number" ? p.stock : 50;
+                  const newStock = Math.max(0, currentStock - qty);
+                  updated = true;
+                  return { ...p, stock: newStock };
+                }
+                return p;
+              });
+
+              if (updated) {
+                await saveMetadataToDb("global_products", updatedProducts);
+                console.log("[save-order] Successfully decremented stock for order items.");
+              }
+            }
+          } catch (stockErr) {
+            console.error("[save-order] Failed to update product stock:", stockErr);
+          }
 
           // Return camelCase order to client
           const savedOrder = {

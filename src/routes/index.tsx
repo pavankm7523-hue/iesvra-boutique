@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useProducts, useCategories } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
+import { LiveActivityTicker } from "@/components/LiveActivityTicker";
 import { addToCart } from "@/lib/cart";
 import { getCurrentUser } from "@/lib/auth";
 import {
@@ -329,6 +330,11 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* ========================================================
+          LIVE ACTIVITY FEED TICKER (SOCIAL PROOF)
+         ======================================================== */}
+      <LiveActivityTicker />
 
 
       {/* ========================================================

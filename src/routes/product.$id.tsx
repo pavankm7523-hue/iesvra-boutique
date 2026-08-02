@@ -302,11 +302,20 @@ function ProductDetails() {
               </div>
             )}
 
+            {/* Availability Stock Status */}
+            {product.stock === 0 && (
+              <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+                <span className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
+                Currently Out of Stock
+              </div>
+            )}
+
             {/* Quantity and Actions */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6 border-t border-border/30 w-full">
-              <div className="flex items-center justify-between border-2 border-border/50 rounded-full h-14 bg-white shrink-0">
+              <div className={`flex items-center justify-between border-2 border-border/50 rounded-full h-14 bg-white shrink-0 ${product.stock === 0 ? "opacity-40 pointer-events-none" : ""}`}>
                 <button
                   type="button"
+                  disabled={product.stock === 0}
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="px-5 text-navy-deep/60 hover:text-navy-deep hover:bg-secondary/20 transition-colors h-full rounded-l-full cursor-pointer font-bold text-xl"
                 >
@@ -317,6 +326,7 @@ function ProductDetails() {
                 </span>
                 <button
                   type="button"
+                  disabled={product.stock === 0}
                   onClick={() => setQuantity(quantity + 1)}
                   className="px-5 text-navy-deep/60 hover:text-navy-deep hover:bg-secondary/20 transition-colors h-full rounded-r-full cursor-pointer font-bold text-xl"
                 >
@@ -325,21 +335,33 @@ function ProductDetails() {
               </div>
 
               <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
-                <button
-                  type="button"
-                  onClick={handleAddToCart}
-                  className="w-full sm:flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-white h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] cursor-pointer"
-                >
-                  <ShoppingBag className="h-4 w-4" /> Add to Cart
-                </button>
+                {product.stock === 0 ? (
+                  <button
+                    disabled
+                    type="button"
+                    className="w-full bg-slate-200 text-slate-500 h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm flex items-center justify-center cursor-not-allowed border border-slate-300 select-none shadow-none"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      className="w-full sm:flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-white h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] cursor-pointer"
+                    >
+                      <ShoppingBag className="h-4 w-4" /> Add to Cart
+                    </button>
 
-                <button
-                  type="button"
-                  onClick={handleBuyDirectly}
-                  className="w-full sm:flex-1 bg-accent hover:bg-accent/95 text-white hover:shadow-[0_8px_30px_rgba(246,166,37,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
-                >
-                  Buy Now
-                </button>
+                    <button
+                      type="button"
+                      onClick={handleBuyDirectly}
+                      className="w-full sm:flex-1 bg-accent hover:bg-accent/95 text-white hover:shadow-[0_8px_30px_rgba(246,166,37,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
+                    >
+                      Buy Now
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 

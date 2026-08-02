@@ -35,11 +35,15 @@ export function ProductCard({
       >
         <div className="relative aspect-square bg-[#F7F7F7] overflow-hidden rounded-t-xl flex items-center justify-center p-6 border-b border-border/40">
           {/* Dynamic Badge */}
-          {(customBadge || product.isBestSeller) && (
+          {product.stock === 0 ? (
+            <div className="absolute top-3 left-3 z-10 bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm">
+              Out of Stock
+            </div>
+          ) : (customBadge || product.isBestSeller) ? (
             <div className="absolute top-3 left-3 z-10 bg-gold text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm">
               {customBadge || "Best Seller"}
             </div>
-          )}
+          ) : null}
 
           <img
             src={product.image}
@@ -47,7 +51,7 @@ export function ProductCard({
             loading="lazy"
             width={800}
             height={800}
-            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+            className={`w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out ${product.stock === 0 ? "opacity-60 grayscale-[30%]" : ""}`}
           />
         </div>
         
@@ -92,21 +96,30 @@ export function ProductCard({
         </div>
       </Link>
 
-      {/* Add to Cart Button - Purple to match reference */}
+      {/* Add to Cart Button - Disabled if Out of Stock */}
       <div className="p-4 pt-0 mt-auto">
-        <button
-          className="w-full bg-primary text-white hover:bg-primary/90 h-10 rounded-md font-bold text-xs uppercase tracking-wider transition-colors duration-300 flex items-center justify-center cursor-pointer shadow-sm"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const colorToUse = product.colors && product.colors.length > 0 ? product.colors[0] : "Standard";
-            // @ts-ignore - passing extra args that we will add to cart.ts next
-            addToCart(product, colorToUse, 1, bannerId, saleEndDate, product.mrp); // mrp holds the normal price now
-            toast.success(`Successfully added ${product.name} to your cart!`);
-          }}
-        >
-          Add to Cart
-        </button>
+        {product.stock === 0 ? (
+          <button
+            disabled
+            className="w-full bg-slate-200 text-slate-500 h-10 rounded-md font-bold text-xs uppercase tracking-wider flex items-center justify-center cursor-not-allowed border border-slate-300 select-none"
+          >
+            Out of Stock
+          </button>
+        ) : (
+          <button
+            className="w-full bg-primary text-white hover:bg-primary/90 h-10 rounded-md font-bold text-xs uppercase tracking-wider transition-colors duration-300 flex items-center justify-center cursor-pointer shadow-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const colorToUse = product.colors && product.colors.length > 0 ? product.colors[0] : "Standard";
+              // @ts-ignore - passing extra args that we will add to cart.ts next
+              addToCart(product, colorToUse, 1, bannerId, saleEndDate, product.mrp); // mrp holds the normal price now
+              toast.success(`Successfully added ${product.name} to your cart!`);
+            }}
+          >
+            Add to Cart
+          </button>
+        )}
       </div>
 
       {showHeart && <WishlistButton product={product} />}
