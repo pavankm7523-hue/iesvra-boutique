@@ -200,30 +200,7 @@ function RootComponent() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"
-          style={{
-            position: "fixed",
-            bottom: "24px",
-            right: "24px",
-            zIndex: 9999,
-            width: "58px",
-            height: "58px",
-            borderRadius: "50%",
-            backgroundColor: "#25D366",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 20px rgba(37,211,102,0.45)",
-            textDecoration: "none",
-            transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.transform = "scale(1.12)";
-            (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 6px 28px rgba(37,211,102,0.6)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.transform = "scale(1)";
-            (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 4px 20px rgba(37,211,102,0.45)";
-          }}
+          className="fixed bottom-[86px] md:bottom-6 right-4.5 md:right-6 z-[9999] w-[56px] h-[56px] rounded-full bg-[#25D366] flex items-center justify-center shadow-[0_4px_20px_rgba(37,211,102,0.45)] no-underline transition-all duration-200 hover:scale-110 active:scale-95"
         >
           {/* Pulse ring */}
           <span
