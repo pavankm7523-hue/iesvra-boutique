@@ -215,7 +215,9 @@ function ProductDetails() {
               <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy-deep leading-[1.1]">
                 {product.name}
               </h1>
-              <p className="text-base text-navy-deep/60 font-light">{product.sub}</p>
+              <p className="text-base text-navy-deep/60 font-light">
+                {(product.sub || "").replace(/IESVRA Boutique/g, "IESVRA")}
+              </p>
             </div>
 
             {/* Ratings */}
