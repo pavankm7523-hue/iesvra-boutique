@@ -88,19 +88,28 @@ function MyOrdersPage() {
   const [isAuthLoaded, setIsAuthLoaded] = useState(false);
 
   useEffect(() => {
-    // Check localStorage auth state synchronously
     setIsAuthLoaded(true);
   }, []);
 
-  // Redirect to login if truly not authenticated
+  // Redirect to login only if truly not authenticated.
+  // Double-check localStorage directly to avoid the SSR hydration race
+  // where React state (user) is still null but localStorage has the session.
   useEffect(() => {
-    if (isAuthLoaded && user === null) {
-      toast.error("Please log in to view your orders.");
-      navigate({ to: "/login" });
-    }
+    if (!isAuthLoaded) return;
+    // Give useCurrentUser's effect time to sync localStorage → state
+    const timer = setTimeout(() => {
+      const rawAuth = typeof window !== "undefined" ? localStorage.getItem("ishvara_auth") : null;
+      if (!rawAuth && user === null) {
+        toast.error("Please log in to view your orders.");
+        navigate({ to: "/login" });
+      }
+    }, 150);
+    return () => clearTimeout(timer);
   }, [user, isAuthLoaded, navigate]);
 
-  if (!isAuthLoaded || !user) return null;
+  // Also read directly from localStorage for the initial render guard
+  const hasLocalSession = typeof window !== "undefined" && !!localStorage.getItem("ishvara_auth");
+  if (!isAuthLoaded || (!user && !hasLocalSession)) return null;
 
   // Filter orders by logged-in user email (case-insensitive)
   const myOrders = allOrders.filter(
