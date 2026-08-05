@@ -279,55 +279,17 @@ export function Home() {
   return (
     <div className="bg-[#F6F7FB] text-slate-800 font-sans pb-20 md:pb-12">
       {/* ========================================================
-          1. HERO BANNER (MATCHING REFERENCE SCREENSHOT)
+          1. HERO BANNER (USING NEW CUSTOM FULL-WIDTH BANNER)
          ======================================================== */}
-      <section className="w-full bg-gradient-to-r from-[#4C1D95] via-[#5B21B6] to-[#7C3AED] text-white pt-6 pb-8 md:pt-10 md:pb-12 relative overflow-hidden select-none">
-        {/* Glow effects */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-fuchsia-500/20 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 lg:gap-10">
-            
-            {/* Left Content */}
-            <div className="flex-1 text-center md:text-left space-y-4 max-w-xl">
-              {/* App Brand Header */}
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
-                <span className="font-extrabold tracking-tight text-white text-xs sm:text-sm">
-                  IESVRA<sup className="text-[9px] font-normal font-sans">®</sup>
-                </span>
-                <span className="text-white/40 text-xs">—</span>
-                <span className="text-[11px] font-medium text-purple-100 tracking-wide">
-                  India's Smartest Shopping App
-                </span>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-display leading-[1.08] tracking-tight uppercase">
-                SMART SHOPPING, <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-300 to-white drop-shadow-sm">
-                  FASTER DELIVERY!
-                </span>
-              </h1>
-
-              {/* Subtitle Pill Button */}
-              <div className="pt-1">
-                <span className="inline-block bg-gradient-to-r from-[#1A0938] to-[#2E0B5B] text-amber-300 px-5 py-2 rounded-full text-xs sm:text-sm font-extrabold tracking-wider border border-amber-400/40 shadow-lg">
-                  SHOP MORE, <span className="text-white">SAVE MORE,</span> GET MORE!
-                </span>
-              </div>
-            </div>
-
-            {/* Right Graphic: 3D Render Illustration */}
-            <div className="flex-1 w-full max-w-md sm:max-w-lg flex items-center justify-center relative select-none">
-              <img
-                src="/hero-banner-3d.png"
-                alt="IESVRA Smart Shopping Rider & App"
-                className="w-full h-auto max-h-[300px] sm:max-h-[380px] object-contain drop-shadow-2xl hover:scale-102 transition-transform duration-500"
-              />
-            </div>
-
-          </div>
+      <section className="w-full bg-[#F6F7FB] py-3 sm:py-5 relative overflow-hidden select-none">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+          <Link to="/shop" className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl transition-transform duration-300 hover:scale-[1.005]">
+            <img
+              src="/hero-banner-new.png"
+              alt="IESVRA Smart Shopping, Faster Delivery! Download App & Shop Now"
+              className="w-full h-auto object-cover rounded-2xl sm:rounded-3xl shadow-lg border border-purple-100"
+            />
+          </Link>
         </div>
       </section>
 

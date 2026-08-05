@@ -85,15 +85,22 @@ function MyOrdersPage() {
     }
   };
 
-  // Redirect to login if not authenticated
+  const [isAuthLoaded, setIsAuthLoaded] = useState(false);
+
   useEffect(() => {
-    if (user === null) {
+    // Check localStorage auth state synchronously
+    setIsAuthLoaded(true);
+  }, []);
+
+  // Redirect to login if truly not authenticated
+  useEffect(() => {
+    if (isAuthLoaded && user === null) {
       toast.error("Please log in to view your orders.");
       navigate({ to: "/login" });
     }
-  }, [user, navigate]);
+  }, [user, isAuthLoaded, navigate]);
 
-  if (!user) return null;
+  if (!isAuthLoaded || !user) return null;
 
   // Filter orders by logged-in user email (case-insensitive)
   const myOrders = allOrders.filter(
