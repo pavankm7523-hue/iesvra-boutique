@@ -68,9 +68,20 @@ function ProductDetails() {
     );
   }
 
-  const galleryItems = product.gallery && product.gallery.length > 0
-    ? product.gallery
-    : [{ id: "main", type: "image" as const, url: product.image }];
+  const galleryItems = useMemo(() => {
+    const raw = product.gallery && product.gallery.length > 0
+      ? product.gallery
+      : [{ id: "main", type: "image" as const, url: product.image }];
+    const seen = new Set<string>();
+    const items: ProductMedia[] = [];
+    for (const item of raw) {
+      if (item && item.url && !seen.has(item.url)) {
+        seen.add(item.url);
+        items.push(item);
+      }
+    }
+    return items.length > 0 ? items : [{ id: "main", type: "image" as const, url: product.image }];
+  }, [product.gallery, product.image]);
 
   const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
 

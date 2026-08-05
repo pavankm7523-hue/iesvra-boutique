@@ -257,14 +257,6 @@ function Login() {
 
   return (
     <div className="bg-background text-foreground min-h-screen flex flex-col items-center justify-center p-4">
-      <Link to="/" className="mb-8 flex items-center">
-        <img
-          src={logo}
-          alt="IESVRA"
-          className="h-12 w-auto object-contain"
-        />
-      </Link>
-
       <div className="bg-white p-8 md:p-10 rounded-xl shadow-sm border border-border w-full max-w-md">
         {forgotStep === "email" ? (
           <div className="space-y-6">
