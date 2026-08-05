@@ -3772,7 +3772,9 @@ function triggerProductsChange() {
 }
 
 export function useProducts() {
-  const [products, setProducts] = useState<Product[]>([]);
+  // Initialize with hardcoded products so SSR renders products immediately
+  // (no empty flash while waiting for client-side localStorage/API fetch)
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {

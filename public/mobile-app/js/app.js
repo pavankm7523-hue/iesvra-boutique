@@ -2,6 +2,10 @@
   // Retrieve functions from global AppState to bypass WebView module restrictions
   const { getProducts, getCategories, getCart, saveCart, addToCart, updateCartQty } = window.AppState;
 
+  // Detect Capacitor native environment and use absolute API URL
+  const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+  const API_BASE = isCapacitor ? 'https://www.iesvra.com' : '';
+
   // DOM elements
   const categoriesScroll = document.getElementById('categoriesScroll');
   const bestSellersRow = document.getElementById('bestSellersRow');
@@ -168,7 +172,7 @@
     localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
     
     // Save globally
-    fetch("/api/users", {
+    fetch(API_BASE + "/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(users)
@@ -188,7 +192,7 @@
       if (password === adminPassword || incomingHash === adminPassword) {
         if (password === adminPassword) {
           localStorage.setItem("ishvara_admin_password", incomingHash);
-          fetch("/api/admin-password", {
+          fetch(API_BASE + "/api/admin-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ password: incomingHash })
@@ -206,7 +210,7 @@
           if (user.passwordHash === password) {
             user.passwordHash = incomingHash;
             localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
-            fetch("/api/users", {
+            fetch(API_BASE + "/api/users", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(users)
@@ -232,7 +236,7 @@
     if (user.passwordHash === password) {
       user.passwordHash = incomingHash;
       localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
-      fetch("/api/users", {
+      fetch(API_BASE + "/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(users)
@@ -249,8 +253,12 @@
     // Initialize Theme
     initTheme();
 
-    // Fetch and sync global products
-    fetch("/api/products")
+    // Render products immediately from localStorage/initialProducts (no delay)
+    if (typeof renderBestSellers === 'function') renderBestSellers();
+    if (typeof renderCategoriesScroll === 'function') renderCategoriesScroll();
+
+    // Fetch and sync global products in background
+    fetch(API_BASE + "/api/products")
       .then(res => res.json())
       .then(globalProducts => {
         if (Array.isArray(globalProducts) && globalProducts.length > 0) {
@@ -262,7 +270,7 @@
       .catch(err => console.error("Failed to sync global products:", err));
 
     // Fetch and sync global categories
-    fetch("/api/categories")
+    fetch(API_BASE + "/api/categories")
       .then(res => res.json())
       .then(globalCategories => {
         if (Array.isArray(globalCategories) && globalCategories.length > 0) {
@@ -273,7 +281,7 @@
       .catch(err => console.error("Failed to sync global categories:", err));
 
     // Fetch and sync global users
-    fetch("/api/users")
+    fetch(API_BASE + "/api/users")
       .then(res => res.json())
       .then(globalUsers => {
         if (Array.isArray(globalUsers) && globalUsers.length > 0) {
@@ -283,7 +291,7 @@
       .catch(err => console.error("Failed to sync global users:", err));
 
     // Fetch and sync global admin password
-    fetch("/api/admin-password")
+    fetch(API_BASE + "/api/admin-password")
       .then(res => res.json())
       .then(globalPassword => {
         if (globalPassword) {
@@ -340,7 +348,7 @@
       } else {
         checkNavigationState();
       }
-    }, 2300);
+    }, 1200);
   }
 
   // ==================== AUTH DATA MIGRATION ====================
@@ -576,7 +584,7 @@
               const hasMember = localStorage.getItem('iesvra_plus_member') === 'true';
               const payId = localStorage.getItem('iesvra_plus_payment_id') || '';
               if (hasMember && payId.startsWith('pay_')) {
-                fetch('/api/plus-membership', {
+                fetch(API_BASE + '/api/plus-membership', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ email: username, razorpay_payment_id: payId }),
@@ -609,7 +617,7 @@
               const hasMember = localStorage.getItem('iesvra_plus_member') === 'true';
               const payId = localStorage.getItem('iesvra_plus_payment_id') || '';
               if (hasMember && payId.startsWith('pay_')) {
-                fetch('/api/plus-membership', {
+                fetch(API_BASE + '/api/plus-membership', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ email: username, razorpay_payment_id: payId }),
@@ -729,7 +737,7 @@
             if (window.updatePlusMemberUI) window.updatePlusMemberUI();
             return;
           }
-          fetch('/api/plus-membership?email=' + encodeURIComponent(auth.email))
+          fetch(API_BASE + '/api/plus-membership?email=' + encodeURIComponent(auth.email))
             .then(function(r) { return r.json(); })
             .then(function(data) {
               if (data.isMember) {
@@ -1959,7 +1967,7 @@
       orderData.paymentStatus = 'Pending - COD';
       try {
         showToast("Saving order...");
-        const res = await fetch("/api/save-order", {
+        const res = await fetch(API_BASE + "/api/save-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(orderData)
@@ -1991,7 +1999,7 @@
       try {
         showToast("Initiating secure payment...");
 
-        const createRes = await fetch("/api/create-order", {
+        const createRes = await fetch(API_BASE + "/api/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount: Math.round(checkoutTotal * 100) })
@@ -2017,7 +2025,7 @@
           handler: async function (response) {
             try {
               showToast("Verifying payment...");
-              const vRes = await fetch("/api/verify-payment", {
+              const vRes = await fetch(API_BASE + "/api/verify-payment", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -2034,7 +2042,7 @@
               orderData.razorpayPaymentId = response.razorpay_payment_id;
 
               // Save order to DB
-              const sRes = await fetch("/api/save-order", {
+              const sRes = await fetch(API_BASE + "/api/save-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(orderData)
@@ -2405,7 +2413,7 @@
         role: 'user'
       });
       localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
-      fetch("/api/users", {
+      fetch(API_BASE + "/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(users)
@@ -2898,7 +2906,7 @@
 
       try {
         showToast("Saving order...");
-        const res = await fetch("/api/save-order", {
+        const res = await fetch(API_BASE + "/api/save-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(orderData)
@@ -2929,7 +2937,7 @@
       try {
         showToast("Initiating secure payment...");
         
-        const res = await fetch("/api/create-order", {
+        const res = await fetch(API_BASE + "/api/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount: Math.round(checkoutTotal * 100) })
@@ -2950,7 +2958,7 @@
           handler: async function (response) {
             try {
               showToast("Verifying payment...");
-              const vRes = await fetch("/api/verify-payment", {
+              const vRes = await fetch(API_BASE + "/api/verify-payment", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -2980,7 +2988,7 @@
                 longitude: appPinnedLng
               };
 
-              const sRes = await fetch("/api/save-order", {
+              const sRes = await fetch(API_BASE + "/api/save-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(orderData)
@@ -3271,7 +3279,7 @@
         role: 'user'
       });
       localStorage.setItem("ishvara_registered_users", JSON.stringify(users));
-      fetch("/api/users", {
+      fetch(API_BASE + "/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(users)
@@ -3359,7 +3367,7 @@
       const left = (window.screen.width / 2) - (popupWidth / 2);
       const top = (window.screen.height / 2) - (popupHeight / 2);
       
-      const popup = window.open("/api/auth/google", "GoogleSignIn", `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`);
+      const popup = window.open(API_BASE + "/api/auth/google", "GoogleSignIn", `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`);
       
       if (!popup) {
         showToast("Popup blocked! Please allow popups for this site.");
@@ -3662,7 +3670,7 @@
 
     try {
       // 1. Create Razorpay order — ₹299 = 29900 paise
-      const createRes = await fetch('/api/create-order', {
+      const createRes = await fetch(API_BASE + '/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: 29900 }),
@@ -3693,7 +3701,7 @@
         order_id: createData.order_id,
         handler: async function(response) {
           try {
-            const verifyRes = await fetch('/api/verify-payment', {
+            const verifyRes = await fetch(API_BASE + '/api/verify-payment', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -3720,7 +3728,7 @@
               if (rawAuth) {
                 const auth = JSON.parse(rawAuth);
                 if (auth && auth.email) {
-                  fetch('/api/plus-membership', {
+                  fetch(API_BASE + '/api/plus-membership', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: auth.email, razorpay_payment_id: paymentId }),
