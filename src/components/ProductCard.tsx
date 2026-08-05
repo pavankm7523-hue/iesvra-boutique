@@ -51,6 +51,12 @@ export function ProductCard({
             loading="lazy"
             width={800}
             height={800}
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (product.gallery && product.gallery[0] && product.gallery[0].url && target.src !== product.gallery[0].url) {
+                target.src = product.gallery[0].url;
+              }
+            }}
             className={`w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out ${product.stock === 0 ? "opacity-60 grayscale-[30%]" : ""}`}
           />
         </div>

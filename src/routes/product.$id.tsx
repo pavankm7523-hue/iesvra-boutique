@@ -75,25 +75,15 @@ function ProductDetails() {
   const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
 
   const handleAddToCart = () => {
-    const hasColors = product.colors && product.colors.length > 0;
-    if (hasColors && !selectedColor) {
-      toast.error("Please select a color option.");
-      return;
-    }
-    const colorToUse = hasColors ? selectedColor : "Standard";
+    const colorToUse = "Standard";
     addToCart(product, colorToUse, quantity);
     toast.success(
-      `Successfully added ${quantity}x ${product.name}${hasColors ? ` (${selectedColor})` : ""} to your cart!`,
+      `Successfully added ${quantity}x ${product.name} to your cart!`,
     );
   };
 
   const handleBuyDirectly = () => {
-    const hasColors = product.colors && product.colors.length > 0;
-    if (hasColors && !selectedColor) {
-      toast.error("Please select a color option.");
-      return;
-    }
-    const colorToUse = hasColors ? selectedColor : "Standard";
+    const colorToUse = "Standard";
     addToCart(product, colorToUse, quantity);
     toast.success("Redirecting directly to checkout...");
     window.location.href = "/cart?checkout=true";
@@ -266,41 +256,6 @@ function ProductDetails() {
               <h3 className="font-semibold text-navy-deep uppercase tracking-wider text-xs">Product Details</h3>
               <p>{product.description}</p>
             </div>
-
-            {/* Colors Section */}
-            {product.colors && product.colors.length > 0 && (
-              <div className="space-y-4">
-                <div className="flex justify-between text-sm">
-                  <span className="font-semibold text-navy-deep uppercase tracking-wider text-xs">
-                    Color Option: <span className="text-gold font-bold ml-1">{selectedColor}</span>
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {product.colors.map((colorName) => {
-                    const hex = colorMap[colorName] || "#CCCCCC";
-                    const isSelected = selectedColor === colorName;
-                    return (
-                      <button
-                        key={colorName}
-                        type="button"
-                        title={colorName}
-                        onClick={() => setSelectedColor(colorName)}
-                        className={`h-9 min-w-9 rounded-full flex items-center justify-center p-0.5 border cursor-pointer transition-all duration-300 ${
-                          isSelected
-                            ? "border-gold ring-2 ring-gold/25 ring-offset-1 scale-105"
-                            : "border-border hover:border-gray-400"
-                        }`}
-                      >
-                        <span
-                          className="h-full w-full rounded-full border border-black/10"
-                          style={{ backgroundColor: hex }}
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
 
             {/* Availability Stock Status */}
             {product.stock === 0 && (
