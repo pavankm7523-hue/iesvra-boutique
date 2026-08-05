@@ -321,11 +321,7 @@ export const initialProducts: Product[] = [
         "url": "/products/prod_2_8.jpg"
       }
     ],
-    "colors": [
-      "Midnight Black",
-      "Blush Pink",
-      "Forest Green"
-    ],
+    "colors": [],
     "description": "Imported premium water bottles. Comes as a set of 3 with motivational quotes and time markers to stay hydrated all day.",
     "isBestSeller": true,
     "reviews": [
@@ -389,11 +385,7 @@ export const initialProducts: Product[] = [
         "url": "/products/prod_3_5.jpeg"
       }
     ],
-    "colors": [
-      "Midnight Black",
-      "Active Red",
-      "Navy Blue"
-    ],
+    "colors": [],
     "description": "High bass portable wireless Bluetooth speaker. Durable build with crystal clear sound and up to 5 hours playback.",
     "isBestSeller": true,
     "reviews": [
@@ -457,9 +449,7 @@ export const initialProducts: Product[] = [
         "url": "/products/prod_4_5.jpeg"
       }
     ],
-    "colors": [
-      "Stealth Black"
-    ],
+    "colors": [],
     "description": "Outdoor motion sensor solar light. Waterproof, heat-resistant, and perfect for security and pathway lighting.",
     "isBestSeller": true,
     "reviews": [
@@ -538,10 +528,7 @@ export const initialProducts: Product[] = [
         "url": "/products/prod_5_8.jpeg"
       }
     ],
-    "colors": [
-      "Matte Black",
-      "Brushed Silver"
-    ],
+    "colors": [],
     "description": "Ergonomic beard trimmer with sharp stainless steel blades, multiple length settings, and rechargeable battery for smooth grooming.",
     "isBestSeller": true,
     "reviews": [
@@ -600,9 +587,7 @@ export const initialProducts: Product[] = [
         "url": "/products/prod_6_4.jpg"
       }
     ],
-    "colors": [
-      "Mint Green"
-    ],
+    "colors": [],
     "description": "Manual juicer for fresh and healthy juices. Perfect for citrus fruits, soft veggies, grapes, and wheatgrass. Easy cleanup.",
     "isBestSeller": true,
     "reviews": [
@@ -701,10 +686,7 @@ export const initialProducts: Product[] = [
         "url": "/products/prod_8_4.jpg"
       }
     ],
-    "colors": [
-      "Metallic Silver",
-      "Rose Gold"
-    ],
+    "colors": [],
     "description": "Waterproof electric scalp massager designed for deep relaxation and hair growth stimulation. Features multiple nodes and speed levels.",
     "isBestSeller": true,
     "reviews": [
@@ -758,11 +740,7 @@ export const initialProducts: Product[] = [
         "url": "/products/prod_9_3.jpeg"
       }
     ],
-    "colors": [
-      "Midnight Black",
-      "Forest Green",
-      "Navy Blue"
-    ],
+    "colors": [],
     "description": "Durable travel duffle bag with dedicated wet pocket and shoe compartment. Perfect for gym, weekend getaways, and flight carry-on.",
     "isBestSeller": true,
     "reviews": [
@@ -820,9 +798,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GX62T8Z5/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n6-Level Adjustable Ergonomics for Comfort – Designed to reduce neck, shoulder & back strain with multiple height and angle adjustments for perfect working posture.\nPremium Lightweight Aluminum Build – Strong, durable and heat-dissipating aluminum body keeps your laptop stable and cool during long working hours.\nFoldable, Portable & Travel-Friendly – Ultra-compact design folds flat in seconds, making it ideal for office, home, travel, study tables and work-from-home setups.\nStrong Anti-Slip Grip & Ventilated Airflow – Silicone pads ensure your laptop stays firmly in place while the open-frame design improves airflow to prevent overheating.\nUniversal Laptop & Tablet Compatibility – Suitable for 10–17 inch devices including MacBook, HP, Dell, Lenovo, ASUS, Acer, Chromebooks & all notebook models.\n› See more product details",
     "isBestSeller": true,
     "rating": 4.5,
@@ -873,9 +849,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GN1MQTH7/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n3 Separate Compartments for Organized Meals - Designed with 3 individual compartments to keep rice, vegetables, snacks, fruits, and other food items neatly separated without mixing flavors.\nLeakproof & Secure Locking Design - Features a tight-sealing lid with secure locks that help prevent spills and leaks, making it ideal for office, school, college, and travel use.\nIncludes Spoon & Fork - Comes with a matching spoon and fork, providing a complete mealtime solution for convenient eating anywhere.\nBPA-Free & Food-Grade Material - Made from high-quality BPA-free plastic that is safe for everyday food storage and suitable for both kids and adults.\nLarge 1400ml Capacity for Daily Use - Spacious 1400ml capacity allows you to pack complete meals, making it perfect for office workers, students, and outdoor activities.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -916,9 +890,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GKWZQD8W/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nAirtight & Fresh: Prevents moisture, dust, and odor from affecting your spices.\nDurable Food-Grade Plastic: Lightweight, sturdy, and safe for daily kitchen use.\nEasy Flow Design: Pour spices quickly without spills or mess.\nTray Included: Keeps all 4 containers organized for easy storage and portability.\nTransparent Lids: Identify contents instantly without opening each box.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -964,9 +936,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNP246V/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nSet of 3 – 4-in-1 Storage Containers – Each jar has 4 compartments to store different items, making it perfect for masalas, spices, pulses, cereals, grains, tea, coffee, sugar, dry fruits, or snacks.\nAirtight & Moisture-Proof – Flip-top lids with tight sealing keep food fresh for longer, preventing moisture, pests, and accidental spills.\nTransparent & Easy to Identify – Clear body design lets you quickly check contents without opening, saving time in busy kitchens.\nDurable & Food-Safe Plastic – Made from high-quality, BPA-free, non-toxic plastic that is sturdy, lightweight, and safe for everyday use.\nEasy to Clean & Refill – Wide openings and smooth interiors ensure hassle-free refilling and cleaning.\nSpace-Saving & Stylish – Compact, stackable design with sleek black lids fits seamlessly into modular kitchens and pantry shelves.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1012,9 +982,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GY4MYZFR/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPOWERFUL SONIC CLEANING TECHNOLOGY: Advanced sonic vibration technology helps remove plaque, food particles, and surface stains for a cleaner and fresher oral care experience\n5 BRUSHING MODES FOR PERSONALIZED CARE: Features Clean, Soft, Polish, Massage, and Whitening modes to suit daily cleaning, sensitive gums, and complete oral hygiene needs\nUSB RECHARGEABLE & TRAVEL FRIENDLY: Built-in rechargeable battery with USB charging support offers convenient cordless use at home, office, gym, or while travelling\nINCLUDES 2 REPLACEMENT BRUSH HEADS: Comes with 2 interchangeable brush heads designed for effective cleaning and long-term usability for adults\nERGONOMIC & WATER-RESISTANT DESIGN: Lightweight and comfortable grip design with water-resistant body makes it suitable for daily bathroom use and easy handling\nMULTICOLOR DESIGN OPTIONS: Available in attractive multicolor finish that adds a vibrant touch to your bathroom essentials and personal care collection\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1055,9 +1023,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0H2Z62YGG/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nHigh Precision Measurement - Accurate digital sensors provide precise weight readings for cooking, baking, meal prep, grocery measurement, and portion control.\nEasy-to-Read LCD Display - Bright LCD screen ensures clear visibility of measurements for convenient everyday kitchen use.\nMultipurpose Kitchen Use - Ideal for weighing vegetables, fruits, spices, baking ingredients, dry fruits, coffee, and small household items.\nCompact & Lightweight Design - Slim and space-saving design fits easily in kitchen cabinets and countertops while remaining portable for daily use.\nDurable & User-Friendly - Built with sturdy material and simple operation buttons for quick weighing, easy cleaning, and long-lasting performance.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1083,9 +1049,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FSKJ7J32/image_1.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n🔥 【Multiple Adjustable Modes】Our heating pad for cramps designed with 3 heat levels and 4 vibration massage modes. You could adjust the temperature and massage, according to your actual needs which are comfortable for your comfortable and warm when using the cordless heating pad. Effectively relieve menstrual cramps and belly pain.\n🔥【Premium Heating Material】This heating pad built-in latest generation heating technology. Safe and healthy, fast heating, no need waiting. The portable heating pad deliver heat to your body to improve blood circulation and relax the muscles. It is suitable for relieving menstrual pain, stomach or abdominal pain.\n🔥【More Ergonomic】The back of our heating pad with massager is made of high-quality soft fabric, which is light and breathable, comfortable and can dissipate heat evenly. Our high elastic waistband is adjustable, suitable for various waistlines. It is suitable for multiple body parts hot compress massage, especially great for waist, abdominal, stomach and belly.\n🔥【Portable and Long Battery Life】This electric heating pad can work for 3.5 hours. You can use this cramps relief heating pad in resting, working, cooking, indoor or outdoor anytime anywhere.\n🔥 【Perfect Gift and Sincere Customer Service】Our usb heating pad is a great gift for your girlfriend, daughter, mother and friends. Warm tips: if charging during use, the period cramp heating pad will automatically shut down for safety, this is a normal. Please feel free to contact us anytime if any question via the amazon message center, a satisfied solution is promised forever.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1131,9 +1095,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GZHK8MYT/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nFUN SPACE-THEME DESIGN FOR KIDS: Attractive cartoon prints featuring rockets, astronauts, sharks & rainbows make this bottle exciting for school-going kids and encourage regular water intake\n100% LEAKPROOF ONE-TOUCH FLIP LID: Secure lock system prevents spills in school bags. Easy press-button lid ensures quick, hygienic drinking for active children\nBPA-FREE & SAFE MATERIAL: Made from high-quality, non-toxic, BPA-free plastic. Safe for daily use at school, home, playgrounds, and outdoor activities\nBUILT-IN STRAW + CARRY STRAP: Smooth-sipping straw for kids of all ages, plus an adjustable strap that lets children carry it comfortably anywhere\nLIGHTWEIGHT, DURABLE & EASY TO CLEAN: Strong, transparent body with wide-mouth opening makes cleaning simple. Designed to withstand drops and daily usage by kids\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1179,9 +1141,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FN7FW23S/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nEXTRA STRONG & DURABLE: Made with thick, high-density material that prevents tearing, splitting, and bursting even with heavy waste—ideal for daily household and commercial use.\n100% LEAKPROOF DESIGN: Securely sealed bottom stops liquid leakage and keeps your dustbin clean and hygienic, reducing mess and odour.\nMULTIPURPOSE USE: Perfect for kitchen, bathroom, office, outdoor cleaning, pet waste, and dry/wet waste disposal—compatible with most medium-size dustbins.\nEASY TO USE & DISPENSE: Comes in 6 compact rolls with 30 bags each, allowing smooth pull-out, easy tear-off, and quick replacement without any hassle.\nVALUE PACK OF 180 BAGS: Long-lasting pack designed to reduce repeat buying—offering better savings, convenience, and reliability for everyday waste management.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1232,9 +1192,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GP6SWNGM/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nSmart 6-in-1 + 3-Piece Combo Includes a 6-compartment organizer and 3 individual storage containers with drain trays — ideal for separating vegetables, fruits, herbs, meat, and leftovers neatly inside your refrigerator.\nBuilt-in Drain Tray for Freshness Removable inner drain basket keeps food elevated from water, helping reduce moisture buildup and supporting longer freshness of leafy greens and produce.\nAirtight & Leak-Resistant Lid Secure snap-lock lids help prevent spills and odor mixing inside the fridge, making it suitable for storing cut vegetables, fruits, and prepped meals.\nBPA-Free & Food-Grade Material Made from durable, transparent BPA-free plastic that allows easy visibility of contents while ensuring safe everyday food storage.\nStackable & Space-Saving Design Flat-top lids allow vertical stacking to maximize fridge space, making it ideal for small refrigerators, meal prep organization, and modular kitchen storage.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1285,9 +1243,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GKWVTHTT/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nMultipurpose Food Chopper: Effortlessly chops vegetables, onions, garlic, nuts, herbs, and fruits for all your recipes.\nHigh-Quality Stainless Steel Blades: Durable, rust-resistant blades ensure precise and uniform chopping every time.\nEasy Pull-String Operation: Smooth, ergonomic pull cord design for fast and effortless food preparation.\n450ML Transparent Container: Compact yet spacious enough for daily kitchen use; monitor chopping progress easily.\nEasy to Clean & Store: Removable components are dishwasher-safe; lightweight design for convenient storage.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1323,9 +1279,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GYFBYGZB/image_3.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n2-in-1 Spray & Pour Design: Smart dual-function oil dispenser lets you spray fine mist or pour controlled stream, giving full flexibility for frying, grilling, roasting, baking and seasoning.\nPremium Thick Glass Body: Made with high-quality transparent glass for durability, easy visibility of oil levels and safe everyday food-grade usage in modern kitchens.\nPrecise & Even Mist Output: Advanced spray nozzle ensures uniform misting to help reduce excess oil consumption, making it ideal for low-calorie cooking or fitness-focused meal prep.\nLeakproof & Easy to Refill: Designed with a tight sealing cap and wide mouth for spill-free refilling, secure storage and hassle-free daily use in home kitchens.\nMultipurpose Kitchen Companion: Suitable for multiple liquids—oil, vinegar, lemon juice, soy sauce, etc.—perfect for BBQ, salads, baking, air fryers and non-stick cooking.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1371,9 +1325,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GYNLKW67/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nDouble Wall Vacuum Insulation - Keep your beverages hot or cold for extended hours with double-wall vacuum insulation, helping maintain the desired temperature throughout the day.\nPremium Stainless Steel - Made from high-quality stainless steel that is durable, rust-resistant, and designed for everyday use while preserving the taste of your beverages.\nLeak-Proof & BPA-Free - Designed with a secure leak-resistant lid to help prevent spills during travel. BPA-free construction offers a safe drinking experience.\nIncludes 2 Drinking Cups - Comes with two matching cups, making it convenient for sharing tea, coffee, water, or other beverages during travel, office, or outdoor activities.\nIdeal for Everyday Use - Suitable for carrying hot or cold beverages to the office, school, college, gym, picnics, camping, road trips, and daily commuting.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1414,9 +1366,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GYN9V6S7/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nHigh-Speed 3 Blade System: IESVRA chopper comes with ultra-sharp stainless steel blades for fast, uniform chopping of vegetables, fruits, nuts, and herbs in seconds\nEffortless Press Mechanism: Designed with an easy push system that reduces effort and speeds up food prep without electricity for everyday kitchen use\nLarge 900ML Capacity Bowl: Suitable for preparing larger quantities at once. Transparent container allows you to monitor chopping consistency easily\nMultipurpose Kitchen Essential: Chop onions, tomatoes, garlic, ginger, fruits, dry fruits, and prepare salads, chutneys, and sauces effortlessly\nSafe, Durable & Easy to Clean: Made from BPA-free food-grade plastic with anti-skid base for stability. Detachable parts ensure quick cleaning and maintenance\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1462,9 +1412,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FT3SHG1X/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nStrong & Reliable Holding Power - Engineered with high-strength adhesive, these wall hooks provide a firm and long-lasting grip, ideal for daily household use.\nNo Drilling, No Damage Installation - Stick-and-use design ensures zero damage to walls—perfect for rented homes, tiles, glass, wood, metal, and smooth surfaces.\nMultipurpose Home Organization - Ideal for hanging towels, keys, ladles, loofahs, kitchen tools, decorations, charging cables, and daily essentials.\nWaterproof & Rust-Free Build - Made with durable, transparent material that stays clean and strong even in bathrooms, wash areas, and humid conditions.\nStylish Flower Design for Modern Homes - Decorative floral shape complements home décor while providing practical storage. Compact, aesthetic, and space-saving.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1510,9 +1458,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FT3TBXHK/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nHeavy-Duty Load Capacity: Strong adhesive design provides powerful grip for securely holding towels, utensils, keys, accessories, kitchen tools & more.\nNo-Drill, Damage-Free Installation: Simply peel and stick—no nails, screws or tools required. Protects walls, tiles, wood & glass surfaces from damage.\nWaterproof & Moisture-Resistant: Ideal for bathrooms & kitchens; the high-quality adhesive stays strong even in humid conditions.\nStylish Transparent Flower Design: Blends seamlessly with any décor theme while adding a modern, clean look to your living space.\nMulti-Purpose Home Organization: Perfect for kitchens, bathrooms, bedrooms, cupboards, wardrobes, behind doors, living rooms & office spaces.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1558,9 +1504,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FT3X23KM/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nStrong Load-Bearing Power - Heavy-duty adhesive hooks designed to hold everyday household items securely, ideal for home, kitchen, bathroom & storage spaces.\nNo-Drill, No-Damage Installation - Easy peel-and-stick application protects your walls—zero drilling, zero screws, zero mess.\nWaterproof & Moisture Resistant - Durable transparent hooks made to perform in wet areas like bathrooms, tiles, glass, kitchens & washrooms.\nReusable & Residue-Free Removal - Can be removed and repositioned without leaving marks or damaging surfaces—perfect for rented homes.\nMultipurpose Home Organization - Use for hanging utensils, keys, towels, accessories, fairy lights, bags, kitchen tools & more. Suitable for tiles, glass, metal, wood & smooth surfaces.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1606,9 +1550,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FT3R2ZDX/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nStrong Heavy-Duty Hold – Built with durable adhesive technology that offers a strong grip for hanging towels, utensils, keys, caps, cleaning tools, and everyday home accessories without falling.\nNo-Drill & Damage-Free Installation – Simply peel, stick, and use. These transparent hooks leave no holes, no stains, and no wall damage, making them ideal for renters and easy home improvement.\nMultipurpose for All Rooms – Perfect for use in the bathroom, kitchen, bedroom, balcony, wardrobes, tiles, glass, metal, and smooth wooden surfaces, giving you organized space everywhere.\nWaterproof & Rust-Free – Made with moisture-resistant, transparent material that stays strong even in wet areas like showers, washrooms, and kitchen sinks.\nSpace-Saving & Aesthetic Design – The clear flower-shaped design blends with all interiors while helping you keep your home neat, tidy, and clutter-free.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1654,9 +1596,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FJLTRRHM/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nStackable Space-Saving Design – Compact fridge organizer bins that maximize refrigerator and pantry storage while reducing clutter.\nMoisture-Control Drain Tray – Includes a removable bottom tray to drain water, keeping vegetables and fruits fresh longer.\nMulti-Purpose Use – Perfect for storing fruits, leafy greens, vegetables, snacks, herbs, dairy, and pantry essentials.\nTransparent & BPA-Free Plastic – Made from food-grade, crystal-clear plastic for durability, safety, and quick identification of contents.\nAirtight Lids for Hygiene – Prevents odor mixing, retains freshness, and ensures spill-free storage inside the fridge.\nEasy to Clean & Reusable – Low-maintenance containers that can be rinsed or wiped clean for daily, long-term use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1682,9 +1622,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNJNYPG/image_1.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nStackable Space-Saving Design – Organize your refrigerator and pantry neatly with nestable fridge containers that maximize storage capacity without clutter.\nMoisture-Free Freshness – Built-in grid-style drain tray prevents water accumulation, keeping vegetables, fruits, and leafy greens fresher for longer.\nVersatile Multi-Purpose Use – Ideal for storing vegetables, fruits, snacks, meat, herbs, dairy items, and pantry essentials, making kitchen organization simple.\nClear BPA-Free Plastic – Crafted from food-grade, transparent plastic that ensures safety, durability, and quick visibility of contents at a glance.\nAirtight Lids for Hygiene – Secure-fit lids prevent spills, lock in freshness, and avoid odor transfer inside the refrigerator.\nEasy to Clean & Reusable – Low-maintenance containers that can be rinsed or wiped clean for repeated daily use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1730,9 +1668,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FN49BJHQ/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nHeavy Duty Strength & Durability – Made with premium thick material to handle wet, dry, sharp, or heavy waste without tearing. Ideal for daily and industrial use.\nLeakproof & Mess-Free – Advanced sealed bottom prevents leakage and keeps your dustbin clean and hygienic, even with wet kitchen waste.\nMultipurpose Use – Perfect for home, kitchen, office, restaurants, hotels, hospitals, salons, shops, and commercial spaces.\nConvenient Roll Packing – Comes in 3 easy-to-pull rolls (30 bags each) for quick dispensing, easy storage, and clutter-free use.\nLarge Size & Extra Capacity – Spacious black bags designed to fit most medium & large dustbins, providing maximum load-bearing strength.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1778,9 +1714,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNMQTDCR/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "Bring protection, positivity, and style wherever you go with the IESVRA Guardian Bell Keychain. Inspired by Tibetan traditions, this symbolic bell is believed to ward off negativity and attract good fortune. Whether used as a charm for your motorcycle, car, or carried in daily life, it serves as a constant reminder of spiritual energy and blessings. Compact and elegant, it makes a thoughtful gift for riders, travelers, and loved ones.",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1821,9 +1755,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GY8NFSF2/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nFast & Effective Menstrual Pain Relief - Designed to provide quick comfort during period cramps, lower belly pain, backaches, and muscle tension with deep warming technology.\n3 Heat Levels for Personalized Comfort - Features adjustable low, medium, and high heat settings to suit different pain levels and provide soothing warmth anytime.\n4 Intelligent Massage Modes - Combines vibration massage with heat therapy to relax muscles, reduce stiffness, and support all-day comfort for women.\nCordless, Lightweight & Rechargeable - Built with a long-lasting rechargeable battery, the belt is portable and easy to use anywhere—home, office, travel, or outdoors.\nSoft, Adjustable & Skin-Friendly Design - Made with comfortable elastic fabric that fits securely on the waist or abdomen, suitable for all body types.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1869,9 +1801,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FJLTJBNY/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n4-in-1 Multipurpose Design – Store 4 different items in one jar; ideal for masalas, spices, pulses, cereals, grains, sugar, tea, coffee, or snacks.\nAirtight & Moisture-Proof – Flip-top lids with strong seals keep food fresh longer and protect against moisture, pests, and spills.\nTransparent Body for Quick Access – Instantly identify contents without opening, saving time during cooking and meal prep.\nDurable & Food-Safe Plastic – Made from premium BPA-free plastic, sturdy, lightweight, and safe for everyday kitchen use.\nEasy to Clean & Refill – Wide-mouthed compartments and smooth interiors make refilling and cleaning hassle-free.\nCompact & Stackable Organizer – Space-saving design fits perfectly in modular kitchens, pantries, and small storage spaces.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1912,9 +1842,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FT3TD2Z8/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nFine Mist Spray for Healthy Cooking - Designed with a precision nozzle that gives a uniform fine mist, helping you control oil usage and cook healthier meals in your kitchen, BBQ grill, baking tray or air fryer.\nPremium Glass Body for Safe Storage - Made with food-grade transparent glass, this oil sprayer ensures safe storage of edible oils like olive oil, sunflower oil, vinegar, etc., without affecting the taste.\nMultipurpose for All Cooking Needs - Perfect for grilling, roasting, sautéing, frying, salad dressing and baking. Ideal for both home kitchen and outdoor BBQ use.\nEasy to Use & Refillable - Simple pump-action design allows hassle-free spraying. The wide-mouth opening makes refilling easy without spills or mess.\nLeak-Proof & Portable - Built with a leak-resistant cap and strong pump mechanism, making it easy to carry and store. Suitable for everyday kitchen use and travel.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -1960,9 +1888,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMMCKYHB/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n6-in-1 Airtight Design: Comes with six removable drain baskets inside a large container to keep different food items fresh, separated, and moisture-free.\nKeeps Food Fresher Longer: Built-in drainage holes allow water to escape, reducing spoilage and preserving fruits, vegetables, and cooked items.\nMultipurpose Storage: Ideal for storing fruits, vegetables, meat, seafood, snacks, and leftovers in your fridge or freezer.\nBPA-Free & Food Safe: Made from high-quality, food-grade plastic that is non-toxic, odor-free, and safe for long-term food storage.\nTransparent & Space-Saving: Clear body for easy visibility of contents; stackable design optimizes fridge space and keeps it organized.\nLeakproof & Easy to Clean: Airtight lid with secure lock clips prevents spills and odor mixing; dishwasher-safe for quick cleaning.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2003,9 +1929,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GYF7HYV1/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "Keep your favourite shoes looking clean and fresh with the IESVRA Shoe Cleaning Wipes Pack of 2 (160 wipes). Designed for effortless everyday shoe maintenance, these pre-moistened wipes remove dust, grime and surface marks in seconds. The gentle formula works safely on sneakers, leather shoes, canvas footwear, rubber soles and sports shoes, making them a versatile cleaning solution for all types of shoes. Their compact and travel-friendly design allows you to clean your footwear on-the-go—whether you're at the office, gym, school or traveling. Each wipe is individually moistened to maintain cleaning performance without leaving any residue. With a total of 160 wipes, this value pack ensures long-lasting convenience, helping you maintain neat and presentable shoes throughout the day. Perfect for users who want quick shoe touch-ups, sneaker maintenance, and hassle-free footwear cleaning without water.",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2041,9 +1965,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GYF3LHPY/image_3.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "Keep your favourite shoes looking clean and fresh with the IESVRA Shoe Cleaning Wipes Pack of 2 (160 wipes). Designed for effortless everyday shoe maintenance, these pre-moistened wipes remove dust, grime and surface marks in seconds. The gentle formula works safely on sneakers, leather shoes, canvas footwear, rubber soles and sports shoes, making them a versatile cleaning solution for all types of shoes. Their compact and travel-friendly design allows you to clean your footwear on-the-go—whether you're at the office, gym, school or traveling. Each wipe is individually moistened to maintain cleaning performance without leaving any residue. With a total of 160 wipes, this value pack ensures long-lasting convenience, helping you maintain neat and presentable shoes throughout the day. Perfect for users who want quick shoe touch-ups, sneaker maintenance, and hassle-free footwear cleaning without water.",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2089,9 +2011,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FKMBDMLT/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nOrganized Spice Storage – Comes with 7 separate compartments and a central spoon to store daily-use spices neatly and access them easily while cooking.\nDurable & Food-Grade Material – Made from high-quality, BPA-free plastic that is safe for food storage and resistant to breakage.\nCompact & Space-Saving Design – Square shape fits easily in kitchen cabinets, shelves, or countertops without occupying extra space.\nTransparent Lid for Easy Viewing – Clear top lid allows you to check spice levels at a glance without opening the box.\nMultipurpose Utility Box – Ideal for storing masalas, herbs, mouth freshener, dry fruits, seeds, and condiments for home or restaurant use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2132,9 +2052,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GTQ7TCKY/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nIESVRA Height Adjusting Laptop Stand Or Laptop Ergonomic Stand Or Laptop Stands For Office Desk Improves Your Posture Scientifically Designed To Help You Balance You’re Sitting Posture Keeping Your Back Straight, Neck Relaxed And Wrists Natural Even After Long Work Hours\nMulti-Angle Adjustable Design: The Aluminium Laptop Stand Or Metal Laptop Stand Or Foldable Laptop Stand Or Better Known As A Aluminum Laptop Stand Provides 6-Speed Adjustable Height, Adjust To Comfortable Operating Angle And Height Based On Your Actual Need. And The Ergonomic Design Makes For Easy Watching And Typing, Relieving Neck, Shoulder And Spinal Pain.\nCompatibility: The Laptop & Tablet Stand Supports Most Devices From 10 - 15.6 Inches: Macbook, Thinkpad, Surface, Chromebook, Ipad Pro, Etc. Therefore Known As A 11.6 Inch Laptop Stand ,12 Inch Laptop Stand , 13.3 Inch Laptop Stand ,15 Inch Laptop Stans & 15.6 Inch Laptop Stand\nIESVRA Travel Laptop Stand Or Laptop Stand Metal Is A Laptop Foldable Stand Which You Can Fold And Carry Easly In Your Backpack Or Briefcase You Can Use It To Change Angle Of Your Laptop Therefore Use It As Laptop Incline Stand Or Laptop Height Stand\nLaptop stand fully foldable, light weight at 260gm only and extremely handy to carry in your office bag [Increases laptop life]-keeps your laptop cooler so the battery life and internal components life also improves\nEXQUISITE WORKMANSHIP: Machined from anodized aluminum alloy, with sand blasted and brushed processes. With Non-slip silicone mat, avoid from risking of any scratches to your devices and stable placement makes it the best laptop stand available in the market\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2175,9 +2093,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GTLYX2JX/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nDURABLE ALUMINIUM ALLOY BUILD: Crafted from high-quality aluminium alloy, this laptop stand offers a strong, stable, and scratch-resistant base with a sleek, modern finish\n7 ADJUSTABLE HEIGHT LEVELS: Features multiple ergonomic angle settings to help reduce neck, shoulder, and back strain, letting you find the optimal viewing position for long work sessions\nFOLDABLE & PORTABLE DESIGN: Folds flat into a compact form and comes with a drawstring carry pouch, making it easy to carry to the office, home, or while travelling\nANTI-SLIP SILICONE PADS & STURDY HINGES: Non-slip silicone pads on the base and support arms keep your device secure and scratch-free, while robust hinges ensure lasting stability\nVENTILATED COOLING STRUCTURE: The open-frame design promotes increased airflow beneath your laptop, helping prevent overheating during extended use and compatible with most laptops, MacBooks, and tablets\nUNIVERSAL COMPATIBILITY: Supports a wide range of devices including laptops from 10 to 17 inches, MacBooks, notebooks, and tablets, accommodating various brands and models\nLIGHTWEIGHT CONSTRUCTION: Weighs minimally while maintaining structural integrity, allowing for effortless transportation between workspaces without compromising on stability or durability\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2223,9 +2139,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GN21V5Z7/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n100% Leak Proof & Airtight Design – Secure locking lid prevents spills and keeps food fresh for long hours, making it ideal for office, school, college & travel.\nSafe BPA Free Material – Made from high-quality food grade plastic, free from harmful chemicals and completely safe for daily food storage.\nMicrowave Safe & Easy to Clean – Heat your meals conveniently without transferring to another container. Dishwasher friendly and stain resistant.\n1200ml Large Capacity – Perfect size for carrying lunch, snacks, fruits or full meals for men, women and growing kids.\nLightweight & Durable Build – Strong yet lightweight design fits easily in backpacks and office bags, perfect for daily use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2271,9 +2185,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0H7S3FQWS/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPowerful Sonic Cleaning: Advanced sonic technology helps remove plaque effectively while providing a thorough clean for healthier teeth and fresher breath\n5 Brushing Modes: Features Clean, White, Polish, Sensitive, and Gum Care modes to suit different oral care needs and provide a personalized brushing experience\nUSB Rechargeable Convenience: Recharge easily using the included USB charging cable. Designed for regular daily use with long-lasting battery performance\nIncludes 2 Replacement Brush Heads: Comes with two high-quality brush heads for extended use. Soft bristles are gentle on gums while cleaning teeth effectively\nComfortable & Travel-Friendly Design: Lightweight ergonomic handle offers a comfortable grip. Suitable for home, office, and travel use\nSmart Timer Function: Built-in timer helps ensure proper brushing duration for optimal oral care and effective cleaning results every time\nWaterproof Construction: Fully waterproof design allows safe use in the shower and makes cleaning the toothbrush quick and easy under running water\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2319,9 +2231,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GPH37X28/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nCOMPLETE KITCHEN STORAGE COMBO Includes 4-piece masala box set with tray rack and 4-in-1 airtight storage container, offering organized storage for daily cooking essentials.\nAIRTIGHT & MOISTURE-RESISTANT LIDS Designed to help keep spices, pulses and dry ingredients fresh by reducing exposure to air and humidity.\nSPACE-SAVING & MODULAR DESIGN Compact tray rack and vertical 4-compartment jar optimize shelf space and maintain a neat kitchen setup.\nTRANSPARENT BODY FOR EASY IDENTIFICATION Clear containers allow quick visibility of contents, making meal preparation faster and more convenient.\nMULTI-PURPOSE DAILY USE STORAGE Ideal for masalas, salt, sugar, dals, rice, dry fruits, snacks and grocery items for everyday kitchen use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2362,9 +2272,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GNS8BS61/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nComplete 3 Size Hydration Combo Includes 2000ml large bottle, 900ml medium bottle, and 300ml compact bottle — perfect for full-day hydration, workouts, school, travel, and daily office use.\nMotivational Time Markers for Daily Intake Clear measurement scale and time reminders help track water consumption easily and support consistent hydration throughout the day.\nLeakproof & Secure Flip Lock Design Strong locking lid with safety latch prevents leakage. Ideal for carrying in gym bags, backpacks, or travel without spills.\nDurable, Lightweight & BPA-Free Plastic Made from high-quality transparent plastic that is lightweight, sturdy, and safe for everyday use.\nDesigned for Everyday Convenience Carry handle for easy grip, slim design for better portability, and wide mouth opening for easy cleaning and refilling.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2410,9 +2318,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNQZXH8/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n4-in-1 Compartment Design – Store 4 different food items in one container; ideal for spices, masalas, cereals, pulses, grains, snacks, tea, coffee, or sugar.\nAirtight & Moisture-Proof – Flip-top lids with tight seals maintain freshness, prevent moisture, and keep pests away.\nTransparent Body for Easy Access – Quickly check contents without opening the jar, ensuring efficient kitchen organization.\nDurable & BPA-Free Plastic – Made from high-quality, food-safe plastic that is non-toxic, sturdy, and safe for everyday kitchen use.\nEasy to Clean & Refill – Wide openings and smooth surfaces make cleaning and refilling hassle-free.\nSpace-Saving & Stackable Design – Compact, stylish, and ideal for modular kitchens, small apartments, and pantry shelves.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2458,9 +2364,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GGH1ZFYN/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nLucky Owl Resin Statue – Symbolizes good luck, wisdom & protection, perfect for energy positivity décor.\nHigh‑Quality Aesthetic Home Décor – Crafted with premium resin for a smooth, elegant finish that suits modern and classic styles.\nMulti‑Purpose Decoration – Ideal for living room, bedroom, study desk, office table, shelf, or reception area.\nThoughtful Gift Idea – A meaningful present for friends & family for housewarming, festivals, or special occasions.\nFeng Shui & Vastu Friendly – Brings harmony, positive vibes & prosperity to any space where displayed\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2511,9 +2415,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0CKJ2HCQ6/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n【2 in 1 Olive Oil Sprayer and Oiler】This oil dispenser bottle has a built-in spout. You can switch between spray and pour functions at any time. Kitchenware tools for home and kitchen.\n【Upgraded Nozzle Design】The nozzle of this olive oil dispenser bottle has been upgraded to achieve a uniform fan-shaped spray. The upgraded anti-drip design realizes no dripping or hanging on the wall when pouring oil.\n【Food Grade Material】This olive oil sprayer is made of thickened lead-free glass material, sturdy and durable. The clear bottle lets you know exactly how much oil is left. The lid and handle are made of food grade PP material, BPA free.\n【Large Diameter Spout】The spout of this oil dispenser bottle has been widened, which is very convenient for pouring sunflower oil, vinegar, soy sauce, lemon and lime juice, sherry or marsala wine, etc.\n【Easy to Use and Clean】This oil dispenser bottle has an ergonomic handle. The handle is comfortable to hold. The body of the pot is not easy to hang oil, and it is easy to clean. Dishwasher safe.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2569,9 +2471,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0F8BWVZ64/image_7.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nThe Twin Draft Guard is made from a washable fabric that is abrasion resistant. Not only does the draft guard help keep the heat in and cold out, it also keeps dust, sand, and bugs out while also helping with sound insulation.\nYou can save a lot of power if you are running an air conditioner in your room. An AC needs to work harder if there is air leak from the room, especially from under the door\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2612,9 +2512,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0H6M1SP15/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nEFFICIENT 360° FLOOR CLEANING - 360-degree rotating mop head easily reaches under furniture, corners, and hard-to-clean areas for effective home cleaning.\nHANDS-FREE SPIN WRINGER SYSTEM - Built-in spin mechanism helps remove excess water quickly, reducing effort and keeping hands clean during mopping.\nDURABLE STAINLESS STEEL HANDLE - Strong stainless steel telescopic handle offers durability, rust resistance, and comfortable grip for everyday use.\nHIGH ABSORBENCY MICROFIBER REFILLS - Includes 2 microfiber mop heads that effectively absorb dust, dirt, and spills while being gentle on floor surfaces.\nMULTIPURPOSE HOME CLEANING TOOL - Suitable for tiles, marble, granite, laminate, wooden floors, kitchens, bathrooms, offices, and living spaces.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2665,9 +2563,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNWLK3C/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Quality & Heavy Duty – The IESVRA Door Mat for Home Entrance is crafted with durable, high-density material that traps dirt, dust, and moisture, keeping your main door area neat and clean.\nAnti-Slip & Waterproof Design – Designed as an Anti-Skid Door Mat for Main Door, it features a strong non-slip backing that prevents slips and stays firmly in place — perfect for kids and elders\nWashable & Easy to Clean – This Washable Door Mat for Home can be easily washed by hand or machine, dries quickly, and looks as good as new — a smart Indoor Outdoor Door Mat for all weather.\nTrusted by Indian Homes – Ideal for those searching for Door Mat for Indian Home Entrance, Rubber Waterproof Doormat, Dust Control Floor Mat, or Non-Slip Doormat for Balcony — IESVRA offers style, quality, and functionality in one.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2718,9 +2614,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNFV2DJ/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nEffective Noise Reduction & Gap Sealing Dual foam tube design tightly seals gaps under doors, helping reduce outside noise, cold air, and unwanted drafts for a quieter and more comfortable indoor environment.\nBlocks Dust, Insects & Pollution Creates a protective barrier that helps prevent dust, insects, smoke, and pollutants from entering through door gaps, keeping your home cleaner and healthier.\nEnergy Saving Insulation Improves temperature control by minimizing air leakage. Helps maintain indoor cooling or heating efficiency, potentially reducing electricity usage.\nEasy Slide-On Installation – No Tools Required Simply slide the seal under your door and adjust to fit. No drilling, screws, or adhesive required. Suitable for most standard doors.\nDurable & Long-Lasting Material Made with high-density foam tubes and flexible outer cover for strong sealing performance and extended durability for daily use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2771,9 +2665,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNFZ6KS/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nEffective Noise Reduction & Gap Sealing Dual foam tube design tightly seals gaps under doors, helping reduce outside noise, cold air, and unwanted drafts for a quieter and more comfortable indoor environment.\nBlocks Dust, Insects & Pollution Creates a protective barrier that helps prevent dust, insects, smoke, and pollutants from entering through door gaps, keeping your home cleaner and healthier.\nEnergy Saving Insulation Improves temperature control by minimizing air leakage. Helps maintain indoor cooling or heating efficiency, potentially reducing electricity usage.\nEasy Slide-On Installation – No Tools Required Simply slide the seal under your door and adjust to fit. No drilling, screws, or adhesive required. Suitable for most standard doors.\nDurable & Long-Lasting Material Made with high-density foam tubes and flexible outer cover for strong sealing performance and extended durability for daily use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2824,9 +2716,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNFDX1Z/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Quality & Heavy Duty – The IESVRA Door Mat for Home Entrance is crafted with durable, high-density material that traps dirt, dust, and moisture, keeping your main door area neat and clean.\nAnti-Slip & Waterproof Design – Designed as an Anti-Skid Door Mat for Main Door, it features a strong non-slip backing that prevents slips and stays firmly in place — perfect for kids and elders\nWashable & Easy to Clean – This Washable Door Mat for Home can be easily washed by hand or machine, dries quickly, and looks as good as new — a smart Indoor Outdoor Door Mat for all weather.\nTrusted by Indian Homes – Ideal for those searching for Door Mat for Indian Home Entrance, Rubber Waterproof Doormat, Dust Control Floor Mat, or Non-Slip Doormat for Balcony — IESVRA offers style, quality, and functionality in one.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2877,9 +2767,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNT8XSN/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nEffective Noise Reduction & Gap Sealing Dual foam tube design tightly seals gaps under doors, helping reduce outside noise, cold air, and unwanted drafts for a quieter and more comfortable indoor environment.\nBlocks Dust, Insects & Pollution Creates a protective barrier that helps prevent dust, insects, smoke, and pollutants from entering through door gaps, keeping your home cleaner and healthier.\nEnergy Saving Insulation Improves temperature control by minimizing air leakage. Helps maintain indoor cooling or heating efficiency, potentially reducing electricity usage.\nEasy Slide-On Installation – No Tools Required Simply slide the seal under your door and adjust to fit. No drilling, screws, or adhesive required. Suitable for most standard doors.\nDurable & Long-Lasting Material Made with high-density foam tubes and flexible outer cover for strong sealing performance and extended durability for daily use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2930,9 +2818,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FMNJ7LVF/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nEffective Noise Reduction & Gap Sealing Dual foam tube design tightly seals gaps under doors, helping reduce outside noise, cold air, and unwanted drafts for a quieter and more comfortable indoor environment.\nBlocks Dust, Insects & Pollution Creates a protective barrier that helps prevent dust, insects, smoke, and pollutants from entering through door gaps, keeping your home cleaner and healthier.\nEnergy Saving Insulation Improves temperature control by minimizing air leakage. Helps maintain indoor cooling or heating efficiency, potentially reducing electricity usage.\nEasy Slide-On Installation – No Tools Required Simply slide the seal under your door and adjust to fit. No drilling, screws, or adhesive required. Suitable for most standard doors.\nDurable & Long-Lasting Material Made with high-density foam tubes and flexible outer cover for strong sealing performance and extended durability for daily use.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -2983,9 +2869,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FKMKZLBJ/image_6.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Quality & Heavy Duty – The IESVRA Door Mat for Home Entrance is crafted with durable, high-density material that traps dirt, dust, and moisture, keeping your main door area neat and clean.\nAnti-Slip & Waterproof Design – Designed as an Anti-Skid Door Mat for Main Door, it features a strong non-slip backing that prevents slips and stays firmly in place — perfect for kids and elders\nWashable & Easy to Clean – This Washable Door Mat for Home can be easily washed by hand or machine, dries quickly, and looks as good as new — a smart Indoor Outdoor Door Mat for all weather.\nTrusted by Indian Homes – Ideal for those searching for Door Mat for Indian Home Entrance, Rubber Waterproof Doormat, Dust Control Floor Mat, or Non-Slip Doormat for Balcony — IESVRA offers style, quality, and functionality in one.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3026,9 +2910,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FJLRDFK2/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n6-Cavity Reusable Popsicle Mould Set – Make up to 6 homemade ice creams or kulfis at once with this user-friendly ice pop maker.\nBPA-Free & Food-Grade Plastic – Safe, durable, and non-toxic material, perfect for kids and family-friendly use.\nAttractive Pink Design with Stand – Comes with a pink star-shaped base stand for stability and mess-free freezing.\nEasy to Use & Clean – Simply fill, freeze, and pull! Dishwasher-safe and easy to demould without cracking.\nPerfect for Summer Fun & Healthy Treats – Great for making fruit pops, yogurt bars, smoothie popsicles, and more—ideal for kids' snacks and adults’ desserts.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3069,9 +2951,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FKMZY6L3/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n6-Cavity Reusable Popsicle Mould Set – Make up to 6 homemade ice creams or kulfis at once with this user-friendly ice pop maker.\nBPA-Free & Food-Grade Plastic – Safe, durable, and non-toxic material, perfect for kids and family-friendly use.\nAttractive Pink Design with Stand – Comes with a pink star-shaped base stand for stability and mess-free freezing.\nEasy to Use & Clean – Simply fill, freeze, and pull! Dishwasher-safe and easy to demould without cracking.\nPerfect for Summer Fun & Healthy Treats – Great for making fruit pops, yogurt bars, smoothie popsicles, and more—ideal for kids' snacks and adults’ desserts.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3112,9 +2992,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FKN5CB6D/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n6-Cavity Reusable Popsicle Mould Set – Make up to 6 homemade ice creams or kulfis at once with this user-friendly ice pop maker.\nBPA-Free & Food-Grade Plastic – Safe, durable, and non-toxic material, perfect for kids and family-friendly use.\nAttractive Pink Design with Stand – Comes with a pink star-shaped base stand for stability and mess-free freezing.\nEasy to Use & Clean – Simply fill, freeze, and pull! Dishwasher-safe and easy to demould without cracking.\nPerfect for Summer Fun & Healthy Treats – Great for making fruit pops, yogurt bars, smoothie popsicles, and more—ideal for kids' snacks and adults’ desserts.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3155,9 +3033,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GYNSPBFF/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nAdvanced Cold Press Technology: Extracts maximum juice with minimal oxidation, preserving natural nutrients, enzymes, and taste for healthier drinking\nHeavy-Duty Manual Operation: No electricity required; smooth hand crank system ensures efficient juice extraction with full control and zero noise\nHigh Efficiency Steel Filter System: Fine stainless steel mesh separates pulp effectively, delivering smooth, fiber-free juice every time\nMultipurpose Juicing Solution: Suitable for oranges, pomegranates, grapes, pineapple, sweet lime, and even leafy greens for detox juices\nDurable, Safe & Easy to Clean: Made with BPA-free food-grade plastic, anti-slip base for stability, and detachable parts for quick cleaning and maintenance\nCompact & Portable Design: Lightweight construction makes it convenient for daily kitchen use, travel, and outdoor activities without requiring power sources\nNutrient Retention Technology: Slow extraction process minimizes heat buildup and oxidation to maintain vitamins, minerals, and natural enzymes in your juice\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3203,9 +3079,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FKYM1S95/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n2-in-1 Seal & Cut Function – Quickly seals and cuts plastic packaging to preserve freshness and reduce food waste.\nCordless & Rechargeable – Comes with USB charging cable for wireless, mess-free use anywhere.\nPerfect for All Bag Types – Works on snack packets, plastic pouches, foil bags, and other kitchen packaging.\nMagnetic & Compact Design – Attaches easily to refrigerators or metal surfaces for handy access.\nSafe & User-Friendly – One-button operation with built-in safety lock to prevent accidental burns.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3251,9 +3125,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FKYNNVLN/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\n2-in-1 Seal & Cut Function – Quickly seals and cuts plastic packaging to preserve freshness and reduce food waste.\nCordless & Rechargeable – Comes with USB charging cable for wireless, mess-free use anywhere.\nPerfect for All Bag Types – Works on snack packets, plastic pouches, foil bags, and other kitchen packaging.\nMagnetic & Compact Design – Attaches easily to refrigerators or metal surfaces for handy access.\nSafe & User-Friendly – One-button operation with built-in safety lock to prevent accidental burns.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3299,9 +3171,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FM7LGD47/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nNo Drill Installation – Comes with a strong adhesive backing for easy wall mounting without damaging surfaces.\nDurable & Lightweight – Made from premium-quality plastic that is sturdy, rustproof, and easy to clean.\nMultipurpose Use – Perfect for holding toiletries, kitchen condiments, cleaning supplies, and more.\nVentilated Design – Slotted base allows for quick water drainage, keeping stored items dry and hygienic.\nSpace-Saving Storage – Helps organize small spaces efficiently, suitable for bathrooms, kitchens, and utility rooms.\nModern Minimalist Look – Sleek white finish complements any home interior.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3342,9 +3212,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNN2D5CD/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Glass Liner with Silicone Cover – Durable borosilicate glass with a non-slip silicone sleeve for protection and grip.\nLeak-Proof & Airtight Lid – Designed with a secure seal to prevent spills in your bag while traveling or working out.\nSafe & BPA-Free – Made from food-grade, non-toxic materials for healthy, eco-friendly hydration.\nCompact 400ml Capacity – Ideal size for office, gym, yoga, cycling, or everyday carry without bulk.\nReusable & Eco-Friendly – A sustainable alternative to single-use plastic bottles, reducing waste and promoting green living.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3385,9 +3253,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNN4WQNQ/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Glass Liner with Silicone Cover – Durable borosilicate glass with a non-slip silicone sleeve for protection and grip.\nLeak-Proof & Airtight Lid – Designed with a secure seal to prevent spills in your bag while traveling or working out.\nSafe & BPA-Free – Made from food-grade, non-toxic materials for healthy, eco-friendly hydration.\nCompact 400ml Capacity – Ideal size for office, gym, yoga, cycling, or everyday carry without bulk.\nReusable & Eco-Friendly – A sustainable alternative to single-use plastic bottles, reducing waste and promoting green living.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3428,9 +3294,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNN66P5B/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Glass Liner with Silicone Cover – Durable borosilicate glass with a non-slip silicone sleeve for protection and grip.\nLeak-Proof & Airtight Lid – Designed with a secure seal to prevent spills in your bag while traveling or working out.\nSafe & BPA-Free – Made from food-grade, non-toxic materials for healthy, eco-friendly hydration.\nCompact 400ml Capacity – Ideal size for office, gym, yoga, cycling, or everyday carry without bulk.\nReusable & Eco-Friendly – A sustainable alternative to single-use plastic bottles, reducing waste and promoting green living.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3471,9 +3335,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNN49PMX/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Glass Liner with Silicone Cover – Durable borosilicate glass with a non-slip silicone sleeve for protection and grip.\nLeak-Proof & Airtight Lid – Designed with a secure seal to prevent spills in your bag while traveling or working out.\nSafe & BPA-Free – Made from food-grade, non-toxic materials for healthy, eco-friendly hydration.\nCompact 400ml Capacity – Ideal size for office, gym, yoga, cycling, or everyday carry without bulk.\nReusable & Eco-Friendly – A sustainable alternative to single-use plastic bottles, reducing waste and promoting green living.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3514,9 +3376,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNN6BRJD/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Glass Liner with Silicone Cover – Durable borosilicate glass with a non-slip silicone sleeve for protection and grip.\nLeak-Proof & Airtight Lid – Designed with a secure seal to prevent spills in your bag while traveling or working out.\nSafe & BPA-Free – Made from food-grade, non-toxic materials for healthy, eco-friendly hydration.\nCompact 400ml Capacity – Ideal size for office, gym, yoga, cycling, or everyday carry without bulk.\nReusable & Eco-Friendly – A sustainable alternative to single-use plastic bottles, reducing waste and promoting green living.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3557,9 +3417,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNN7W66B/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Glass Liner with Silicone Cover – Durable borosilicate glass with a non-slip silicone sleeve for protection and grip.\nLeak-Proof & Airtight Lid – Designed with a secure seal to prevent spills in your bag while traveling or working out.\nSafe & BPA-Free – Made from food-grade, non-toxic materials for healthy, eco-friendly hydration.\nCompact 400ml Capacity – Ideal size for office, gym, yoga, cycling, or everyday carry without bulk.\nReusable & Eco-Friendly – A sustainable alternative to single-use plastic bottles, reducing waste and promoting green living.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3600,9 +3458,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNN7Q41H/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Glass Liner with Silicone Cover – Durable borosilicate glass with a non-slip silicone sleeve for protection and grip.\nLeak-Proof & Airtight Lid – Designed with a secure seal to prevent spills in your bag while traveling or working out.\nSafe & BPA-Free – Made from food-grade, non-toxic materials for healthy, eco-friendly hydration.\nCompact 400ml Capacity – Ideal size for office, gym, yoga, cycling, or everyday carry without bulk.\nReusable & Eco-Friendly – A sustainable alternative to single-use plastic bottles, reducing waste and promoting green living.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3643,9 +3499,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FNN672TC/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nPremium Glass Liner with Silicone Cover – Durable borosilicate glass with a non-slip silicone sleeve for protection and grip.\nLeak-Proof & Airtight Lid – Designed with a secure seal to prevent spills in your bag while traveling or working out.\nSafe & BPA-Free – Made from food-grade, non-toxic materials for healthy, eco-friendly hydration.\nCompact 400ml Capacity – Ideal size for office, gym, yoga, cycling, or everyday carry without bulk.\nReusable & Eco-Friendly – A sustainable alternative to single-use plastic bottles, reducing waste and promoting green living.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3686,9 +3540,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FJLQTH6X/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nQuick & Uniform Chopping – Spring-action push mechanism with stainless steel blades chops vegetables, fruits, and herbs effortlessly in seconds.\nManual & Hassle-Free – No electricity needed; perfect for quick daily use, travel, outdoor cooking, or small kitchens.\nDurable Build Quality – Made from premium BPA-free plastic and rust-resistant stainless steel for long-term use.\nTransparent Storage Container – Built-in chopping bowl collects ingredients and lets you monitor chopping size easily.\nCompact & Easy to Store – Lightweight and space-saving design fits into any drawer or kitchen shelf.\nMulti-Use Tool – Ideal for chopping onions, tomatoes, chilies, garlic, carrots, cucumber, dry fruits, and more.\nEasy to Clean – All parts detach easily for a quick rinse; low-maintenance and hygiene-friendly.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3729,9 +3581,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FJLT87Q2/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nQuick & Uniform Chopping – Spring-action push mechanism with stainless steel blades chops vegetables, fruits, and herbs effortlessly in seconds.\nManual & Hassle-Free – No electricity needed; perfect for quick daily use, travel, outdoor cooking, or small kitchens.\nDurable Build Quality – Made from premium BPA-free plastic and rust-resistant stainless steel for long-term use.\nTransparent Storage Container – Built-in chopping bowl collects ingredients and lets you monitor chopping size easily.\nCompact & Easy to Store – Lightweight and space-saving design fits into any drawer or kitchen shelf.\nMulti-Use Tool – Ideal for chopping onions, tomatoes, chilies, garlic, carrots, cucumber, dry fruits, and more.\nEasy to Clean – All parts detach easily for a quick rinse; low-maintenance and hygiene-friendly.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3772,9 +3622,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GGH7RQGL/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nElegant Artistic Design – The IESVRA Bird Figurine features a refined, modern silhouette that adds a touch of sophistication and calm to any living space, blending seamlessly with contemporary, minimalist, or classic décor styles.\nPremium Craftsmanship – Carefully crafted with attention to detail, this decorative bird sculpture showcases smooth finishes and balanced proportions, making it a timeless décor accent for shelves, desks, mantels, and tabletops.\nVersatile Home Décor Accent – Perfect for living rooms, bedrooms, offices, studies, entryways, or coffee tables, this bird figurine enhances your interior with subtle charm and artistic character.\nThoughtful Gift Choice – An ideal gift for housewarmings, birthdays, anniversaries, holidays, or special occasions, especially for bird lovers, art enthusiasts, and home décor collectors.\nCompact & Display-Ready – Designed to be lightweight and easy to place, this figurine instantly elevates your space without overpowering it, making it suitable for both small and large displays.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3815,9 +3663,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0FS831QLM/image_4.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nVERSATILE HEATING: Features targeted heating for uterus, stomach, waist, and abdomen areas with digital temperature control and display\nMASSAGE MODES: 4 distinct vibration massage patterns provide customised comfort with ultra-quiet operation under 20dB\nCOMFORT DESIGN: Soft, ergonomic shape with adjustable fit and premium materials for maximum comfort during menstrual cycles\nSMART FEATURES: LED digital display shows temperature settings clearly, with easy-to-use controls for precise heat adjustment\nPORTABLE SOLUTION: USB-powered design with compact, lightweight construction makes it perfect for home, office, or travel use\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3863,9 +3709,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GKVPGWDV/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nLeak Proof & Mess Free Pouring Specially designed anti-drip pour spout ensures controlled oil flow and prevents messy spills on kitchen counters.\nLarge 1 Litre Capacity Perfect size for daily cooking oil storage including mustard oil, olive oil, sunflower oil and vinegar.\nTransparent Body Design Clear plastic body allows you to easily monitor oil levels, helping you refill at the right time.\nMulti Purpose Kitchen Bottle Ideal for storing cooking oil, vinegar, soy sauce, salad dressing and liquid condiments.\nFood Grade & Durable Material Made from high quality food grade plastic, safe for daily kitchen use and resistant to breakage.\nComfortable Grip Handle – Ergonomic handle provides better control and firm grip while pouring, even with one hand.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
@@ -3911,9 +3755,7 @@ export const initialProducts: Product[] = [
         "url": "/products/B0GKVWDYSM/image_5.jpg"
       }
     ],
-    "colors": [
-      "Standard"
-    ],
+    "colors": [],
     "description": "About this item\nLeak Proof & Spill-Free Design – Equipped with a secure lid and tight seal to prevent leakage, ensuring clean and mess-free pouring every time.\nHigh-Quality Food-Grade Plastic – Made from durable, safe, and odor-free material that maintains the purity and freshness of stored cooking oil.\nSmooth & Controlled Pouring Spout – Specially designed spout allows easy and accurate pouring without dripping or wasting oil.\nSpacious 1 Litre Capacity – Ideal for daily kitchen use, reducing the need for frequent refilling and offering convenient oil storage.\nTransparent Body for Easy Monitoring – Clear bottle design helps you quickly check oil levels and refill when required.\nComfortable Grip Handle – Ergonomic handle provides better control and firm grip while pouring, even with one hand.\n› See more product details",
     "isBestSeller": false,
     "rating": 4.5,
