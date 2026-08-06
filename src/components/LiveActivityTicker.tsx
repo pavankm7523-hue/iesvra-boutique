@@ -111,7 +111,8 @@ export function LiveActivityTicker() {
   const { products } = useProducts();
   const [currentActivity, setCurrentActivity] = useState<ActivityItem | null>(null);
   const [isFading, setIsFading] = useState(false);
-  const lastKeyRef = useRef<string>("");
+  const lastIndexRef = useRef<number>(0);
+  const lastNameRef = useRef<string>("");
 
   const getRandomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
@@ -123,21 +124,22 @@ export function LiveActivityTicker() {
       { name: "Wireless Bluetooth Earbuds", id: "4" }
     ];
 
+    // Pick name that is guaranteed different from previous tick
+    let name = getRandomItem(CUSTOMER_NAMES);
+    while (name === lastNameRef.current && CUSTOMER_NAMES.length > 1) {
+      name = getRandomItem(CUSTOMER_NAMES);
+    }
+    lastNameRef.current = name;
+
     const prod = getRandomItem(catalog);
-    const name = getRandomItem(CUSTOMER_NAMES);
     const loc = getRandomItem(PATNA_LOCATIONS);
     const minsAgo = Math.floor(Math.random() * 25) + 2;
     const boughtCount = Math.floor(Math.random() * 20) + 12;
-    const type = Math.floor(Math.random() * 3);
+
+    const type = lastIndexRef.current % 3;
+    lastIndexRef.current += 1;
 
     const truncName = prod.name.length > 35 ? prod.name.slice(0, 35) + "..." : prod.name;
-    const key = `${name}-${loc}-${prod.id}-${type}`;
-
-    if (key === lastKeyRef.current) {
-      // Pick another type if key matches previous
-      return generateRandomActivity();
-    }
-    lastKeyRef.current = key;
 
     if (type === 0) {
       return {

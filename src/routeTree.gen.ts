@@ -39,6 +39,7 @@ import { Route as ApiResolveMapsUrlRouteImport } from './routes/api/resolve-maps
 import { Route as ApiProductsRouteImport } from './routes/api/products'
 import { Route as ApiPlusMembershipRouteImport } from './routes/api/plus-membership'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
+import { Route as ApiHeroRouteImport } from './routes/api/hero'
 import { Route as ApiGetOrderRouteImport } from './routes/api/get-order'
 import { Route as ApiGeocodeRouteImport } from './routes/api/geocode'
 import { Route as ApiDiagRouteImport } from './routes/api/diag'
@@ -208,6 +209,11 @@ const ApiNotifyAdminRoute = ApiNotifyAdminRouteImport.update({
   path: '/api/notify-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHeroRoute = ApiHeroRouteImport.update({
+  id: '/api/hero',
+  path: '/api/hero',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGetOrderRoute = ApiGetOrderRouteImport.update({
   id: '/api/get-order',
   path: '/api/get-order',
@@ -328,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/api/diag': typeof ApiDiagRoute
   '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
+  '/api/hero': typeof ApiHeroRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
@@ -377,6 +384,7 @@ export interface FileRoutesByTo {
   '/api/diag': typeof ApiDiagRoute
   '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
+  '/api/hero': typeof ApiHeroRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
@@ -428,6 +436,7 @@ export interface FileRoutesById {
   '/api/diag': typeof ApiDiagRoute
   '/api/geocode': typeof ApiGeocodeRoute
   '/api/get-order': typeof ApiGetOrderRoute
+  '/api/hero': typeof ApiHeroRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
@@ -480,6 +489,7 @@ export interface FileRouteTypes {
     | '/api/diag'
     | '/api/geocode'
     | '/api/get-order'
+    | '/api/hero'
     | '/api/notify-admin'
     | '/api/plus-membership'
     | '/api/products'
@@ -529,6 +539,7 @@ export interface FileRouteTypes {
     | '/api/diag'
     | '/api/geocode'
     | '/api/get-order'
+    | '/api/hero'
     | '/api/notify-admin'
     | '/api/plus-membership'
     | '/api/products'
@@ -579,6 +590,7 @@ export interface FileRouteTypes {
     | '/api/diag'
     | '/api/geocode'
     | '/api/get-order'
+    | '/api/hero'
     | '/api/notify-admin'
     | '/api/plus-membership'
     | '/api/products'
@@ -626,6 +638,7 @@ export interface RootRouteChildren {
   ApiDiagRoute: typeof ApiDiagRoute
   ApiGeocodeRoute: typeof ApiGeocodeRoute
   ApiGetOrderRoute: typeof ApiGetOrderRoute
+  ApiHeroRoute: typeof ApiHeroRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
   ApiPlusMembershipRoute: typeof ApiPlusMembershipRoute
   ApiProductsRoute: typeof ApiProductsRoute
@@ -857,6 +870,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNotifyAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/hero': {
+      id: '/api/hero'
+      path: '/api/hero'
+      fullPath: '/api/hero'
+      preLoaderRoute: typeof ApiHeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/get-order': {
       id: '/api/get-order'
       path: '/api/get-order'
@@ -1033,6 +1053,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDiagRoute: ApiDiagRoute,
   ApiGeocodeRoute: ApiGeocodeRoute,
   ApiGetOrderRoute: ApiGetOrderRoute,
+  ApiHeroRoute: ApiHeroRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
   ApiPlusMembershipRoute: ApiPlusMembershipRoute,
   ApiProductsRoute: ApiProductsRoute,

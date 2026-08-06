@@ -3,6 +3,7 @@ import { z } from "zod";
 import * as fs from "fs/promises";
 import * as path from "path";
 import bundledHeroData from "../../data/hero.json";
+import { getMetadataFromDb, saveMetadataToDb } from "../db.server";
 
 export const HeroSettingsSchema = z.object({
   id: z.string(),
@@ -14,7 +15,7 @@ export const HeroSettingsSchema = z.object({
   isSpecialSale: z.boolean(),
   saleEndDate: z.string().optional(),
   productIds: z.array(z.string()).optional(),
-  productPrices: z.record(z.number()).optional(),
+  productPrices: z.record(z.any()).optional(),
   exclusiveProductIds: z.array(z.string()).optional(),
 });
 
@@ -24,22 +25,11 @@ const DATA_FILE = path.join(process.cwd(), "src", "data", "hero.json");
 
 let memoryBanners: HeroSettings[] | null = null;
 
-async function ensureDataDir() {
-  const dataDir = path.dirname(DATA_FILE);
-  try {
-    await fs.access(dataDir);
-  } catch {
-    try {
-      await fs.mkdir(dataDir, { recursive: true });
-    } catch {}
-  }
-}
-
 const DEFAULT_BANNERS: HeroSettings[] = [{
   id: "default-1",
-  title: "IESVRA",
-  subtitle: "Quality Products, Best Prices, Everyday",
-  buttonText: "SHOP NOW",
+  title: "IESVRA — Smart Shopping, Faster Delivery!",
+  subtitle: "Shop More. Save More. Get More!",
+  buttonText: "DOWNLOAD APP & SHOP NOW!",
   buttonLink: "/shop",
   backgroundImageUrl: "/hero-banner-new.png",
   isSpecialSale: false,
@@ -50,34 +40,49 @@ const DEFAULT_BANNERS: HeroSettings[] = [{
 
 async function readData(): Promise<HeroSettings[]> {
   if (memoryBanners) return memoryBanners;
-  await ensureDataDir();
+
+  try {
+    const dbData = await getMetadataFromDb("global_hero_banners");
+    if (Array.isArray(dbData) && dbData.length > 0) {
+      memoryBanners = dbData as HeroSettings[];
+      return memoryBanners;
+    }
+  } catch (e) {
+    console.warn("[hero.server] Supabase read error:", e);
+  }
+
   try {
     const data = await fs.readFile(DATA_FILE, "utf-8");
     const parsed = JSON.parse(data);
-    if (Array.isArray(parsed)) {
+    if (Array.isArray(parsed) && parsed.length > 0) {
       memoryBanners = parsed as HeroSettings[];
       return memoryBanners;
     }
-    const migrated = { ...parsed, id: Date.now().toString() } as HeroSettings;
-    try { await fs.writeFile(DATA_FILE, JSON.stringify([migrated], null, 2), "utf-8"); } catch {}
-    memoryBanners = [migrated];
-    return memoryBanners;
-  } catch (e) {
-    if (Array.isArray(bundledHeroData) && bundledHeroData.length > 0) {
-      memoryBanners = bundledHeroData as HeroSettings[];
-      return memoryBanners;
-    }
-    memoryBanners = DEFAULT_BANNERS;
+  } catch {}
+
+  if (Array.isArray(bundledHeroData) && bundledHeroData.length > 0) {
+    memoryBanners = bundledHeroData as HeroSettings[];
     return memoryBanners;
   }
+
+  memoryBanners = DEFAULT_BANNERS;
+  return memoryBanners;
 }
 
 async function writeData(banners: HeroSettings[]): Promise<void> {
   memoryBanners = banners;
+
+  try {
+    await saveMetadataToDb("global_hero_banners", banners);
+    console.log("[hero.server] Saved hero banners to Supabase DB successfully!");
+  } catch (e) {
+    console.warn("[hero.server] Could not save banners to Supabase DB:", e);
+  }
+
   try {
     await fs.writeFile(DATA_FILE, JSON.stringify(banners, null, 2), "utf-8");
   } catch (e) {
-    console.warn("[hero.server] Could not persist banners to disk (read-only environment):", e);
+    console.warn("[hero.server] Local disk write skipped (read-only filesystem):", e);
   }
 }
 
@@ -87,28 +92,25 @@ export const getHeroBanners = createServerFn({ method: "GET" })
   });
 
 const NewBannerSchema = z.object({
-  title: z.string(),
-  subtitle: z.string(),
-  buttonText: z.string(),
-  buttonLink: z.string(),
+  title: z.string().optional().default(""),
+  subtitle: z.string().optional().default(""),
+  buttonText: z.string().optional().default("SHOP NOW"),
+  buttonLink: z.string().optional().default("/shop"),
   backgroundImageUrl: z.string().optional().default(""),
-  isSpecialSale: z.boolean(),
-  saleEndDate: z.string().optional(),
-  productIds: z.array(z.string()).optional(),
-  productPrices: z.record(z.number()).optional(),
-  exclusiveProductIds: z.array(z.string()).optional(),
+  isSpecialSale: z.boolean().optional().default(false),
+  saleEndDate: z.string().optional().nullable(),
+  productIds: z.array(z.string()).optional().default([]),
+  productPrices: z.record(z.any()).optional().default({}),
+  exclusiveProductIds: z.array(z.string()).optional().default([]),
 });
 
 export const addHeroBanner = createServerFn({ method: "POST" })
-  .inputValidator(z.object({
-    settings: NewBannerSchema,
-    imageData: z.string().optional(),
-    imageExt: z.string().optional(),
-  }))
+  .validator((data: any) => data)
   .handler(async ({ data }) => {
     const banners = await readData();
-    let { settings, imageData, imageExt } = data;
-    
+    let { settings, imageData, imageExt } = data || {};
+    if (!settings) settings = {};
+
     if (imageData && imageExt) {
       try {
         const uploadsDir = path.join(process.cwd(), "public", "uploads");
@@ -131,9 +133,17 @@ export const addHeroBanner = createServerFn({ method: "POST" })
     }
 
     const newBanner: HeroSettings = {
-      ...settings,
+      id: Date.now().toString(),
+      title: settings.title || "IESVRA",
+      subtitle: settings.subtitle || "",
+      buttonText: settings.buttonText || "SHOP NOW",
+      buttonLink: settings.buttonLink || "/shop",
       backgroundImageUrl: settings.backgroundImageUrl,
-      id: Date.now().toString()
+      isSpecialSale: Boolean(settings.isSpecialSale),
+      saleEndDate: settings.saleEndDate || undefined,
+      productIds: settings.productIds || [],
+      productPrices: settings.productPrices || {},
+      exclusiveProductIds: settings.exclusiveProductIds || []
     };
     
     banners.push(newBanner);
@@ -142,15 +152,12 @@ export const addHeroBanner = createServerFn({ method: "POST" })
   });
 
 export const updateHeroBanner = createServerFn({ method: "POST" })
-  .inputValidator(z.object({
-    id: z.string(),
-    settings: NewBannerSchema,
-    imageData: z.string().optional(),
-    imageExt: z.string().optional(),
-  }))
+  .validator((data: any) => data)
   .handler(async ({ data }) => {
     const banners = await readData();
-    let { id, settings, imageData, imageExt } = data;
+    let { id, settings, imageData, imageExt } = data || {};
+    if (!settings) settings = {};
+    
     const index = banners.findIndex(b => b.id === id);
     if (index === -1) throw new Error("Banner not found");
     
@@ -176,6 +183,7 @@ export const updateHeroBanner = createServerFn({ method: "POST" })
     }
 
     banners[index] = {
+      ...banners[index],
       ...settings,
       backgroundImageUrl: settings.backgroundImageUrl,
       id
@@ -185,10 +193,11 @@ export const updateHeroBanner = createServerFn({ method: "POST" })
   });
 
 export const deleteHeroBanner = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string() }))
+  .validator((data: any) => data)
   .handler(async ({ data }) => {
     let banners = await readData();
-    banners = banners.filter(b => b.id !== data.id);
+    const { id } = data || {};
+    banners = banners.filter(b => b.id !== id);
     await writeData(banners);
     return banners;
   });
