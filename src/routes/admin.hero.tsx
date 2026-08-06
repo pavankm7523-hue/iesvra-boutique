@@ -87,18 +87,19 @@ function AdminHero() {
   };
 
   const handleSave = () => {
+    const finalBgImage = backgroundImageUrl || previewImage || imageData || "/hero-banner-new.png";
     const payload = {
       settings: {
-        title,
-        subtitle,
-        buttonText,
-        backgroundImageUrl,
+        title: title || "IESVRA Mega Sale",
+        subtitle: subtitle || "Special Deals & Discounts",
+        buttonText: buttonText || "SHOP NOW",
+        backgroundImageUrl: finalBgImage,
         isSpecialSale,
         saleEndDate: isSpecialSale && saleEndDate ? new Date(saleEndDate).toISOString() : undefined,
         productIds,
         productPrices,
         exclusiveProductIds,
-        buttonLink: productIds.length > 0 && buttonLink === "/shop" ? "" : buttonLink, // Will be handled on save or overridden
+        buttonLink: productIds.length > 0 && buttonLink === "/shop" ? "" : (buttonLink || "/shop"),
       },
       imageData,
       imageExt,
@@ -112,11 +113,14 @@ function AdminHero() {
             toast.success("Hero Banner updated successfully!");
             setIsFormOpen(false);
           },
-          onError: () => toast.error("Failed to update Hero Banner.")
+          onError: (err: any) => {
+            console.error("Update banner error:", err);
+            toast.error("Failed to update Hero Banner.");
+          }
         }
       );
     } else {
-      if (!previewImage) {
+      if (!previewImage && !imageData && !backgroundImageUrl) {
         toast.error("Please select a background image.");
         return;
       }
@@ -127,7 +131,10 @@ function AdminHero() {
             toast.success("Hero Banner added successfully!");
             setIsFormOpen(false);
           },
-          onError: () => toast.error("Failed to add Hero Banner.")
+          onError: (err: any) => {
+            console.error("Add banner error:", err);
+            toast.error("Failed to add Hero Banner.");
+          }
         }
       );
     }

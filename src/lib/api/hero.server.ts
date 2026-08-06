@@ -22,12 +22,16 @@ export type HeroSettings = z.infer<typeof HeroSettingsSchema>;
 
 const DATA_FILE = path.join(process.cwd(), "src", "data", "hero.json");
 
+let memoryBanners: HeroSettings[] | null = null;
+
 async function ensureDataDir() {
   const dataDir = path.dirname(DATA_FILE);
   try {
     await fs.access(dataDir);
   } catch {
-    await fs.mkdir(dataDir, { recursive: true });
+    try {
+      await fs.mkdir(dataDir, { recursive: true });
+    } catch {}
   }
 }
 
@@ -37,7 +41,7 @@ const DEFAULT_BANNERS: HeroSettings[] = [{
   subtitle: "Quality Products, Best Prices, Everyday",
   buttonText: "SHOP NOW",
   buttonLink: "/shop",
-  backgroundImageUrl: "/hero-bg.jpg",
+  backgroundImageUrl: "/hero-banner-new.png",
   isSpecialSale: false,
   productIds: [],
   productPrices: {},
@@ -45,23 +49,35 @@ const DEFAULT_BANNERS: HeroSettings[] = [{
 }];
 
 async function readData(): Promise<HeroSettings[]> {
+  if (memoryBanners) return memoryBanners;
   await ensureDataDir();
   try {
     const data = await fs.readFile(DATA_FILE, "utf-8");
     const parsed = JSON.parse(data);
     if (Array.isArray(parsed)) {
-      return parsed as HeroSettings[];
+      memoryBanners = parsed as HeroSettings[];
+      return memoryBanners;
     }
-    // Migrate old single object
     const migrated = { ...parsed, id: Date.now().toString() } as HeroSettings;
-    await fs.writeFile(DATA_FILE, JSON.stringify([migrated], null, 2), "utf-8");
-    return [migrated];
+    try { await fs.writeFile(DATA_FILE, JSON.stringify([migrated], null, 2), "utf-8"); } catch {}
+    memoryBanners = [migrated];
+    return memoryBanners;
   } catch (e) {
-    // Fallback to bundled data if file system read fails (e.g. on Vercel)
     if (Array.isArray(bundledHeroData) && bundledHeroData.length > 0) {
-      return bundledHeroData as HeroSettings[];
+      memoryBanners = bundledHeroData as HeroSettings[];
+      return memoryBanners;
     }
-    return DEFAULT_BANNERS;
+    memoryBanners = DEFAULT_BANNERS;
+    return memoryBanners;
+  }
+}
+
+async function writeData(banners: HeroSettings[]): Promise<void> {
+  memoryBanners = banners;
+  try {
+    await fs.writeFile(DATA_FILE, JSON.stringify(banners, null, 2), "utf-8");
+  } catch (e) {
+    console.warn("[hero.server] Could not persist banners to disk (read-only environment):", e);
   }
 }
 
@@ -75,7 +91,7 @@ const NewBannerSchema = z.object({
   subtitle: z.string(),
   buttonText: z.string(),
   buttonLink: z.string(),
-  backgroundImageUrl: z.string(),
+  backgroundImageUrl: z.string().optional().default(""),
   isSpecialSale: z.boolean(),
   saleEndDate: z.string().optional(),
   productIds: z.array(z.string()).optional(),
@@ -94,22 +110,34 @@ export const addHeroBanner = createServerFn({ method: "POST" })
     let { settings, imageData, imageExt } = data;
     
     if (imageData && imageExt) {
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      try { await fs.access(uploadsDir); } catch { await fs.mkdir(uploadsDir, { recursive: true }); }
-      const fileName = `hero-banner-${Date.now()}${imageExt}`;
-      const filePath = path.join(uploadsDir, fileName);
-      const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
-      await fs.writeFile(filePath, base64Data, 'base64');
-      settings.backgroundImageUrl = `/uploads/${fileName}`;
+      try {
+        const uploadsDir = path.join(process.cwd(), "public", "uploads");
+        await fs.mkdir(uploadsDir, { recursive: true });
+        const fileName = `hero-banner-${Date.now()}${imageExt}`;
+        const filePath = path.join(uploadsDir, fileName);
+        const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
+        await fs.writeFile(filePath, base64Data, 'base64');
+        settings.backgroundImageUrl = `/uploads/${fileName}`;
+      } catch (e) {
+        console.warn("[hero.server] Disk write failed, using base64 Data URL fallback:", e);
+        settings.backgroundImageUrl = imageData;
+      }
+    } else if (!settings.backgroundImageUrl && imageData) {
+      settings.backgroundImageUrl = imageData;
+    }
+
+    if (!settings.backgroundImageUrl) {
+      settings.backgroundImageUrl = "/hero-banner-new.png";
     }
 
     const newBanner: HeroSettings = {
       ...settings,
+      backgroundImageUrl: settings.backgroundImageUrl,
       id: Date.now().toString()
     };
     
     banners.push(newBanner);
-    await fs.writeFile(DATA_FILE, JSON.stringify(banners, null, 2), "utf-8");
+    await writeData(banners);
     return banners;
   });
 
@@ -127,17 +155,32 @@ export const updateHeroBanner = createServerFn({ method: "POST" })
     if (index === -1) throw new Error("Banner not found");
     
     if (imageData && imageExt) {
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      try { await fs.access(uploadsDir); } catch { await fs.mkdir(uploadsDir, { recursive: true }); }
-      const fileName = `hero-banner-${Date.now()}${imageExt}`;
-      const filePath = path.join(uploadsDir, fileName);
-      const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
-      await fs.writeFile(filePath, base64Data, 'base64');
-      settings.backgroundImageUrl = `/uploads/${fileName}`;
+      try {
+        const uploadsDir = path.join(process.cwd(), "public", "uploads");
+        await fs.mkdir(uploadsDir, { recursive: true });
+        const fileName = `hero-banner-${Date.now()}${imageExt}`;
+        const filePath = path.join(uploadsDir, fileName);
+        const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
+        await fs.writeFile(filePath, base64Data, 'base64');
+        settings.backgroundImageUrl = `/uploads/${fileName}`;
+      } catch (e) {
+        console.warn("[hero.server] Disk write failed, using base64 Data URL fallback:", e);
+        settings.backgroundImageUrl = imageData;
+      }
+    } else if (!settings.backgroundImageUrl && imageData) {
+      settings.backgroundImageUrl = imageData;
     }
 
-    banners[index] = { ...settings, id };
-    await fs.writeFile(DATA_FILE, JSON.stringify(banners, null, 2), "utf-8");
+    if (!settings.backgroundImageUrl) {
+      settings.backgroundImageUrl = banners[index].backgroundImageUrl || "/hero-banner-new.png";
+    }
+
+    banners[index] = {
+      ...settings,
+      backgroundImageUrl: settings.backgroundImageUrl,
+      id
+    };
+    await writeData(banners);
     return banners;
   });
 
@@ -146,6 +189,6 @@ export const deleteHeroBanner = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     let banners = await readData();
     banners = banners.filter(b => b.id !== data.id);
-    await fs.writeFile(DATA_FILE, JSON.stringify(banners, null, 2), "utf-8");
+    await writeData(banners);
     return banners;
   });

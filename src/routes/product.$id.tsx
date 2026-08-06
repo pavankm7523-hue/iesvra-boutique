@@ -1,11 +1,19 @@
 import { useState, useEffect, useMemo } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { z } from "zod";
 import { toast } from "sonner";
 import { useProducts, colorMap } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
 import { ArrowLeft, Star, ShoppingBag, Shield, Truck, RefreshCcw, ChevronLeft, ChevronRight, Users, Clock } from "lucide-react";
 
+const productSearchSchema = z.object({
+  bannerId: z.string().optional(),
+  category: z.string().optional(),
+  q: z.string().optional(),
+});
+
 export const Route = createFileRoute("/product/$id")({
+  validateSearch: (search) => productSearchSchema.parse(search),
   head: () => {
     return {
       meta: [{ title: "Product Details - IESVRA" }],
@@ -115,10 +123,10 @@ function ProductDetails() {
           <span>/</span>
           <Link
             to="/shop"
-            search={{ category: product.categories[0] }}
+            search={{ category: product.categories?.[0] || "All" }}
             className="hover:text-gold transition"
           >
-            {product.categories[0]}
+            {product.categories?.[0] || "All"}
           </Link>
           <span>/</span>
           <span className="text-navy-deep font-medium truncate max-w-[200px] sm:max-w-xs">
@@ -221,7 +229,7 @@ function ProductDetails() {
           <div className="space-y-8 lg:py-6">
             <div className="space-y-3">
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold bg-gold/10 px-4 py-1.5 rounded-full inline-block mb-2">
-                {product.categories.join(", ")}
+                {(product.categories || []).join(", ")}
               </span>
               <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy-deep leading-[1.1]">
                 {product.name}

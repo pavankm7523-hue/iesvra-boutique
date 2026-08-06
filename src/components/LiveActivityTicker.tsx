@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { ShoppingBag, CheckCircle2, Zap, TrendingUp, MapPin } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ShoppingBag, Zap, TrendingUp, MapPin } from "lucide-react";
 import { useProducts } from "@/lib/products";
 
-const PATNA_LOCATIONS = [
+export const PATNA_LOCATIONS = [
   "Boring Road, Patna",
   "Kankarbagh, Patna",
   "Bailey Road, Patna",
@@ -13,9 +13,34 @@ const PATNA_LOCATIONS = [
   "Frazer Road, Patna",
   "Ashiana Nagar, Patna",
   "Hanuman Nagar, Patna",
+  "Saguna More, Patna",
+  "Exhibition Road, Patna",
+  "Digha, Patna",
+  "Kumhrar, Patna",
+  "Phulwari Sharif, Patna",
+  "Kurji, Patna",
+  "Boring Canal Road, Patna",
+  "Mithapur, Patna",
+  "Gulzarbagh, Patna",
+  "Khajpura, Patna",
+  "Bankipur, Patna",
+  "Gola Road, Patna",
+  "RK Nagar, Patna",
+  "SP Verma Road, Patna",
+  "Budh Marg, Patna",
+  "Kidwaipuri, Patna",
+  "Shastri Nagar, Patna",
+  "Jakkanpur, Patna",
+  "Hajipur, Bihar",
+  "Muzaffarpur, Bihar",
+  "Gaya, Bihar",
+  "Bhagalpur, Bihar",
+  "Darbhanga, Bihar",
+  "Begusarai, Bihar",
+  "Arrah, Bihar",
 ];
 
-const CUSTOMER_NAMES = [
+export const CUSTOMER_NAMES = [
   "Priya S.",
   "Rahul M.",
   "Ananya K.",
@@ -26,70 +51,140 @@ const CUSTOMER_NAMES = [
   "Amit K.",
   "Rohan G.",
   "Nisha V.",
+  "Sunita D.",
+  "Deepak C.",
+  "Swati T.",
+  "Manish B.",
+  "Kavita S.",
+  "Rajesh K.",
+  "Ritu M.",
+  "Sanjay P.",
+  "Neha A.",
+  "Alok R.",
+  "Kirti G.",
+  "Abhishek N.",
+  "Megha S.",
+  "Gaurav D.",
+  "Shweta K.",
+  "Aditya H.",
+  "Divya B.",
+  "Vivek C.",
+  "Tanja P.",
+  "Kunal M.",
+  "Anjali R.",
+  "Saurabh V.",
+  "Pallavi S.",
+  "Vikas T.",
+  "Richa G.",
+  "Harsh K.",
+  "Simran A.",
+  "Prashant N.",
+  "Shalini D.",
+  "Ashish R.",
+  "Nidhi P.",
+  "Tarun S.",
+  "Aakanksha M.",
+  "Rohit B.",
+  "Vandana G.",
+  "Nitin K.",
+  "Bhavna C.",
+  "Sumit R.",
+  "Preeti T.",
+  "Mayank S.",
+  "Komal V.",
+  "Siddharth P.",
+  "Archana K.",
+  "Gautam D.",
+  "Kavya M.",
 ];
+
+export type ActivityItem = {
+  id: string;
+  badge: string;
+  badgeBg: string;
+  icon: React.ReactNode;
+  message: string;
+  time: string;
+};
 
 export function LiveActivityTicker() {
   const { products } = useProducts();
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentActivity, setCurrentActivity] = useState<ActivityItem | null>(null);
   const [isFading, setIsFading] = useState(false);
+  const lastKeyRef = useRef<string>("");
 
-  // Generate activities dynamically from catalog products
-  const activities = (products.length > 0 ? products : [
-    { name: "1pis set Plastic Square 7 Sections Multipurpose", id: "1" },
-    { name: "3 PC MOTIVATION BOTTLE", id: "2" },
-    { name: "Portable Neck Massager Pillow", id: "3" },
-    { name: "Wireless Bluetooth Earbuds", id: "4" }
-  ]).flatMap((p, idx) => {
-    const loc1 = PATNA_LOCATIONS[idx % PATNA_LOCATIONS.length];
-    const loc2 = PATNA_LOCATIONS[(idx + 3) % PATNA_LOCATIONS.length];
-    const name = CUSTOMER_NAMES[idx % CUSTOMER_NAMES.length];
-    const minsAgo = Math.floor((idx % 12) * 3) + 2;
-    const boughtCount = Math.floor((idx % 15) + 12);
+  const getRandomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-    return [
-      {
-        id: `act_${p.id}_1`,
+  const generateRandomActivity = (): ActivityItem => {
+    const catalog = products.length > 0 ? products : [
+      { name: "1pis set Plastic Square 7 Sections Multipurpose", id: "1" },
+      { name: "3 PC MOTIVATION BOTTLE", id: "2" },
+      { name: "Portable Neck Massager Pillow", id: "3" },
+      { name: "Wireless Bluetooth Earbuds", id: "4" }
+    ];
+
+    const prod = getRandomItem(catalog);
+    const name = getRandomItem(CUSTOMER_NAMES);
+    const loc = getRandomItem(PATNA_LOCATIONS);
+    const minsAgo = Math.floor(Math.random() * 25) + 2;
+    const boughtCount = Math.floor(Math.random() * 20) + 12;
+    const type = Math.floor(Math.random() * 3);
+
+    const truncName = prod.name.length > 35 ? prod.name.slice(0, 35) + "..." : prod.name;
+    const key = `${name}-${loc}-${prod.id}-${type}`;
+
+    if (key === lastKeyRef.current) {
+      // Pick another type if key matches previous
+      return generateRandomActivity();
+    }
+    lastKeyRef.current = key;
+
+    if (type === 0) {
+      return {
+        id: `act_${Date.now()}_${Math.random()}`,
         icon: <ShoppingBag className="h-4 w-4 text-purple-600 shrink-0" />,
         badge: "PURCHASED",
         badgeBg: "bg-purple-100 text-purple-800 border-purple-200",
-        message: `${name} from ${loc1} bought "${p.name.length > 35 ? p.name.slice(0, 35) + '...' : p.name}"`,
+        message: `${name} from ${loc} bought "${truncName}"`,
         time: `${minsAgo} mins ago`,
-      },
-      {
-        id: `act_${p.id}_2`,
+      };
+    } else if (type === 1) {
+      return {
+        id: `act_${Date.now()}_${Math.random()}`,
         icon: <Zap className="h-4 w-4 text-amber-500 shrink-0" />,
         badge: "DELIVERED",
         badgeBg: "bg-amber-100 text-amber-900 border-amber-200",
-        message: `Express 15-min delivery completed to ${loc2} — under 5km away`,
-        time: `${minsAgo + 4} mins ago`,
-      },
-      {
-        id: `act_${p.id}_3`,
+        message: `Express 15-min delivery completed to ${loc} — under 5km away`,
+        time: `${minsAgo + 3} mins ago`,
+      };
+    } else {
+      return {
+        id: `act_${Date.now()}_${Math.random()}`,
         icon: <TrendingUp className="h-4 w-4 text-emerald-600 shrink-0" />,
         badge: "TRENDING",
         badgeBg: "bg-emerald-100 text-emerald-800 border-emerald-200",
-        message: `${boughtCount} people in Patna bought "${p.name.length > 35 ? p.name.slice(0, 35) + '...' : p.name}" in the last hour`,
+        message: `${boughtCount} people in Patna bought "${truncName}" in the last hour`,
         time: "Just now",
-      },
-    ];
-  });
+      };
+    }
+  };
 
   useEffect(() => {
-    if (activities.length === 0) return;
+    // Initial activity
+    setCurrentActivity(generateRandomActivity());
+
     const interval = setInterval(() => {
       setIsFading(true);
       setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % activities.length);
+        setCurrentActivity(generateRandomActivity());
         setIsFading(false);
       }, 300);
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [activities.length]);
+  }, [products]);
 
-  if (activities.length === 0) return null;
-
-  const current = activities[currentIndex % activities.length];
+  if (!currentActivity) return null;
 
   return (
     <div className="w-full min-h-[52px] sm:min-h-[48px] my-3 sm:my-4 bg-gradient-to-r from-purple-950 via-slate-900 to-indigo-950 text-white border-y border-purple-500/20 py-2 sm:py-0 px-3 sm:px-4 shadow-inner select-none flex items-center relative z-10">
@@ -113,19 +208,19 @@ export function LiveActivityTicker() {
               isFading ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
             }`}
           >
-            <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded border shrink-0 hidden md:inline-block ${current.badgeBg}`}>
-              {current.badge}
+            <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded border shrink-0 hidden md:inline-block ${currentActivity.badgeBg}`}>
+              {currentActivity.badge}
             </span>
             
             <div className="flex items-center justify-center sm:justify-start gap-1.5 min-w-0 truncate">
-              {current.icon}
+              {currentActivity.icon}
               <span className="font-medium text-slate-100 text-[11px] sm:text-xs md:text-sm truncate">
-                {current.message}
+                {currentActivity.message}
               </span>
             </div>
 
             <span className="text-[10px] text-slate-400 font-semibold shrink-0 ml-1 whitespace-nowrap">
-              • {current.time}
+              • {currentActivity.time}
             </span>
           </div>
         </div>
