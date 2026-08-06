@@ -288,8 +288,8 @@ export function Home() {
               src="/hero-banner-new.png"
               alt="IESVRA Smart Shopping, Faster Delivery! Download App & Shop Now"
               width={2560}
-              height={853}
-              className="w-full h-auto object-cover rounded-2xl sm:rounded-3xl shadow-lg border border-purple-100"
+              height={1428}
+              className="w-full h-auto object-contain rounded-2xl sm:rounded-3xl shadow-lg border border-purple-100"
             />
           </Link>
         </div>
