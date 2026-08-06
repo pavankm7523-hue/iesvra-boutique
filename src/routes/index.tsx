@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useProducts, useCategories } from "@/lib/products";
+import { useHeroBanners } from "@/lib/hero";
 import { ProductCard } from "@/components/ProductCard";
 import { LiveActivityTicker } from "@/components/LiveActivityTicker";
 import { addToCart } from "@/lib/cart";
@@ -50,6 +51,30 @@ export function Home() {
   const navigate = useNavigate();
   const { isLoaded, bestSellersList, products } = useProducts();
   const { categories } = useCategories();
+  const { data: heroBanners } = useHeroBanners();
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  const activeBanners = heroBanners && heroBanners.length > 0 ? heroBanners : [
+    {
+      id: "default-1",
+      title: "SMART SHOPPING,",
+      subtitle: "Shop More. Save More. Get More!",
+      buttonText: "DOWNLOAD THE APP & SHOP NOW!",
+      buttonLink: "/shop",
+      backgroundImageUrl: "/hero-3d-side.png",
+      isSpecialSale: false,
+    }
+  ];
+
+  useEffect(() => {
+    if (activeBanners.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % activeBanners.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [activeBanners.length]);
+
+  const activeBanner = activeBanners[currentSlideIndex % activeBanners.length];
   const [searchQuery, setSearchQuery] = useState("");
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [isPlusModalOpen, setIsPlusModalOpen] = useState(false);
@@ -308,11 +333,17 @@ export function Home() {
               {/* Main Vector Hero Heading */}
               <div className="space-y-1.5 sm:space-y-2">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-black text-[#1E1B4B] tracking-tight leading-[1.08] uppercase">
-                  SMART SHOPPING,
-                  <span className="block text-[#F59E0B] drop-shadow-sm">FASTER DELIVERY!</span>
+                  {activeBanner.title.includes(",") ? (
+                    <>
+                      {activeBanner.title.split(",")[0]},
+                      <span className="block text-[#F59E0B] drop-shadow-sm">{activeBanner.title.split(",")[1]}</span>
+                    </>
+                  ) : (
+                    activeBanner.title
+                  )}
                 </h1>
                 <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-700 tracking-tight">
-                  Shop More. Save More. Get More!
+                  {activeBanner.subtitle}
                 </p>
               </div>
 
@@ -352,15 +383,32 @@ export function Home() {
                 </div>
               </div>
 
-              {/* Action Buttons Bar */}
-              <div className="pt-2 flex flex-wrap items-center gap-3">
+              {/* Action Buttons Bar & Carousel Indicators */}
+              <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
                 <Link
-                  to="/shop"
+                  to={activeBanner.buttonLink || "/shop"}
+                  search={activeBanner.id ? { bannerId: activeBanner.id } : undefined}
                   className="inline-flex items-center gap-2 bg-[#2E1065] hover:bg-[#3B0764] text-[#FACC15] px-6 sm:px-8 h-12 sm:h-14 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-purple-950/20 transition-all hover:scale-105 active:scale-95"
                 >
                   <ShoppingBag className="h-4 w-4 text-[#FACC15]" />
-                  DOWNLOAD THE APP & SHOP NOW!
+                  {activeBanner.buttonText || "DOWNLOAD THE APP & SHOP NOW!"}
                 </Link>
+
+                {/* Carousel Slide Dots */}
+                {activeBanners.length > 1 && (
+                  <div className="flex items-center gap-2">
+                    {activeBanners.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentSlideIndex(idx)}
+                        className={`h-2.5 rounded-full transition-all duration-300 ${
+                          currentSlideIndex === idx ? "w-8 bg-[#FACC15]" : "w-2.5 bg-white/50 hover:bg-white"
+                        }`}
+                        aria-label={`Go to slide ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
             </div>
@@ -368,9 +416,12 @@ export function Home() {
             {/* Right Side: High-Res 3D Illustration Graphic */}
             <div className="w-full lg:w-[42%] relative h-full min-h-[260px] sm:min-h-[340px] lg:min-h-[480px] flex items-center justify-center overflow-hidden">
               <img
-                src="/hero-3d-side.png"
-                alt="IESVRA 3D App Showcase & Fast Delivery"
+                src={activeBanner.backgroundImageUrl || "/hero-3d-side.png"}
+                alt={activeBanner.title}
                 className="w-full h-full object-cover object-left max-h-[480px] drop-shadow-2xl"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = "/hero-3d-side.png";
+                }}
               />
             </div>
 
