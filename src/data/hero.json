@@ -1,31 +1,14 @@
 [
   {
-    "id": "banner-main",
-    "title": "SMART SHOPPING, FASTER DELIVERY!",
-    "subtitle": "Shop More. Save More. Get More!",
-    "buttonText": "DOWNLOAD APP & SHOP NOW",
+    "title": "New Title",
+    "subtitle": "New Subtitle",
+    "buttonText": "SHOP NOW",
     "buttonLink": "/shop",
-    "backgroundImageUrl": "/hero-3d-side.png",
-    "isSpecialSale": false,
+    "backgroundImageUrl": "/hero-bg.jpg",
+    "isSpecialSale": true,
     "productIds": [],
     "productPrices": {},
-    "exclusiveProductIds": []
-  },
-  {
-    "id": "banner-festive-sale",
-    "title": "MEGA FESTIVE SALE",
-    "subtitle": "Up to 80% Off on Everyday Essentials & Smart Gadgets",
-    "buttonText": "SHOP MEGA DEALS",
-    "buttonLink": "/shop",
-    "backgroundImageUrl": "/hero-banner-new.png",
-    "isSpecialSale": true,
-    "saleEndDate": "2026-12-31T23:59:59.000Z",
-    "productIds": ["prod_drive_1", "prod_drive_2", "prod_drive_3"],
-    "productPrices": {
-      "prod_drive_1": 89,
-      "prod_drive_2": 299,
-      "prod_drive_3": 499
-    },
-    "exclusiveProductIds": ["prod_drive_1"]
+    "exclusiveProductIds": [],
+    "id": "1783414426882"
   }
 ]
