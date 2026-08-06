@@ -1,11 +1,11 @@
 [
   {
-    "title": "New Title",
-    "subtitle": "New Subtitle",
-    "buttonText": "SHOP NOW",
+    "title": "IESVRA — Smart Shopping, Faster Delivery!",
+    "subtitle": "Shop More. Save More. Get More!",
+    "buttonText": "DOWNLOAD APP & SHOP NOW!",
     "buttonLink": "/shop",
-    "backgroundImageUrl": "/hero-bg.jpg",
-    "isSpecialSale": true,
+    "backgroundImageUrl": "/hero-banner-new.png",
+    "isSpecialSale": false,
     "productIds": [],
     "productPrices": {},
     "exclusiveProductIds": [],
