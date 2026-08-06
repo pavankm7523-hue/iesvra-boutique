@@ -28,6 +28,8 @@ import {
   PhoneCall,
   CheckCircle2,
   X,
+  Tag,
+  ShoppingBag,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -279,19 +281,100 @@ export function Home() {
   return (
     <div className="bg-[#F6F7FB] text-slate-800 font-sans pb-20 md:pb-12">
       {/* ========================================================
-          1. HERO BANNER (USING NEW CUSTOM FULL-WIDTH BANNER)
+          1. HERO BANNER (NATIVE HYBRID HTML VECTOR TYPOGRAPHY)
          ======================================================== */}
       <section className="w-full bg-[#F6F7FB] py-3 sm:py-5 relative overflow-hidden select-none">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-          <Link to="/shop" className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl transition-transform duration-300 hover:scale-[1.005]">
-            <img
-              src="/hero-banner-new.png"
-              alt="IESVRA Smart Shopping, Faster Delivery! Download App & Shop Now"
-              width={2560}
-              height={1428}
-              className="w-full h-auto object-contain rounded-2xl sm:rounded-3xl shadow-lg border border-purple-100"
-            />
-          </Link>
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl bg-gradient-to-r from-[#F8F9FF] via-[#F3F4FD] to-[#3B0764] border border-purple-100/80 min-h-[380px] sm:min-h-[460px] lg:min-h-[480px] flex flex-col lg:flex-row items-center justify-between">
+            
+            {/* Left Content Column (Native Vector Text & Badges - 100% Crisp) */}
+            <div className="w-full lg:w-[58%] p-6 sm:p-8 lg:p-10 z-10 flex flex-col justify-between h-full space-y-4 sm:space-y-6">
+              
+              {/* Brand Logo Header */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-[#3B0764] to-[#6B21A8] flex items-center justify-center text-white shadow-md shadow-purple-900/20">
+                  <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6" />
+                </div>
+                <div>
+                  <div className="font-display font-black text-xl sm:text-2xl tracking-tight text-[#2E1065]">
+                    IESVRA
+                  </div>
+                  <div className="text-[11px] sm:text-xs text-slate-500 font-bold tracking-wide">
+                    India's Smartest Shopping App
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Vector Hero Heading */}
+              <div className="space-y-1.5 sm:space-y-2">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-black text-[#1E1B4B] tracking-tight leading-[1.08] uppercase">
+                  SMART SHOPPING,
+                  <span className="block text-[#F59E0B] drop-shadow-sm">FASTER DELIVERY!</span>
+                </h1>
+                <p className="text-sm sm:text-base lg:text-lg font-extrabold text-slate-700 tracking-tight">
+                  Shop More. Save More. Get More!
+                </p>
+              </div>
+
+              {/* 3 Pillar Feature Badges */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-1">
+                {/* Pillar 1 */}
+                <div className="flex items-center gap-2.5 bg-white/90 backdrop-blur-sm p-2.5 rounded-xl border border-purple-100 shadow-sm">
+                  <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 font-bold">
+                    <Tag className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-black text-slate-900 uppercase leading-none">UNBEATABLE DEALS</div>
+                    <div className="text-[10px] text-slate-500 font-semibold mt-0.5 truncate">Best prices everyday</div>
+                  </div>
+                </div>
+
+                {/* Pillar 2 */}
+                <div className="flex items-center gap-2.5 bg-white/90 backdrop-blur-sm p-2.5 rounded-xl border border-purple-100 shadow-sm">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 font-bold">
+                    <Zap className="h-4 w-4 fill-amber-500" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-black text-slate-900 uppercase leading-none">LIGHTNING DELIVERY</div>
+                    <div className="text-[10px] text-slate-500 font-semibold mt-0.5 truncate">Fast & reliable at door</div>
+                  </div>
+                </div>
+
+                {/* Pillar 3 */}
+                <div className="flex items-center gap-2.5 bg-white/90 backdrop-blur-sm p-2.5 rounded-xl border border-purple-100 shadow-sm">
+                  <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-bold">
+                    <ShieldCheck className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-black text-slate-900 uppercase leading-none">100% SECURE</div>
+                    <div className="text-[10px] text-slate-500 font-semibold mt-0.5 truncate">Safe shopping you trust</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons Bar */}
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <Link
+                  to="/shop"
+                  className="inline-flex items-center gap-2 bg-[#2E1065] hover:bg-[#3B0764] text-[#FACC15] px-6 sm:px-8 h-12 sm:h-14 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-purple-950/20 transition-all hover:scale-105 active:scale-95"
+                >
+                  <ShoppingBag className="h-4 w-4 text-[#FACC15]" />
+                  DOWNLOAD THE APP & SHOP NOW!
+                </Link>
+              </div>
+
+            </div>
+
+            {/* Right Side: High-Res 3D Illustration Graphic */}
+            <div className="w-full lg:w-[42%] relative h-full min-h-[260px] sm:min-h-[340px] lg:min-h-[480px] flex items-center justify-center overflow-hidden">
+              <img
+                src="/hero-3d-side.png"
+                alt="IESVRA 3D App Showcase & Fast Delivery"
+                className="w-full h-full object-cover object-left max-h-[480px] drop-shadow-2xl"
+              />
+            </div>
+
+          </div>
         </div>
       </section>
 
