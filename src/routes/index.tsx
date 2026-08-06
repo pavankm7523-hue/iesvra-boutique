@@ -287,19 +287,19 @@ export function Home() {
             <picture>
               <source
                 type="image/webp"
-                srcSet="/hero-banner-3840.webp?v=4 3840w, /hero-banner-2560.webp?v=4 2560w, /hero-banner-1920.webp?v=4 1920w, /hero-banner-1280.webp?v=4 1280w"
+                srcSet="/hero-banner-3840.webp?v=5 3840w, /hero-banner-2560.webp?v=5 2560w, /hero-banner-1920.webp?v=5 1920w, /hero-banner-1280.webp?v=5 1280w"
                 sizes="(max-width: 1280px) 100vw, 1280px"
               />
               <source
                 type="image/png"
-                srcSet="/hero-banner-3840.png?v=4 3840w, /hero-banner-2560.png?v=4 2560w, /hero-banner-1920.png?v=4 1920w, /hero-banner-1280.png?v=4 1280w"
+                srcSet="/hero-banner-3840.png?v=5 3840w, /hero-banner-2560.png?v=5 2560w, /hero-banner-1920.png?v=5 1920w, /hero-banner-1280.png?v=5 1280w"
                 sizes="(max-width: 1280px) 100vw, 1280px"
               />
               <img
-                src="/hero-banner-new.png?v=4"
+                src="/hero-banner-new.png?v=5"
                 alt="IESVRA Smart Shopping, Faster Delivery! Download App & Shop Now"
                 width={3840}
-                height={2143}
+                height={831}
                 className="w-full h-auto object-contain rounded-2xl sm:rounded-3xl shadow-lg border border-purple-100"
                 style={{ imageRendering: "-webkit-optimize-contrast" }}
               />
