@@ -31,7 +31,7 @@ const DEFAULT_BANNERS: HeroSettings[] = [{
   subtitle: "Shop More. Save More. Get More!",
   buttonText: "DOWNLOAD APP & SHOP NOW!",
   buttonLink: "/shop",
-  backgroundImageUrl: "/hero-banner-new.png",
+  backgroundImageUrl: "/hero-banner-original.png",
   isSpecialSale: false,
   productIds: [],
   productPrices: {},

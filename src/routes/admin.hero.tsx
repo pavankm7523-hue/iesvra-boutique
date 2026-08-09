@@ -124,7 +124,7 @@ function AdminHero() {
   };
 
   const handleSave = () => {
-    const finalBgImage = backgroundImageUrl || previewImage || imageData || "/hero-banner-new.png";
+    const finalBgImage = backgroundImageUrl || previewImage || imageData || "/hero-banner-original.png";
     let formattedSaleEndDate: string | undefined = undefined;
     if (isSpecialSale && saleEndDate) {
       try {
