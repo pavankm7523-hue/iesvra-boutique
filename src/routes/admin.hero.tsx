@@ -87,7 +87,7 @@ function AdminHero() {
         const canvas = document.createElement("canvas");
         let width = img.width;
         let height = img.height;
-        const maxDim = 1600;
+        const maxDim = 1920; // Full HD 1080p width
 
         if (width > maxDim || height > maxDim) {
           if (width > height) {
@@ -103,8 +103,10 @@ function AdminHero() {
         canvas.height = height;
         const ctx = canvas.getContext("2d");
         if (ctx) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
           ctx.drawImage(img, 0, 0, width, height);
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.88);
           setImageData(compressedDataUrl);
           setPreviewImage(compressedDataUrl);
         } else {
