@@ -53,12 +53,13 @@ export function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [isPlusModalOpen, setIsPlusModalOpen] = useState(false);
-  const [isPlusMember, setIsPlusMember] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("iesvra_plus_member") === "true";
+  const [isPlusMember, setIsPlusMember] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && localStorage.getItem("iesvra_plus_member") === "true") {
+      setIsPlusMember(true);
     }
-    return false;
-  });
+  }, []);
   const [isPlusPaymentProcessing, setIsPlusPaymentProcessing] = useState(false);
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
