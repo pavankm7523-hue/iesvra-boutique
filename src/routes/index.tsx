@@ -279,18 +279,116 @@ export function Home() {
   return (
     <div className="bg-[#F6F7FB] text-slate-800 font-sans pb-20 md:pb-12">
       {/* ========================================================
-          1. HERO BANNER (DIRECT ORIGINAL UNCOMPRESSED BANNER)
+          1. HERO BANNER (NATIVE VECTOR HTML/CSS TYPOGRAPHY - 100% CRISP)
          ======================================================== */}
-      <section className="w-full bg-[#F6F7FB] py-2 sm:py-4 relative overflow-hidden select-none">
+      <section className="w-full bg-[#F6F7FB] py-3 sm:py-5 relative overflow-hidden select-none">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-          <Link to="/shop" className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-200/60 hover:shadow-2xl transition-all duration-300 bg-white">
-            <img
-              src="/hero-banner-original.png"
-              alt="IESVRA — Smart Shopping, Faster Delivery!"
-              className="w-full h-auto object-cover group-hover:scale-[1.008] transition-transform duration-500"
-              loading="eager"
-            />
-          </Link>
+          <div className="relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl bg-white border border-purple-100 flex flex-col lg:flex-row items-stretch">
+            
+            {/* Left Side: Native Vector HTML Typography (100% Razor Sharp) */}
+            <div className="flex-1 p-6 sm:p-8 lg:p-10 flex flex-col justify-between z-10 space-y-4 sm:space-y-6">
+              
+              {/* Logo & App Tagline */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-700 to-indigo-600 flex items-center justify-center text-white shadow-md">
+                  <ShoppingBag className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="font-black text-xl sm:text-2xl text-slate-900 tracking-tight leading-none">
+                    IES<span className="text-amber-500">VRA</span>
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-semibold text-slate-500 tracking-wide uppercase mt-0.5">
+                    India's Smartest Shopping App
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Headline */}
+              <div className="space-y-1.5 sm:space-y-2">
+                <h1 className="font-black text-2xl sm:text-4xl lg:text-5xl text-slate-900 tracking-tight uppercase leading-[1.05]">
+                  SMART SHOPPING,<br />
+                  <span className="text-amber-500 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 bg-clip-text text-transparent">
+                    FASTER DELIVERY!
+                  </span>
+                </h1>
+                <p className="text-xs sm:text-sm lg:text-base font-bold text-slate-600">
+                  Shop More. Save More. Get More!
+                </p>
+              </div>
+
+              {/* 3 Pillars / Feature Badges */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-1 sm:pt-2">
+                {/* Feature 1 */}
+                <div className="flex items-start gap-2">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <Zap className="w-4 h-4 fill-purple-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10px] sm:text-xs font-black text-slate-900 uppercase leading-tight">
+                      UNBEATABLE DEALS
+                    </div>
+                    <div className="text-[9px] sm:text-[11px] font-medium text-slate-500 leading-tight hidden sm:block">
+                      Best prices everyday
+                    </div>
+                  </div>
+                </div>
+
+                {/* Feature 2 */}
+                <div className="flex items-start gap-2">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <Truck className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10px] sm:text-xs font-black text-slate-900 uppercase leading-tight">
+                      LIGHTNING DELIVERY
+                    </div>
+                    <div className="text-[9px] sm:text-[11px] font-medium text-slate-500 leading-tight hidden sm:block">
+                      Fast &amp; reliable at your door
+                    </div>
+                  </div>
+                </div>
+
+                {/* Feature 3 */}
+                <div className="flex items-start gap-2">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10px] sm:text-xs font-black text-slate-900 uppercase leading-tight">
+                      100% SECURE PAYMENTS
+                    </div>
+                    <div className="text-[9px] sm:text-[11px] font-medium text-slate-500 leading-tight hidden sm:block">
+                      Safe shopping you can trust
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <Link
+                  to="/shop"
+                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-950 via-purple-900 to-indigo-900 text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider px-5 sm:px-7 py-3 rounded-full shadow-lg hover:shadow-purple-900/30 hover:scale-105 transition-all duration-300 border border-purple-500/30"
+                >
+                  DOWNLOAD THE APP <span className="text-amber-400">&amp; SHOP NOW!</span>
+                  <ArrowRight className="w-4 h-4 text-amber-400" />
+                </Link>
+              </div>
+
+            </div>
+
+            {/* Right Side: Showcase Graphic */}
+            <div className="lg:w-[48%] relative flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-950 to-slate-950 overflow-hidden min-h-[220px] lg:min-h-full p-3 sm:p-5">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+              <img
+                src="/hero-banner-original.png"
+                alt="IESVRA Showcase"
+                className="w-full h-full object-contain relative z-10 max-h-[380px] rounded-xl shadow-md"
+                style={{ imageRendering: "high-quality" }}
+              />
+            </div>
+
+          </div>
         </div>
       </section>
 
