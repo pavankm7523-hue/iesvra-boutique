@@ -74,20 +74,67 @@ function AdminHero() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const ext = file.name.substring(file.name.lastIndexOf("."));
-    setImageExt(ext);
+    const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+    setImageExt(".jpg"); // Standardize to jpeg after canvas compression
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const result = event.target?.result as string;
-      setImageData(result);
-      setPreviewImage(result);
+      const rawDataUrl = event.target?.result as string;
+      
+      // Compress image using Canvas to ensure payload size is under 200KB (avoids Vercel/Nitro body size limits)
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 1600;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+          setImageData(compressedDataUrl);
+          setPreviewImage(compressedDataUrl);
+        } else {
+          setImageData(rawDataUrl);
+          setPreviewImage(rawDataUrl);
+        }
+      };
+      img.onerror = () => {
+        setImageData(rawDataUrl);
+        setPreviewImage(rawDataUrl);
+      };
+      img.src = rawDataUrl;
     };
     reader.readAsDataURL(file);
   };
 
   const handleSave = () => {
     const finalBgImage = backgroundImageUrl || previewImage || imageData || "/hero-banner-new.png";
+    let formattedSaleEndDate: string | undefined = undefined;
+    if (isSpecialSale && saleEndDate) {
+      try {
+        const parsedDate = new Date(saleEndDate);
+        if (!isNaN(parsedDate.getTime())) {
+          formattedSaleEndDate = parsedDate.toISOString();
+        }
+      } catch (e) {
+        console.warn("Invalid sale end date format:", saleEndDate, e);
+      }
+    }
+
     const payload = {
       settings: {
         title: title || "IESVRA Mega Sale",
@@ -95,14 +142,14 @@ function AdminHero() {
         buttonText: buttonText || "SHOP NOW",
         backgroundImageUrl: finalBgImage,
         isSpecialSale,
-        saleEndDate: isSpecialSale && saleEndDate ? new Date(saleEndDate).toISOString() : undefined,
+        saleEndDate: formattedSaleEndDate,
         productIds,
         productPrices,
         exclusiveProductIds,
         buttonLink: productIds.length > 0 && buttonLink === "/shop" ? "" : (buttonLink || "/shop"),
       },
       imageData,
-      imageExt,
+      imageExt: imageExt || ".jpg",
     };
 
     if (editingId) {
@@ -115,7 +162,8 @@ function AdminHero() {
           },
           onError: (err: any) => {
             console.error("Update banner error:", err);
-            toast.error("Failed to update Hero Banner.");
+            const msg = err?.message || err?.toString() || "Failed to update Hero Banner.";
+            toast.error(`Failed to update Hero Banner: ${msg}`);
           }
         }
       );
@@ -133,7 +181,8 @@ function AdminHero() {
           },
           onError: (err: any) => {
             console.error("Add banner error:", err);
-            toast.error("Failed to add Hero Banner.");
+            const msg = err?.message || err?.toString() || "Failed to add Hero Banner.";
+            toast.error(`Failed to add Hero Banner: ${msg}`);
           }
         }
       );

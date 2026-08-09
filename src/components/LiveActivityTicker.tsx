@@ -111,13 +111,20 @@ export function LiveActivityTicker() {
   const { products } = useProducts();
   const [currentActivity, setCurrentActivity] = useState<ActivityItem | null>(null);
   const [isFading, setIsFading] = useState(false);
+  
+  const productsRef = useRef(products);
+  useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
+
   const lastIndexRef = useRef<number>(0);
   const lastNameRef = useRef<string>("");
+  const lastLocRef = useRef<string>("");
 
   const getRandomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
   const generateRandomActivity = (): ActivityItem => {
-    const catalog = products.length > 0 ? products : [
+    const catalog = (productsRef.current && productsRef.current.length > 0) ? productsRef.current : [
       { name: "1pis set Plastic Square 7 Sections Multipurpose", id: "1" },
       { name: "3 PC MOTIVATION BOTTLE", id: "2" },
       { name: "Portable Neck Massager Pillow", id: "3" },
@@ -126,20 +133,31 @@ export function LiveActivityTicker() {
 
     // Pick name that is guaranteed different from previous tick
     let name = getRandomItem(CUSTOMER_NAMES);
-    while (name === lastNameRef.current && CUSTOMER_NAMES.length > 1) {
+    let attempts = 0;
+    while (name === lastNameRef.current && CUSTOMER_NAMES.length > 1 && attempts < 10) {
       name = getRandomItem(CUSTOMER_NAMES);
+      attempts++;
     }
     lastNameRef.current = name;
 
-    const prod = getRandomItem(catalog);
-    const loc = getRandomItem(PATNA_LOCATIONS);
+    // Pick location that is guaranteed different from previous tick
+    let loc = getRandomItem(PATNA_LOCATIONS);
+    attempts = 0;
+    while (loc === lastLocRef.current && PATNA_LOCATIONS.length > 1 && attempts < 10) {
+      loc = getRandomItem(PATNA_LOCATIONS);
+      attempts++;
+    }
+    lastLocRef.current = loc;
+
+    const rawProd = getRandomItem(catalog);
+    const prodName = rawProd?.name || "Boutique Collection Item";
     const minsAgo = Math.floor(Math.random() * 25) + 2;
     const boughtCount = Math.floor(Math.random() * 20) + 12;
 
     const type = lastIndexRef.current % 3;
     lastIndexRef.current += 1;
 
-    const truncName = prod.name.length > 35 ? prod.name.slice(0, 35) + "..." : prod.name;
+    const truncName = prodName.length > 35 ? prodName.slice(0, 35) + "..." : prodName;
 
     if (type === 0) {
       return {
@@ -184,7 +202,7 @@ export function LiveActivityTicker() {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [products]);
+  }, []);
 
   if (!currentActivity) return null;
 

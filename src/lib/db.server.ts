@@ -235,25 +235,22 @@ export async function saveMetadataToDb(keyStr: string, data: any): Promise<boole
     payment_status: "Pending"
   };
 
-  // Upsert pattern
-  await fetch(`${url}/rest/v1/orders?id=eq.${encodeURIComponent(keyStr)}`, {
-    method: "DELETE",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`
-    }
-  });
-
   const res = await fetch(`${url}/rest/v1/orders`, {
     method: "POST",
     headers: {
       apikey: key,
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
-      Prefer: "return=representation"
+      Prefer: "resolution=merge-duplicates,return=representation"
     },
     body: JSON.stringify(mockRecord)
   });
 
-  return res.ok;
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error(`[db] saveMetadataToDb failed for ${keyStr}:`, res.status, errText);
+    return false;
+  }
+
+  return true;
 }

@@ -72,17 +72,28 @@ async function readData(): Promise<HeroSettings[]> {
 async function writeData(banners: HeroSettings[]): Promise<void> {
   memoryBanners = banners;
 
+  let savedToDb = false;
   try {
-    await saveMetadataToDb("global_hero_banners", banners);
-    console.log("[hero.server] Saved hero banners to Supabase DB successfully!");
+    savedToDb = await saveMetadataToDb("global_hero_banners", banners);
+    if (savedToDb) {
+      console.log("[hero.server] Saved hero banners to Supabase DB successfully!");
+    } else {
+      console.error("[hero.server] saveMetadataToDb returned false when writing global_hero_banners!");
+    }
   } catch (e) {
-    console.warn("[hero.server] Could not save banners to Supabase DB:", e);
+    console.error("[hero.server] Error in saveMetadataToDb:", e);
   }
 
+  let savedToDisk = false;
   try {
     await fs.writeFile(DATA_FILE, JSON.stringify(banners, null, 2), "utf-8");
+    savedToDisk = true;
   } catch (e) {
-    console.warn("[hero.server] Local disk write skipped (read-only filesystem):", e);
+    console.warn("[hero.server] Local disk write skipped (read-only filesystem on Vercel):", e);
+  }
+
+  if (!savedToDb && !savedToDisk) {
+    throw new Error("Failed to persist hero banners: database write failed and filesystem is read-only.");
   }
 }
 
