@@ -279,24 +279,17 @@ export function Home() {
   return (
     <div className="bg-[#F6F7FB] text-slate-800 font-sans pb-20 md:pb-12">
       {/* ========================================================
-          1. HERO BANNER (FULL-WIDTH 4K ULTRA HD RESPONSIVE BANNER)
+          1. HERO BANNER (DIRECT ORIGINAL UNCOMPRESSED BANNER)
          ======================================================== */}
       <section className="w-full bg-[#F6F7FB] py-2 sm:py-4 relative overflow-hidden select-none">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <Link to="/shop" className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-200/60 hover:shadow-2xl transition-all duration-300 bg-white">
-            <picture>
-              <source
-                srcSet="/hero-banner-3840.webp 3840w, /hero-banner-2560.webp 2560w, /hero-banner-1920.webp 1920w, /hero-banner-1280.webp 1280w"
-                type="image/webp"
-              />
-              <img
-                src="/hero-banner-3840.png"
-                alt="IESVRA — Smart Shopping, Faster Delivery!"
-                className="w-full h-auto object-cover group-hover:scale-[1.008] transition-transform duration-500"
-                style={{ imageRendering: "high-quality" }}
-                loading="eager"
-              />
-            </picture>
+            <img
+              src="/hero-banner-original.png"
+              alt="IESVRA — Smart Shopping, Faster Delivery!"
+              className="w-full h-auto object-cover group-hover:scale-[1.008] transition-transform duration-500"
+              loading="eager"
+            />
           </Link>
         </div>
       </section>
