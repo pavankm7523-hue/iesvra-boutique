@@ -28,6 +28,8 @@ import {
   PhoneCall,
   CheckCircle2,
   X,
+  Percent,
+  ShoppingBag,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -279,19 +281,175 @@ export function Home() {
   return (
     <div className="bg-[#F6F7FB] text-slate-800 font-sans pb-20 md:pb-12">
       {/* ========================================================
-          1. HERO BANNER (3200x1080 ULTRA HD FULL-WIDTH BANNER)
+          1. HERO BANNER (100% NATIVE VECTOR HTML/CSS + INTERACTIVE WORKING BUTTONS)
          ======================================================== */}
       <section className="w-full bg-[#F6F7FB] py-2 sm:py-4 relative overflow-hidden select-none">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-          <Link to="/shop" className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-200/60 hover:shadow-2xl transition-all duration-300 bg-white">
-            <img
-              src="/hero-banner-original.png"
-              alt="IESVRA — Smart Shopping, Faster Delivery!"
-              className="w-full h-auto object-cover group-hover:scale-[1.006] transition-transform duration-500"
-              style={{ imageRendering: "-webkit-optimize-contrast" }}
-              loading="eager"
-            />
-          </Link>
+          <div className="relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-200/60 bg-white flex flex-col lg:flex-row items-stretch">
+            
+            {/* Left Column: 100% Razor-Sharp Vector Content */}
+            <div className="flex-1 p-5 sm:p-8 lg:p-10 flex flex-col justify-between z-20 space-y-5 lg:space-y-0">
+              
+              {/* Brand Header */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#5B21B6] text-white flex items-center justify-center shadow-md shrink-0">
+                  <ShoppingBag className="w-5 h-5 stroke-[2.2]" />
+                </div>
+                <div>
+                  <div className="font-black text-xl sm:text-2xl text-[#1E1B4B] tracking-tight leading-none">
+                    IES<span className="text-amber-500">VRA</span>
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-bold text-slate-500 tracking-wide uppercase mt-0.5">
+                    India's Smartest Shopping App
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Vector Headline */}
+              <div className="my-2 sm:my-4">
+                <h1 className="font-black text-3xl sm:text-5xl lg:text-6xl text-[#1E1B4B] tracking-tight uppercase leading-[1.05] font-display">
+                  SMART SHOPPING,<br />
+                  <span className="text-amber-500 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 bg-clip-text text-transparent drop-shadow-xs">
+                    FASTER DELIVERY!
+                  </span>
+                </h1>
+                <p className="text-sm sm:text-lg font-extrabold text-slate-600 tracking-tight mt-2">
+                  Shop More. Save More. Get More!
+                </p>
+              </div>
+
+              {/* 3 Feature Pillars */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-2 sm:my-3">
+                {/* Feature 1 */}
+                <div className="flex items-center gap-2.5 bg-purple-50/60 border border-purple-100 p-2.5 rounded-xl">
+                  <div className="w-8 h-8 rounded-full bg-[#5B21B6] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <Percent className="w-4 h-4 stroke-[2.5]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-black text-slate-900 uppercase tracking-tight leading-tight">
+                      UNBEATABLE DEALS
+                    </div>
+                    <div className="text-[10px] font-semibold text-slate-500 leading-tight truncate">
+                      Best prices everyday
+                    </div>
+                  </div>
+                </div>
+
+                {/* Feature 2 */}
+                <div className="flex items-center gap-2.5 bg-purple-50/60 border border-purple-100 p-2.5 rounded-xl">
+                  <div className="w-8 h-8 rounded-full bg-[#5B21B6] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <Zap className="w-4 h-4 fill-white stroke-[1.5]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-black text-slate-900 uppercase tracking-tight leading-tight">
+                      LIGHTNING DELIVERY
+                    </div>
+                    <div className="text-[10px] font-semibold text-slate-500 leading-tight truncate">
+                      Fast &amp; reliable at door
+                    </div>
+                  </div>
+                </div>
+
+                {/* Feature 3 */}
+                <div className="flex items-center gap-2.5 bg-purple-50/60 border border-purple-100 p-2.5 rounded-xl">
+                  <div className="w-8 h-8 rounded-full bg-[#5B21B6] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-black text-slate-900 uppercase tracking-tight leading-tight">
+                      100% SECURE PAYMENTS
+                    </div>
+                    <div className="text-[10px] font-semibold text-slate-500 leading-tight truncate">
+                      Safe shopping guaranteed
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons (100% Working Links) */}
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <Link
+                  to="/shop"
+                  className="inline-flex items-center justify-center gap-2 bg-[#1B113B] hover:bg-[#2A1C59] text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 rounded-full shadow-lg hover:scale-105 transition-all duration-300 border border-purple-500/30"
+                >
+                  DOWNLOAD THE APP <span className="text-amber-400">&amp; SHOP NOW!</span>
+                </Link>
+
+                <a
+                  href="https://play.google.com/store"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:scale-105 transition-transform duration-200"
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                    alt="Google Play"
+                    className="h-10"
+                  />
+                </a>
+
+                <a
+                  href="https://www.apple.com/app-store/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:scale-105 transition-transform duration-200"
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                    alt="App Store"
+                    className="h-10"
+                  />
+                </a>
+              </div>
+
+            </div>
+
+            {/* Right Column: 3D Artwork & Interactive SLA Badges */}
+            <div className="lg:w-[48%] relative flex items-center justify-center bg-gradient-to-br from-[#5B21B6] via-[#380E83] to-[#1E0545] overflow-hidden min-h-[260px] lg:min-h-full p-4">
+              
+              {/* Glow Accent */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Stamp Badge: Trusted by 10,000+ Customers */}
+              <div className="absolute top-4 right-4 z-20 hidden sm:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-full shadow-lg">
+                <div className="w-6 h-6 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center font-black text-xs">
+                  ★
+                </div>
+                <div className="leading-none text-left">
+                  <div className="text-[10px] font-black text-amber-300 uppercase tracking-wide">
+                    TRUSTED BY
+                  </div>
+                  <div className="text-[11px] font-extrabold text-white uppercase tracking-tight">
+                    10,000+ HAPPY CUSTOMERS
+                  </div>
+                </div>
+              </div>
+
+              {/* 3D Showcase Graphic */}
+              <img
+                src="/hero-3d-showcase.webp"
+                alt="IESVRA 3D Showcase"
+                className="w-full h-full object-contain relative z-10 max-h-[380px] drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+              />
+
+              {/* Bottom SLA Pill: Fast Delivery */}
+              <div className="absolute bottom-4 right-4 z-20 bg-white/95 backdrop-blur-md text-slate-900 px-4 py-2 rounded-full shadow-2xl border border-purple-100 flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-purple-100 text-[#5B21B6] flex items-center justify-center shrink-0">
+                  <Truck className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <div className="text-left leading-tight">
+                  <div className="text-[10px] font-black text-purple-900 uppercase tracking-wide">
+                    FAST DELIVERY
+                  </div>
+                  <div className="text-[11px] font-extrabold text-slate-700">
+                    At your convenience!
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
         </div>
       </section>
 
