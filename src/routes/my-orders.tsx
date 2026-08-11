@@ -274,44 +274,97 @@ function MyOrdersPage() {
                           <p className="text-[10px] font-bold uppercase tracking-widest text-navy-deep/50 mb-3">
                             Order Progress
                           </p>
-                          <div className="flex items-center gap-0">
-                            {(["Processing", "Shipped", "Delivered"] as const).map(
-                              (step, idx) => {
-                                const stepCfg = statusConfig[step];
-                                const StepIcon = stepCfg.icon;
-                                const isActive = cfg.step >= idx + 1;
-                                const isLast = idx === 2;
-                                return (
-                                  <div key={step} className="flex items-center flex-1">
-                                    <div className="flex flex-col items-center gap-1.5 w-full">
+
+                          {/* Mobile Vertical Timeline (< 640px) */}
+                          <div className="sm:hidden py-1">
+                            <div className="relative pl-10 space-y-5">
+                              {/* Vertical connecting line through 36px (h-9) icon center (X = 17px) */}
+                              <div className="absolute left-[17px] top-4 bottom-4 w-0.5 bg-gray-200 rounded-full z-0" />
+                              <div
+                                className="absolute left-[17px] top-4 w-0.5 bg-primary rounded-full z-0 transition-all duration-700"
+                                style={{
+                                  height: cfg.step === 1 ? "0%" : cfg.step === 2 ? "50%" : "100%",
+                                }}
+                              />
+
+                              {(["Processing", "Shipped", "Delivered"] as const).map(
+                                (step, idx) => {
+                                  const stepCfg = statusConfig[step];
+                                  const StepIcon = stepCfg.icon;
+                                  const isActive = cfg.step >= idx + 1;
+                                  const isCurrent = cfg.step === idx + 1;
+                                  return (
+                                    <div key={step} className="relative z-10 flex flex-col justify-center min-h-[36px]">
+                                      <div
+                                        className={`absolute -left-10 top-0 h-9 w-9 rounded-full flex items-center justify-center border-2 transition-all ${
+                                          isActive
+                                            ? "bg-primary border-primary text-white shadow-sm"
+                                            : "bg-white border-border/60 text-navy-deep/30"
+                                        }`}
+                                      >
+                                        <StepIcon className="h-4 w-4" />
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          className={`text-xs font-bold uppercase tracking-wider ${
+                                            isActive ? "text-navy-deep" : "text-navy-deep/40"
+                                          }`}
+                                        >
+                                          {step}
+                                        </span>
+                                        {isCurrent && (
+                                          <span className="text-[9px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                            Current Status
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Desktop Horizontal Timeline (>= 640px) */}
+                          <div className="hidden sm:block py-2">
+                            <div className="relative flex items-center justify-between px-4">
+                              {/* Background line centered on 36px circle top-4.5 (18px down) */}
+                              <div className="absolute left-8 right-8 top-[18px] -translate-y-1/2 h-1 bg-gray-100 rounded-full z-0" />
+                              <div
+                                className="absolute left-8 top-[18px] -translate-y-1/2 h-1 bg-primary rounded-full z-0 transition-all duration-700"
+                                style={{
+                                  width: cfg.step === 1 ? "0%" : cfg.step === 2 ? "50%" : "calc(100% - 4rem)",
+                                }}
+                              />
+
+                              {(["Processing", "Shipped", "Delivered"] as const).map(
+                                (step, idx) => {
+                                  const stepCfg = statusConfig[step];
+                                  const StepIcon = stepCfg.icon;
+                                  const isActive = cfg.step >= idx + 1;
+                                  return (
+                                    <div key={step} className="flex flex-col items-center gap-1.5 relative z-10 w-20">
                                       <div
                                         className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all ${
                                           isActive
-                                            ? "bg-primary border-primary text-white"
-                                            : "bg-white border-border/50 text-navy-deep/30"
+                                            ? "bg-primary border-primary text-white shadow-sm"
+                                            : "bg-white border-border/60 text-navy-deep/30"
                                         }`}
                                       >
                                         <StepIcon className="h-4 w-4" />
                                       </div>
                                       <span
-                                        className={`text-[10px] font-semibold uppercase tracking-wide text-center ${
+                                        className={`text-[10px] font-bold uppercase tracking-wider text-center ${
                                           isActive ? "text-navy-deep" : "text-navy-deep/30"
                                         }`}
                                       >
                                         {step}
                                       </span>
                                     </div>
-                                    {!isLast && (
-                                      <div
-                                        className={`h-0.5 flex-1 -mt-5 mx-1 rounded-full transition-all ${
-                                          cfg.step >= idx + 2 ? "bg-primary" : "bg-border/50"
-                                        }`}
-                                      />
-                                    )}
-                                  </div>
-                                );
-                              }
-                            )}
+                                  );
+                                }
+                              )}
+                            </div>
                           </div>
                         </div>
                       )}
