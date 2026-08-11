@@ -117,92 +117,102 @@ export function LiveActivityTicker() {
     productsRef.current = products;
   }, [products]);
 
-  const lastIndexRef = useRef<number>(0);
   const lastNameRef = useRef<string>("");
   const lastLocRef = useRef<string>("");
+  const lastProdRef = useRef<string>("");
+  const typeIndexRef = useRef<number>(0);
 
-  const getRandomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+  const generateActivity = useCallback((): ActivityItem => {
+    const catalog = (productsRef.current && productsRef.current.length > 0)
+      ? productsRef.current
+      : [
+          { name: "Solar Interaction Wall Lamp" },
+          { name: "3 PC MOTIVATION BOTTLE" },
+          { name: "Portable Neck Massager Pillow" },
+          { name: "Wireless Bluetooth Earbuds" },
+          { name: "1pis set Plastic Square 7 Sections" },
+        ];
 
-  const generateRandomActivity = (): ActivityItem => {
-    const catalog = (productsRef.current && productsRef.current.length > 0) ? productsRef.current : [
-      { name: "1pis set Plastic Square 7 Sections Multipurpose", id: "1" },
-      { name: "3 PC MOTIVATION BOTTLE", id: "2" },
-      { name: "Portable Neck Massager Pillow", id: "3" },
-      { name: "Wireless Bluetooth Earbuds", id: "4" }
-    ];
-
-    // Pick name that is guaranteed different from previous tick
-    let name = getRandomItem(CUSTOMER_NAMES);
+    // Pick random name (guaranteed different from previous tick)
+    let name = CUSTOMER_NAMES[Math.floor(Math.random() * CUSTOMER_NAMES.length)];
     let attempts = 0;
-    while (name === lastNameRef.current && CUSTOMER_NAMES.length > 1 && attempts < 10) {
-      name = getRandomItem(CUSTOMER_NAMES);
+    while (name === lastNameRef.current && CUSTOMER_NAMES.length > 1 && attempts < 15) {
+      name = CUSTOMER_NAMES[Math.floor(Math.random() * CUSTOMER_NAMES.length)];
       attempts++;
     }
     lastNameRef.current = name;
 
-    // Pick location that is guaranteed different from previous tick
-    let loc = getRandomItem(PATNA_LOCATIONS);
+    // Pick random location (guaranteed different from previous tick)
+    let loc = PATNA_LOCATIONS[Math.floor(Math.random() * PATNA_LOCATIONS.length)];
     attempts = 0;
-    while (loc === lastLocRef.current && PATNA_LOCATIONS.length > 1 && attempts < 10) {
-      loc = getRandomItem(PATNA_LOCATIONS);
+    while (loc === lastLocRef.current && PATNA_LOCATIONS.length > 1 && attempts < 15) {
+      loc = PATNA_LOCATIONS[Math.floor(Math.random() * PATNA_LOCATIONS.length)];
       attempts++;
     }
     lastLocRef.current = loc;
 
-    const rawProd = getRandomItem(catalog);
-    const prodName = rawProd?.name || "Boutique Collection Item";
-    const minsAgo = Math.floor(Math.random() * 25) + 2;
-    const boughtCount = Math.floor(Math.random() * 20) + 12;
+    // Pick random product (guaranteed different from previous tick)
+    let prod = catalog[Math.floor(Math.random() * catalog.length)];
+    attempts = 0;
+    while (prod?.name === lastProdRef.current && catalog.length > 1 && attempts < 15) {
+      prod = catalog[Math.floor(Math.random() * catalog.length)];
+      attempts++;
+    }
+    const prodName = prod?.name || "Boutique Collection Item";
+    lastProdRef.current = prodName;
 
-    const type = lastIndexRef.current % 3;
-    lastIndexRef.current += 1;
+    const minsAgo = Math.floor(Math.random() * 28) + 2;
+    const boughtCount = Math.floor(Math.random() * 24) + 8;
 
-    const truncName = prodName.length > 35 ? prodName.slice(0, 35) + "..." : prodName;
+    const type = typeIndexRef.current % 3;
+    typeIndexRef.current += 1;
+
+    const truncName = prodName.length > 34 ? prodName.slice(0, 34) + "..." : prodName;
 
     if (type === 0) {
       return {
         id: `act_${Date.now()}_${Math.random()}`,
-        icon: <ShoppingBag className="h-4 w-4 text-purple-600 shrink-0" />,
+        icon: <ShoppingBag className="h-4 w-4 text-purple-400 shrink-0" />,
         badge: "PURCHASED",
-        badgeBg: "bg-purple-100 text-purple-800 border-purple-200",
+        badgeBg: "bg-purple-900/80 text-purple-200 border-purple-500/40",
         message: `${name} from ${loc} bought "${truncName}"`,
         time: `${minsAgo} mins ago`,
       };
     } else if (type === 1) {
       return {
         id: `act_${Date.now()}_${Math.random()}`,
-        icon: <Zap className="h-4 w-4 text-amber-500 shrink-0" />,
+        icon: <Zap className="h-4 w-4 text-amber-400 shrink-0" />,
         badge: "DELIVERED",
-        badgeBg: "bg-amber-100 text-amber-900 border-amber-200",
+        badgeBg: "bg-amber-900/80 text-amber-200 border-amber-500/40",
         message: `Express 15-min delivery completed to ${loc} — under 5km away`,
-        time: `${minsAgo + 3} mins ago`,
+        time: `${minsAgo + 2} mins ago`,
       };
     } else {
       return {
         id: `act_${Date.now()}_${Math.random()}`,
-        icon: <TrendingUp className="h-4 w-4 text-emerald-600 shrink-0" />,
+        icon: <TrendingUp className="h-4 w-4 text-emerald-400 shrink-0" />,
         badge: "TRENDING",
-        badgeBg: "bg-emerald-100 text-emerald-800 border-emerald-200",
+        badgeBg: "bg-emerald-900/80 text-emerald-200 border-emerald-500/40",
         message: `${boughtCount} people in Patna bought "${truncName}" in the last hour`,
         time: "Just now",
       };
     }
-  };
+  }, []);
 
   useEffect(() => {
-    // Initial activity
-    setCurrentActivity(generateRandomActivity());
+    // Initial activity on mount
+    setCurrentActivity(generateActivity());
 
     const interval = setInterval(() => {
       setIsFading(true);
       setTimeout(() => {
-        setCurrentActivity(generateRandomActivity());
+        setCurrentActivity(generateActivity());
         setIsFading(false);
-      }, 300);
-    }, 4000);
+      }, 250);
+    }, 3500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [generateActivity]);
 
   if (!currentActivity) return null;
 

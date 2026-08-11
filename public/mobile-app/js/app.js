@@ -953,34 +953,50 @@
   }
 
   let mobileTickerInterval = null;
+  let globalMobileTickerIdx = Math.floor(Math.random() * 20);
   function initMobileLiveTicker() {
     const tickerText = document.getElementById('mobileTickerText');
     if (!tickerText) return;
-    if (mobileTickerInterval) clearInterval(mobileTickerInterval);
+    if (mobileTickerInterval) return; // Keep running interval, don't destroy and reset index to 0!
 
-    const locations = ["Boring Road, Patna", "Kankarbagh, Patna", "Bailey Road, Patna", "Danapur, Patna", "Patliputra Colony, Patna", "Rajendra Nagar, Patna", "Anisabad, Patna", "Frazer Road, Patna"];
-    const names = ["Priya S.", "Rahul M.", "Ananya K.", "Vikram R.", "Sneha P.", "Aarav M.", "Pooja R.", "Amit K."];
-    
-    let tickerIdx = 0;
+    const locations = [
+      "Boring Road, Patna", "Kankarbagh, Patna", "Bailey Road, Patna", "Danapur, Patna",
+      "Patliputra Colony, Patna", "Rajendra Nagar, Patna", "Anisabad, Patna", "Frazer Road, Patna",
+      "Ashiana Nagar, Patna", "Hanuman Nagar, Patna", "Saguna More, Patna", "Exhibition Road, Patna",
+      "Digha, Patna", "Kumhrar, Patna", "Phulwari Sharif, Patna", "Kurji, Patna",
+      "Boring Canal Road, Patna", "Mithapur, Patna", "Gulzarbagh, Patna", "Khajpura, Patna",
+      "Bankipur, Patna", "Gola Road, Patna", "RK Nagar, Patna", "SP Verma Road, Patna",
+      "Budh Marg, Patna", "Kidwaipuri, Patna", "Shastri Nagar, Patna", "Jakkanpur, Patna",
+      "Hajipur, Bihar", "Muzaffarpur, Bihar", "Gaya, Bihar", "Bhagalpur, Bihar"
+    ];
+    const names = [
+      "Priya S.", "Rahul M.", "Ananya K.", "Vikram R.", "Sneha P.", "Aarav M.", "Pooja R.", "Amit K.",
+      "Rohan G.", "Nisha V.", "Sunita D.", "Deepak C.", "Swati T.", "Manish B.", "Kavita S.", "Rajesh K.",
+      "Ritu M.", "Sanjay P.", "Neha A.", "Alok R.", "Kirti G.", "Abhishek N.", "Megha S.", "Gaurav D.",
+      "Shweta K.", "Aditya H.", "Divya B.", "Vivek C.", "Tanja P.", "Kunal M.", "Anjali R.", "Saurabh V.",
+      "Pallavi S.", "Vikas T.", "Richa G.", "Harsh K.", "Simran A.", "Prashant N.", "Shalini D."
+    ];
+
     const updateTicker = () => {
       const prods = getProducts();
       if (!prods || prods.length === 0) return;
-      const p = prods[tickerIdx % prods.length];
-      const loc = locations[tickerIdx % locations.length];
-      const name = names[tickerIdx % names.length];
-      const mins = Math.floor((tickerIdx % 8) * 3) + 2;
+      
+      const randProd = prods[Math.floor(Math.random() * prods.length)];
+      const randLoc = locations[Math.floor(Math.random() * locations.length)];
+      const randName = names[Math.floor(Math.random() * names.length)];
+      const mins = Math.floor(Math.random() * 25) + 2;
 
       tickerText.style.opacity = '0';
       setTimeout(() => {
-        const shortName = p.name.length > 32 ? p.name.slice(0, 32) + '...' : p.name;
-        tickerText.textContent = `${name} from ${loc} bought "${shortName}" — ${mins} mins ago`;
+        const shortName = randProd.name.length > 32 ? randProd.name.slice(0, 32) + '...' : randProd.name;
+        tickerText.textContent = `${randName} from ${randLoc} bought "${shortName}" — ${mins} mins ago`;
         tickerText.style.opacity = '1';
-        tickerIdx = (tickerIdx + 1) % prods.length;
-      }, 300);
+        globalMobileTickerIdx++;
+      }, 250);
     };
 
     updateTicker();
-    mobileTickerInterval = setInterval(updateTicker, 4000);
+    mobileTickerInterval = setInterval(updateTicker, 3500);
   }
 
   function showSearchResults(query, overlay) {
