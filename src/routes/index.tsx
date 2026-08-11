@@ -286,21 +286,21 @@ export function Home() {
          ======================================================== */}
       <section className="w-full bg-[#F6F7FB] py-2 sm:py-4 relative overflow-hidden select-none">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-          <div className="relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-200/60 bg-white flex flex-row items-stretch">
+          <div className="relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-500/20 bg-gradient-to-br from-[#2D1263] via-[#4C1D95] to-[#1E0947] flex flex-row items-stretch text-white">
             
             {/* Left Column: 100% Razor-Sharp Vector Content */}
             <div className="w-[58%] sm:w-[54%] p-3 xs:p-5 sm:p-8 lg:p-10 flex flex-col justify-between z-20 space-y-2 xs:space-y-3 sm:space-y-5">
               
               {/* Brand Header */}
               <div className="flex items-center gap-1.5 sm:gap-3">
-                <div className="w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-lg xs:rounded-xl sm:rounded-2xl bg-[#5B21B6] text-white flex items-center justify-center shadow-md shrink-0">
-                  <ShoppingBag className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
+                <div className="w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-lg xs:rounded-xl sm:rounded-2xl bg-amber-400 text-purple-950 flex items-center justify-center shadow-md shrink-0">
+                  <ShoppingBag className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
                 </div>
                 <div>
-                  <div className="font-black text-xs xs:text-sm sm:text-2xl text-[#1E1B4B] tracking-tight leading-none">
-                    IES<span className="text-amber-500">VRA</span>
+                  <div className="font-black text-xs xs:text-sm sm:text-2xl text-white tracking-tight leading-none">
+                    IES<span className="text-amber-400">VRA</span>
                   </div>
-                  <div className="text-[7px] xs:text-[9px] sm:text-xs font-bold text-slate-500 tracking-wide uppercase mt-0.5">
+                  <div className="text-[7px] xs:text-[9px] sm:text-xs font-bold text-purple-200/90 tracking-wide uppercase mt-0.5">
                     India's Smartest Shopping App
                   </div>
                 </div>
@@ -308,13 +308,13 @@ export function Home() {
 
               {/* Main Vector Headline */}
               <div className="my-1 sm:my-4">
-                <h1 className="font-black text-xs xs:text-base sm:text-4xl lg:text-5xl text-[#1E1B4B] tracking-tight uppercase leading-[1.1] font-display">
+                <h1 className="font-black text-xs xs:text-base sm:text-4xl lg:text-5xl text-white tracking-tight uppercase leading-[1.1] font-display">
                   SMART SHOPPING,<br />
-                  <span className="text-amber-500 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 bg-clip-text text-transparent drop-shadow-xs">
+                  <span className="text-amber-400 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-200 bg-clip-text text-transparent drop-shadow-xs">
                     FASTER DELIVERY!
                   </span>
                 </h1>
-                <p className="text-[9px] xs:text-xs sm:text-base font-extrabold text-slate-600 tracking-tight mt-0.5 sm:mt-2 leading-tight">
+                <p className="text-[9px] xs:text-xs sm:text-base font-extrabold text-amber-300/90 tracking-tight mt-0.5 sm:mt-2 leading-tight">
                   Shop More. Save More. Get More!
                 </p>
               </div>
@@ -322,45 +322,45 @@ export function Home() {
               {/* 3 Feature Pillars */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-3 my-1 sm:my-3">
                 {/* Feature 1 */}
-                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-purple-50/60 border border-purple-100 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
-                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-[#5B21B6] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
+                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center shrink-0 shadow-xs">
                     <Percent className="w-2.5 h-2.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[8px] sm:text-[11px] font-black text-slate-900 uppercase tracking-tight leading-tight">
+                    <div className="text-[8px] sm:text-[11px] font-black text-white uppercase tracking-tight leading-tight">
                       UNBEATABLE DEALS
                     </div>
-                    <div className="hidden sm:block text-[10px] font-semibold text-slate-500 leading-tight truncate">
+                    <div className="hidden sm:block text-[10px] font-semibold text-purple-200/80 leading-tight truncate">
                       Best prices everyday
                     </div>
                   </div>
                 </div>
 
                 {/* Feature 2 */}
-                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-purple-50/60 border border-purple-100 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
-                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-[#5B21B6] text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Zap className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-white stroke-[1.5]" />
+                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
+                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center shrink-0 shadow-xs">
+                    <Zap className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-purple-950 stroke-[1.5]" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[8px] sm:text-[11px] font-black text-slate-900 uppercase tracking-tight leading-tight">
+                    <div className="text-[8px] sm:text-[11px] font-black text-white uppercase tracking-tight leading-tight">
                       LIGHTNING DELIVERY
                     </div>
-                    <div className="hidden sm:block text-[10px] font-semibold text-slate-500 leading-tight truncate">
+                    <div className="hidden sm:block text-[10px] font-semibold text-purple-200/80 leading-tight truncate">
                       Fast &amp; reliable at door
                     </div>
                   </div>
                 </div>
 
                 {/* Feature 3 */}
-                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-purple-50/60 border border-purple-100 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
-                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-[#5B21B6] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
+                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center shrink-0 shadow-xs">
                     <ShieldCheck className="w-2.5 h-2.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[8px] sm:text-[11px] font-black text-slate-900 uppercase tracking-tight leading-tight">
+                    <div className="text-[8px] sm:text-[11px] font-black text-white uppercase tracking-tight leading-tight">
                       100% SECURE PAYMENTS
                     </div>
-                    <div className="hidden sm:block text-[10px] font-semibold text-slate-500 leading-tight truncate">
+                    <div className="hidden sm:block text-[10px] font-semibold text-purple-200/80 leading-tight truncate">
                       Safe shopping guaranteed
                     </div>
                   </div>
@@ -371,9 +371,9 @@ export function Home() {
               <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-1.5 sm:gap-3">
                 <Link
                   to="/shop"
-                  className="inline-flex items-center justify-center gap-1 bg-[#1B113B] hover:bg-[#2A1C59] text-white font-extrabold text-[8px] xs:text-[10px] sm:text-sm uppercase tracking-wider px-2.5 xs:px-4 sm:px-8 py-1.5 sm:py-3.5 rounded-full shadow-md hover:scale-105 transition-all duration-300 border border-purple-500/30 whitespace-nowrap"
+                  className="inline-flex items-center justify-center gap-1 bg-amber-400 hover:bg-amber-300 active:scale-[0.98] text-purple-950 font-black text-[8px] xs:text-[10px] sm:text-sm uppercase tracking-wider px-2.5 xs:px-4 sm:px-8 py-1.5 sm:py-3.5 rounded-full shadow-md hover:scale-105 transition-all duration-300 border border-amber-300/50 whitespace-nowrap"
                 >
-                  DOWNLOAD APP <span className="text-amber-400">&amp; SHOP!</span>
+                  DOWNLOAD APP <span className="text-purple-900">&amp; SHOP!</span>
                 </Link>
 
                 <a
@@ -406,10 +406,10 @@ export function Home() {
             </div>
 
             {/* Right Column: 3D Artwork & Interactive SLA Badges */}
-            <div className="w-[42%] sm:w-[46%] relative flex items-center justify-center bg-gradient-to-br from-[#5B21B6] via-[#380E83] to-[#1E0545] overflow-hidden p-2 sm:p-4">
+            <div className="w-[42%] sm:w-[46%] relative flex items-center justify-center overflow-hidden p-2 sm:p-4">
               
               {/* Glow Accent */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 sm:w-96 h-48 sm:h-96 bg-purple-500/30 rounded-full blur-2xl sm:blur-3xl pointer-events-none" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 sm:w-96 h-48 sm:h-96 bg-amber-400/20 rounded-full blur-2xl sm:blur-3xl pointer-events-none" />
 
               {/* Stamp Badge: Trusted by 10,000+ Customers */}
               <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 hidden sm:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-full shadow-lg">
