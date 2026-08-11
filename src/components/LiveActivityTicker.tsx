@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ShoppingBag, Zap, TrendingUp, MapPin } from "lucide-react";
 import { useProducts } from "@/lib/products";
 
