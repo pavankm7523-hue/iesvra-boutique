@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useProducts, colorMap } from "@/lib/products";
+import { useProducts, colorMap, type ProductMedia } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
 import { ArrowLeft, Star, ShoppingBag, Shield, Truck, RefreshCcw, ChevronLeft, ChevronRight, Users, Clock } from "lucide-react";
 

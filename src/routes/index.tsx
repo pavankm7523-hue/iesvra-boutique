@@ -277,101 +277,47 @@ export function Home() {
     }
   };
 
-
-
   return (
     <div className="bg-[#F6F7FB] text-slate-800 font-sans pb-20 md:pb-12">
       {/* ========================================================
-          1. HERO BANNER (100% NATIVE VECTOR HTML/CSS + INTERACTIVE WORKING BUTTONS)
+          1. HERO BANNER (RESPONSIVE RETINA DUAL MOBILE & DESKTOP ASSETS)
          ======================================================== */}
       <section className="w-full bg-[#F6F7FB] py-2 sm:py-4 relative overflow-hidden select-none">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-          <div className="relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-500/20 bg-gradient-to-br from-[#2D1263] via-[#4C1D95] to-[#1E0947] flex flex-row items-stretch text-white">
-            
-            {/* Left Column: 100% Razor-Sharp Vector Content */}
-            <div className="w-[58%] sm:w-[54%] p-3 xs:p-5 sm:p-8 lg:p-10 flex flex-col justify-between z-20 space-y-2 xs:space-y-3 sm:space-y-5">
-              
-              {/* Brand Header */}
-              <div className="flex items-center gap-1.5 sm:gap-3">
-                <div className="w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-lg xs:rounded-xl sm:rounded-2xl bg-amber-400 text-purple-950 flex items-center justify-center shadow-md shrink-0">
-                  <ShoppingBag className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
-                </div>
-                <div>
-                  <div className="font-black text-xs xs:text-sm sm:text-2xl text-white tracking-tight leading-none">
-                    IES<span className="text-amber-400">VRA</span>
-                  </div>
-                  <div className="text-[7px] xs:text-[9px] sm:text-xs font-bold text-purple-200/90 tracking-wide uppercase mt-0.5">
-                    India's Smartest Mobile & Laptop Shopping Platform
-                  </div>
-                </div>
-              </div>
+          
+          {/* Responsive Picture Banner with Retina Clarity */}
+          <div className="relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-500/20 bg-gradient-to-br from-[#2D1263] via-[#4C1D95] to-[#1E0947]">
+            <picture className="w-full h-auto block">
+              {/* Dedicated Mobile High-Res Asset (1560x900 px for 2x/3x Retina Crispness on 390px Mobile Screens) */}
+              <source
+                media="(max-width: 639px)"
+                srcSet="/hero-banner-mobile.webp 1560w, /hero-banner-mobile.png 1560w"
+                sizes="(max-width: 639px) 100vw, 780px"
+                type="image/webp"
+              />
+              {/* Dedicated Desktop Widescreen Asset (2560x864 px for 2K/4K Crispness on Desktop Screens) */}
+              <source
+                media="(min-width: 640px)"
+                srcSet="/hero-banner-desktop.webp 2560w, /hero-banner-desktop.png 2560w"
+                sizes="(min-width: 640px) 100vw, 1280px"
+                type="image/webp"
+              />
+              {/* Fallback Image */}
+              <img
+                src="/hero-banner-desktop.png"
+                alt="IESVRA — Smart Shopping, Faster Delivery!"
+                className="w-full h-auto object-cover block rounded-2xl sm:rounded-3xl"
+                loading="eager"
+              />
+            </picture>
 
-              {/* Main Vector Headline */}
-              <div className="my-1 sm:my-4">
-                <h1 className="font-black text-xs xs:text-base sm:text-4xl lg:text-5xl text-white tracking-tight uppercase leading-[1.1] font-display">
-                  SMART SHOPPING,<br />
-                  <span className="text-amber-400 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-200 bg-clip-text text-transparent drop-shadow-xs">
-                    FASTER DELIVERY!
-                  </span>
-                </h1>
-                <p className="text-[9px] xs:text-xs sm:text-base font-extrabold text-amber-300/90 tracking-tight mt-0.5 sm:mt-2 leading-tight">
-                  Shop More. Save More. Get More!
-                </p>
-              </div>
-
-              {/* 3 Feature Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-3 my-1 sm:my-3">
-                {/* Feature 1 */}
-                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
-                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center shrink-0 shadow-xs">
-                    <Percent className="w-2.5 h-2.5 sm:w-4 sm:h-4 stroke-[2.5]" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-[8px] sm:text-[11px] font-black text-white uppercase tracking-tight leading-tight">
-                      UNBEATABLE DEALS
-                    </div>
-                    <div className="hidden sm:block text-[10px] font-semibold text-purple-200/80 leading-tight truncate">
-                      Best prices everyday
-                    </div>
-                  </div>
-                </div>
-
-                {/* Feature 2 */}
-                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
-                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center shrink-0 shadow-xs">
-                    <Zap className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-purple-950 stroke-[1.5]" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-[8px] sm:text-[11px] font-black text-white uppercase tracking-tight leading-tight">
-                      LIGHTNING DELIVERY
-                    </div>
-                    <div className="hidden sm:block text-[10px] font-semibold text-purple-200/80 leading-tight truncate">
-                      Fast &amp; reliable at door
-                    </div>
-                  </div>
-                </div>
-
-                {/* Feature 3 */}
-                <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 p-1 sm:p-2.5 rounded-md sm:rounded-xl">
-                  <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center shrink-0 shadow-xs">
-                    <ShieldCheck className="w-2.5 h-2.5 sm:w-4 sm:h-4 stroke-[2.5]" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-[8px] sm:text-[11px] font-black text-white uppercase tracking-tight leading-tight">
-                      100% SECURE PAYMENTS
-                    </div>
-                    <div className="hidden sm:block text-[10px] font-semibold text-purple-200/80 leading-tight truncate">
-                      Safe shopping guaranteed
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons (100% Working Links) */}
-              <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-1.5 sm:gap-3">
+            {/* Interactive Vector Action Overlay Links */}
+            <div className="absolute inset-0 z-20 flex flex-col justify-between p-3 xs:p-5 sm:p-8 lg:p-10 pointer-events-none">
+              <div className="flex-1" />
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 pointer-events-auto">
                 <Link
                   to="/shop"
-                  className="inline-flex items-center justify-center gap-1 bg-amber-400 hover:bg-amber-300 active:scale-[0.98] text-purple-950 font-black text-[8px] xs:text-[10px] sm:text-sm uppercase tracking-wider px-2.5 xs:px-4 sm:px-8 py-1.5 sm:py-3.5 rounded-full shadow-md hover:scale-105 transition-all duration-300 border border-amber-300/50 whitespace-nowrap"
+                  className="inline-flex items-center justify-center gap-1 bg-amber-400/90 hover:bg-amber-300 active:scale-[0.98] text-purple-950 font-black text-[9px] xs:text-[11px] sm:text-base uppercase tracking-wider px-3 xs:px-5 sm:px-8 py-1.5 xs:py-2.5 sm:py-4 rounded-full shadow-lg hover:scale-105 transition-all duration-300 border border-amber-300/60 backdrop-blur-xs whitespace-nowrap"
                 >
                   DOWNLOAD APP <span className="text-purple-900">&amp; SHOP!</span>
                 </Link>
@@ -380,12 +326,12 @@ export function Home() {
                   href="https://play.google.com/store"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:scale-105 transition-transform duration-200 hidden xs:inline-block"
+                  className="hover:scale-105 transition-transform duration-200 hidden xs:inline-block pointer-events-auto"
                 >
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
                     alt="Google Play"
-                    className="h-5 xs:h-7 sm:h-10"
+                    className="h-6 xs:h-8 sm:h-11"
                   />
                 </a>
 
@@ -393,61 +339,15 @@ export function Home() {
                   href="https://www.apple.com/app-store/"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:scale-105 transition-transform duration-200 hidden sm:inline-block"
+                  className="hover:scale-105 transition-transform duration-200 hidden sm:inline-block pointer-events-auto"
                 >
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
                     alt="App Store"
-                    className="h-10"
+                    className="h-11"
                   />
                 </a>
               </div>
-
-            </div>
-
-            {/* Right Column: 3D Artwork & Interactive SLA Badges */}
-            <div className="w-[42%] sm:w-[46%] relative flex items-center justify-center overflow-hidden p-2 sm:p-4">
-              
-              {/* Glow Accent */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 sm:w-96 h-48 sm:h-96 bg-amber-400/20 rounded-full blur-2xl sm:blur-3xl pointer-events-none" />
-
-              {/* Stamp Badge: Trusted by 10,000+ Customers */}
-              <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 hidden sm:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-full shadow-lg">
-                <div className="w-6 h-6 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center font-black text-xs">
-                  ★
-                </div>
-                <div className="leading-none text-left">
-                  <div className="text-[10px] font-black text-amber-300 uppercase tracking-wide">
-                    TRUSTED BY
-                  </div>
-                  <div className="text-[11px] font-extrabold text-white uppercase tracking-tight">
-                    10,000+ HAPPY CUSTOMERS
-                  </div>
-                </div>
-              </div>
-
-              {/* 3D Showcase Graphic */}
-              <img
-                src="/hero-3d-showcase-transparent.webp"
-                alt="IESVRA 3D Showcase"
-                className="w-full h-full object-contain relative z-10 max-h-[180px] xs:max-h-[240px] sm:max-h-[400px] drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-              />
-
-              {/* Bottom SLA Pill: Fast Delivery */}
-              <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 z-20 hidden sm:flex bg-white/95 backdrop-blur-md text-slate-900 px-4 py-2 rounded-full shadow-2xl border border-purple-100 items-center gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-purple-100 text-[#5B21B6] flex items-center justify-center shrink-0">
-                  <Truck className="w-4 h-4 stroke-[2.5]" />
-                </div>
-                <div className="text-left leading-tight">
-                  <div className="text-[10px] font-black text-purple-900 uppercase tracking-wide">
-                    FAST DELIVERY
-                  </div>
-                  <div className="text-[11px] font-extrabold text-slate-700">
-                    At your convenience!
-                  </div>
-                </div>
-              </div>
-
             </div>
 
           </div>

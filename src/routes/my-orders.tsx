@@ -109,7 +109,7 @@ function MyOrdersPage() {
 
   // Also read directly from localStorage for the initial render guard
   const hasLocalSession = typeof window !== "undefined" && !!localStorage.getItem("ishvara_auth");
-  if (!isAuthLoaded || (!user && !hasLocalSession)) return null;
+  if (!isAuthLoaded || !user) return null;
 
   // Filter orders by logged-in user email (case-insensitive)
   const myOrders = allOrders.filter(
