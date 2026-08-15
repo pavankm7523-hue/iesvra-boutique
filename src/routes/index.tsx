@@ -286,7 +286,10 @@ export function Home() {
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           
           {/* Responsive Picture Banner with Retina Clarity */}
-          <div className="relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-500/20 bg-gradient-to-br from-[#2D1263] via-[#4C1D95] to-[#1E0947]">
+          <Link
+            to="/shop"
+            className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-500/20 bg-gradient-to-br from-[#2D1263] via-[#4C1D95] to-[#1E0947]"
+          >
             <picture className="w-full h-auto block">
               {/* Dedicated Mobile High-Res Asset (1560x900 px for 2x/3x Retina Crispness on 390px Mobile Screens) */}
               <source
@@ -310,47 +313,7 @@ export function Home() {
                 loading="eager"
               />
             </picture>
-
-            {/* Interactive Vector Action Overlay Links */}
-            <div className="absolute inset-0 z-20 flex flex-col justify-between p-3 xs:p-5 sm:p-8 lg:p-10 pointer-events-none">
-              <div className="flex-1" />
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4 pointer-events-auto">
-                <Link
-                  to="/shop"
-                  className="inline-flex items-center justify-center gap-1 bg-amber-400/90 hover:bg-amber-300 active:scale-[0.98] text-purple-950 font-black text-[9px] xs:text-[11px] sm:text-base uppercase tracking-wider px-3 xs:px-5 sm:px-8 py-1.5 xs:py-2.5 sm:py-4 rounded-full shadow-lg hover:scale-105 transition-all duration-300 border border-amber-300/60 backdrop-blur-xs whitespace-nowrap"
-                >
-                  DOWNLOAD APP <span className="text-purple-900">&amp; SHOP!</span>
-                </Link>
-
-                <a
-                  href="https://play.google.com/store"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:scale-105 transition-transform duration-200 hidden xs:inline-block pointer-events-auto"
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                    alt="Google Play"
-                    className="h-6 xs:h-8 sm:h-11"
-                  />
-                </a>
-
-                <a
-                  href="https://www.apple.com/app-store/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:scale-105 transition-transform duration-200 hidden sm:inline-block pointer-events-auto"
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
-                    alt="App Store"
-                    className="h-11"
-                  />
-                </a>
-              </div>
-            </div>
-
-          </div>
+          </Link>
         </div>
       </section>
 
