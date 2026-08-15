@@ -448,65 +448,7 @@ export function Home() {
 
 
 
-      {/* ========================================================
-          6. APP DOWNLOAD BANNER (MATCHING SCREENSHOT)
-         ======================================================== */}
-      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-6">
-        <div className="bg-gradient-to-r from-[#380E83] via-[#4C1D95] to-[#5B21B6] rounded-2xl p-5 sm:p-8 text-white relative overflow-hidden shadow-xl">
-          {/* Background graphics */}
-          <div className="absolute right-0 top-0 w-64 h-64 bg-white/5 rounded-full blur-2xl pointer-events-none" />
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-            
-            {/* Left Content */}
-            <div className="flex-1 space-y-3 text-center md:text-left">
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-purple-200">
-                DOWNLOAD THE
-              </div>
-              <h3 className="text-xl sm:text-3xl font-black font-display tracking-tight text-white uppercase">
-                IESVRA APP
-              </h3>
-              <p className="text-xs sm:text-sm text-purple-100 font-semibold max-w-md">
-                EXPERIENCE SMART SHOPPING LIKE NEVER BEFORE!
-              </p>
-
-              {/* App Badges */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
-                <a
-                  href="/mobile-app/index.html"
-                  className="hover:scale-105 transition-transform"
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                    alt="Google Play"
-                    className="h-9"
-                  />
-                </a>
-                <a
-                  href="/mobile-app/index.html"
-                  className="hover:scale-105 transition-transform"
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
-                    alt="App Store"
-                    className="h-9"
-                  />
-                </a>
-              </div>
-            </div>
-
-            {/* Right Graphic: Smartphone & Gift Bag Mockup */}
-            <div className="w-36 sm:w-48 shrink-0 flex items-center justify-center select-none">
-              <img
-                src="/hero-banner-3d.png"
-                alt="IESVRA Mobile App"
-                className="w-full h-auto object-contain max-h-36 sm:max-h-44 drop-shadow-xl"
-              />
-            </div>
-
-          </div>
-        </div>
-      </section>
 
 
       {/* ========================================================
