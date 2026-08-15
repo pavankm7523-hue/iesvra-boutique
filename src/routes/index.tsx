@@ -522,30 +522,28 @@ export function Home() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
-          {!isLoaded
-            ? null
-            : (showAllProducts
-                ? products
-                : (bestSellersList.length >= 10
-                    ? bestSellersList.slice(0, 10)
-                    : products.slice(0, 10))
-              ).map((product, idx) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  customBadge={
-                    !showAllProducts && idx === 0
-                      ? "Best Seller"
-                      : !showAllProducts && idx === 1
-                      ? "Trending"
-                      : !showAllProducts && idx === 2
-                      ? "New"
-                      : !showAllProducts && idx === 3
-                      ? "15 Min Fast"
-                      : undefined
-                  }
-                />
-              ))}
+          {(showAllProducts
+            ? products
+            : (bestSellersList.length >= 10
+                ? bestSellersList.slice(0, 10)
+                : products.slice(0, 10))
+          ).map((product, idx) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              customBadge={
+                !showAllProducts && idx === 0
+                  ? "Best Seller"
+                  : !showAllProducts && idx === 1
+                  ? "Trending"
+                  : !showAllProducts && idx === 2
+                  ? "New"
+                  : !showAllProducts && idx === 3
+                  ? "15 Min Fast"
+                  : undefined
+              }
+            />
+          ))}
         </div>
 
         {/* Bottom Expand / Collapse Button */}

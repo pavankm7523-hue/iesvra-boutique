@@ -3772,34 +3772,27 @@ function triggerProductsChange() {
 }
 
 export function useProducts() {
-  // Initialize with hardcoded products so SSR renders products immediately
-  // (no empty flash while waiting for client-side localStorage/API fetch)
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    // 1. Load locally immediately
-    const stored = localStorage.getItem("ishvara_products_v11");
-    let localList = initialProducts;
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        localList = parsed.map((p: any) => ({
-          ...p,
-          categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
-          stock: typeof p.stock === "number" ? p.stock : 50,
-        }));
-      } catch (e) {
-        console.error("Failed to parse local products", e);
+  // Initialize with local cache or fallback immediately so 0ms delay on render
+  const [products, setProducts] = useState<Product[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("ishvara_products_v11");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          return parsed.map((p: any) => ({
+            ...p,
+            categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
+            stock: typeof p.stock === "number" ? p.stock : 50,
+          }));
+        } catch {}
       }
     }
-    const normalizedInitial = localList.map(p => ({
-      ...p,
-      stock: typeof p.stock === "number" ? p.stock : 50,
-    }));
-    setProducts(normalizedInitial);
+    return initialProducts;
+  });
+  const [isLoaded, setIsLoaded] = useState(true);
 
-    // 2. Fetch globally in background
+  useEffect(() => {
+    // Fetch globally in background to sync latest prices/stock
     fetch("/api/products")
       .then((res) => res.json())
       .then((globalList) => {
@@ -3811,11 +3804,11 @@ export function useProducts() {
           setProducts(normalizedGlobal);
           localStorage.setItem("ishvara_products_v11", JSON.stringify(normalizedGlobal));
         } else {
-          // If first run (no global data), initialize global list with local data
+          // If first run (no global data), initialize global list with initial products
           fetch("/api/products", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(localList),
+            body: JSON.stringify(initialProducts),
           }).catch(console.error);
         }
         setIsLoaded(true);
