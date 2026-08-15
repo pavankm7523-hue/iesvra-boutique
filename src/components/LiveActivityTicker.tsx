@@ -2,42 +2,62 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { ShoppingBag, Zap, TrendingUp, MapPin } from "lucide-react";
 import { useProducts } from "@/lib/products";
 
-export const PATNA_LOCATIONS = [
+export const ALL_INDIA_LOCATIONS = [
+  "Bandra, Mumbai",
+  "Indiranagar, Bengaluru",
+  "Connaught Place, New Delhi",
+  "HSR Layout, Bengaluru",
+  "Juhu, Mumbai",
+  "Salt Lake, Kolkata",
+  "Koramangala, Bengaluru",
+  "Cyber City, Gurugram",
+  "Banjara Hills, Hyderabad",
+  "T Nagar, Chennai",
+  "Kalyani Nagar, Pune",
+  "Sector 18, Noida",
+  "Alwarpet, Chennai",
+  "Park Street, Kolkata",
+  "Jubilee Hills, Hyderabad",
+  "Koregaon Park, Pune",
+  "Vasant Kunj, New Delhi",
+  "Gachibowli, Hyderabad",
+  "Powai, Mumbai",
+  "Velachery, Chennai",
+  "Civil Lines, Jaipur",
   "Boring Road, Patna",
+  "Navrangpura, Ahmedabad",
+  "Whitefield, Bengaluru",
+  "Gomti Nagar, Lucknow",
+  "C-Scheme, Jaipur",
   "Kankarbagh, Patna",
-  "Bailey Road, Patna",
-  "Danapur, Patna",
-  "Patliputra Colony, Patna",
-  "Rajendra Nagar, Patna",
-  "Anisabad, Patna",
-  "Frazer Road, Patna",
-  "Ashiana Nagar, Patna",
-  "Hanuman Nagar, Patna",
-  "Saguna More, Patna",
-  "Exhibition Road, Patna",
-  "Digha, Patna",
-  "Kumhrar, Patna",
-  "Phulwari Sharif, Patna",
-  "Kurji, Patna",
+  "Sector 62, Noida",
+  "Besa, Nagpur",
+  "Thaltej, Ahmedabad",
+  "Hazratganj, Lucknow",
+  "Adyar, Chennai",
+  "Andheri West, Mumbai",
+  "Lajpat Nagar, New Delhi",
+  "Rajarhat, Kolkata",
+  "Ballygunge, Kolkata",
+  "Amanora, Pune",
+  "Madhapur, Hyderabad",
+  "MG Road, Kochi",
+  "Panampilly Nagar, Kochi",
+  "Chandigarh City Centre",
+  "Arera Colony, Bhopal",
+  "Vijay Nagar, Indore",
+  "Palasia, Indore",
+  "Malviya Nagar, Jaipur",
+  "Kaloor, Kochi",
+  "Bistupur, Jamshedpur",
+  "GS Road, Guwahati",
+  "Saheed Nagar, Bhubaneswar",
+  "Patia, Bhubaneswar",
+  "Vastrapur, Ahmedabad",
+  "Anna Nagar, Chennai",
+  "South Extension, New Delhi",
+  "Viman Nagar, Pune",
   "Boring Canal Road, Patna",
-  "Mithapur, Patna",
-  "Gulzarbagh, Patna",
-  "Khajpura, Patna",
-  "Bankipur, Patna",
-  "Gola Road, Patna",
-  "RK Nagar, Patna",
-  "SP Verma Road, Patna",
-  "Budh Marg, Patna",
-  "Kidwaipuri, Patna",
-  "Shastri Nagar, Patna",
-  "Jakkanpur, Patna",
-  "Hajipur, Bihar",
-  "Muzaffarpur, Bihar",
-  "Gaya, Bihar",
-  "Bhagalpur, Bihar",
-  "Darbhanga, Bihar",
-  "Begusarai, Bihar",
-  "Arrah, Bihar",
 ];
 
 export const CUSTOMER_NAMES = [
@@ -69,7 +89,7 @@ export const CUSTOMER_NAMES = [
   "Aditya H.",
   "Divya B.",
   "Vivek C.",
-  "Tanja P.",
+  "Tanya P.",
   "Kunal M.",
   "Anjali R.",
   "Saurabh V.",
@@ -143,10 +163,10 @@ export function LiveActivityTicker() {
     lastNameRef.current = name;
 
     // Pick random location (guaranteed different from previous tick)
-    let loc = PATNA_LOCATIONS[Math.floor(Math.random() * PATNA_LOCATIONS.length)];
+    let loc = ALL_INDIA_LOCATIONS[Math.floor(Math.random() * ALL_INDIA_LOCATIONS.length)];
     attempts = 0;
-    while (loc === lastLocRef.current && PATNA_LOCATIONS.length > 1 && attempts < 15) {
-      loc = PATNA_LOCATIONS[Math.floor(Math.random() * PATNA_LOCATIONS.length)];
+    while (loc === lastLocRef.current && ALL_INDIA_LOCATIONS.length > 1 && attempts < 15) {
+      loc = ALL_INDIA_LOCATIONS[Math.floor(Math.random() * ALL_INDIA_LOCATIONS.length)];
       attempts++;
     }
     lastLocRef.current = loc;
@@ -162,7 +182,7 @@ export function LiveActivityTicker() {
     lastProdRef.current = prodName;
 
     const minsAgo = Math.floor(Math.random() * 28) + 2;
-    const boughtCount = Math.floor(Math.random() * 24) + 8;
+    const boughtCount = Math.floor(Math.random() * 45) + 12;
 
     const type = typeIndexRef.current % 3;
     typeIndexRef.current += 1;
@@ -184,7 +204,7 @@ export function LiveActivityTicker() {
         icon: <Zap className="h-4 w-4 text-amber-400 shrink-0" />,
         badge: "DELIVERED",
         badgeBg: "bg-amber-900/80 text-amber-200 border-amber-500/40",
-        message: `Express 15-min delivery completed to ${loc} — under 5km away`,
+        message: `Express delivery completed to ${loc}`,
         time: `${minsAgo + 2} mins ago`,
       };
     } else {
@@ -193,7 +213,7 @@ export function LiveActivityTicker() {
         icon: <TrendingUp className="h-4 w-4 text-emerald-400 shrink-0" />,
         badge: "TRENDING",
         badgeBg: "bg-emerald-900/80 text-emerald-200 border-emerald-500/40",
-        message: `${boughtCount} people in Patna bought "${truncName}" in the last hour`,
+        message: `${boughtCount} people across India bought "${truncName}" in the last hour`,
         time: "Just now",
       };
     }
@@ -258,7 +278,7 @@ export function LiveActivityTicker() {
         {/* Right Location Tag */}
         <div className="hidden md:flex items-center gap-1.5 text-purple-200/80 text-[11px] font-semibold shrink-0 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full whitespace-nowrap">
           <MapPin className="h-3 w-3 text-amber-300" />
-          <span>Patna & Bihar Region</span>
+          <span>All India Live Delivery Network</span>
         </div>
 
       </div>

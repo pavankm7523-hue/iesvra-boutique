@@ -210,7 +210,7 @@ export function Header() {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-1.5 text-amber-400">
               <Zap className="h-3.5 w-3.5 fill-amber-400" />
-              <span>15 Min Delivery in Patna & Nearby Areas</span>
+              <span>Express Delivery Available All Over India</span>
             </div>
             <div className="h-3 w-[1px] bg-white/10" />
             <div className="flex items-center gap-1.5">
