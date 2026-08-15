@@ -280,36 +280,33 @@ export function Home() {
   return (
     <div className="bg-[#F6F7FB] text-slate-800 font-sans pb-20 md:pb-12">
       {/* ========================================================
-          1. HERO BANNER (RESPONSIVE RETINA DUAL MOBILE & DESKTOP ASSETS)
+          1. HERO BANNER (RESPONSIVE RETINA CLEAN FULL-BLEED BANNER)
          ======================================================== */}
-      <section className="w-full bg-[#F6F7FB] py-2 sm:py-4 relative overflow-hidden select-none">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+      <section className="w-full py-2 sm:py-4 relative overflow-hidden select-none">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           
-          {/* Responsive Picture Banner with Retina Clarity */}
           <Link
             to="/shop"
-            className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl border border-purple-500/20 bg-gradient-to-br from-[#2D1263] via-[#4C1D95] to-[#1E0947]"
+            className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-300"
           >
             <picture className="w-full h-auto block">
-              {/* Dedicated Mobile High-Res Asset (1560x900 px for 2x/3x Retina Crispness on 390px Mobile Screens) */}
+              {/* High-Resolution Mobile Retina Asset */}
               <source
                 media="(max-width: 639px)"
-                srcSet="/hero-banner-mobile.webp 1560w, /hero-banner-mobile.png 1560w"
-                sizes="(max-width: 639px) 100vw, 780px"
+                srcSet="/hero-banner-mobile.webp 1920w, /hero-banner-mobile.png 1920w"
                 type="image/webp"
               />
-              {/* Dedicated Desktop Widescreen Asset (2560x864 px for 2K/4K Crispness on Desktop Screens) */}
+              {/* Ultra High-Resolution Desktop 4K/2K Asset */}
               <source
                 media="(min-width: 640px)"
                 srcSet="/hero-banner-desktop.webp 2560w, /hero-banner-desktop.png 2560w"
-                sizes="(min-width: 640px) 100vw, 1280px"
                 type="image/webp"
               />
               {/* Fallback Image */}
               <img
                 src="/hero-banner-desktop.png"
                 alt="IESVRA — Smart Shopping, Faster Delivery!"
-                className="w-full h-auto object-cover block rounded-2xl sm:rounded-3xl"
+                className="w-full h-auto block object-contain rounded-2xl sm:rounded-3xl"
                 loading="eager"
               />
             </picture>
