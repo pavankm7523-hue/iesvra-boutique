@@ -81,22 +81,18 @@ function AdminHero() {
     reader.onload = (event) => {
       const rawDataUrl = event.target?.result as string;
       
-      // Compress image using Canvas to ensure payload size is under 200KB (avoids Vercel/Nitro body size limits)
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
         let width = img.width;
         let height = img.height;
-        const maxDim = 1920; // Full HD 1080p width
+        const maxW = 1600;
+        const maxH = 900;
 
-        if (width > maxDim || height > maxDim) {
-          if (width > height) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
+        if (width > maxW || height > maxH) {
+          const ratio = Math.min(maxW / width, maxH / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
         }
 
         canvas.width = width;
@@ -106,7 +102,7 @@ function AdminHero() {
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = "high";
           ctx.drawImage(img, 0, 0, width, height);
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.88);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.82);
           setImageData(compressedDataUrl);
           setPreviewImage(compressedDataUrl);
         } else {
