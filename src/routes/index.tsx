@@ -301,7 +301,7 @@ export function Home() {
                     IES<span className="text-amber-400">VRA</span>
                   </div>
                   <div className="text-[7px] xs:text-[9px] sm:text-xs font-bold text-purple-200/90 tracking-wide uppercase mt-0.5">
-                    India's Smartest Shopping App
+                    India's Smartest Mobile & Laptop Shopping Platform
                   </div>
                 </div>
               </div>
@@ -428,9 +428,9 @@ export function Home() {
 
               {/* 3D Showcase Graphic */}
               <img
-                src="/hero-3d-showcase.webp"
+                src="/hero-3d-showcase-transparent.webp"
                 alt="IESVRA 3D Showcase"
-                className="w-full h-full object-contain relative z-10 max-h-[160px] xs:max-h-[220px] sm:max-h-[380px] drop-shadow-xl hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-contain relative z-10 max-h-[180px] xs:max-h-[240px] sm:max-h-[400px] drop-shadow-2xl hover:scale-105 transition-transform duration-500"
               />
 
               {/* Bottom SLA Pill: Fast Delivery */}
