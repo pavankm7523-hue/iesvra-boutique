@@ -115,10 +115,11 @@ function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // ---- DYNAMIC DELIVERY & TIMER CALCULATION ----
-  const [countdown, setCountdown] = useState<{ hours: number; minutes: number; isBeforeCutoff: boolean }>({
+  // ---- DYNAMIC REAL-TIME LIVE DELIVERY TIMER (1-SECOND TICKING) ----
+  const [countdown, setCountdown] = useState<{ hours: number; minutes: number; seconds: number; isBeforeCutoff: boolean }>({
     hours: 0,
     minutes: 0,
+    seconds: 0,
     isBeforeCutoff: true,
   });
 
@@ -136,14 +137,15 @@ function ProductDetails() {
         diff = cutoff.getTime() - now.getTime();
       }
 
-      const totalMinutes = Math.floor(diff / (1000 * 60));
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      setCountdown({ hours, minutes, isBeforeCutoff: isBefore });
+      const totalSeconds = Math.max(0, Math.floor(diff / 1000));
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      setCountdown({ hours, minutes, seconds, isBeforeCutoff: isBefore });
     };
 
     calculateCountdown();
-    const interval = setInterval(calculateCountdown, 30000);
+    const interval = setInterval(calculateCountdown, 1000); // Live real-time tick every second
     return () => clearInterval(interval);
   }, []);
 
@@ -726,8 +728,11 @@ function ProductDetails() {
                   <span className="text-navy-deep/70">Or fastest delivery </span>
                   <span className="font-extrabold text-navy-deep">{deliveryDates.fastestPrefix}, {deliveryDates.fastestFormatted}</span>
                   <span className="text-navy-deep/70">. Order within </span>
-                  <span className="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 inline-block">
-                    {countdown.hours} hrs {countdown.minutes} mins
+                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-flex items-center gap-1.5 tabular-nums">
+                    <Clock className="h-3 w-3 text-emerald-600 animate-pulse shrink-0" />
+                    <span>
+                      {countdown.hours} hrs {countdown.minutes} mins {countdown.seconds} secs
+                    </span>
                   </span>
                 </div>
               </div>
@@ -930,7 +935,7 @@ function ProductDetails() {
               </div>
             </div>
 
-            {/* Live Social Proof Viewing Count */}
+            {/* Live Social Proof Viewing Count & Delivery Countdown */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <div className="flex items-center gap-1.5 bg-navy-deep/5 border border-navy-deep/10 rounded-full px-3 py-1.5">
                 <span className="relative flex h-1.5 w-1.5">
@@ -942,6 +947,15 @@ function ProductDetails() {
                   <span className="font-bold text-navy-deep">{pdpShopperCount}</span> people viewing this right now
                 </span>
               </div>
+
+              {countdown.isBeforeCutoff && (
+                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5 tabular-nums">
+                  <Clock className="h-3 w-3 text-amber-600 animate-pulse" />
+                  <span className="text-[10px] font-semibold text-amber-800">
+                    Order in <span className="font-bold font-mono">{countdown.hours}h {countdown.minutes}m {countdown.seconds}s</span> → Next Day Delivery
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Description & Product Overview */}
