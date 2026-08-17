@@ -210,8 +210,8 @@ export const categories = initialCategories;
 export const initialProducts: Product[] = [
   {
     "id": "prod_drive_1",
-    "name": "1pis set Plastic Square 7 Sections Multipurpose",
-    "sub": "Premium Quality Organiser",
+    "name": "7-Section Square Masala Box",
+    "sub": "Plastic Spice Container with Spoon for Kitchen Storage",
     "price": 89,
     "mrp": 599,
     "categories": [
@@ -248,7 +248,7 @@ export const initialProducts: Product[] = [
     "colors": [],
     "description": "Imported premium product for all your household organization needs. Organize drawers, cosmetics, or tools.",
     "isBestSeller": true,
-    "boughtInPastMonth": 1000,
+    "boughtInPastMonth": 6000,
     "reviews": [
       {
         "id": "rev_1_1",
@@ -275,8 +275,8 @@ export const initialProducts: Product[] = [
   },
   {
     "id": "prod_drive_2",
-    "name": "3 PC MOTIVATION BOTTLE",
-    "sub": "Premium Quality Drinkware",
+    "name": "3-Piece Motivational Water Bottle Set",
+    "sub": "2000ml + 900ml + 300ml Leakproof Bottles with Time Marker & Straw",
     "price": 499,
     "mrp": 1499,
     "categories": [
@@ -350,7 +350,8 @@ export const initialProducts: Product[] = [
         "comment": "Awesome quality. My kids love it too. Good for gym and outdoor sports.",
         "date": "2026-05-15"
       }
-    ]
+    ],
+    "boughtInPastMonth": 1000
   },
   {
     "id": "prod_drive_3",
@@ -414,7 +415,8 @@ export const initialProducts: Product[] = [
         "comment": "Worth the price. Easy to carry during travel.",
         "date": "2026-05-22"
       }
-    ]
+    ],
+    "boughtInPastMonth": 2500
   },
   {
     "id": "prod_drive_4",
@@ -478,7 +480,8 @@ export const initialProducts: Product[] = [
         "comment": "Good light, easy installation. Plastic quality could be slightly heavier, but works great.",
         "date": "2026-04-28"
       }
-    ]
+    ],
+    "boughtInPastMonth": 3000
   },
   {
     "id": "prod_drive_5",
@@ -557,12 +560,13 @@ export const initialProducts: Product[] = [
         "comment": "Premium look and feel. The blades are sharp and don't pull hair. Recommended!",
         "date": "2026-05-27"
       }
-    ]
+    ],
+    "boughtInPastMonth": 2000
   },
   {
     "id": "prod_drive_6",
-    "name": "Jen Deluxe Green Fruit & Veg. Hand Juicer",
-    "sub": "Premium Quality Juicer",
+    "name": "Hand Press Fruit & Vegetable Chopper",
+    "sub": "Compact Manual Food Chopper with Stainless Steel Blades",
     "price": 299,
     "mrp": 1799,
     "categories": [
@@ -609,12 +613,13 @@ export const initialProducts: Product[] = [
         "comment": "Good for quick juicing. Requires some manual effort but juice yield is excellent.",
         "date": "2026-04-22"
       }
-    ]
+    ],
+    "boughtInPastMonth": 2500
   },
   {
     "id": "prod_drive_7",
-    "name": "MRK Push Chopper",
-    "sub": "Premium Quality Chopper",
+    "name": "MRK Push Chopper for Vegetables",
+    "sub": "Quick Manual Food Slicer with Pull Cord Mechanism",
     "price": 89,
     "mrp": 499,
     "categories": [
@@ -656,12 +661,13 @@ export const initialProducts: Product[] = [
         "comment": "Perfect for daily cooking. Very sharp blades. Handle with care.",
         "date": "2026-05-25"
       }
-    ]
+    ],
+    "boughtInPastMonth": 6000
   },
   {
     "id": "prod_drive_8",
-    "name": "Rechargeable Scalp Massager & Body Brush",
-    "sub": "Premium Wellness Massager",
+    "name": "Rechargeable Scalp & Body Massager",
+    "sub": "Cordless Waterproof Electric Massager for Head, Neck & Scalp Relief",
     "price": 799,
     "mrp": 2499,
     "categories": [
@@ -715,12 +721,13 @@ export const initialProducts: Product[] = [
         "comment": "Very good product. The massage nodes are soft and comfortable. Charging is quick.",
         "date": "2026-05-23"
       }
-    ]
+    ],
+    "boughtInPastMonth": 1000
   },
   {
     "id": "prod_drive_9",
     "name": "Premium Waterproof Travel Duffle Bag",
-    "sub": "Bags & Travel",
+    "sub": "Foldable Large Capacity Overnight Gym & Travel Luggage Bag",
     "price": 899,
     "mrp": 2999,
     "categories": [
@@ -762,13 +769,14 @@ export const initialProducts: Product[] = [
         "comment": "Beautiful bag, very lightweight. Fits a lot of clothes. Great for weekend trips.",
         "date": "2026-05-20"
       }
-    ]
+    ],
+    "boughtInPastMonth": 800
   },
   {
     "asin": "B0GX62T8Z5",
     "id": "prod_amz_B0GX62T8Z5",
-    "name": "6-Angle Adjustable Aluminum Laptop Stand | Ergonomic Foldable & Portable Tabletop Riser Holder for Laptop/Desktop | Compatible with MacBook, HP, Dell, Lenovo & All Notebooks (Silver)",
-    "sub": "IESVRA — Mobile Accessories",
+    "name": "6-Angle Adjustable Aluminum Laptop Stand",
+    "sub": "Ergonomic Foldable & Portable Tabletop Riser Holder for Laptop/Desktop | Compatible with MacBook, HP, Dell, Lenovo & All Notebooks (Silver)",
     "price": 219,
     "mrp": 999,
     "categories": [
@@ -808,13 +816,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 35,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GX62T8Z5"
+    "url": "https://www.amazon.in/dp/B0GX62T8Z5",
+    "boughtInPastMonth": 2500
   },
   {
     "asin": "B0GN1MQTH7",
     "id": "prod_amz_B0GN1MQTH7",
-    "name": "3 Compartment Lunch Box for Office & School | 1400ml Leakproof Bento Lunch Box with Spoon & Fork | BPA Free Plastic Tiffin Box for Kids & Adults | Multicolor",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "3 Compartment Lunch Box for Office & School",
+    "sub": "1400ml Leakproof Bento Lunch Box with Spoon & Fork | BPA Free Plastic Tiffin Box for Kids & Adults | Multicolor",
     "price": 249,
     "mrp": 250,
     "categories": [
@@ -859,13 +868,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 84,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GN1MQTH7"
+    "url": "https://www.amazon.in/dp/B0GN1MQTH7",
+    "boughtInPastMonth": 400
   },
   {
     "asin": "B0GKWZQD8W",
     "id": "prod_amz_B0GKWZQD8W",
-    "name": "4-Piece Airtight Kitchen Masala Box Set with Tray | Leakproof Spice Storage Containers | Easy Flow Rasoi Organizer for Masala, Dry Fruits & Condiments |",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "4-Piece Airtight Kitchen Masala Box Set with Tray",
+    "sub": "Leakproof Spice Storage Containers | Easy Flow Rasoi Organizer for Masala, Dry Fruits & Condiments",
     "price": 199,
     "mrp": 399,
     "categories": [
@@ -900,13 +910,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 61,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GKWZQD8W"
+    "url": "https://www.amazon.in/dp/B0GKWZQD8W",
+    "boughtInPastMonth": 400
   },
   {
     "asin": "B0FMNP246V",
     "id": "prod_amz_B0FMNP246V",
-    "name": "4-in-1 Airtight Kitchen Storage Container Set of 3 | Multipurpose Plastic Masala & Spice Box with Flip Lids | Transparent Food Organizer Jars for Pulses, Grains, Cereals, Snacks, Tea & Sugar",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "4-in-1 Airtight Kitchen Storage Container Set of 3",
+    "sub": "Multipurpose Plastic Masala & Spice Box with Flip Lids | Transparent Food Organizer Jars for Pulses, Grains, Cereals, Snacks, Tea & Sugar",
     "price": 549,
     "mrp": 999,
     "categories": [
@@ -946,13 +957,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 67,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNP246V"
+    "url": "https://www.amazon.in/dp/B0FMNP246V",
+    "boughtInPastMonth": 100
   },
   {
     "asin": "B0GY4MYZFR",
     "id": "prod_amz_B0GY4MYZFR",
-    "name": "Sonic Electric Toothbrush for Adults with 2 Replacement Brush Heads | USB Rechargeable | 5 Brushing Modes for Deep Cleaning, Plaque Removal & Gum Care | Multicolor",
-    "sub": "IESVRA — Beauty & Personal Care",
+    "name": "Sonic Electric Toothbrush for Adults with 2 Replacement Brush Heads",
+    "sub": "USB Rechargeable | 5 Brushing Modes for Deep Cleaning, Plaque Removal & Gum Care | Multicolor",
     "price": 280,
     "mrp": 200000,
     "categories": [
@@ -992,13 +1004,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 41,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GY4MYZFR"
+    "url": "https://www.amazon.in/dp/B0GY4MYZFR",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0H2Z62YGG",
     "id": "prod_amz_B0H2Z62YGG",
-    "name": "Digital Kitchen Weighing Scale | High Precision Food Weight Machine with LCD Display | Multipurpose Electronic Weight Scale for Cooking, Baking & Grocery | Compact & Portable | White",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Digital Kitchen Weighing Scale",
+    "sub": "High Precision Food Weight Machine with LCD Display | Multipurpose Electronic Weight Scale for Cooking, Baking & Grocery | Compact & Portable | White",
     "price": 299,
     "mrp": 899,
     "categories": [
@@ -1033,13 +1046,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 89,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0H2Z62YGG"
+    "url": "https://www.amazon.in/dp/B0H2Z62YGG",
+    "boughtInPastMonth": 400
   },
   {
     "asin": "B0FSKJ7J32",
     "id": "prod_amz_B0FSKJ7J32",
-    "name": "Portable Cordless Wireless Heating Pad for Menstrual Period Cramps, Electric Waist Belt Device, 4 Heat Levels and 4 Vibration Massage Modes, Back or Belly Heating Pad for Females",
-    "sub": "IESVRA — Massagers",
+    "name": "Portable Cordless Wireless Heating Pad for Menstrual Period Cramps",
+    "sub": "Electric Waist Belt Device, 4 Heat Levels and 4 Vibration Massage Modes, Back or Belly Heating Pad for Females",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -1059,13 +1073,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 32,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FSKJ7J32"
+    "url": "https://www.amazon.in/dp/B0FSKJ7J32",
+    "boughtInPastMonth": 1000
   },
   {
     "asin": "B0GZHK8MYT",
     "id": "prod_amz_B0GZHK8MYT",
-    "name": "Kids Space Theme Water Bottle | 650ml Leakproof Sipper Bottle with Straw for School | BPA-Free Plastic Cute Cartoon Water Bottle for Boys & Girls | One-Touch Flip Lid, Strap, Lightweight (Blue)",
-    "sub": "IESVRA — Drinkware",
+    "name": "Kids Space Theme Water Bottle",
+    "sub": "650ml Leakproof Sipper Bottle with Straw for School | BPA-Free Plastic Cute Cartoon Water Bottle for Boys & Girls | One-Touch Flip Lid, Strap, Lightweight (Blue)",
     "price": 219,
     "mrp": 799,
     "categories": [
@@ -1105,13 +1120,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 31,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GZHK8MYT"
+    "url": "https://www.amazon.in/dp/B0GZHK8MYT",
+    "boughtInPastMonth": 700
   },
   {
     "asin": "B0FN7FW23S",
     "id": "prod_amz_B0FN7FW23S",
-    "name": "Heavy Duty Garbage Bags – 180 Count (30 Bags x 6 Rolls) | Extra Strong Black Trash Bags for Kitchen, Bathroom, Office & Outdoor Use | Leakproof & Tear-Resistant Dustbin Bags",
-    "sub": "IESVRA — Bags & Travel",
+    "name": "Heavy Duty Garbage Bags – 180 Count (30 Bags x 6 Rolls)",
+    "sub": "Extra Strong Black Trash Bags for Kitchen, Bathroom, Office & Outdoor Use | Leakproof & Tear-Resistant Dustbin Bags",
     "price": 299,
     "mrp": 599,
     "categories": [
@@ -1151,13 +1167,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 21,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FN7FW23S"
+    "url": "https://www.amazon.in/dp/B0FN7FW23S",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0GP6SWNGM",
     "id": "prod_amz_B0GP6SWNGM",
-    "name": "Airtight Fridge Storage Containers Combo (6-in-1 + Set of 3) | BPA-Free Refrigerator Organizer Boxes with Lid & Drain Tray | Stackable Leakproof Vegetable, Fruit, Meat & Leftover Storage",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Airtight Fridge Storage Containers Combo (6-in-1 + Set of 3)",
+    "sub": "BPA-Free Refrigerator Organizer Boxes with Lid & Drain Tray | Stackable Leakproof Vegetable, Fruit, Meat & Leftover Storage",
     "price": 499,
     "mrp": 699,
     "categories": [
@@ -1202,13 +1219,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 85,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GP6SWNGM"
+    "url": "https://www.amazon.in/dp/B0GP6SWNGM",
+    "boughtInPastMonth": 400
   },
   {
     "asin": "B0GKWVTHTT",
     "id": "prod_amz_B0GKWVTHTT",
-    "name": "Manual Hand Chopper 450ML | Vegetable & Onion Chopper with Stainless Steel Blades | Pull String Food Processor | Garlic, Herbs, Nuts & Fruit Cutter",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Manual Hand Chopper 450ML",
+    "sub": "Vegetable & Onion Chopper with Stainless Steel Blades | Pull String Food Processor | Garlic, Herbs, Nuts & Fruit Cutter",
     "price": 199,
     "mrp": 599,
     "categories": [
@@ -1253,13 +1271,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 47,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GKWVTHTT"
+    "url": "https://www.amazon.in/dp/B0GKWVTHTT",
+    "boughtInPastMonth": 400
   },
   {
     "asin": "B0GYFBYGZB",
     "id": "prod_amz_B0GYFBYGZB",
-    "name": "2-in-1 Glass Oil Dispenser Spray Bottle | Fine Mist & Controlled Pouring for Cooking | Refillable Kitchen Oil Sprayer for Frying, Baking, BBQ & Salad | Leakproof & Easy to Use",
-    "sub": "IESVRA — Drinkware",
+    "name": "2-in-1 Glass Oil Dispenser Spray Bottle",
+    "sub": "Fine Mist & Controlled Pouring for Cooking | Refillable Kitchen Oil Sprayer for Frying, Baking, BBQ & Salad | Leakproof & Easy to Use",
     "price": 189,
     "mrp": 999,
     "categories": [
@@ -1289,13 +1308,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 72,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GYFBYGZB"
+    "url": "https://www.amazon.in/dp/B0GYFBYGZB",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0GYNLKW67",
     "id": "prod_amz_B0GYNLKW67",
-    "name": "500ml Stainless Steel Vacuum Insulated Bottle Set with 2 Cups | Double Wall Thermos Flask | Leak Proof BPA Free Water Bottle for Office, School, Travel & Outdoor",
-    "sub": "IESVRA — Drinkware",
+    "name": "500ml Stainless Steel Vacuum Insulated Bottle Set with 2 Cups",
+    "sub": "Double Wall Thermos Flask | Leak Proof BPA Free Water Bottle for Office, School, Travel & Outdoor",
     "price": 299,
     "mrp": 599,
     "categories": [
@@ -1335,13 +1355,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 48,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GYNLKW67"
+    "url": "https://www.amazon.in/dp/B0GYNLKW67",
+    "boughtInPastMonth": 600
   },
   {
     "asin": "B0GYN9V6S7",
     "id": "prod_amz_B0GYN9V6S7",
-    "name": "Manual Vegetable Chopper 900ML | Heavy Duty Hand Press Food Processor | 3 Stainless Steel Blades | Onion, Tomato, Garlic Cutter | Multipurpose Kitchen Chopper & Salad Maker",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Manual Vegetable Chopper 900ML",
+    "sub": "Heavy Duty Hand Press Food Processor | 3 Stainless Steel Blades | Onion, Tomato, Garlic Cutter | Multipurpose Kitchen Chopper & Salad Maker",
     "price": 199,
     "mrp": 799,
     "categories": [
@@ -1376,13 +1397,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 49,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GYN9V6S7"
+    "url": "https://www.amazon.in/dp/B0GYN9V6S7",
+    "boughtInPastMonth": 600
   },
   {
     "asin": "B0FT3SHG1X",
     "id": "prod_amz_B0FT3SHG1X",
-    "name": "Flower Shape Adhesive Wall Hook | Heavy Duty Transparent Wall Holder for Bathroom & Kitchen | No-Drill Sticker Hooks for Home Organization | Strong Self-Adhesive for Keys, Towels (Pack of 10)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Flower Shape Adhesive Wall Hook (Pack of 10)",
+    "sub": "Heavy Duty Transparent Wall Holder for Bathroom & Kitchen | No-Drill Sticker Hooks for Home Organization | Strong Self-Adhesive for Keys, Towels",
     "price": 139,
     "mrp": 599,
     "categories": [
@@ -1422,13 +1444,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 83,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FT3SHG1X"
+    "url": "https://www.amazon.in/dp/B0FT3SHG1X",
+    "boughtInPastMonth": 1000
   },
   {
     "asin": "B0FT3TBXHK",
     "id": "prod_amz_B0FT3TBXHK",
-    "name": "Flower Shape Adhesive Wall Hook | Heavy Duty Transparent Wall Holder | No-Drill Waterproof Hooks for Bathroom, Kitchen & Home Organization |Strong Sticker Hangers for Accessories (Pack of 20)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Flower Shape Adhesive Wall Hook (Pack of 20)",
+    "sub": "Heavy Duty Transparent Wall Holder | No-Drill Waterproof Hooks for Bathroom, Kitchen & Home Organization | Strong Sticker Hangers for Accessories",
     "price": 199,
     "mrp": 599,
     "categories": [
@@ -1468,13 +1491,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 21,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FT3TBXHK"
+    "url": "https://www.amazon.in/dp/B0FT3TBXHK",
+    "boughtInPastMonth": 700
   },
   {
     "asin": "B0FT3X23KM",
     "id": "prod_amz_B0FT3X23KM",
-    "name": "Flower Shape Adhesive Wall Hook | Heavy Duty Transparent Wall Holder | No-Drill Waterproof Wall Hooks for Home, Bathroom, Kitchen & Bedroom Organization | Strong Sticker Hooks (Pack of 30)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Flower Shape Adhesive Wall Hook (Pack of 30)",
+    "sub": "Heavy Duty Transparent Wall Holder | No-Drill Waterproof Wall Hooks for Home, Bathroom, Kitchen & Bedroom Organization | Strong Sticker Hooks",
     "price": 279,
     "mrp": 599,
     "categories": [
@@ -1514,13 +1538,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 82,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FT3X23KM"
+    "url": "https://www.amazon.in/dp/B0FT3X23KM",
+    "boughtInPastMonth": 700
   },
   {
     "asin": "B0FT3R2ZDX",
     "id": "prod_amz_B0FT3R2ZDX",
-    "name": "Flower Shape Adhesive Wall Hook | Heavy Duty Transparent Wall Holder for Home | No-Drill Sticker Hooks for Bathroom, Kitchen, Bedroom | Strong Utility Wall Hanger for Organization (Pack of 40)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Flower Shape Adhesive Wall Hook (Pack of 40)",
+    "sub": "Heavy Duty Transparent Wall Holder for Home | No-Drill Sticker Hooks for Bathroom, Kitchen, Bedroom | Strong Utility Wall Hanger for Organization",
     "price": 349,
     "mrp": 599,
     "categories": [
@@ -1560,13 +1585,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 74,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FT3R2ZDX"
+    "url": "https://www.amazon.in/dp/B0FT3R2ZDX",
+    "boughtInPastMonth": 200
   },
   {
     "asin": "B0FJLTRRHM",
     "id": "prod_amz_B0FJLTRRHM",
-    "name": "Fridge Storage Containers for Vegetables & Fruits | Refrigerator Organizer Bins with Lid & Drain Tray | Stackable, BPA-Free Transparent Kitchen Storage Box (Set of 3)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Fridge Storage Containers for Vegetables & Fruits (Set of 3)",
+    "sub": "Refrigerator Organizer Bins with Lid & Drain Tray | Stackable, BPA-Free Transparent Kitchen Storage Box",
     "price": 299,
     "mrp": 599,
     "categories": [
@@ -1606,13 +1632,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 84,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FJLTRRHM"
+    "url": "https://www.amazon.in/dp/B0FJLTRRHM",
+    "boughtInPastMonth": 600
   },
   {
     "asin": "B0FMNJNYPG",
     "id": "prod_amz_B0FMNJNYPG",
-    "name": "Fridge Storage Containers for Vegetables & Fruits | Stackable Refrigerator Organizer Bins with Lid & Drain Tray | BPA-Free Plastic Kitchen & Pantry Box (Set of 6)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Fridge Storage Containers for Vegetables & Fruits (Set of 6)",
+    "sub": "Stackable Refrigerator Organizer Bins with Lid & Drain Tray | BPA-Free Plastic Kitchen & Pantry Box",
     "price": 549,
     "mrp": 899,
     "categories": [
@@ -1632,13 +1659,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 16,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNJNYPG"
+    "url": "https://www.amazon.in/dp/B0FMNJNYPG",
+    "boughtInPastMonth": 200
   },
   {
     "asin": "B0FN49BJHQ",
     "id": "prod_amz_B0FN49BJHQ",
-    "name": "Heavy Duty Garbage Bags – 90 Count (30 x 3 Rolls) | Extra Strong Black Trash Bags | Leakproof & Tear-Resistant | Large Disposable Dustbin Bags for Home, Kitchen, Office & Commercial Use",
-    "sub": "IESVRA — Bags & Travel",
+    "name": "Heavy Duty Garbage Bags – 90 Count (30 x 3 Rolls)",
+    "sub": "Extra Strong Black Trash Bags | Leakproof & Tear-Resistant | Large Disposable Dustbin Bags for Home, Kitchen, Office & Commercial Use",
     "price": 199,
     "mrp": 599,
     "categories": [
@@ -1678,13 +1706,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 29,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FN49BJHQ"
+    "url": "https://www.amazon.in/dp/B0FN49BJHQ",
+    "boughtInPastMonth": 700
   },
   {
     "asin": "B0FNMQTDCR",
     "id": "prod_amz_B0FNMQTDCR",
-    "name": "Guardian Bell Keychain | Tibetan Good Luck Protection Bell Key Chain for Car, Bike, Motorcycle, Home & Travel | Spiritual Charm & Positive Energy Amulet",
-    "sub": "IESVRA — Bags & Travel",
+    "name": "Guardian Bell Keychain",
+    "sub": "Tibetan Good Luck Protection Bell Key Chain for Car, Bike, Motorcycle, Home & Travel | Spiritual Charm & Positive Energy Amulet",
     "price": 349,
     "mrp": 17450,
     "categories": [
@@ -1724,13 +1753,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 77,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNMQTDCR"
+    "url": "https://www.amazon.in/dp/B0FNMQTDCR",
+    "boughtInPastMonth": 200
   },
   {
     "asin": "B0GY8NFSF2",
     "id": "prod_amz_B0GY8NFSF2",
-    "name": "Portable Cordless Heating Pad for Menstrual Pain Relief | 3 Heat & 4 Massage Modes | Rechargeable Period Cramp Relief Belt for Belly, Waist | Adjustable Pain Relief Warmer for Women",
-    "sub": "IESVRA — Massagers",
+    "name": "Portable Cordless Heating Pad for Menstrual Pain Relief",
+    "sub": "3 Heat & 4 Massage Modes | Rechargeable Period Cramp Relief Belt for Belly, Waist | Adjustable Pain Relief Warmer for Women",
     "price": 499,
     "mrp": 999,
     "categories": [
@@ -1765,13 +1795,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 49,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GY8NFSF2"
+    "url": "https://www.amazon.in/dp/B0GY8NFSF2",
+    "boughtInPastMonth": 200
   },
   {
     "asin": "B0FJLTJBNY",
     "id": "prod_amz_B0FJLTJBNY",
-    "name": "4-in-1 Airtight Kitchen Storage Container | Multipurpose Plastic Masala & Spice Box with Flip Lids | Transparent Food Organizer Jar for Pulses, Grains, Cereals, Snacks, Tea & Sugar",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "4-in-1 Airtight Kitchen Storage Container",
+    "sub": "Multipurpose Plastic Masala & Spice Box with Flip Lids | Transparent Food Organizer Jar for Pulses, Grains, Cereals, Snacks, Tea & Sugar",
     "price": 219,
     "mrp": 999,
     "categories": [
@@ -1811,13 +1842,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 83,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FJLTJBNY"
+    "url": "https://www.amazon.in/dp/B0FJLTJBNY",
+    "boughtInPastMonth": 400
   },
   {
     "asin": "B0FT3TD2Z8",
     "id": "prod_amz_B0FT3TD2Z8",
-    "name": "Glass Oil Dispenser 250ml | Refillable Cooking Oil Sprayer Bottle for Kitchen, BBQ, Air Fryer & Baking | Fine Mist Olive Spray Bottle for Healthy Cooking (1 Pack)",
-    "sub": "IESVRA — Drinkware",
+    "name": "Glass Oil Dispenser 250ml (1 Pack)",
+    "sub": "Refillable Cooking Oil Sprayer Bottle for Kitchen, BBQ, Air Fryer & Baking | Fine Mist Olive Spray Bottle for Healthy Cooking",
     "price": 198,
     "mrp": 799,
     "categories": [
@@ -1852,13 +1884,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 64,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FT3TD2Z8"
+    "url": "https://www.amazon.in/dp/B0FT3TD2Z8",
+    "boughtInPastMonth": 600
   },
   {
     "asin": "B0FMMCKYHB",
     "id": "prod_amz_B0FMMCKYHB",
-    "name": "Airtight Fridge Storage Containers 6-in-1 Set | BPA-Free Refrigerator Organizer Boxes with Lid & Drain Basket | Leakproof Vegetable, Fruit, Meat & Leftover Storage Box for Kitchen",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Airtight Fridge Storage Containers 6-in-1 Set",
+    "sub": "BPA-Free Refrigerator Organizer Boxes with Lid & Drain Basket | Leakproof Vegetable, Fruit, Meat & Leftover Storage Box for Kitchen",
     "price": 199,
     "mrp": 999,
     "categories": [
@@ -1898,13 +1931,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 83,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMMCKYHB"
+    "url": "https://www.amazon.in/dp/B0FMMCKYHB",
+    "boughtInPastMonth": 600
   },
   {
     "asin": "B0GYF7HYV1",
     "id": "prod_amz_B0GYF7HYV1",
-    "name": "Shoe Cleaning Wipes | Quick Sneaker Wipes for Shoes | Portable Shoe Cleaner for Sneakers, Leather & Sports Footwear | White Shoe Cleaning Wipes (Pack of 2)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Shoe Cleaning Wipes (Pack of 2)",
+    "sub": "Quick Sneaker Wipes for Shoes | Portable Shoe Cleaner for Sneakers, Leather & Sports Footwear | White Shoe Cleaning Wipes",
     "price": 210,
     "mrp": 899,
     "categories": [
@@ -1939,13 +1973,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 69,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GYF7HYV1"
+    "url": "https://www.amazon.in/dp/B0GYF7HYV1",
+    "boughtInPastMonth": 600
   },
   {
     "asin": "B0GYF3LHPY",
     "id": "prod_amz_B0GYF3LHPY",
-    "name": "Shoe Cleaning Wipes | Quick Sneaker Wipes for Shoes | Portable Shoe Cleaner for Sneakers, Leather & Sports Footwear | White Shoe Cleaning Wipes (Pack of 1)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Shoe Cleaning Wipes (Pack of 1)",
+    "sub": "Quick Sneaker Wipes for Shoes | Portable Shoe Cleaner for Sneakers, Leather & Sports Footwear | White Shoe Cleaning Wipes",
     "price": 129,
     "mrp": 899,
     "categories": [
@@ -1975,13 +2010,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 25,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GYF3LHPY"
+    "url": "https://www.amazon.in/dp/B0GYF3LHPY",
+    "boughtInPastMonth": 1500
   },
   {
     "asin": "B0FKMBDMLT",
     "id": "prod_amz_B0FKMBDMLT",
-    "name": "Square Masala Box with 7 Compartments & Spoon | Plastic Spice Organizer with Airtight Lid | Indian Spice Storage Container for Kitchen (1 Pc, Brown)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Square Masala Box with 7 Compartments & Spoon",
+    "sub": "Plastic Spice Organizer with Airtight Lid | Indian Spice Storage Container for Kitchen (1 Pc, Brown)",
     "price": 199,
     "mrp": 499,
     "categories": [
@@ -2021,13 +2057,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 91,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FKMBDMLT"
+    "url": "https://www.amazon.in/dp/B0FKMBDMLT",
+    "boughtInPastMonth": 600
   },
   {
     "asin": "B0GTQ7TCKY",
     "id": "prod_amz_B0GTQ7TCKY",
-    "name": "Adjustable Aluminum Laptop Stand Foldable Portable | Ergonomic Laptop Riser with Anti-Slip Pads | Heavy Duty Cooling Stand for Desk, MacBook, Notebook (Silver)",
-    "sub": "IESVRA — Mobile Accessories",
+    "name": "Adjustable Aluminum Laptop Stand Foldable Portable",
+    "sub": "Ergonomic Laptop Riser with Anti-Slip Pads | Heavy Duty Cooling Stand for Desk, MacBook, Notebook (Silver)",
     "price": 239,
     "mrp": 2499,
     "categories": [
@@ -2062,13 +2099,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 41,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GTQ7TCKY"
+    "url": "https://www.amazon.in/dp/B0GTQ7TCKY",
+    "boughtInPastMonth": 700
   },
   {
     "asin": "B0GTLYX2JX",
     "id": "prod_amz_B0GTLYX2JX",
-    "name": "Foldable Aluminum Alloy Laptop Stand, Adjustable Portable Holder with Anti-Slip Silicone Pads, Ergonomic Cooling Stand for MacBook, Laptop & Tablet, Silver",
-    "sub": "IESVRA — Mobile Accessories",
+    "name": "Foldable Aluminum Alloy Laptop Stand",
+    "sub": "Adjustable Portable Holder with Anti-Slip Silicone Pads, Ergonomic Cooling Stand for MacBook, Laptop & Tablet, Silver",
     "price": 239,
     "mrp": 899,
     "categories": [
@@ -2103,13 +2141,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 86,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GTLYX2JX"
+    "url": "https://www.amazon.in/dp/B0GTLYX2JX",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0GN21V5Z7",
     "id": "prod_amz_B0GN21V5Z7",
-    "name": "1200ml Leak Proof Lunch Box for Office & School | BPA Free Food Container with Airtight Lid | Microwave Safe, Durable & Lightweight Tiffin Box for Men, Women & Kids (Bule)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "1200ml Leak Proof Lunch Box for Office & School",
+    "sub": "BPA Free Food Container with Airtight Lid | Microwave Safe, Durable & Lightweight Tiffin Box for Men, Women & Kids (Bule)",
     "price": 239,
     "mrp": 499,
     "categories": [
@@ -2149,13 +2188,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 70,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GN21V5Z7"
+    "url": "https://www.amazon.in/dp/B0GN21V5Z7",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0H7S3FQWS",
     "id": "prod_amz_B0H7S3FQWS",
-    "name": "Sonic Electric Toothbrush for Adults, Multicolor | USB Rechargeable, 2 Replacement Brush Heads, 5 Brushing Modes, Deep Cleaning, Plaque Removal & Gum Care",
-    "sub": "IESVRA — Beauty & Personal Care",
+    "name": "Sonic Electric Toothbrush for Adults, Multicolor",
+    "sub": "USB Rechargeable, 2 Replacement Brush Heads, 5 Brushing Modes, Deep Cleaning, Plaque Removal & Gum Care",
     "price": 279,
     "mrp": 27900,
     "categories": [
@@ -2195,13 +2235,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 54,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0H7S3FQWS"
+    "url": "https://www.amazon.in/dp/B0H7S3FQWS",
+    "boughtInPastMonth": 700
   },
   {
     "asin": "B0GPH37X28",
     "id": "prod_amz_B0GPH37X28",
-    "name": "Combo- 4-Piece Airtight Kitchen Masala Box Set with Tray & 4-in-1 Airtight Storage Container | Transparent Spice Containers with Rack & Dry Storage Jar",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Combo- 4-Piece Airtight Kitchen Masala Box Set with Tray & 4-in-1 Airtight Storage Container",
+    "sub": "Transparent Spice Containers with Rack & Dry Storage Jar",
     "price": 399,
     "mrp": 599,
     "categories": [
@@ -2241,13 +2282,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 21,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GPH37X28"
+    "url": "https://www.amazon.in/dp/B0GPH37X28",
+    "boughtInPastMonth": 200
   },
   {
     "asin": "B0GNS8BS61",
     "id": "prod_amz_B0GNS8BS61",
-    "name": "Motivational Water Bottle 3 Pcs Set (2000ml + 900ml + 300ml) | Transparent Leakproof Plastic Water Bottles with Time Marker | Gym, Office, School & Travel | BPA Free |",
-    "sub": "IESVRA — Drinkware",
+    "name": "Motivational Water Bottle 3 Pcs Set (2000ml + 900ml + 300ml)",
+    "sub": "Transparent Leakproof Plastic Water Bottles with Time Marker | Gym, Office, School & Travel | BPA Free",
     "price": 299,
     "mrp": 599,
     "categories": [
@@ -2282,13 +2324,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 58,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GNS8BS61"
+    "url": "https://www.amazon.in/dp/B0GNS8BS61",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0FMNQZXH8",
     "id": "prod_amz_B0FMNQZXH8",
-    "name": "4-in-1 Airtight Kitchen Storage Container | Multipurpose Plastic Masala & Spice Box with Flip Lids | Transparent Food Organizer Jar for Pulses, Grains, Cereals, Snacks, Tea & Sugar (Set of 2)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "4-in-1 Airtight Kitchen Storage Container (Set of 2)",
+    "sub": "Multipurpose Plastic Masala & Spice Box with Flip Lids | Transparent Food Organizer Jar for Pulses, Grains, Cereals, Snacks, Tea & Sugar",
     "price": 399,
     "mrp": 999,
     "categories": [
@@ -2328,13 +2371,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 52,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNQZXH8"
+    "url": "https://www.amazon.in/dp/B0FMNQZXH8",
+    "boughtInPastMonth": 300
   },
   {
     "asin": "B0GGH1ZFYN",
     "id": "prod_amz_B0GGH1ZFYN",
-    "name": "Lucky Owl Resin Statue for Good Luck – Aesthetic Owl Art Figurine Showpiece for Home & Office Décor, Feng Shui & Vastu Wisdom Ornament Gift",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Lucky Owl Resin Statue for Good Luck",
+    "sub": "Aesthetic Owl Art Figurine Showpiece for Home & Office Décor, Feng Shui & Vastu Wisdom Ornament Gift",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -2374,13 +2418,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 58,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GGH1ZFYN"
+    "url": "https://www.amazon.in/dp/B0GGH1ZFYN",
+    "boughtInPastMonth": 1500
   },
   {
     "asin": "B0CKJ2HCQ6",
     "id": "prod_amz_B0CKJ2HCQ6",
-    "name": "NANZU Glass 2 in 1 Oil Sprayer and Dispenser Bottle - 500ML for Kitchen, Cooking, BBQ, Air Fryer, Salad, Frying, Baking, Transparent",
-    "sub": "IESVRA — Drinkware",
+    "name": "NANZU Glass 2 in 1 Oil Sprayer and Dispenser Bottle",
+    "sub": "500ML for Kitchen, Cooking, BBQ, Air Fryer, Salad, Frying, Baking, Transparent",
     "price": 229,
     "mrp": 599,
     "categories": [
@@ -2425,13 +2470,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 55,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0CKJ2HCQ6"
+    "url": "https://www.amazon.in/dp/B0CKJ2HCQ6",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0F8BWVZ64",
     "id": "prod_amz_B0F8BWVZ64",
-    "name": "RERANT (Pack of 5, 39 Inches) Door Guard – Bottom Seal Strip Gap Filler for Doors | Soundproof, Noise Reduction, Energy Saving, Dust & Insect, Rat Protector, Door Strip for Home & Office",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "(Pack of 5, 39 Inches) Door Guard – Bottom Seal Strip Gap Filler for Doors",
+    "sub": "Soundproof, Noise Reduction, Energy Saving, Dust & Insect, Rat Protector, Door Strip for Home & Office",
     "price": 199,
     "mrp": 3980,
     "categories": [
@@ -2481,13 +2527,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 89,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0F8BWVZ64"
+    "url": "https://www.amazon.in/dp/B0F8BWVZ64",
+    "boughtInPastMonth": 600
   },
   {
     "asin": "B0H6M1SP15",
     "id": "prod_amz_B0H6M1SP15",
-    "name": "Spin Mop Bucket Set with Stainless Steel Handle | 360° Rotating Microfiber Floor Cleaning Mop | 2 Refill Heads | Easy Spin Wringer System | Blue",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Spin Mop Bucket Set with Stainless Steel Handle",
+    "sub": "360° Rotating Microfiber Floor Cleaning Mop | 2 Refill Heads | Easy Spin Wringer System | Blue",
     "price": 748,
     "mrp": 299900,
     "categories": [
@@ -2522,13 +2569,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 24,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0H6M1SP15"
+    "url": "https://www.amazon.in/dp/B0H6M1SP15",
+    "boughtInPastMonth": 200
   },
   {
     "asin": "B0FMNWLK3C",
     "id": "prod_amz_B0FMNWLK3C",
-    "name": "Door Mat for Home Entrance Set of 3 | Anti-Slip Waterproof Doormat for Main Door | Large Brown Dust Control Floor Mat for Indoor Outdoor Use | Home, Bathroom, Kitchen & Balcony (Set of 3)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Door Mat for Home Entrance Set of 3 (Set of 3)",
+    "sub": "Anti-Slip Waterproof Doormat for Main Door | Large Brown Dust Control Floor Mat for Indoor Outdoor Use | Home, Bathroom, Kitchen & Balcony",
     "price": 690,
     "mrp": 129900,
     "categories": [
@@ -2573,13 +2621,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 17,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNWLK3C"
+    "url": "https://www.amazon.in/dp/B0FMNWLK3C",
+    "boughtInPastMonth": 200
   },
   {
     "asin": "B0FMNFV2DJ",
     "id": "prod_amz_B0FMNFV2DJ",
-    "name": "Double Tube Door Bottom Seal Guard | Noise Reduction, Dust & Insect Blocker | Energy Saving Draft Stopper | Easy Install Under Door Insulation Strip for Home & Office (Set of 4)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Double Tube Door Bottom Seal Guard (Set of 4)",
+    "sub": "Noise Reduction, Dust & Insect Blocker | Energy Saving Draft Stopper | Easy Install Under Door Insulation Strip for Home & Office",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -2624,13 +2673,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 25,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNFV2DJ"
+    "url": "https://www.amazon.in/dp/B0FMNFV2DJ",
+    "boughtInPastMonth": 1200
   },
   {
     "asin": "B0FMNFZ6KS",
     "id": "prod_amz_B0FMNFZ6KS",
-    "name": "Double Tube Door Bottom Seal Guard | Noise Reduction, Dust & Insect Blocker | Energy Saving Draft Stopper | Easy Install Under Door Insulation Strip for Home & Office (Set 0f 5)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Double Tube Door Bottom Seal Guard",
+    "sub": "Noise Reduction, Dust & Insect Blocker | Energy Saving Draft Stopper | Easy Install Under Door Insulation Strip for Home & Office (Set 0f 5)",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -2675,13 +2725,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 59,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNFZ6KS"
+    "url": "https://www.amazon.in/dp/B0FMNFZ6KS",
+    "boughtInPastMonth": 1200
   },
   {
     "asin": "B0FMNFDX1Z",
     "id": "prod_amz_B0FMNFDX1Z",
-    "name": "Door Mat for Home Entrance | Large Anti-Slip Doormat for Main Door | Waterproof Dust Control Mat for Indoor Outdoor Use | Brown Heavy Duty Floor Mat for Bathroom, Living Room & Balcony (6)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Door Mat for Home Entrance (6)",
+    "sub": "Large Anti-Slip Doormat for Main Door | Waterproof Dust Control Mat for Indoor Outdoor Use | Brown Heavy Duty Floor Mat for Bathroom, Living Room & Balcony",
     "price": 1845,
     "mrp": 259800,
     "categories": [
@@ -2726,13 +2777,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 30,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNFDX1Z"
+    "url": "https://www.amazon.in/dp/B0FMNFDX1Z",
+    "boughtInPastMonth": 100
   },
   {
     "asin": "B0FMNT8XSN",
     "id": "prod_amz_B0FMNT8XSN",
-    "name": "Double Tube Door Bottom Seal Guard | Noise Reduction, Dust & Insect Blocker | Energy Saving Draft Stopper | Easy Install Under Door Insulation Strip for Home & Office (Set 0f 7)",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Double Tube Door Bottom Seal Guard",
+    "sub": "Noise Reduction, Dust & Insect Blocker | Energy Saving Draft Stopper | Easy Install Under Door Insulation Strip for Home & Office (Set 0f 7)",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -2777,13 +2829,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 50,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNT8XSN"
+    "url": "https://www.amazon.in/dp/B0FMNT8XSN",
+    "boughtInPastMonth": 1500
   },
   {
     "asin": "B0FMNJ7LVF",
     "id": "prod_amz_B0FMNJ7LVF",
-    "name": "Door Mat for Home Entrance Set of 8 | Anti-Slip Waterproof Doormat for Main Door | Large Brown Dust Control Floor Mat for Indoor Outdoor Use | Home, Bathroom, Kitchen & Balcony",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Door Mat for Home Entrance Set of 8",
+    "sub": "Anti-Slip Waterproof Doormat for Main Door | Large Brown Dust Control Floor Mat for Indoor Outdoor Use | Home, Bathroom, Kitchen & Balcony",
     "price": 897,
     "mrp": 199900,
     "categories": [
@@ -2828,13 +2881,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 33,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FMNJ7LVF"
+    "url": "https://www.amazon.in/dp/B0FMNJ7LVF",
+    "boughtInPastMonth": 100
   },
   {
     "asin": "B0FKMKZLBJ",
     "id": "prod_amz_B0FKMKZLBJ",
-    "name": "Door Mat for Home Entrance | Anti-Slip Door Mat for Main Door | Waterproof Dust Control Doormat for Indoor Outdoor | Brown Large Door Mat for Home Bathroom",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Door Mat for Home Entrance",
+    "sub": "Anti-Slip Door Mat for Main Door | Waterproof Dust Control Doormat for Indoor Outdoor | Brown Large Door Mat for Home Bathroom",
     "price": 897,
     "mrp": 199900,
     "categories": [
@@ -2879,13 +2933,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 26,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FKMKZLBJ"
+    "url": "https://www.amazon.in/dp/B0FKMKZLBJ",
+    "boughtInPastMonth": 50
   },
   {
     "asin": "B0FJLRDFK2",
     "id": "prod_amz_B0FJLRDFK2",
-    "name": "Reusable Popsicle Mould Set | 6-Cavity BPA-Free Ice Cream & Kulfi Moulds with Stand | DIY Ice Lolly Maker for Kids & Adults – Pink Plastic Frozen Treat Mold",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Reusable Popsicle Mould Set",
+    "sub": "6-Cavity BPA-Free Ice Cream & Kulfi Moulds with Stand | DIY Ice Lolly Maker for Kids & Adults – Pink Plastic Frozen Treat Mold",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -2920,13 +2975,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 29,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FJLRDFK2"
+    "url": "https://www.amazon.in/dp/B0FJLRDFK2",
+    "boughtInPastMonth": 1200
   },
   {
     "asin": "B0FKMZY6L3",
     "id": "prod_amz_B0FKMZY6L3",
-    "name": "Reusable Popsicle Mould Set | 6-Cavity BPA-Free Ice Cream & Kulfi Moulds with Stand | DIY Ice Lolly Maker for Kids & Adults – Plastic Frozen Treat Mold (Blue)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Reusable Popsicle Mould Set",
+    "sub": "6-Cavity BPA-Free Ice Cream & Kulfi Moulds with Stand | DIY Ice Lolly Maker for Kids & Adults – Plastic Frozen Treat Mold (Blue)",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -2961,13 +3017,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 48,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FKMZY6L3"
+    "url": "https://www.amazon.in/dp/B0FKMZY6L3",
+    "boughtInPastMonth": 1500
   },
   {
     "asin": "B0FKN5CB6D",
     "id": "prod_amz_B0FKN5CB6D",
-    "name": "Reusable Popsicle Mould Set | 6-Cavity BPA-Free Ice Cream & Kulfi Moulds with Stand | DIY Ice Lolly Maker for Kids & Adults – Plastic Frozen Treat Mold (Green)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Reusable Popsicle Mould Set",
+    "sub": "6-Cavity BPA-Free Ice Cream & Kulfi Moulds with Stand | DIY Ice Lolly Maker for Kids & Adults – Plastic Frozen Treat Mold (Green)",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -3002,13 +3059,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 14,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FKN5CB6D"
+    "url": "https://www.amazon.in/dp/B0FKN5CB6D",
+    "boughtInPastMonth": 800
   },
   {
     "asin": "B0GYNSPBFF",
     "id": "prod_amz_B0GYNSPBFF",
-    "name": "Manual Cold Press Juicer | Hand Juicer Machine with Steel Filter | Slow Juicer for Fruits & Vegetables | Hand Operated Juice Extractor for Orange, Pomegranate, Pineapple, Grapes | BPA Free",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Manual Cold Press Juicer",
+    "sub": "Hand Juicer Machine with Steel Filter | Slow Juicer for Fruits & Vegetables | Hand Operated Juice Extractor for Orange, Pomegranate, Pineapple, Grapes | BPA Free",
     "price": 3979,
     "mrp": 99900,
     "categories": [
@@ -3043,13 +3101,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 30,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GYNSPBFF"
+    "url": "https://www.amazon.in/dp/B0GYNSPBFF",
+    "boughtInPastMonth": 50
   },
   {
     "asin": "B0FKYM1S95",
     "id": "prod_amz_B0FKYM1S95",
-    "name": "Portable Mini Sealing Machine | Handheld Heat Sealer for Plastic Bags, Snack Packets, Chips & Food Storage | Rechargeable USB Seal & Cutter for Airtight Freshness (Blue)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Portable Mini Sealing Machine",
+    "sub": "Handheld Heat Sealer for Plastic Bags, Snack Packets, Chips & Food Storage | Rechargeable USB Seal & Cutter for Airtight Freshness (Blue)",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -3089,13 +3148,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 85,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FKYM1S95"
+    "url": "https://www.amazon.in/dp/B0FKYM1S95",
+    "boughtInPastMonth": 1200
   },
   {
     "asin": "B0FKYNNVLN",
     "id": "prod_amz_B0FKYNNVLN",
-    "name": "Portable Mini Sealing Machine | Handheld Heat Sealer for Plastic Bags, Snack Packets, Chips & Food Storage | Rechargeable USB Seal & Cutter for Airtight Freshness (White)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Portable Mini Sealing Machine",
+    "sub": "Handheld Heat Sealer for Plastic Bags, Snack Packets, Chips & Food Storage | Rechargeable USB Seal & Cutter for Airtight Freshness (White)",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -3135,13 +3195,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 29,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FKYNNVLN"
+    "url": "https://www.amazon.in/dp/B0FKYNNVLN",
+    "boughtInPastMonth": 1500
   },
   {
     "asin": "B0FM7LGD47",
     "id": "prod_amz_B0FM7LGD47",
-    "name": "Self Adhesive Wall Mount Storage Basket Rack | Multipurpose Bathroom & Kitchen Organizer Shelf | No Drill Strong Adhesive Plastic Storage Rack, 2-Pack (White)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Self Adhesive Wall Mount Storage Basket Rack",
+    "sub": "Multipurpose Bathroom & Kitchen Organizer Shelf | No Drill Strong Adhesive Plastic Storage Rack, 2-Pack (White)",
     "price": 148,
     "mrp": 222,
     "categories": [
@@ -3181,13 +3242,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 26,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FM7LGD47"
+    "url": "https://www.amazon.in/dp/B0FM7LGD47",
+    "boughtInPastMonth": 1000
   },
   {
     "asin": "B0FNN2D5CD",
     "id": "prod_amz_B0FNN2D5CD",
-    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve | Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Blue, Pack of 1)",
-    "sub": "IESVRA — Drinkware",
+    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve",
+    "sub": "Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Blue, Pack of 1)",
     "price": 449,
     "mrp": 673,
     "categories": [
@@ -3222,13 +3284,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 72,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNN2D5CD"
+    "url": "https://www.amazon.in/dp/B0FNN2D5CD",
+    "boughtInPastMonth": 300
   },
   {
     "asin": "B0FNN4WQNQ",
     "id": "prod_amz_B0FNN4WQNQ",
-    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve | Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Blue, Pack of 2)",
-    "sub": "IESVRA — Drinkware",
+    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve",
+    "sub": "Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Blue, Pack of 2)",
     "price": 449,
     "mrp": 673,
     "categories": [
@@ -3263,13 +3326,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 66,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNN4WQNQ"
+    "url": "https://www.amazon.in/dp/B0FNN4WQNQ",
+    "boughtInPastMonth": 400
   },
   {
     "asin": "B0FNN66P5B",
     "id": "prod_amz_B0FNN66P5B",
-    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve | Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Green, Pack of 1)",
-    "sub": "IESVRA — Drinkware",
+    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve",
+    "sub": "Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Green, Pack of 1)",
     "price": 449,
     "mrp": 199900,
     "categories": [
@@ -3304,13 +3368,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 20,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNN66P5B"
+    "url": "https://www.amazon.in/dp/B0FNN66P5B",
+    "boughtInPastMonth": 400
   },
   {
     "asin": "B0FNN49PMX",
     "id": "prod_amz_B0FNN49PMX",
-    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve | Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Green, Pack of 2)",
-    "sub": "IESVRA — Drinkware",
+    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve",
+    "sub": "Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Green, Pack of 2)",
     "price": 449,
     "mrp": 673,
     "categories": [
@@ -3345,13 +3410,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 54,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNN49PMX"
+    "url": "https://www.amazon.in/dp/B0FNN49PMX",
+    "boughtInPastMonth": 300
   },
   {
     "asin": "B0FNN6BRJD",
     "id": "prod_amz_B0FNN6BRJD",
-    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve | Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (PInk, Pack of 1)",
-    "sub": "IESVRA — Drinkware",
+    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve",
+    "sub": "Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (PInk, Pack of 1)",
     "price": 449,
     "mrp": 479600,
     "categories": [
@@ -3386,13 +3452,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 22,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNN6BRJD"
+    "url": "https://www.amazon.in/dp/B0FNN6BRJD",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0FNN7W66B",
     "id": "prod_amz_B0FNN7W66B",
-    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve | Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (PInk, Pack of 2)",
-    "sub": "IESVRA — Drinkware",
+    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve",
+    "sub": "Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (PInk, Pack of 2)",
     "price": 449,
     "mrp": 673,
     "categories": [
@@ -3427,13 +3494,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 50,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNN7W66B"
+    "url": "https://www.amazon.in/dp/B0FNN7W66B",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0FNN7Q41H",
     "id": "prod_amz_B0FNN7Q41H",
-    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve | Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Yellow, Pack of 1)",
-    "sub": "IESVRA — Drinkware",
+    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve",
+    "sub": "Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Yellow, Pack of 1)",
     "price": 449,
     "mrp": 49900,
     "categories": [
@@ -3468,13 +3536,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 23,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNN7Q41H"
+    "url": "https://www.amazon.in/dp/B0FNN7Q41H",
+    "boughtInPastMonth": 200
   },
   {
     "asin": "B0FNN672TC",
     "id": "prod_amz_B0FNN672TC",
-    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve | Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Yellow, Pack of 2)",
-    "sub": "IESVRA — Drinkware",
+    "name": "400ml Glass Water Bottle with Silicone Protective Sleeve",
+    "sub": "Leak Proof | BPA Free | Travel Friendly Reusable Water Bottle with Airtight Lid for Office, Gym & Home (Yellow, Pack of 2)",
     "price": 809,
     "mrp": 1213,
     "categories": [
@@ -3509,13 +3578,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 80,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FNN672TC"
+    "url": "https://www.amazon.in/dp/B0FNN672TC",
+    "boughtInPastMonth": 70
   },
   {
     "asin": "B0FJLQTH6X",
     "id": "prod_amz_B0FJLQTH6X",
-    "name": "Manual Food Cutter for Vegetables & Fruits | Push Style with Stainless Steel Blades | Onion, Tomato, Garlic, Chilli Slicer | Compact Kitchen Tool (Green)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Manual Food Cutter for Vegetables & Fruits",
+    "sub": "Push Style with Stainless Steel Blades | Onion, Tomato, Garlic, Chilli Slicer | Compact Kitchen Tool (Green)",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -3550,13 +3620,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 55,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FJLQTH6X"
+    "url": "https://www.amazon.in/dp/B0FJLQTH6X",
+    "boughtInPastMonth": 800
   },
   {
     "asin": "B0FJLT87Q2",
     "id": "prod_amz_B0FJLT87Q2",
-    "name": "Manual Food Cutter for Vegetables & Fruits | Push Style with Stainless Steel Blades | Onion, Tomato, Garlic, Chilli Slicer | Compact Kitchen Tool (Purple)",
-    "sub": "IESVRA — Home & Kitchen",
+    "name": "Manual Food Cutter for Vegetables & Fruits",
+    "sub": "Push Style with Stainless Steel Blades | Onion, Tomato, Garlic, Chilli Slicer | Compact Kitchen Tool (Purple)",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -3591,13 +3662,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 41,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FJLT87Q2"
+    "url": "https://www.amazon.in/dp/B0FJLT87Q2",
+    "boughtInPastMonth": 1500
   },
   {
     "asin": "B0GGH7RQGL",
     "id": "prod_amz_B0GGH7RQGL",
-    "name": "Bird Figurine Decorative Sculpture, Elegant Bird Statue for Home Décor, Living Room, Office, Shelf & Tabletop Accent, Modern Artistic Collectible Gift",
-    "sub": "IESVRA — Daily Essentials",
+    "name": "Bird Figurine Decorative Sculpture",
+    "sub": "Elegant Bird Statue for Home Décor, Living Room, Office, Shelf & Tabletop Accent, Modern Artistic Collectible Gift",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -3632,13 +3704,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 89,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GGH7RQGL"
+    "url": "https://www.amazon.in/dp/B0GGH7RQGL",
+    "boughtInPastMonth": 800
   },
   {
     "asin": "B0FS831QLM",
     "id": "prod_amz_B0FS831QLM",
-    "name": "Menstrual Heating Pad with 4 Massage Modes, Digital Display, Ultra-quiet Operation, Pink",
-    "sub": "IESVRA — Massagers",
+    "name": "Menstrual Heating Pad with 4 Massage Modes",
+    "sub": "Digital Display, Ultra-quiet Operation, Pink",
     "price": 0,
     "mrp": 0,
     "categories": [
@@ -3673,13 +3746,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 81,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0FS831QLM"
+    "url": "https://www.amazon.in/dp/B0FS831QLM",
+    "boughtInPastMonth": 800
   },
   {
     "asin": "B0GKVPGWDV",
     "id": "prod_amz_B0GKVPGWDV",
-    "name": "1 Litre Oil Dispenser Bottle for Kitchen | Leak Proof Oil Pourer Bottle with Spout | Transparent Cooking Oil Container for Olive Oil, Vinegar & Sauce Storage",
-    "sub": "IESVRA — Drinkware",
+    "name": "1 Litre Oil Dispenser Bottle for Kitchen",
+    "sub": "Leak Proof Oil Pourer Bottle with Spout | Transparent Cooking Oil Container for Olive Oil, Vinegar & Sauce Storage",
     "price": 249,
     "mrp": 149900,
     "categories": [
@@ -3719,13 +3793,14 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 86,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GKVPGWDV"
+    "url": "https://www.amazon.in/dp/B0GKVPGWDV",
+    "boughtInPastMonth": 500
   },
   {
     "asin": "B0GKVWDYSM",
     "id": "prod_amz_B0GKVWDYSM",
-    "name": "1 Litre Oil Dispenser Bottle for Kitchen | Leak Proof Plastic Cooking Oil Dispenser with Easy Pour Spout | Oil Container & Oil Bottle for Kitchen Use (Pack of 2)",
-    "sub": "IESVRA — Drinkware",
+    "name": "1 Litre Oil Dispenser Bottle for Kitchen (Pack of 2)",
+    "sub": "Leak Proof Plastic Cooking Oil Dispenser with Easy Pour Spout | Oil Container & Oil Bottle for Kitchen Use",
     "price": 249,
     "mrp": 39500,
     "categories": [
@@ -3765,7 +3840,8 @@ export const initialProducts: Product[] = [
     "rating": 4.5,
     "reviewsCount": 14,
     "status": "success",
-    "url": "https://www.amazon.in/dp/B0GKVWDYSM"
+    "url": "https://www.amazon.in/dp/B0GKVWDYSM",
+    "boughtInPastMonth": 500
   }
 ];
 

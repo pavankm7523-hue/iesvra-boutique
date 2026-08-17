@@ -600,7 +600,7 @@ export function Header() {
             <img
               src={logo}
               alt="IESVRA"
-              className="h-12 w-auto object-contain"
+              className="h-16 sm:h-20 w-auto object-contain brightness-105"
             />
           </Link>
           <button 

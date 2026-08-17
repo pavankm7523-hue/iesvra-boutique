@@ -61,10 +61,15 @@ export function ProductCard({
           />
         </div>
         
-        <div className="p-4 flex flex-col gap-2 flex-1">
-          <h3 className="font-display font-semibold text-sm text-navy-deep group-hover:text-gold transition-colors line-clamp-1 leading-snug">
+        <div className="p-4 flex flex-col gap-1.5 flex-1">
+          <h3 className="font-display font-bold text-sm text-navy-deep group-hover:text-gold transition-colors line-clamp-1 leading-snug">
             {product.name}
           </h3>
+          {product.sub && (
+            <p className="text-[11px] text-navy-deep/60 line-clamp-1 font-light -mt-0.5">
+              {product.sub.replace(/^IESVRA —\s*/i, "").replace(/^IESVRA\s*[-—]\s*/i, "")}
+            </p>
+          )}
           
           {/* Rating */}
           {reviewsCount > 0 ? (

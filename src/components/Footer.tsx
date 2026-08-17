@@ -46,7 +46,7 @@ export function Footer() {
             <img
               src={logo}
               alt="IESVRA"
-              className="h-10 w-auto object-contain"
+              className="h-16 sm:h-20 w-auto object-contain brightness-105"
             />
           </Link>
           <p className="text-sm text-white/70 leading-relaxed">
