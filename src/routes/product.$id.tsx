@@ -5,10 +5,11 @@ import { toast } from "sonner";
 import { useProducts, colorMap, type ProductMedia } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
 import { useIsInWishlist, toggleWishlist } from "@/lib/wishlist";
+import { geocodeAddress, reverseGeocode } from "@/lib/delivery";
 import { 
   ArrowLeft, Star, ShoppingBag, Shield, Truck, RefreshCcw, 
   ChevronLeft, ChevronRight, Users, Clock, Award, MapPin, 
-  Heart, CheckCircle2, Lock, Zap, ChevronDown
+  Heart, CheckCircle2, Lock, Zap, ChevronDown, Locate, Loader2
 } from "lucide-react";
 
 const productSearchSchema = z.object({
@@ -26,6 +27,71 @@ export const Route = createFileRoute("/product/$id")({
   },
   component: ProductDetails,
 });
+
+/**
+ * Resolves a 6-digit Indian PIN code to real City/District, State, and Locality.
+ * Validates against the official India Post API and geocoding services.
+ */
+async function resolveLocationFromPincode(pincode: string): Promise<{
+  city: string;
+  state: string;
+  locality: string;
+  pincode: string;
+  isExpress: boolean;
+  displayText: string;
+} | null> {
+  const cleanPin = pincode.trim().replace(/\D/g, "");
+  if (cleanPin.length !== 6) return null;
+
+  // 1. Query India Post Postal API for official District, State, and Post Office Name
+  try {
+    const res = await fetch(`https://api.postalpincode.in/pincode/${cleanPin}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data[0]?.Status === "Success" && Array.isArray(data[0]?.PostOffice) && data[0].PostOffice.length > 0) {
+        const po = data[0].PostOffice[0];
+        const city = po.District || po.Division || po.Circle || "Patna";
+        const state = po.State || "Bihar";
+        const locality = po.Name || "";
+        const isExpress = city.toLowerCase().includes("patna") || cleanPin.startsWith("800") || cleanPin.startsWith("801");
+        const displayText = locality && locality !== city ? `${locality}, ${city} ${cleanPin}` : `${city} ${cleanPin}`;
+        return { city, state, locality, pincode: cleanPin, isExpress, displayText };
+      }
+    }
+  } catch (err) {
+    console.warn("[pincode-lookup] Postal API fetch failed, trying geocoder:", err);
+  }
+
+  // 2. Fallback to Geocoding via Nominatim/Google
+  try {
+    const geo = await geocodeAddress(cleanPin);
+    if (geo && (geo.city || geo.state)) {
+      const city = geo.city || geo.state || "Patna";
+      const state = geo.state || "Bihar";
+      const locality = geo.line2 || geo.line1 || "";
+      const isExpress = city.toLowerCase().includes("patna") || cleanPin.startsWith("800") || cleanPin.startsWith("801");
+      const displayText = locality && locality !== city ? `${locality}, ${city} ${cleanPin}` : `${city} ${cleanPin}`;
+      return { city, state, locality, pincode: cleanPin, isExpress, displayText };
+    }
+  } catch (err) {
+    console.warn("[pincode-lookup] Geocoding lookup failed:", err);
+  }
+
+  // 3. Fallback for Patna warehouse zone
+  if (cleanPin.startsWith("800") || cleanPin.startsWith("801")) {
+    const locality = cleanPin === "800020" ? "Kankarbagh" : "Patna";
+    return {
+      city: "Patna",
+      state: "Bihar",
+      locality,
+      pincode: cleanPin,
+      isExpress: true,
+      displayText: `${locality}, Patna ${cleanPin}`,
+    };
+  }
+
+  return null;
+}
 
 function ProductDetails() {
   const navigate = useNavigate();
@@ -81,65 +147,236 @@ function ProductDetails() {
     return () => clearInterval(interval);
   }, []);
 
-  const deliveryDates = useMemo(() => {
-    const now = new Date();
-    const options: Intl.DateTimeFormatOptions = { weekday: "short", day: "numeric", month: "short" };
-    
-    // Fastest delivery (Tomorrow if before 9 PM, or +2 days if after)
-    const isPastCutoff = now.getHours() >= 21;
-    const fastestDate = new Date(now);
-    fastestDate.setDate(now.getDate() + (isPastCutoff ? 2 : 1));
-    const fastestFormatted = fastestDate.toLocaleDateString("en-IN", options);
-    const fastestPrefix = isPastCutoff ? "in 2 days" : "Tomorrow";
+  // ---- REAL SAVED DELIVERY LOCATION & PINCODE RESOLUTION ----
+  const [deliveryLoc, setDeliveryLoc] = useState<{
+    city: string;
+    state: string;
+    locality: string;
+    pincode: string;
+    isExpress: boolean;
+    displayText: string;
+  }>({
+    city: "Patna",
+    state: "Bihar",
+    locality: "Kankarbagh",
+    pincode: "800020",
+    isExpress: true,
+    displayText: "Kankarbagh, Patna 800020",
+  });
 
-    // Free standard delivery (3 days)
-    const freeDate = new Date(now);
-    freeDate.setDate(now.getDate() + 3);
-    const freeFormatted = freeDate.toLocaleDateString("en-IN", options);
+  const [isEditingLocation, setIsEditingLocation] = useState(false);
+  const [pincodeInput, setPincodeInput] = useState("");
+  const [isResolvingLocation, setIsResolvingLocation] = useState(false);
 
-    return {
-      fastestFormatted,
-      fastestPrefix,
-      freeFormatted,
+  // Save location to localStorage and broadcast sync event
+  const saveLocation = (loc: {
+    city: string;
+    state: string;
+    locality: string;
+    pincode: string;
+    isExpress: boolean;
+    displayText: string;
+  }) => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("IESVRA_delivery_city", loc.city);
+    localStorage.setItem("IESVRA_delivery_state", loc.state);
+    localStorage.setItem("IESVRA_delivery_pincode", loc.pincode);
+    localStorage.setItem("IESVRA_delivery_address_locality", loc.locality);
+    localStorage.setItem(
+      "IESVRA_delivery_address",
+      `${loc.locality ? loc.locality + ", " : ""}${loc.city}, ${loc.state} - ${loc.pincode}`
+    );
+    localStorage.setItem("IESVRA_is_express_eligible", loc.isExpress ? "true" : "false");
+    window.dispatchEvent(new Event("iesvra-address-updated"));
+  };
+
+  // Sync state with localStorage changes across pages and header
+  const syncLocationFromStorage = () => {
+    if (typeof window === "undefined") return;
+    const city = localStorage.getItem("IESVRA_delivery_city")?.trim() || "";
+    const pin = localStorage.getItem("IESVRA_delivery_pincode")?.trim() || "";
+    const locality = localStorage.getItem("IESVRA_delivery_address_locality")?.trim() || "";
+    const fullAddr = localStorage.getItem("IESVRA_delivery_address")?.trim() || "";
+    const isExpress = localStorage.getItem("IESVRA_is_express_eligible") === "true";
+
+    // Clean up any stale or invalid test pincode like 192773
+    if (pin === "192773" || (city.toLowerCase() === "patna" && pin && !pin.startsWith("800") && !pin.startsWith("801"))) {
+      const defaultLoc = {
+        city: "Patna",
+        state: "Bihar",
+        locality: "Kankarbagh",
+        pincode: "800020",
+        isExpress: true,
+        displayText: "Kankarbagh, Patna 800020",
+      };
+      saveLocation(defaultLoc);
+      setDeliveryLoc(defaultLoc);
+      return;
+    }
+
+    if (city && pin) {
+      const displayText = locality && locality !== city ? `${locality}, ${city} ${pin}` : `${city} ${pin}`;
+      setDeliveryLoc({
+        city,
+        state: localStorage.getItem("IESVRA_delivery_state") || "",
+        locality,
+        pincode: pin,
+        isExpress,
+        displayText,
+      });
+    } else if (pin) {
+      setDeliveryLoc({
+        city: city || "",
+        state: "",
+        locality: "",
+        pincode: pin,
+        isExpress,
+        displayText: `PIN ${pin}`,
+      });
+    } else if (fullAddr) {
+      const parts = fullAddr.split(",").map(p => p.trim()).filter(Boolean);
+      const shortAddr = parts.slice(0, 2).join(", ");
+      setDeliveryLoc({
+        city: city || "Patna",
+        state: localStorage.getItem("IESVRA_delivery_state") || "Bihar",
+        locality: locality || "",
+        pincode: pin || "800020",
+        isExpress,
+        displayText: shortAddr || "Kankarbagh, Patna 800020",
+      });
+    } else {
+      setDeliveryLoc({
+        city: "Patna",
+        state: "Bihar",
+        locality: "Kankarbagh",
+        pincode: "800020",
+        isExpress: true,
+        displayText: "Kankarbagh, Patna 800020",
+      });
+    }
+  };
+
+  useEffect(() => {
+    syncLocationFromStorage();
+    window.addEventListener("iesvra-address-updated", syncLocationFromStorage);
+    window.addEventListener("storage", syncLocationFromStorage);
+    return () => {
+      window.removeEventListener("iesvra-address-updated", syncLocationFromStorage);
+      window.removeEventListener("storage", syncLocationFromStorage);
     };
   }, []);
 
-  // ---- SAVED USER LOCATION ----
-  const [userPincode, setUserPincode] = useState<string>("Patna 800020");
-  const [isEditingPincode, setIsEditingPincode] = useState(false);
-  const [pincodeInput, setPincodeInput] = useState("");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const city = localStorage.getItem("IESVRA_delivery_city");
-      const pin = localStorage.getItem("IESVRA_delivery_pincode");
-      const addr = localStorage.getItem("IESVRA_delivery_address");
-      if (city && pin) {
-        setUserPincode(`${city} ${pin}`);
-      } else if (pin) {
-        setUserPincode(`PIN ${pin}`);
-      } else if (addr) {
-        const parts = addr.split(",");
-        const shortAddr = parts.slice(0, 2).join(", ").trim();
-        setUserPincode(shortAddr || "Patna 800020");
-      }
-    }
-  }, []);
-
-  const handleSavePincode = (e: React.FormEvent) => {
+  // Handle user entering a PIN code
+  const handleApplyPincode = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanPin = pincodeInput.trim();
-    if (/^\d{6}$/.test(cleanPin)) {
-      setUserPincode(`PIN ${cleanPin}`);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("IESVRA_delivery_pincode", cleanPin);
-      }
-      setIsEditingPincode(false);
-      toast.success(`Delivery address updated to PIN ${cleanPin}`);
-    } else {
+    const cleanPin = pincodeInput.trim().replace(/\D/g, "");
+    if (cleanPin.length !== 6) {
       toast.error("Please enter a valid 6-digit PIN code.");
+      return;
+    }
+
+    setIsResolvingLocation(true);
+    try {
+      const resolved = await resolveLocationFromPincode(cleanPin);
+      if (resolved) {
+        saveLocation(resolved);
+        setDeliveryLoc(resolved);
+        setIsEditingLocation(false);
+        setPincodeInput("");
+        toast.success(`Delivery location updated to ${resolved.displayText}`);
+      } else {
+        toast.error(`Could not verify PIN ${cleanPin}. Please verify and enter a valid Indian postal code.`);
+      }
+    } catch (err) {
+      toast.error("Failed to verify pincode. Please try again.");
+    } finally {
+      setIsResolvingLocation(false);
     }
   };
+
+  // Handle detecting user's current GPS location
+  const handleDetectGPS = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser.");
+      return;
+    }
+    setIsResolvingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const geo = await reverseGeocode(latitude, longitude);
+          if (geo && (geo.city || geo.pincode)) {
+            const city = geo.city || "Patna";
+            const state = geo.state || "Bihar";
+            const pincode = geo.pincode || "800020";
+            const locality = geo.line2 || geo.line1 || "";
+            const isExpress = city.toLowerCase().includes("patna") || pincode.startsWith("800") || pincode.startsWith("801");
+            const displayText = locality && locality !== city ? `${locality}, ${city} ${pincode}` : `${city} ${pincode}`;
+            const locObj = { city, state, locality, pincode, isExpress, displayText };
+            saveLocation(locObj);
+            setDeliveryLoc(locObj);
+            setIsEditingLocation(false);
+            toast.success(`Location detected: ${displayText}`);
+          } else {
+            toast.error("Unable to resolve address from coordinates.");
+          }
+        } catch (err) {
+          toast.error("Failed to detect location.");
+        } finally {
+          setIsResolvingLocation(false);
+        }
+      },
+      (err) => {
+        setIsResolvingLocation(false);
+        toast.error("Please allow location access to auto-detect your delivery address.");
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  };
+
+  // ---- DYNAMIC DELIVERY DATES BASED ON LOCATION ----
+  const deliveryDates = useMemo(() => {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = { weekday: "short", day: "numeric", month: "short" };
+    const isPastCutoff = now.getHours() >= 21;
+
+    if (deliveryLoc.isExpress) {
+      // Local Express (Patna): Next Day Delivery or 15-30 Min Express
+      const fastestDate = new Date(now);
+      fastestDate.setDate(now.getDate() + (isPastCutoff ? 2 : 1));
+      const fastestFormatted = fastestDate.toLocaleDateString("en-IN", options);
+      const fastestPrefix = isPastCutoff ? "in 2 days" : "Tomorrow";
+
+      const freeDate = new Date(now);
+      freeDate.setDate(now.getDate() + (isPastCutoff ? 3 : 2));
+      const freeFormatted = freeDate.toLocaleDateString("en-IN", options);
+
+      return {
+        isExpress: true,
+        fastestFormatted,
+        fastestPrefix,
+        freeFormatted,
+      };
+    } else {
+      // National Standard Delivery (Outside Patna across India)
+      const fastestDate = new Date(now);
+      fastestDate.setDate(now.getDate() + 2);
+      const fastestFormatted = fastestDate.toLocaleDateString("en-IN", options);
+      const fastestPrefix = "in 2-3 days";
+
+      const freeDate = new Date(now);
+      freeDate.setDate(now.getDate() + 4);
+      const freeFormatted = freeDate.toLocaleDateString("en-IN", options);
+
+      return {
+        isExpress: false,
+        fastestFormatted,
+        fastestPrefix,
+        freeFormatted,
+      };
+    }
+  }, [deliveryLoc.isExpress]);
 
   // ---- WISHLIST STATUS ----
   const isWishlisted = useIsInWishlist(product?.id || "");
@@ -495,45 +732,85 @@ function ProductDetails() {
                 </div>
               </div>
 
-              {/* Delivery Location Reader / Picker */}
-              <div className="flex items-center gap-2 text-xs text-navy-deep/80 pt-1 border-t border-border/30">
-                <MapPin className="h-4 w-4 text-primary shrink-0" />
-                {!isEditingPincode ? (
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span>Deliver to <span className="font-bold text-navy-deep">{userPincode}</span></span>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditingPincode(true)}
-                      className="text-primary hover:underline font-semibold cursor-pointer text-[11px]"
-                    >
-                      (Change)
-                    </button>
+              {/* Delivery Location Reader & Interactive Changer */}
+              <div className="pt-1 border-t border-border/30">
+                <div className="flex items-start gap-2 text-xs text-navy-deep/90">
+                  <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span>Deliver to <span className="font-bold text-navy-deep">{deliveryLoc.displayText}</span></span>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingLocation((prev) => !prev)}
+                        className="text-primary hover:underline font-bold cursor-pointer text-[11px]"
+                      >
+                        {isEditingLocation ? "(Close)" : "(Change)"}
+                      </button>
+                    </div>
+
+                    {/* Zone Badge */}
+                    {deliveryLoc.isExpress ? (
+                      <div className="flex items-center gap-1 mt-1 text-[11px] font-semibold text-emerald-700">
+                        <Zap className="h-3 w-3 fill-emerald-600 text-emerald-600" />
+                        <span>Patna Express Zone (Eligible for 15-30 min delivery)</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 mt-1 text-[11px] font-medium text-navy-deep/60">
+                        <Truck className="h-3 w-3 text-navy-deep/60" />
+                        <span>Standard India-Wide Delivery</span>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <form onSubmit={handleSavePincode} className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={pincodeInput}
-                      onChange={(e) => setPincodeInput(e.target.value.replace(/\D/g, ""))}
-                      placeholder="6-digit PIN"
-                      className="w-24 h-7 px-2 border border-border rounded text-xs focus:ring-1 focus:ring-primary outline-none"
-                      autoFocus
-                    />
-                    <button
-                      type="submit"
-                      className="px-2.5 h-7 bg-primary text-white text-[11px] font-bold rounded hover:bg-primary/90"
-                    >
-                      Apply
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditingPincode(false)}
-                      className="text-xs text-navy-deep/50 hover:text-navy-deep"
-                    >
-                      Cancel
-                    </button>
-                  </form>
+                </div>
+
+                {/* Location Edit / PIN Code Resolution Box */}
+                {isEditingLocation && (
+                  <div className="mt-3 p-3.5 bg-slate-50 border border-border/80 rounded-xl space-y-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-navy-deep/70">
+                      Enter 6-Digit Indian PIN Code:
+                    </div>
+                    <form onSubmit={handleApplyPincode} className="flex gap-2">
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={pincodeInput}
+                        onChange={(e) => setPincodeInput(e.target.value.replace(/\D/g, ""))}
+                        placeholder="e.g. 800020, 110001, 560001"
+                        className="flex-1 h-9 px-3 border border-border/80 rounded-lg text-xs font-semibold text-navy-deep focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none bg-white"
+                        autoFocus
+                      />
+                      <button
+                        type="submit"
+                        disabled={isResolvingLocation}
+                        className="px-4 h-9 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/95 transition flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50 cursor-pointer"
+                      >
+                        {isResolvingLocation ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Apply"}
+                      </button>
+                    </form>
+
+                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/50 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={handleDetectGPS}
+                        disabled={isResolvingLocation}
+                        className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-semibold cursor-pointer"
+                      >
+                        <Locate className="h-3.5 w-3.5" />
+                        <span>Use my current GPS</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          window.dispatchEvent(new Event("open-address-modal"));
+                          setIsEditingLocation(false);
+                        }}
+                        className="text-navy-deep/60 hover:text-navy-deep font-semibold underline cursor-pointer"
+                      >
+                        Map Address Picker
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
 
