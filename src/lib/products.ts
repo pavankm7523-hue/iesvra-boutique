@@ -43,6 +43,7 @@ export type Product = {
   isDigital?: boolean;
   type?: string;
   stock?: number;
+  boughtInPastMonth?: number;
 };
 
 export const colorMap: Record<string, string> = {
@@ -101,6 +102,7 @@ export const initialCategories: Category[] = [
   { name: "Drinkware", image: pSteel },
   { name: "Daily Essentials", image: pDish },
   { name: "Fans & Coolers", image: pFan },
+  { name: "Books & Stationery", image: pJar },
 ];
 
 const categoryImageMap: Record<string, string> = {
@@ -111,7 +113,8 @@ const categoryImageMap: Record<string, string> = {
   "Bags & Travel": pTravel,
   "Drinkware": pSteel,
   "Daily Essentials": pDish,
-  "Fans & Coolers": pFan
+  "Fans & Coolers": pFan,
+  "Books & Stationery": pJar,
 };
 
 export function sanitizeCategories(cats: Category[]): Category[] {
@@ -245,6 +248,7 @@ export const initialProducts: Product[] = [
     "colors": [],
     "description": "Imported premium product for all your household organization needs. Organize drawers, cosmetics, or tools.",
     "isBestSeller": true,
+    "boughtInPastMonth": 1000,
     "reviews": [
       {
         "id": "rev_1_1",

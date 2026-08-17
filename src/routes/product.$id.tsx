@@ -4,7 +4,12 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useProducts, colorMap, type ProductMedia } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
-import { ArrowLeft, Star, ShoppingBag, Shield, Truck, RefreshCcw, ChevronLeft, ChevronRight, Users, Clock } from "lucide-react";
+import { useIsInWishlist, toggleWishlist } from "@/lib/wishlist";
+import { 
+  ArrowLeft, Star, ShoppingBag, Shield, Truck, RefreshCcw, 
+  ChevronLeft, ChevronRight, Users, Clock, Award, MapPin, 
+  Heart, CheckCircle2, Lock, Zap, ChevronDown
+} from "lucide-react";
 
 const productSearchSchema = z.object({
   bannerId: z.string().optional(),
@@ -40,8 +45,114 @@ function ProductDetails() {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
 
   const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || "");
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // ---- DYNAMIC DELIVERY & TIMER CALCULATION ----
+  const [countdown, setCountdown] = useState<{ hours: number; minutes: number; isBeforeCutoff: boolean }>({
+    hours: 0,
+    minutes: 0,
+    isBeforeCutoff: true,
+  });
+
+  useEffect(() => {
+    const calculateCountdown = () => {
+      const now = new Date();
+      const cutoff = new Date(now);
+      cutoff.setHours(21, 0, 0, 0); // 9:00 PM cutoff
+
+      let diff = cutoff.getTime() - now.getTime();
+      let isBefore = true;
+      if (diff <= 0) {
+        isBefore = false;
+        cutoff.setDate(cutoff.getDate() + 1);
+        diff = cutoff.getTime() - now.getTime();
+      }
+
+      const totalMinutes = Math.floor(diff / (1000 * 60));
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      setCountdown({ hours, minutes, isBeforeCutoff: isBefore });
+    };
+
+    calculateCountdown();
+    const interval = setInterval(calculateCountdown, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const deliveryDates = useMemo(() => {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = { weekday: "short", day: "numeric", month: "short" };
+    
+    // Fastest delivery (Tomorrow if before 9 PM, or +2 days if after)
+    const isPastCutoff = now.getHours() >= 21;
+    const fastestDate = new Date(now);
+    fastestDate.setDate(now.getDate() + (isPastCutoff ? 2 : 1));
+    const fastestFormatted = fastestDate.toLocaleDateString("en-IN", options);
+    const fastestPrefix = isPastCutoff ? "in 2 days" : "Tomorrow";
+
+    // Free standard delivery (3 days)
+    const freeDate = new Date(now);
+    freeDate.setDate(now.getDate() + 3);
+    const freeFormatted = freeDate.toLocaleDateString("en-IN", options);
+
+    return {
+      fastestFormatted,
+      fastestPrefix,
+      freeFormatted,
+    };
+  }, []);
+
+  // ---- SAVED USER LOCATION ----
+  const [userPincode, setUserPincode] = useState<string>("Patna 800020");
+  const [isEditingPincode, setIsEditingPincode] = useState(false);
+  const [pincodeInput, setPincodeInput] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const city = localStorage.getItem("IESVRA_delivery_city");
+      const pin = localStorage.getItem("IESVRA_delivery_pincode");
+      const addr = localStorage.getItem("IESVRA_delivery_address");
+      if (city && pin) {
+        setUserPincode(`${city} ${pin}`);
+      } else if (pin) {
+        setUserPincode(`PIN ${pin}`);
+      } else if (addr) {
+        const parts = addr.split(",");
+        const shortAddr = parts.slice(0, 2).join(", ").trim();
+        setUserPincode(shortAddr || "Patna 800020");
+      }
+    }
+  }, []);
+
+  const handleSavePincode = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanPin = pincodeInput.trim();
+    if (/^\d{6}$/.test(cleanPin)) {
+      setUserPincode(`PIN ${cleanPin}`);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("IESVRA_delivery_pincode", cleanPin);
+      }
+      setIsEditingPincode(false);
+      toast.success(`Delivery address updated to PIN ${cleanPin}`);
+    } else {
+      toast.error("Please enter a valid 6-digit PIN code.");
+    }
+  };
+
+  // ---- WISHLIST STATUS ----
+  const isWishlisted = useIsInWishlist(product?.id || "");
+
+  const handleWishlistToggle = () => {
+    if (!product) return;
+    const added = toggleWishlist(product);
+    if (added) {
+      toast.success(`Added ${product.name} to your Wishlist!`);
+    } else {
+      toast.info(`Removed from your Wishlist.`);
+    }
+  };
 
   // ---- LIVE SOCIAL PROOF (product page) ----
   // NOTE: Must be here BEFORE any early returns to satisfy React Rules of Hooks
@@ -55,8 +166,6 @@ function ProductDetails() {
     }, 10000);
     return () => clearInterval(interval);
   }, []);
-  const pdpCurrentHour = new Date().getHours();
-  const pdpIsBeforeCutoff = pdpCurrentHour < 21;
   // -------------------------------------------
 
   if (!product) {
@@ -91,19 +200,28 @@ function ProductDetails() {
     return items.length > 0 ? items : [{ id: "main", type: "image" as const, url: product.image }];
   }, [product.gallery, product.image]);
 
-  const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
+  const activeVariant = product.variants?.[selectedVariantIndex];
+  const currentPrice = activeVariant ? activeVariant.price : product.price;
+  const currentMrp = activeVariant ? activeVariant.mrp : product.mrp;
+  const discount = currentMrp > 0 ? Math.round(((currentMrp - currentPrice) / currentMrp) * 100) : 0;
+  const totalPrice = currentPrice * quantity;
+  const totalSavings = (currentMrp - currentPrice) * quantity;
+  const isOutOfStock = product.stock === 0;
+  const isLowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
 
   const handleAddToCart = () => {
-    const colorToUse = "Standard";
-    addToCart(product, colorToUse, quantity);
+    const variantLabel = activeVariant ? activeVariant.label : (selectedColor || "Standard");
+    const itemToCart = activeVariant ? { ...product, price: currentPrice, mrp: currentMrp } : product;
+    addToCart(itemToCart, variantLabel, quantity);
     toast.success(
-      `Successfully added ${quantity}x ${product.name} to your cart!`,
+      `Successfully added ${quantity}x ${product.name} (${variantLabel}) to your cart!`,
     );
   };
 
   const handleBuyDirectly = () => {
-    const colorToUse = "Standard";
-    addToCart(product, colorToUse, quantity);
+    const variantLabel = activeVariant ? activeVariant.label : (selectedColor || "Standard");
+    const itemToCart = activeVariant ? { ...product, price: currentPrice, mrp: currentMrp } : product;
+    addToCart(itemToCart, variantLabel, quantity);
     toast.success("Redirecting directly to checkout...");
     window.location.href = "/cart?checkout=true";
   };
@@ -136,10 +254,10 @@ function ProductDetails() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          {/* Left Column: Image & Gallery */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-[2rem] border border-border/30 overflow-hidden shadow-2xl shadow-navy-deep/5 w-full max-w-[500px] mx-auto aspect-square relative flex items-center justify-center p-8 group/main-img">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+          {/* Left Column: Image & Gallery (5 cols) */}
+          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+            <div className="bg-white rounded-[2rem] border border-border/30 overflow-hidden shadow-2xl shadow-navy-deep/5 w-full aspect-square relative flex items-center justify-center p-8 group/main-img">
               {galleryItems[activeIndex]?.type === "video" ? (
                 <video
                   src={galleryItems[activeIndex]?.url}
@@ -153,9 +271,13 @@ function ProductDetails() {
                   className="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-105"
                 />
               )}
-              <span className="absolute top-6 left-6 bg-gold text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg z-10">
-                {discount}% OFF
-              </span>
+
+              {/* Red Circular/Pill Discount Badge */}
+              {discount > 0 && (
+                <div className="absolute top-5 left-5 flex items-center gap-1.5 bg-red-600 text-white text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-lg z-10">
+                  <span>{discount}% OFF</span>
+                </div>
+              )}
 
               {/* Navigation Arrows */}
               {galleryItems.length > 1 && (
@@ -225,123 +347,313 @@ function ProductDetails() {
             )}
           </div>
 
-          {/* Right Column: Information */}
-          <div className="space-y-8 lg:py-6">
+          {/* Center/Right Column: Product Details & Amazon Purchase Box (7 cols) */}
+          <div className="lg:col-span-7 space-y-6">
+            
+            {/* Top Badges & Category Header */}
             <div className="space-y-3">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold bg-gold/10 px-4 py-1.5 rounded-full inline-block mb-2">
-                {(product.categories || []).join(", ")}
-              </span>
-              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy-deep leading-[1.1]">
+              <div className="flex flex-wrap items-center gap-2.5">
+                {/* Category Pill */}
+                <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary bg-primary/10 px-3.5 py-1 rounded-full inline-block">
+                  {(product.categories || []).join(", ")}
+                </span>
+
+                {/* Amazon-Style #1 Best Seller Badge (Only for isBestSeller: true) */}
+                {product.isBestSeller && (
+                  <Link
+                    to="/shop"
+                    search={{ category: product.categories?.[0] || "All" }}
+                    className="inline-flex items-center gap-1.5 bg-[#e47911] hover:bg-[#c96608] text-white text-[11px] font-bold px-3 py-1 rounded-sm shadow-sm transition-all tracking-wide group"
+                    title={`View Best Sellers in ${product.categories?.[0] || "All"}`}
+                  >
+                    <Award className="h-3.5 w-3.5 fill-white text-white shrink-0" />
+                    <span>#1 Best Seller</span>
+                    <span className="font-normal opacity-90 lowercase first-letter:uppercase text-[10px]">
+                      in {product.categories?.[0] || "Featured"}
+                    </span>
+                  </Link>
+                )}
+              </div>
+
+              {/* Title & Subtitle */}
+              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-semibold text-navy-deep leading-tight">
                 {product.name}
               </h1>
-              <p className="text-base text-navy-deep/60 font-light">
+              <p className="text-sm text-navy-deep/60 font-light">
                 {(product.sub || "").replace(/IESVRA Boutique/g, "IESVRA")}
               </p>
             </div>
 
-            {/* Ratings */}
-            <div className="flex items-center gap-4 border-y border-border/30 py-4">
-              <div className="flex items-center text-gold">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`h-5 w-5 ${
-                      star <= Math.round(averageRating) ? "fill-current" : "fill-current opacity-30"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-sm font-bold text-navy-deep">
-                {reviewsCount > 0 ? `${averageRating} / 5.0` : "No reviews yet"}
-              </span>
-              <span className="text-xs text-navy-deep/50 uppercase tracking-wider font-semibold">
-                ({reviewsCount} {reviewsCount === 1 ? "Review" : "Reviews"})
-              </span>
-            </div>
-
-            {/* Pricing */}
-            <div className="space-y-1.5">
-              <div className="flex items-baseline gap-4">
-                <span className="text-4xl font-bold text-navy-deep tracking-tight">₹{product.price.toLocaleString()}.00</span>
-                <span className="text-navy-deep/40 line-through text-lg">
-                  ₹{product.mrp.toLocaleString()}.00
+            {/* Ratings & Social Proof Line */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-border/40 py-3.5 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center text-gold">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`h-4 w-4 ${
+                        star <= Math.round(averageRating) ? "fill-current" : "fill-current opacity-30"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs font-bold text-navy-deep">
+                  {reviewsCount > 0 ? averageRating.toFixed(1) : "No reviews"}
+                </span>
+                <span className="text-xs text-navy-deep/50 font-medium">
+                  ({reviewsCount} {reviewsCount === 1 ? "rating" : "ratings"})
                 </span>
               </div>
-              <p className="text-xs text-gold font-bold uppercase tracking-wide">
-                You save ₹{(product.mrp - product.price).toLocaleString()}.00 ({discount}%)
+
+              {/* "X,000+ bought in past month" (Shown when boughtInPastMonth is set) */}
+              {product.boughtInPastMonth && product.boughtInPastMonth > 0 && (
+                <div className="flex items-center gap-1.5 text-xs text-navy-deep/80 font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md text-[#92400e]">
+                  <Zap className="h-3 w-3 text-[#d97706] fill-[#d97706]" />
+                  <span>{product.boughtInPastMonth.toLocaleString()}+ bought in past month</span>
+                </div>
+              )}
+            </div>
+
+            {/* Price Row */}
+            <div className="space-y-1">
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl sm:text-4xl font-extrabold text-navy-deep tracking-tight">
+                  ₹{currentPrice.toLocaleString()}.00
+                </span>
+                {discount > 0 && (
+                  <>
+                    <span className="text-navy-deep/40 line-through text-lg">
+                      ₹{currentMrp.toLocaleString()}.00
+                    </span>
+                    <span className="text-xs text-red-600 font-extrabold uppercase tracking-wide bg-red-50 border border-red-200 px-2 py-0.5 rounded">
+                      -{discount}%
+                    </span>
+                  </>
+                )}
+              </div>
+              <p className="text-xs text-navy-deep/60">
+                Inclusive of all taxes. Free shipping on orders over ₹499.
               </p>
             </div>
 
-            {/* Description */}
-            <div className="space-y-3 text-sm text-navy-deep/70 leading-relaxed font-light">
-              <h3 className="font-semibold text-navy-deep uppercase tracking-wider text-xs">Product Details</h3>
-              <p>{product.description}</p>
-            </div>
-
-            {/* Availability Stock Status */}
-            {product.stock === 0 && (
-              <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
-                <span className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
-                Currently Out of Stock
+            {/* Variant Selector */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="space-y-2.5 pt-1">
+                <h3 className="font-bold text-navy-deep uppercase tracking-wider text-xs">
+                  Select Pack Size / Option
+                </h3>
+                <div className="flex flex-wrap gap-2.5">
+                  {product.variants.map((variant, idx) => (
+                    <button
+                      key={variant.label || idx}
+                      type="button"
+                      onClick={() => setSelectedVariantIndex(idx)}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border cursor-pointer ${
+                        selectedVariantIndex === idx
+                          ? "bg-navy-deep text-white border-navy-deep shadow-md"
+                          : "bg-white text-navy-deep/80 border-border/70 hover:border-navy-deep/40 hover:bg-slate-50"
+                      }`}
+                    >
+                      {variant.label} — ₹{variant.price}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
-            {/* Quantity and Actions */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6 border-t border-border/30 w-full">
-              <div className={`flex items-center justify-between border-2 border-border/50 rounded-full h-14 bg-white shrink-0 ${product.stock === 0 ? "opacity-40 pointer-events-none" : ""}`}>
-                <button
-                  type="button"
-                  disabled={product.stock === 0}
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-5 text-navy-deep/60 hover:text-navy-deep hover:bg-secondary/20 transition-colors h-full rounded-l-full cursor-pointer font-bold text-xl"
-                >
-                  -
-                </button>
-                <span className="px-4 font-bold text-navy-deep text-base w-12 text-center select-none">
-                  {quantity}
-                </span>
-                <button
-                  type="button"
-                  disabled={product.stock === 0}
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-5 text-navy-deep/60 hover:text-navy-deep hover:bg-secondary/20 transition-colors h-full rounded-r-full cursor-pointer font-bold text-xl"
-                >
-                  +
-                </button>
+            {/* AMAZON-STYLE PURCHASE BOX CARD */}
+            <div className="bg-white rounded-2xl border-2 border-border/80 p-5 sm:p-6 shadow-md shadow-navy-deep/5 space-y-4">
+              {/* Total Price Header */}
+              <div className="border-b border-border/40 pb-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-navy-deep/60">Total Amount:</span>
+                  <div className="text-right">
+                    <span className="text-2xl font-black text-navy-deep">₹{totalPrice.toLocaleString()}.00</span>
+                    {totalSavings > 0 && (
+                      <p className="text-[11px] font-semibold text-emerald-700">
+                        You save ₹{totalSavings.toLocaleString()}.00 ({discount}%)
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full">
-                {product.stock === 0 ? (
+              {/* Delivery Estimates */}
+              <div className="space-y-2 text-xs sm:text-sm text-navy-deep/90 leading-relaxed">
+                <div>
+                  <span className="font-bold text-primary">FREE delivery </span>
+                  <span className="font-extrabold text-navy-deep">{deliveryDates.freeFormatted}</span>
+                  <span className="text-navy-deep/70"> on orders over ₹499.</span>
+                </div>
+                <div>
+                  <span className="text-navy-deep/70">Or fastest delivery </span>
+                  <span className="font-extrabold text-navy-deep">{deliveryDates.fastestPrefix}, {deliveryDates.fastestFormatted}</span>
+                  <span className="text-navy-deep/70">. Order within </span>
+                  <span className="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 inline-block">
+                    {countdown.hours} hrs {countdown.minutes} mins
+                  </span>
+                </div>
+              </div>
+
+              {/* Delivery Location Reader / Picker */}
+              <div className="flex items-center gap-2 text-xs text-navy-deep/80 pt-1 border-t border-border/30">
+                <MapPin className="h-4 w-4 text-primary shrink-0" />
+                {!isEditingPincode ? (
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span>Deliver to <span className="font-bold text-navy-deep">{userPincode}</span></span>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingPincode(true)}
+                      className="text-primary hover:underline font-semibold cursor-pointer text-[11px]"
+                    >
+                      (Change)
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSavePincode} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={pincodeInput}
+                      onChange={(e) => setPincodeInput(e.target.value.replace(/\D/g, ""))}
+                      placeholder="6-digit PIN"
+                      className="w-24 h-7 px-2 border border-border rounded text-xs focus:ring-1 focus:ring-primary outline-none"
+                      autoFocus
+                    />
+                    <button
+                      type="submit"
+                      className="px-2.5 h-7 bg-primary text-white text-[11px] font-bold rounded hover:bg-primary/90"
+                    >
+                      Apply
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingPincode(false)}
+                      className="text-xs text-navy-deep/50 hover:text-navy-deep"
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                )}
+              </div>
+
+              {/* In Stock / Out of Stock Indicator */}
+              <div className="pt-1">
+                {isOutOfStock ? (
+                  <div className="text-base font-bold text-red-600 flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-red-600 animate-pulse" />
+                    Currently Out of Stock
+                  </div>
+                ) : isLowStock ? (
+                  <div className="text-sm font-bold text-[#b45309] flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-[#b45309]" />
+                    Only {product.stock} left in stock - order soon.
+                  </div>
+                ) : (
+                  <div className="text-base font-bold text-emerald-700 flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    In Stock
+                  </div>
+                )}
+              </div>
+
+              {/* Quantity Selector Dropdown */}
+              {!isOutOfStock && (
+                <div className="flex items-center gap-3 pt-1">
+                  <label htmlFor="pdp-quantity-select" className="text-xs font-bold text-navy-deep uppercase tracking-wider">
+                    Quantity:
+                  </label>
+                  <div className="relative inline-block w-28">
+                    <select
+                      id="pdp-quantity-select"
+                      value={quantity}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      className="w-full h-9 pl-3 pr-8 bg-slate-50 hover:bg-slate-100 border border-border/80 rounded-lg text-xs font-bold text-navy-deep appearance-none cursor-pointer focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                        <option key={num} value={num}>
+                          {num}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="h-3.5 w-3.5 text-navy-deep/50 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
+              )}
+
+              {/* Stacked Action Buttons */}
+              <div className="space-y-2.5 pt-2">
+                {isOutOfStock ? (
                   <button
                     disabled
                     type="button"
-                    className="w-full bg-slate-200 text-slate-500 h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm flex items-center justify-center cursor-not-allowed border border-slate-300 select-none shadow-none"
+                    className="w-full bg-slate-200 text-slate-500 h-12 rounded-full font-bold uppercase tracking-wider text-xs flex items-center justify-center cursor-not-allowed border border-slate-300 select-none shadow-none"
                   >
-                    Out of Stock
+                    Currently Unavailable
                   </button>
                 ) : (
                   <>
+                    {/* Add to Cart (Solid Purple Theme) */}
                     <button
                       type="button"
                       onClick={handleAddToCart}
-                      className="w-full sm:flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-white h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] cursor-pointer"
+                      className="w-full bg-primary hover:bg-primary/95 text-white h-12 rounded-full font-bold uppercase tracking-wider text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-md shadow-primary/20 active:scale-[0.98] cursor-pointer"
                     >
                       <ShoppingBag className="h-4 w-4" /> Add to Cart
                     </button>
 
+                    {/* Buy Now (Warm Amber/Gold Accent) */}
                     <button
                       type="button"
                       onClick={handleBuyDirectly}
-                      className="w-full sm:flex-1 bg-accent hover:bg-accent/95 text-white hover:shadow-[0_8px_30px_rgba(246,166,37,0.3)] h-14 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl active:scale-[0.98] cursor-pointer"
+                      className="w-full bg-accent hover:bg-accent/95 text-white hover:shadow-[0_6px_20px_rgba(246,166,37,0.35)] h-12 rounded-full font-bold uppercase tracking-wider text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-md active:scale-[0.98] cursor-pointer"
                     >
-                      Buy Now
+                      <Zap className="h-4 w-4 fill-white" /> Buy Now
                     </button>
                   </>
                 )}
               </div>
+
+              {/* Ships From / Sold By Trust Metadata */}
+              <div className="border-t border-border/40 pt-3.5 space-y-1 text-xs text-navy-deep/70">
+                <div className="grid grid-cols-3 gap-2 py-0.5">
+                  <span className="text-navy-deep/50 font-medium">Payment</span>
+                  <span className="col-span-2 font-semibold text-navy-deep flex items-center gap-1">
+                    <Lock className="h-3 w-3 text-emerald-600" /> Secure transaction
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 py-0.5">
+                  <span className="text-navy-deep/50 font-medium">Ships from</span>
+                  <span className="col-span-2 font-semibold text-navy-deep">IESVRA Logistics</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 py-0.5">
+                  <span className="text-navy-deep/50 font-medium">Sold by</span>
+                  <span className="col-span-2 font-semibold text-primary">IESVRA Direct</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 py-0.5">
+                  <span className="text-navy-deep/50 font-medium">Returns</span>
+                  <span className="col-span-2 font-semibold text-navy-deep">14-Day Replacement / Return</span>
+                </div>
+              </div>
+
+              {/* Add to Wishlist Button */}
+              <div className="border-t border-border/40 pt-3">
+                <button
+                  type="button"
+                  onClick={handleWishlistToggle}
+                  className={`w-full h-10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer ${
+                    isWishlisted
+                      ? "bg-rose-50 border-rose-300 text-rose-600 hover:bg-rose-100"
+                      : "bg-slate-50 border-border/80 text-navy-deep/80 hover:bg-slate-100 hover:text-navy-deep"
+                  }`}
+                >
+                  <Heart className={`h-4 w-4 ${isWishlisted ? "fill-rose-600 text-rose-600" : "text-navy-deep/60"}`} />
+                  <span>{isWishlisted ? "In Wishlist (Saved)" : "Add to Wishlist"}</span>
+                </button>
+              </div>
             </div>
 
-            {/* Live Social Proof */}
+            {/* Live Social Proof Viewing Count */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <div className="flex items-center gap-1.5 bg-navy-deep/5 border border-navy-deep/10 rounded-full px-3 py-1.5">
                 <span className="relative flex h-1.5 w-1.5">
@@ -349,14 +661,16 @@ function ProductDetails() {
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
                 </span>
                 <Users className="h-3 w-3 text-navy-deep/60" />
-                <span className="text-[10px] font-semibold text-navy-deep/70"><span className="font-bold text-navy-deep">{pdpShopperCount}</span> people viewing this</span>
+                <span className="text-[10px] font-semibold text-navy-deep/70">
+                  <span className="font-bold text-navy-deep">{pdpShopperCount}</span> people viewing this right now
+                </span>
               </div>
-              {pdpIsBeforeCutoff && (
-                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5">
-                  <Clock className="h-3 w-3 text-amber-600" />
-                  <span className="text-[10px] font-semibold text-amber-700">Order before <span className="font-bold">9 PM</span> → Next Day Delivery</span>
-                </div>
-              )}
+            </div>
+
+            {/* Description & Product Overview */}
+            <div className="space-y-3 text-sm text-navy-deep/80 leading-relaxed font-light pt-2">
+              <h3 className="font-bold text-navy-deep uppercase tracking-wider text-xs">About this item</h3>
+              <p className="bg-white/60 p-4 rounded-xl border border-border/40">{product.description}</p>
             </div>
 
             {/* Features strip */}
