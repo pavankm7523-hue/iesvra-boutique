@@ -28,6 +28,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ApiVerifyPaymentRouteImport } from './routes/api/verify-payment'
 import { Route as ApiUsersRouteImport } from './routes/api/users'
+import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as ApiUpdateOrderRouteImport } from './routes/api/update-order'
 import { Route as ApiSendShippedEmailRouteImport } from './routes/api/send-shipped-email'
 import { Route as ApiSendOtpRouteImport } from './routes/api/send-otp'
@@ -152,6 +153,11 @@ const ApiVerifyPaymentRoute = ApiVerifyPaymentRouteImport.update({
 const ApiUsersRoute = ApiUsersRouteImport.update({
   id: '/api/users',
   path: '/api/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUpdateOrderRoute = ApiUpdateOrderRouteImport.update({
@@ -346,6 +352,7 @@ export interface FileRoutesByFullPath {
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
   '/api/update-order': typeof ApiUpdateOrderRoute
+  '/api/upload': typeof ApiUploadRoute
   '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -396,6 +403,7 @@ export interface FileRoutesByTo {
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
   '/api/update-order': typeof ApiUpdateOrderRoute
+  '/api/upload': typeof ApiUploadRoute
   '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -448,6 +456,7 @@ export interface FileRoutesById {
   '/api/send-otp': typeof ApiSendOtpRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
   '/api/update-order': typeof ApiUpdateOrderRoute
+  '/api/upload': typeof ApiUploadRoute
   '/api/users': typeof ApiUsersRoute
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/product/$id': typeof ProductIdRoute
@@ -501,6 +510,7 @@ export interface FileRouteTypes {
     | '/api/send-otp'
     | '/api/send-shipped-email'
     | '/api/update-order'
+    | '/api/upload'
     | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
@@ -551,6 +561,7 @@ export interface FileRouteTypes {
     | '/api/send-otp'
     | '/api/send-shipped-email'
     | '/api/update-order'
+    | '/api/upload'
     | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
@@ -602,6 +613,7 @@ export interface FileRouteTypes {
     | '/api/send-otp'
     | '/api/send-shipped-email'
     | '/api/update-order'
+    | '/api/upload'
     | '/api/users'
     | '/api/verify-payment'
     | '/product/$id'
@@ -650,6 +662,7 @@ export interface RootRouteChildren {
   ApiSendOtpRoute: typeof ApiSendOtpRoute
   ApiSendShippedEmailRoute: typeof ApiSendShippedEmailRoute
   ApiUpdateOrderRoute: typeof ApiUpdateOrderRoute
+  ApiUploadRoute: typeof ApiUploadRoute
   ApiUsersRoute: typeof ApiUsersRoute
   ApiVerifyPaymentRoute: typeof ApiVerifyPaymentRoute
   ProductIdRoute: typeof ProductIdRoute
@@ -791,6 +804,13 @@ declare module '@tanstack/react-router' {
       path: '/api/users'
       fullPath: '/api/users'
       preLoaderRoute: typeof ApiUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/update-order': {
@@ -1065,6 +1085,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSendOtpRoute: ApiSendOtpRoute,
   ApiSendShippedEmailRoute: ApiSendShippedEmailRoute,
   ApiUpdateOrderRoute: ApiUpdateOrderRoute,
+  ApiUploadRoute: ApiUploadRoute,
   ApiUsersRoute: ApiUsersRoute,
   ApiVerifyPaymentRoute: ApiVerifyPaymentRoute,
   ProductIdRoute: ProductIdRoute,

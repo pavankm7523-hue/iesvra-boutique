@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useProducts, categories } from "@/lib/products";
 import { useState, useEffect } from "react";
-import { ArrowLeft, Save } from "lucide-react";
-
+import { ArrowLeft, Save, Plus, Trash2, Layers } from "lucide-react";
+import { toast } from "sonner";
 import { MediaUploader } from "@/components/MediaUploader";
-import type { ProductMedia } from "@/lib/products";
+import type { ProductMedia, ProductVariant } from "@/lib/products";
 
 export const Route = createFileRoute("/admin/product/$id")({
   component: EditProduct,
@@ -30,6 +30,7 @@ function EditProduct() {
   });
 
   const [gallery, setGallery] = useState<ProductMedia[]>([]);
+  const [variants, setVariants] = useState<ProductVariant[]>([]);
 
   useEffect(() => {
     if (product) {
@@ -45,14 +46,43 @@ function EditProduct() {
         isBestSeller: product.isBestSeller || false,
       });
       setGallery(product.gallery || [{ id: "main", type: "image", url: product.image }]);
+      setVariants(product.variants || []);
     }
   }, [product]);
 
   if (!isLoaded) return <div>Loading...</div>;
   if (!product) return <div>Product not found</div>;
 
+  const handleAddVariant = () => {
+    setVariants([
+      ...variants,
+      {
+        id: "var_" + Date.now(),
+        label: "Pack of " + (variants.length + 1) * 5,
+        price: Number(formData.price) || 199,
+        mrp: Number(formData.mrp) || 499,
+        unitPriceText: "",
+      },
+    ]);
+  };
+
+  const handleUpdateVariant = (index: number, field: keyof ProductVariant, value: any) => {
+    const updated = [...variants];
+    updated[index] = { ...updated[index], [field]: value };
+    setVariants(updated);
+  };
+
+  const handleRemoveVariant = (index: number) => {
+    setVariants(variants.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (gallery.length === 0) {
+      toast.error("Please add at least one product image before saving.");
+      return;
+    }
+
     const updatedProduct = {
       ...product,
       name: formData.name,
@@ -62,6 +92,7 @@ function EditProduct() {
       stock: Math.max(0, parseInt(formData.stock, 10) || 0),
       image: gallery.length > 0 ? gallery[0].url : "https://placehold.co/800x800?text=No+Image",
       gallery: gallery,
+      variants: variants.length > 0 ? variants : undefined,
       categories: formData.categories.length > 0 ? formData.categories : ["Uncategorized"],
       colors: formData.colors,
       description: formData.description,
@@ -69,6 +100,7 @@ function EditProduct() {
     };
     
     updateProduct(updatedProduct);
+    toast.success("Product updated successfully!");
     navigate({ to: "/admin" });
   };
 
@@ -154,6 +186,94 @@ function EditProduct() {
             <label className="text-sm font-semibold text-navy-deep">Media (Images & Videos)</label>
             <MediaUploader value={gallery} onChange={setGallery} />
           </div>
+        </div>
+
+        {/* Size / Pack Variants Section */}
+        <div className="space-y-4 pt-4 border-t border-border/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-navy-deep flex items-center gap-2">
+                <Layers className="h-4 w-4 text-gold" /> Size & Pack Options (Amazon-Style Variants)
+              </h3>
+              <p className="text-xs text-navy-deep/60 mt-0.5">
+                Add selectable sizes/packs (e.g. 5, 10, 15, 20, 30, 50, or S, M, L) with custom prices and MRPs.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddVariant}
+              className="inline-flex items-center gap-1.5 bg-secondary/30 hover:bg-gold hover:text-navy-deep text-navy-deep text-xs font-bold px-3.5 py-2 rounded-lg transition-colors cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add Size Option
+            </button>
+          </div>
+
+          {variants.length > 0 && (
+            <div className="space-y-3 bg-[#f8f9fb] p-4 rounded-xl border border-border/60">
+              <div className="grid grid-cols-12 gap-3 text-xs font-bold uppercase tracking-wider text-navy-deep/70 px-1">
+                <span className="col-span-3">Size / Pack Label</span>
+                <span className="col-span-3">Price (₹)</span>
+                <span className="col-span-3">MRP (₹)</span>
+                <span className="col-span-2">Unit Note</span>
+                <span className="col-span-1 text-right">Remove</span>
+              </div>
+
+              {variants.map((variant, idx) => (
+                <div key={variant.id || idx} className="grid grid-cols-12 gap-3 items-center bg-white p-2.5 rounded-lg border border-border/40">
+                  <div className="col-span-3">
+                    <input
+                      type="text"
+                      value={variant.label}
+                      onChange={(e) => handleUpdateVariant(idx, "label", e.target.value)}
+                      placeholder="e.g. 20 or Pack of 20"
+                      className="w-full h-9 px-3 text-xs font-bold text-navy-deep border border-border/60 rounded-md focus:outline-none focus:border-gold"
+                    />
+                  </div>
+                  <div className="col-span-3">
+                    <input
+                      type="number"
+                      min="0"
+                      step="any"
+                      value={variant.price}
+                      onChange={(e) => handleUpdateVariant(idx, "price", parseFloat(e.target.value) || 0)}
+                      placeholder="Price"
+                      className="w-full h-9 px-3 text-xs font-bold text-navy-deep border border-border/60 rounded-md focus:outline-none focus:border-gold"
+                    />
+                  </div>
+                  <div className="col-span-3">
+                    <input
+                      type="number"
+                      min="0"
+                      step="any"
+                      value={variant.mrp || ""}
+                      onChange={(e) => handleUpdateVariant(idx, "mrp", parseFloat(e.target.value) || 0)}
+                      placeholder="MRP"
+                      className="w-full h-9 px-3 text-xs text-navy-deep border border-border/60 rounded-md focus:outline-none focus:border-gold"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <input
+                      type="text"
+                      value={variant.unitPriceText || ""}
+                      onChange={(e) => handleUpdateVariant(idx, "unitPriceText", e.target.value)}
+                      placeholder="e.g. (₹9.05 / count)"
+                      className="w-full h-9 px-2 text-[11px] text-navy-deep/80 border border-border/60 rounded-md focus:outline-none focus:border-gold"
+                    />
+                  </div>
+                  <div className="col-span-1 text-right">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveVariant(idx)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
+                      title="Delete option"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">

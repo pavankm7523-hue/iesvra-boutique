@@ -74,7 +74,6 @@ function AdminHero() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
     setImageExt(".jpg"); // Standardize to jpeg after canvas compression
 
     const reader = new FileReader();
@@ -102,17 +101,20 @@ function AdminHero() {
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = "high";
           ctx.drawImage(img, 0, 0, width, height);
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.82);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.85);
           setImageData(compressedDataUrl);
           setPreviewImage(compressedDataUrl);
+          setBackgroundImageUrl(""); // Clear old static url so new upload takes precedence
         } else {
           setImageData(rawDataUrl);
           setPreviewImage(rawDataUrl);
+          setBackgroundImageUrl("");
         }
       };
       img.onerror = () => {
         setImageData(rawDataUrl);
         setPreviewImage(rawDataUrl);
+        setBackgroundImageUrl("");
       };
       img.src = rawDataUrl;
     };
@@ -120,7 +122,7 @@ function AdminHero() {
   };
 
   const handleSave = () => {
-    const finalBgImage = backgroundImageUrl || previewImage || imageData || "/hero-banner-original.png";
+    const finalBgImage = imageData || previewImage || backgroundImageUrl || "/hero-banner-original.png";
     let formattedSaleEndDate: string | undefined = undefined;
     if (isSpecialSale && saleEndDate) {
       try {

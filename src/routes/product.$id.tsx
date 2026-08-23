@@ -440,8 +440,8 @@ function ProductDetails() {
   }, [product.gallery, product.image]);
 
   const activeVariant = product.variants?.[selectedVariantIndex];
-  const currentPrice = activeVariant ? activeVariant.price : product.price;
-  const currentMrp = activeVariant ? activeVariant.mrp : product.mrp;
+  const currentPrice = (activeVariant && typeof activeVariant.price === "number") ? activeVariant.price : product.price;
+  const currentMrp = (activeVariant && typeof activeVariant.mrp === "number") ? activeVariant.mrp : product.mrp;
   const discount = currentMrp > 0 ? Math.round(((currentMrp - currentPrice) / currentMrp) * 100) : 0;
   const totalPrice = currentPrice * quantity;
   const totalSavings = (currentMrp - currentPrice) * quantity;
@@ -675,27 +675,60 @@ function ProductDetails() {
               </p>
             </div>
 
-            {/* Variant Selector */}
+            {/* Amazon-Style Size / Pack Variant Selector */}
             {product.variants && product.variants.length > 0 && (
-              <div className="space-y-2.5 pt-1">
-                <h3 className="font-bold text-navy-deep uppercase tracking-wider text-xs">
-                  Select Pack Size / Option
-                </h3>
-                <div className="flex flex-wrap gap-2.5">
-                  {product.variants.map((variant, idx) => (
-                    <button
-                      key={variant.label || idx}
-                      type="button"
-                      onClick={() => setSelectedVariantIndex(idx)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border cursor-pointer ${
-                        selectedVariantIndex === idx
-                          ? "bg-navy-deep text-white border-navy-deep shadow-md"
-                          : "bg-white text-navy-deep/80 border-border/70 hover:border-navy-deep/40 hover:bg-slate-50"
-                      }`}
-                    >
-                      {variant.label} — ₹{variant.price}
-                    </button>
-                  ))}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="font-medium text-navy-deep/70">Size:</span>
+                  <span className="font-bold text-navy-deep text-base">
+                    {activeVariant ? activeVariant.label : product.variants[0]?.label}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {product.variants.map((variant, idx) => {
+                    const isSelected = selectedVariantIndex === idx;
+                    const countMatch = variant.label.match(/\d+/);
+                    const count = countMatch ? parseInt(countMatch[0], 10) : null;
+                    const perCountText = variant.unitPriceText || (count ? `(₹${(variant.price / count).toFixed(2)} / count)` : null);
+
+                    return (
+                      <button
+                        key={variant.label || idx}
+                        type="button"
+                        onClick={() => setSelectedVariantIndex(idx)}
+                        className={`relative p-3 rounded-lg border-2 text-left cursor-pointer transition-all duration-150 flex flex-col justify-between min-h-[96px] ${
+                          isSelected
+                            ? "border-[#007185] bg-[#f0f8ff] ring-1 ring-[#007185] shadow-sm"
+                            : "border-gray-300 hover:border-gray-600 bg-white"
+                        }`}
+                      >
+                        {/* Top: Size / Pack Label */}
+                        <div className="font-bold text-sm text-navy-deep leading-tight">
+                          {variant.label}
+                        </div>
+
+                        {/* Middle: Current Price */}
+                        <div className="text-sm font-semibold text-navy-deep mt-1">
+                          ₹{Number(variant.price).toLocaleString(undefined, { minimumFractionDigits: Number.isInteger(variant.price) ? 0 : 2 })}
+                        </div>
+
+                        {/* Subtitle: (₹X.XX / count) */}
+                        {perCountText && (
+                          <div className="text-[11px] text-gray-500 leading-tight mt-0.5">
+                            {perCountText}
+                          </div>
+                        )}
+
+                        {/* Strikethrough MRP */}
+                        {variant.mrp && variant.mrp > variant.price && (
+                          <div className="text-xs text-gray-400 line-through mt-0.5">
+                            ₹{Number(variant.mrp).toLocaleString(undefined, { minimumFractionDigits: Number.isInteger(variant.mrp) ? 0 : 2 })}
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}

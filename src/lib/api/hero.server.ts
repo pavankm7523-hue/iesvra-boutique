@@ -122,21 +122,39 @@ export const addHeroBanner = createServerFn({ method: "POST" })
     let { settings, imageData, imageExt } = data || {};
     if (!settings) settings = {};
 
-    if (imageData && imageExt) {
-      try {
-        const uploadsDir = path.join(process.cwd(), "public", "uploads");
-        await fs.mkdir(uploadsDir, { recursive: true });
-        const fileName = `hero-banner-${Date.now()}${imageExt}`;
-        const filePath = path.join(uploadsDir, fileName);
-        const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
-        await fs.writeFile(filePath, base64Data, 'base64');
-        settings.backgroundImageUrl = `/uploads/${fileName}`;
-      } catch (e) {
-        console.warn("[hero.server] Disk write failed, using base64 Data URL fallback:", e);
+    if (imageData) {
+      if (imageData.startsWith("data:")) {
+        try {
+          const { url, key } = getSupabaseConfig();
+          const base64Data = imageData.replace(/^data:[^;]+;base64,/, "");
+          const buffer = Buffer.from(base64Data, "base64");
+          const ext = imageExt || ".jpg";
+          const fileName = `hero_${Date.now()}_${Math.random().toString(36).substring(2, 7)}${ext}`;
+          
+          const uploadRes = await fetch(`${url}/storage/v1/object/iesvra-media/${fileName}`, {
+            method: "POST",
+            headers: {
+              apikey: key,
+              Authorization: `Bearer ${key}`,
+              "Content-Type": ext === ".png" ? "image/png" : "image/jpeg",
+              "x-upsert": "true"
+            },
+            body: buffer
+          });
+
+          if (uploadRes.ok) {
+            settings.backgroundImageUrl = `${url}/storage/v1/object/public/iesvra-media/${fileName}`;
+          } else {
+            console.error("[hero.server] Supabase Storage upload failed, fallback to imageData");
+            settings.backgroundImageUrl = imageData;
+          }
+        } catch (e) {
+          console.warn("[hero.server] Supabase Storage error:", e);
+          settings.backgroundImageUrl = imageData;
+        }
+      } else {
         settings.backgroundImageUrl = imageData;
       }
-    } else if (!settings.backgroundImageUrl && imageData) {
-      settings.backgroundImageUrl = imageData;
     }
 
     if (!settings.backgroundImageUrl) {
@@ -162,6 +180,15 @@ export const addHeroBanner = createServerFn({ method: "POST" })
     return banners;
   });
 
+function getSupabaseConfig() {
+  const url = (process.env.SUPABASE_URL || "").trim();
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
+  if (!url || !key) {
+    throw new Error("Supabase credentials missing.");
+  }
+  return { url, key };
+}
+
 export const updateHeroBanner = createServerFn({ method: "POST" })
   .validator((data: any) => data)
   .handler(async ({ data }) => {
@@ -172,21 +199,39 @@ export const updateHeroBanner = createServerFn({ method: "POST" })
     const index = banners.findIndex(b => b.id === id);
     if (index === -1) throw new Error("Banner not found");
     
-    if (imageData && imageExt) {
-      try {
-        const uploadsDir = path.join(process.cwd(), "public", "uploads");
-        await fs.mkdir(uploadsDir, { recursive: true });
-        const fileName = `hero-banner-${Date.now()}${imageExt}`;
-        const filePath = path.join(uploadsDir, fileName);
-        const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
-        await fs.writeFile(filePath, base64Data, 'base64');
-        settings.backgroundImageUrl = `/uploads/${fileName}`;
-      } catch (e) {
-        console.warn("[hero.server] Disk write failed, using base64 Data URL fallback:", e);
+    if (imageData) {
+      if (imageData.startsWith("data:")) {
+        try {
+          const { url, key } = getSupabaseConfig();
+          const base64Data = imageData.replace(/^data:[^;]+;base64,/, "");
+          const buffer = Buffer.from(base64Data, "base64");
+          const ext = imageExt || ".jpg";
+          const fileName = `hero_${Date.now()}_${Math.random().toString(36).substring(2, 7)}${ext}`;
+          
+          const uploadRes = await fetch(`${url}/storage/v1/object/iesvra-media/${fileName}`, {
+            method: "POST",
+            headers: {
+              apikey: key,
+              Authorization: `Bearer ${key}`,
+              "Content-Type": ext === ".png" ? "image/png" : "image/jpeg",
+              "x-upsert": "true"
+            },
+            body: buffer
+          });
+
+          if (uploadRes.ok) {
+            settings.backgroundImageUrl = `${url}/storage/v1/object/public/iesvra-media/${fileName}`;
+          } else {
+            console.error("[hero.server] Supabase Storage upload failed in update, fallback to imageData");
+            settings.backgroundImageUrl = imageData;
+          }
+        } catch (e) {
+          console.warn("[hero.server] Supabase Storage error in update:", e);
+          settings.backgroundImageUrl = imageData;
+        }
+      } else {
         settings.backgroundImageUrl = imageData;
       }
-    } else if (!settings.backgroundImageUrl && imageData) {
-      settings.backgroundImageUrl = imageData;
     }
 
     if (!settings.backgroundImageUrl) {

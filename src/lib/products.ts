@@ -22,6 +22,16 @@ export type Review = {
   date: string;
 };
 
+export type ProductVariant = {
+  id?: string;
+  label: string; // e.g. "5", "10", "15", "20", "30", "50", "Pack of 20", "Large"
+  price: number;
+  mrp?: number;
+  unitPriceText?: string; // e.g. "(₹9.05 / count)"
+  image?: string;
+  inStock?: boolean;
+};
+
 export type Product = {
   id: string;
   asin?: string;
@@ -44,6 +54,7 @@ export type Product = {
   type?: string;
   stock?: number;
   boughtInPastMonth?: number;
+  variants?: ProductVariant[];
 };
 
 export const colorMap: Record<string, string> = {
@@ -102,7 +113,7 @@ export const initialCategories: Category[] = [
   { name: "Drinkware", image: pSteel },
   { name: "Daily Essentials", image: pDish },
   { name: "Fans & Coolers", image: pFan },
-  { name: "Books & Stationery", image: pJar },
+  { name: "Books & Stationery", image: "/products/books/ncert_pcm_set_full_edited_26-27.png" },
 ];
 
 const categoryImageMap: Record<string, string> = {
@@ -114,7 +125,7 @@ const categoryImageMap: Record<string, string> = {
   "Drinkware": pSteel,
   "Daily Essentials": pDish,
   "Fans & Coolers": pFan,
-  "Books & Stationery": pJar,
+  "Books & Stationery": "/products/books/ncert_pcm_set_full_edited_26-27.png",
 };
 
 export function sanitizeCategories(cats: Category[]): Category[] {
@@ -249,6 +260,11 @@ export const initialProducts: Product[] = [
     "description": "Imported premium product for all your household organization needs. Organize drawers, cosmetics, or tools.",
     "isBestSeller": true,
     "boughtInPastMonth": 6000,
+    "variants": [
+      { "label": "Pack of 1", "price": 89, "mrp": 599, "unitPriceText": "(₹89.00 / count)" },
+      { "label": "Pack of 2", "price": 169, "mrp": 1199, "unitPriceText": "(₹84.50 / count)" },
+      { "label": "Pack of 4", "price": 319, "mrp": 2399, "unitPriceText": "(₹79.75 / count)" }
+    ],
     "reviews": [
       {
         "id": "rev_1_1",
@@ -351,7 +367,11 @@ export const initialProducts: Product[] = [
         "date": "2026-05-15"
       }
     ],
-    "boughtInPastMonth": 1000
+    "boughtInPastMonth": 1000,
+    "variants": [
+      { "label": "Single Set (3 Pcs)", "price": 499, "mrp": 1499, "unitPriceText": "(₹166.33 / bottle)" },
+      { "label": "Twin Set (6 Pcs)", "price": 899, "mrp": 2999, "unitPriceText": "(₹149.83 / bottle)" }
+    ]
   },
   {
     "id": "prod_drive_3",
@@ -1445,7 +1465,15 @@ export const initialProducts: Product[] = [
     "reviewsCount": 83,
     "status": "success",
     "url": "https://www.amazon.in/dp/B0FT3SHG1X",
-    "boughtInPastMonth": 1000
+    "boughtInPastMonth": 1000,
+    "variants": [
+      { "label": "5", "price": 114.99, "mrp": 299, "unitPriceText": "(₹23.00 / count)" },
+      { "label": "10", "price": 143.00, "mrp": 399, "unitPriceText": "(₹14.30 / count)" },
+      { "label": "15", "price": 160.99, "mrp": 499, "unitPriceText": "(₹10.73 / count)" },
+      { "label": "20", "price": 180.99, "mrp": 499, "unitPriceText": "(₹9.05 / count)" },
+      { "label": "30", "price": 229.00, "mrp": 799, "unitPriceText": "(₹7.63 / count)" },
+      { "label": "50", "price": 298.99, "mrp": 999, "unitPriceText": "(₹5.98 / count)" }
+    ]
   },
   {
     "asin": "B0FT3TBXHK",
@@ -3842,6 +3870,441 @@ export const initialProducts: Product[] = [
     "status": "success",
     "url": "https://www.amazon.in/dp/B0GKVWDYSM",
     "boughtInPastMonth": 500
+  },
+  {
+    "id": "prod_ncert_pcmb_11",
+    "name": "NCERT PCMB Class 11 Complete Textbook Set (Session 2026-27)",
+    "sub": "Physics (Part 1 & 2), Chemistry (Part 1 & 2), Mathematics, Biology | CBSE Class 11 Set",
+    "price": 1199,
+    "mrp": 1499,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/ncert_pcmb_11th_set_full_edited_26-27_(1).png",
+    "gallery": [
+      {
+        "id": "med_ncert_pcmb_11_1",
+        "type": "image",
+        "url": "/products/books/ncert_pcmb_11th_set_full_edited_26-27_(1).png"
+      },
+      {
+        "id": "med_ncert_pcmb_11_2",
+        "type": "image",
+        "url": "/products/books/pcme_class_11th_set_book.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Comprehensive NCERT textbook combo pack for Class 11 Science stream (PCMB). Includes Physics (Part 1 & 2), Chemistry (Part 1 & 2), Mathematics, and Biology. Fully updated as per the latest CBSE rationalized curriculum 2026-2027.",
+    "isBestSeller": true,
+    "rating": 4.9,
+    "reviewsCount": 38,
+    "boughtInPastMonth": 1200,
+    "stock": 50
+  },
+  {
+    "id": "prod_ncert_pcm_11",
+    "name": "NCERT PCM Class 11 Complete Textbook Set (Session 2026-27)",
+    "sub": "Physics (Part 1 & 2), Chemistry (Part 1 & 2), Mathematics | CBSE Class 11 Set",
+    "price": 999,
+    "mrp": 1299,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/ncert_pcm_set_full_edited_26-27.png",
+    "gallery": [
+      {
+        "id": "med_ncert_pcm_11_1",
+        "type": "image",
+        "url": "/products/books/ncert_pcm_set_full_edited_26-27.png"
+      },
+      {
+        "id": "med_ncert_pcm_11_2",
+        "type": "image",
+        "url": "/products/books/ncert_pcm_set_full_edited_26-27_(1).png"
+      },
+      {
+        "id": "med_ncert_pcm_11_3",
+        "type": "image",
+        "url": "/products/books/ncert_pcm_set_full_edited_26-27_(2).png"
+      },
+      {
+        "id": "med_ncert_pcm_11_4",
+        "type": "image",
+        "url": "/products/books/pcm_set_11_and_12th.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Complete NCERT textbook set for CBSE Class 11 PCM students. Contains latest editions of Physics Parts 1 & 2, Chemistry Parts 1 & 2, and Mathematics textbook.",
+    "isBestSeller": true,
+    "rating": 4.8,
+    "reviewsCount": 42,
+    "boughtInPastMonth": 950,
+    "stock": 60
+  },
+  {
+    "id": "prod_ncert_pcm_12",
+    "name": "NCERT PCM Class 12 Complete Textbook Set",
+    "sub": "Physics (Part 1 & 2), Chemistry (Part 1 & 2), Mathematics (Part 1 & 2) | CBSE Class 12",
+    "price": 1049,
+    "mrp": 1399,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/ncert_pcm_class_12th.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_pcm_12_1",
+        "type": "image",
+        "url": "/products/books/ncert_pcm_class_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_pcm_12_2",
+        "type": "image",
+        "url": "/products/books/pcm_class_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_pcm_12_3",
+        "type": "image",
+        "url": "/products/books/pcm_set_11_and_12th.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Essential NCERT combo bundle for CBSE Class 12 PCM students. Includes standard textbooks for Physics Parts 1 & 2, Chemistry Parts 1 & 2, and Mathematics Parts 1 & 2.",
+    "isBestSeller": true,
+    "rating": 4.9,
+    "reviewsCount": 65,
+    "boughtInPastMonth": 1400,
+    "stock": 75
+  },
+  {
+    "id": "prod_ncert_pcb_11_12_combo",
+    "name": "NCERT PCB Class 11 & 12 Mega Combo Set",
+    "sub": "Complete Physics, Chemistry & Biology Textbooks for NEET & CBSE Class 11 & 12",
+    "price": 1899,
+    "mrp": 2499,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/pcb_class_11_and_12_combo.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_pcb_combo_1",
+        "type": "image",
+        "url": "/products/books/pcb_class_11_and_12_combo.jpeg"
+      },
+      {
+        "id": "med_ncert_pcb_combo_2",
+        "type": "image",
+        "url": "/products/books/pcb_11_and_12_combo.jpeg"
+      },
+      {
+        "id": "med_ncert_pcb_combo_3",
+        "type": "image",
+        "url": "/products/books/pcb_class_11_and_12th_combo.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "All-in-one comprehensive NCERT PCB master collection covering Class 11 and Class 12 Physics, Chemistry, and Biology. Perfect for CBSE Board exams and NEET preparation.",
+    "isBestSeller": true,
+    "rating": 5,
+    "reviewsCount": 89,
+    "boughtInPastMonth": 2100,
+    "stock": 40
+  },
+  {
+    "id": "prod_ncert_pcb_12",
+    "name": "NCERT PCB Class 12 Complete Textbook Set",
+    "sub": "Physics (Part 1 & 2), Chemistry (Part 1 & 2), Biology | CBSE Class 12 & NEET",
+    "price": 999,
+    "mrp": 1299,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/ncert_pcb_class_12th.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_pcb_12_1",
+        "type": "image",
+        "url": "/products/books/ncert_pcb_class_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_pcb_12_2",
+        "type": "image",
+        "url": "/products/books/ncert_pcb_class_12_set.jpeg"
+      },
+      {
+        "id": "med_ncert_pcb_12_3",
+        "type": "image",
+        "url": "/products/books/ncert_pcb_class_12th_with_phone_no_remove.jpeg"
+      },
+      {
+        "id": "med_ncert_pcb_12_4",
+        "type": "image",
+        "url": "/products/books/pcb_class_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_pcb_12_5",
+        "type": "image",
+        "url": "/products/books/pcb_class_12th.jpg.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Full NCERT PCB textbook set for Class 12 students. Includes Physics Parts 1 & 2, Chemistry Parts 1 & 2, and Biology. Highly recommended for CBSE Boards and NEET UG.",
+    "isBestSeller": false,
+    "rating": 4.8,
+    "reviewsCount": 52,
+    "boughtInPastMonth": 880,
+    "stock": 55
+  },
+  {
+    "id": "prod_ncert_pcmb_12",
+    "name": "NCERT PCMB Class 12 Complete Textbook Set",
+    "sub": "Physics (1 & 2), Chemistry (1 & 2), Mathematics (1 & 2), Biology | CBSE Class 12",
+    "price": 1249,
+    "mrp": 1599,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/pcmb_class_12th_set.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_pcmb_12_1",
+        "type": "image",
+        "url": "/products/books/pcmb_class_12th_set.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Complete PCMB bundle for Class 12 CBSE students studying both Mathematics and Biology along with Physics and Chemistry.",
+    "isBestSeller": false,
+    "rating": 4.7,
+    "reviewsCount": 29,
+    "boughtInPastMonth": 420,
+    "stock": 35
+  },
+  {
+    "id": "prod_ncert_pcmbe_12",
+    "name": "NCERT PCMBE Class 12 Complete Set with English Core",
+    "sub": "Physics, Chemistry, Mathematics, Biology & English (Flamingo & Vistas) | CBSE Class 12",
+    "price": 1399,
+    "mrp": 1799,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/ncert_pcmbe_class_12th.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_pcmbe_12_1",
+        "type": "image",
+        "url": "/products/books/ncert_pcmbe_class_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_pcmbe_12_2",
+        "type": "image",
+        "url": "/products/books/ncert_pcmbe_class_12th_(1).jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Complete 5-subject PCMBE textbook package for Class 12 CBSE board exams including Physics, Chemistry, Maths, Biology, and English textbooks.",
+    "isBestSeller": false,
+    "rating": 4.9,
+    "reviewsCount": 31,
+    "boughtInPastMonth": 390,
+    "stock": 30
+  },
+  {
+    "id": "prod_ncert_pcme_12",
+    "name": "NCERT PCME Class 12 Complete Set with English Core",
+    "sub": "Physics (1 & 2), Chemistry (1 & 2), Mathematics (1 & 2) & English Core | CBSE Class 12",
+    "price": 1199,
+    "mrp": 1499,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/ncert_pcme_class_12th.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_pcme_12_1",
+        "type": "image",
+        "url": "/products/books/ncert_pcme_class_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_pcme_12_2",
+        "type": "image",
+        "url": "/products/books/pcme_class_12th_set.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Comprehensive PCME package for CBSE Class 12 non-medical students including Physics, Chemistry, Mathematics, and English Core textbooks.",
+    "isBestSeller": false,
+    "rating": 4.8,
+    "reviewsCount": 24,
+    "boughtInPastMonth": 310,
+    "stock": 45
+  },
+  {
+    "id": "prod_ncert_pcme_11",
+    "name": "NCERT PCME Class 11 Complete Set with English",
+    "sub": "Physics (1 & 2), Chemistry (1 & 2), Mathematics & English Core | CBSE Class 11",
+    "price": 1099,
+    "mrp": 1399,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/pcme_class_11th_set_book.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_pcme_11_1",
+        "type": "image",
+        "url": "/products/books/pcme_class_11th_set_book.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Complete PCME combo textbook pack for CBSE Class 11 students with Physics, Chemistry, Mathematics, and English.",
+    "isBestSeller": false,
+    "rating": 4.7,
+    "reviewsCount": 19,
+    "boughtInPastMonth": 280,
+    "stock": 40
+  },
+  {
+    "id": "prod_ncert_chemistry_11_12_combo",
+    "name": "NCERT Chemistry Class 11 & 12 Complete Combo Set (4 Books)",
+    "sub": "Class 11 Chemistry (Part 1 & 2) + Class 12 Chemistry (Part 1 & 2) | Latest 2026-27 Edition",
+    "price": 749,
+    "mrp": 999,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/ncert_chemistry_1&2_11_&_12_set_full_edited_26-27.jpg.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_chem_combo_1",
+        "type": "image",
+        "url": "/products/books/ncert_chemistry_1&2_11_&_12_set_full_edited_26-27.jpg.jpeg"
+      },
+      {
+        "id": "med_ncert_chem_combo_2",
+        "type": "image",
+        "url": "/products/books/ncert_chemistry_1&2_11_&_12_set_full_edited_26-27_(1).jpg.jpeg"
+      },
+      {
+        "id": "med_ncert_chem_combo_3",
+        "type": "image",
+        "url": "/products/books/chemistry_11_and_12.jpeg"
+      },
+      {
+        "id": "med_ncert_chem_combo_4",
+        "type": "image",
+        "url": "/products/books/chemistry_11_and_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_chem_combo_5",
+        "type": "image",
+        "url": "/products/books/ncert_chemistry_1&2_set_full_edited_26-27.png"
+      },
+      {
+        "id": "med_ncert_chem_combo_6",
+        "type": "image",
+        "url": "/products/books/ncert_chemistry_1&2_set_full_edited_26-27.jpg.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Full 4-book Chemistry set for Class 11 & 12 CBSE & NEET aspirants. Includes Class 11 (Part 1 & 2) and Class 12 (Part 1 & 2) Chemistry textbooks.",
+    "isBestSeller": true,
+    "rating": 4.9,
+    "reviewsCount": 77,
+    "boughtInPastMonth": 1600,
+    "stock": 80
+  },
+  {
+    "id": "prod_ncert_chemistry_12",
+    "name": "NCERT Chemistry Class 12 Textbook Set (Part 1 & Part 2)",
+    "sub": "Official NCERT Chemistry Textbooks for CBSE Class 12 Board Exam & NEET",
+    "price": 399,
+    "mrp": 550,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/chemistry_12th.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_chem_12_1",
+        "type": "image",
+        "url": "/products/books/chemistry_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_chem_12_2",
+        "type": "image",
+        "url": "/products/books/ncert_chemistry_1&2_set_full_edited_26-27.png"
+      }
+    ],
+    "colors": [],
+    "description": "Official NCERT Class 12 Chemistry Part 1 & Part 2 textbooks. Essential for CBSE Class 12 Chemistry preparation and competitive entrance exams.",
+    "isBestSeller": false,
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "boughtInPastMonth": 650,
+    "stock": 70
+  },
+  {
+    "id": "prod_ncert_physics_11_12_combo",
+    "name": "NCERT Physics Class 11 & 12 Complete Combo Set (4 Books)",
+    "sub": "Class 11 Physics (Part 1 & 2) + Class 12 Physics (Part 1 & 2) | Latest 2026-27 Edition",
+    "price": 799,
+    "mrp": 1050,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/ncert_physics_1&2_11_&_12_set_full_edited_26-27.png",
+    "gallery": [
+      {
+        "id": "med_ncert_phy_combo_1",
+        "type": "image",
+        "url": "/products/books/ncert_physics_1&2_11_&_12_set_full_edited_26-27.png"
+      },
+      {
+        "id": "med_ncert_phy_combo_2",
+        "type": "image",
+        "url": "/products/books/physics_class_12th.jpeg"
+      }
+    ],
+    "colors": [],
+    "description": "Complete 4-book Physics package containing Class 11 Physics Parts 1 & 2 and Class 12 Physics Parts 1 & 2 for CBSE Boards, JEE Main, and NEET.",
+    "isBestSeller": true,
+    "rating": 4.9,
+    "reviewsCount": 62,
+    "boughtInPastMonth": 1350,
+    "stock": 65
+  },
+  {
+    "id": "prod_ncert_physics_12",
+    "name": "NCERT Physics Class 12 Textbook Set (Part 1 & Part 2)",
+    "sub": "Official NCERT Physics Textbooks for CBSE Class 12 Board Exam, JEE & NEET",
+    "price": 429,
+    "mrp": 580,
+    "categories": [
+      "Books & Stationery"
+    ],
+    "image": "/products/books/physics_class_12th.jpeg",
+    "gallery": [
+      {
+        "id": "med_ncert_phy_12_1",
+        "type": "image",
+        "url": "/products/books/physics_class_12th.jpeg"
+      },
+      {
+        "id": "med_ncert_phy_12_2",
+        "type": "image",
+        "url": "/products/books/ncert_physics_1&2_11_&_12_set_full_edited_26-27.png"
+      }
+    ],
+    "colors": [],
+    "description": "Official NCERT Class 12 Physics Part 1 & Part 2 textbooks for CBSE Class 12 Board examination and national entrance tests.",
+    "isBestSeller": false,
+    "rating": 4.8,
+    "reviewsCount": 41,
+    "boughtInPastMonth": 590,
+    "stock": 90
   }
 ];
 
@@ -3851,11 +4314,19 @@ function triggerProductsChange() {
   }
 }
 
+function safeSetLocalProducts(key: string, data: any) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    console.warn("[products] localStorage write failed or quota exceeded:", e);
+  }
+}
+
 export function useProducts() {
-  // Initialize with local cache or fallback immediately so 0ms delay on render
   const [products, setProducts] = useState<Product[]>(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("ishvara_products_v11");
+      const stored = localStorage.getItem("ishvara_products_v12");
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
@@ -3872,7 +4343,6 @@ export function useProducts() {
   const [isLoaded, setIsLoaded] = useState(true);
 
   useEffect(() => {
-    // Fetch globally in background to sync latest prices/stock
     fetch("/api/products")
       .then((res) => res.json())
       .then((globalList) => {
@@ -3882,9 +4352,8 @@ export function useProducts() {
             stock: typeof p.stock === "number" ? p.stock : 50,
           }));
           setProducts(normalizedGlobal);
-          localStorage.setItem("ishvara_products_v11", JSON.stringify(normalizedGlobal));
+          safeSetLocalProducts("ishvara_products_v12", normalizedGlobal);
         } else {
-          // If first run (no global data), initialize global list with initial products
           fetch("/api/products", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -3899,7 +4368,7 @@ export function useProducts() {
       });
 
     const handleUpdate = () => {
-      const latest = localStorage.getItem("ishvara_products_v11");
+      const latest = localStorage.getItem("ishvara_products_v12");
       if (latest) {
         try { setProducts(JSON.parse(latest)); } catch {}
       }
@@ -3913,10 +4382,9 @@ export function useProducts() {
   const addProduct = (p: Product) => {
     const updated = [p, ...products];
     setProducts(updated);
-    localStorage.setItem("ishvara_products_v11", JSON.stringify(updated));
+    safeSetLocalProducts("ishvara_products_v12", updated);
     triggerProductsChange();
     
-    // Save to global DB
     fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -3927,10 +4395,9 @@ export function useProducts() {
   const updateProduct = (p: Product) => {
     const updated = products.map((prod) => (prod.id === p.id ? p : prod));
     setProducts(updated);
-    localStorage.setItem("ishvara_products_v11", JSON.stringify(updated));
+    safeSetLocalProducts("ishvara_products_v12", updated);
     triggerProductsChange();
 
-    // Save to global DB
     fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -3944,10 +4411,9 @@ export function useProducts() {
       current = current.map((prod) => (prod.id === p.id ? p : prod));
     }
     setProducts(current);
-    localStorage.setItem("ishvara_products_v11", JSON.stringify(current));
+    safeSetLocalProducts("ishvara_products_v12", current);
     triggerProductsChange();
 
-    // Save to global DB
     fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -3958,10 +4424,9 @@ export function useProducts() {
   const deleteProduct = (id: string) => {
     const updated = products.filter((prod) => prod.id !== id);
     setProducts(updated);
-    localStorage.setItem("ishvara_products_v11", JSON.stringify(updated));
+    safeSetLocalProducts("ishvara_products_v12", updated);
     triggerProductsChange();
 
-    // Save to global DB
     fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -3985,4 +4450,3 @@ export function useProducts() {
     newArrivalsList: products.slice(12, 16),
   };
 }
-
