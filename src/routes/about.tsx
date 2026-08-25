@@ -3,7 +3,18 @@ import { Sparkles, Heart, ShieldCheck, Gem } from "lucide-react";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
-    meta: [{ title: "About Us - IESVRA" }],
+    meta: [
+      { title: "About Us & Our Story | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Learn about IESVRA's journey, our commitment to accessible luxury, high quality standards, and curated everyday essentials.",
+      },
+      { property: "og:title", content: "About Us & Our Story | IESVRA Boutique" },
+      {
+        property: "og:description",
+        content: "Learn about IESVRA's journey, our commitment to accessible luxury, high quality standards, and curated everyday essentials.",
+      },
+    ],
   }),
   component: About,
 });

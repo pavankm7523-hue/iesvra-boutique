@@ -28,11 +28,40 @@ export const Route = createFileRoute("/api/reverse-geocode")({
           });
 
           if (!res.ok) {
-            const errorText = await res.text();
-            console.error("[api-reverse-geocode] Ola Maps Reverse Geocode error:", res.status, errorText);
+            console.warn("[api-reverse-geocode] Ola Maps Reverse Geocode failed, falling back to Nominatim OSM:", res.status);
+            const nominatimRes = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en&addressdetails=1`,
+              {
+                headers: {
+                  "User-Agent": "IeswaraBoutique/1.0 (contact@iesvra.com)",
+                  "Accept-Language": "en"
+                }
+              }
+            );
+            if (nominatimRes.ok) {
+              const osmData = await nominatimRes.json();
+              return new Response(
+                JSON.stringify({
+                  results: [
+                    {
+                      formatted_address: osmData.display_name,
+                      address_components: osmData.address,
+                    }
+                  ]
+                }),
+                {
+                  status: 200,
+                  headers: { 
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*"
+                  },
+                }
+              );
+            }
+
             return new Response(JSON.stringify({ results: [] }), {
               status: 200,
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
             });
           }
 
@@ -45,10 +74,46 @@ export const Route = createFileRoute("/api/reverse-geocode")({
             },
           });
         } catch (error: any) {
-          console.error("[api-reverse-geocode] Unexpected error:", error);
+          console.error("[api-reverse-geocode] Unexpected error, trying Nominatim:", error);
+          try {
+            const urlObj = new URL(request.url);
+            const lat = urlObj.searchParams.get("lat") || "";
+            const lng = urlObj.searchParams.get("lng") || "";
+            if (lat && lng) {
+              const nominatimRes = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en&addressdetails=1`,
+                {
+                  headers: {
+                    "User-Agent": "IeswaraBoutique/1.0 (contact@iesvra.com)",
+                    "Accept-Language": "en"
+                  }
+                }
+              );
+              if (nominatimRes.ok) {
+                const osmData = await nominatimRes.json();
+                return new Response(
+                  JSON.stringify({
+                    results: [
+                      {
+                        formatted_address: osmData.display_name,
+                        address_components: osmData.address,
+                      }
+                    ]
+                  }),
+                  {
+                    status: 200,
+                    headers: { 
+                      "Content-Type": "application/json",
+                      "Access-Control-Allow-Origin": "*"
+                    },
+                  }
+                );
+              }
+            }
+          } catch {}
           return new Response(JSON.stringify({ results: [] }), {
             status: 200,
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
           });
         }
       },

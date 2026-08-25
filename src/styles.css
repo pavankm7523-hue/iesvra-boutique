@@ -67,14 +67,23 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    box-sizing: border-box;
   }
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
   }
   h1,
   h2,

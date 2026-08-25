@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
-    meta: [{ title: "Terms & Conditions - IESVRA" }],
+    meta: [
+      { title: "Terms & Conditions | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Read the official terms and conditions for purchasing, payments, intellectual property, and warranties at IESVRA Boutique.",
+      },
+      { property: "og:title", content: "Terms & Conditions | IESVRA Boutique" },
+    ],
   }),
   component: Terms,
 });

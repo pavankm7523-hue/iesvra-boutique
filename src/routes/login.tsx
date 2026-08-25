@@ -7,7 +7,11 @@ import { Check, X, Shield, Lock, Eye, EyeOff, ArrowLeft, KeyRound } from "lucide
 
 export const Route = createFileRoute("/login")({
   head: () => ({
-    meta: [{ title: "Login - IESVRA" }],
+    meta: [
+      { title: "Account Login & Sign Up | IESVRA Boutique" },
+      { name: "description", content: "Sign in or create a new account with IESVRA to track orders, save your wishlist, and enjoy express deliveries." },
+      { property: "og:title", content: "Account Login & Sign Up | IESVRA Boutique" },
+    ],
   }),
   component: Login,
 });
@@ -64,7 +68,7 @@ function Login() {
     if (socialProvider !== "Google") return;
 
     const initGoogleBtn = () => {
-      const client_id = (window as any).GOOGLE_CLIENT_ID || "825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com";
+      const client_id = (window as any).GOOGLE_CLIENT_ID || "129499608888-ffjcvvrv58mjm3g0avv4h0ehpt7ft98f.apps.googleusercontent.com";
       (window as any).google.accounts.id.initialize({
         client_id: client_id,
         callback: (response: any) => {

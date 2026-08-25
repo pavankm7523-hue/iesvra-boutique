@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/shipping")({
   head: () => ({
-    meta: [{ title: "Shipping Policy - IESVRA" }],
+    meta: [
+      { title: "Shipping & Delivery Policy | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Learn about IESVRA's shipping coverage across India, free delivery thresholds, standard timelines, and tracking information.",
+      },
+      { property: "og:title", content: "Shipping & Delivery Policy | IESVRA Boutique" },
+    ],
   }),
   component: ShippingPolicy,
 });

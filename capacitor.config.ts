@@ -6,12 +6,14 @@ const config: CapacitorConfig = {
   webDir: 'public/mobile-app',
   bundledWebRuntime: false,
   plugins: {
-    GoogleAuth: {
-      scopes: ['profile', 'email'],
-      clientId: 'YOUR_WEB_CLIENT_ID_PLACEHOLDER.apps.googleusercontent.com',
-      androidClientId: 'YOUR_ANDROID_CLIENT_ID_PLACEHOLDER.apps.googleusercontent.com',
-      iosClientId: 'YOUR_IOS_CLIENT_ID_PLACEHOLDER.apps.googleusercontent.com',
-      forceCodeForRefreshToken: true,
+    SocialLogin: {
+      providers: {
+        google: true,
+        apple: false,
+        facebook: false,
+        twitter: false,
+      },
+      logLevel: 1,
     },
   },
 };

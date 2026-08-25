@@ -12,7 +12,14 @@ const trackSearchSchema = z.object({
 export const Route = createFileRoute("/track-order")({
   validateSearch: (search) => trackSearchSchema.parse(search),
   head: () => ({
-    meta: [{ title: "Track Order - IESVRA" }],
+    meta: [
+      { title: "Track Your Order Online | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Track the real-time shipping and delivery status of your IESVRA order using your Order ID.",
+      },
+      { property: "og:title", content: "Track Your Order Online | IESVRA Boutique" },
+    ],
   }),
   component: TrackOrder,
 });

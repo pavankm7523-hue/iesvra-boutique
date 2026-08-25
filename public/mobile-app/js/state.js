@@ -1,4 +1,35 @@
 (function() {
+  const isNativeApp = Boolean(
+    window.Capacitor &&
+    window.Capacitor.isNativePlatform &&
+    window.Capacitor.isNativePlatform()
+  );
+  const remoteAssetBase = isNativeApp ? "https://www.iesvra.com" : "";
+
+  function resolveAssetUrl(url) {
+    if (!url || typeof url !== "string") return url;
+    if (/^(https?:|data:|blob:)/i.test(url)) return url;
+    const path = url.startsWith("/") ? url : `/${url}`;
+    return `${remoteAssetBase}${path}`;
+  }
+
+  function normalizeProduct(product) {
+    if (!product || typeof product !== "object") return product;
+    return {
+      ...product,
+      image: resolveAssetUrl(product.image),
+      gallery: Array.isArray(product.gallery)
+        ? product.gallery.map((item) => ({ ...item, url: resolveAssetUrl(item.url) }))
+        : product.gallery,
+    };
+  }
+
+  function normalizeCategory(category) {
+    return category && typeof category === "object"
+      ? { ...category, image: resolveAssetUrl(category.image) }
+      : category;
+  }
+
   // Default fallback products and categories (synced with src/lib/products.ts default values)
   const initialCategories = [
     { name: "Massagers", image: "/products/prod_8_1.jpg" },
@@ -3576,33 +3607,36 @@
     const stored = localStorage.getItem("ishvara_products_v11");
     if (stored) {
       try {
-        return JSON.parse(stored);
+        return JSON.parse(stored).map(normalizeProduct);
       } catch (e) {
         console.error("Failed to parse products from localstorage", e);
       }
     }
     localStorage.setItem("ishvara_products_v11", JSON.stringify(initialProducts));
-    return initialProducts;
+    return initialProducts.map(normalizeProduct);
   }
 
   function getCategories() {
     const stored = localStorage.getItem("ishvara_categories_v3");
     if (stored) {
       try {
-        return JSON.parse(stored);
+        return JSON.parse(stored).map(normalizeCategory);
       } catch (e) {
         console.error("Failed to parse categories from localstorage", e);
       }
     }
     localStorage.setItem("ishvara_categories_v3", JSON.stringify(initialCategories));
-    return initialCategories;
+    return initialCategories.map(normalizeCategory);
   }
 
   function getCart() {
     const stored = localStorage.getItem("ishvara_cart");
     if (stored) {
       try {
-        return JSON.parse(stored);
+        return JSON.parse(stored).map((item) => ({
+          ...item,
+          image: resolveAssetUrl(item.image),
+        }));
       } catch (e) {
         console.error("Failed to parse cart from localstorage", e);
       }

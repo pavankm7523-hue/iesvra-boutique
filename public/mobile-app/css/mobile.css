@@ -54,6 +54,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  max-width: 100vw;
   overscroll-behavior-y: contain;
 }
 
@@ -61,7 +62,7 @@ html, body {
 /* ==================== GLOBAL LAYOUT ==================== */
 .app-header {
   position: fixed;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   left: 0;
   right: 0;
   z-index: 999;
@@ -70,9 +71,9 @@ html, body {
 
 /* Home Header (Blinkit Style) */
 .app-header.header-home {
-  height: 140px;
+  height: calc(140px + env(safe-area-inset-top, 0px));
   background-color: var(--accent-purple);
-  padding: 16px 16px 10px 16px;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 10px 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -703,11 +704,21 @@ body.no-app-header .main-content {
   flex-direction: column;
   justify-content: space-between;
   overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  align-items: center;
+}
+
+.login-screen > * {
+  width: 100%;
+  max-width: 430px;
+  min-width: 0;
 }
 
 .login-header {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .login-header h2 {
@@ -729,6 +740,8 @@ body.no-app-header .main-content {
   flex-direction: column;
   gap: 20px;
   margin: 40px 0;
+  width: 100%;
+  min-width: 0;
 }
 
 .input-group {
@@ -755,6 +768,8 @@ body.no-app-header .main-content {
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s ease;
+  width: 100%;
+  min-width: 0;
 }
 
 .input-group input:focus {

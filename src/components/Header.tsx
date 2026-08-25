@@ -230,10 +230,10 @@ export function Header() {
               <span>Download Our App</span>
             </div>
             <div className="flex items-center gap-2">
-              <a href="#" className="hover:opacity-80 transition-opacity">
+              <a href="/mobile-app/index.html" className="hover:opacity-80 transition-opacity">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-4.5" />
               </a>
-              <a href="#" className="hover:opacity-80 transition-opacity">
+              <a href="/mobile-app/index.html" className="hover:opacity-80 transition-opacity">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-4.5" />
               </a>
             </div>

@@ -18,20 +18,52 @@ import { Toaster } from "sonner";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="min-h-[80vh] flex items-center justify-center bg-background px-4 py-16">
+      <div className="max-w-lg w-full text-center bg-white p-8 sm:p-12 rounded-3xl border border-border shadow-xl shadow-navy-deep/5">
+        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <span className="font-display text-4xl font-extrabold text-primary">404</span>
+        </div>
+        
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-navy-deep">
+          Page Not Found
+        </h1>
+        
+        <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+          Oops! The page or product you're looking for might have been moved, deleted, or never existed.
         </p>
-        <div className="mt-6">
+
+        {/* Quick Links / CTAs */}
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:bg-primary/95 hover:shadow-lg active:scale-95"
           >
-            Go home
+            Back to Home
           </Link>
+          <Link
+            to="/shop"
+            className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-input bg-background px-6 py-3.5 text-sm font-semibold text-foreground transition-all hover:bg-accent hover:text-white active:scale-95"
+          >
+            Explore Catalog
+          </Link>
+        </div>
+
+        {/* Popular Quick Navigation */}
+        <div className="mt-10 pt-8 border-t border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            Popular Destinations
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <Link to="/shop" className="text-xs px-3 py-1.5 rounded-lg bg-muted text-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors">
+              🛍️ All Products
+            </Link>
+            <Link to="/track-order" className="text-xs px-3 py-1.5 rounded-lg bg-muted text-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors">
+              🚚 Track Order
+            </Link>
+            <Link to="/contact" className="text-xs px-3 py-1.5 rounded-lg bg-muted text-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors">
+              💬 Customer Care
+            </Link>
+          </div>
         </div>
       </div>
     </div>
@@ -43,30 +75,33 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+    <div className="min-h-[80vh] flex items-center justify-center bg-background px-4 py-16">
+      <div className="max-w-md w-full text-center bg-white p-8 rounded-3xl border border-border shadow-lg">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-2xl font-bold">
+          !
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground font-display">
+          Something went wrong
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          We encountered an unexpected error loading this section. Please try again.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-95"
           >
             Try again
           </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center rounded-xl border border-input bg-background px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
           >
             Go home
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -77,22 +112,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "IESVRA" },
-      { name: "description", content: "IESVRA - Everyday essentials, extraordinary deals." },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" },
+      { name: "theme-color", content: "#6B46C1" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { title: "IESVRA | Everyday Essentials & Extraordinary Deals" },
+      { name: "description", content: "Discover premium quality lifestyle products, trendy gadgets, home essentials & extraordinary deals at IESVRA Boutique." },
+      { name: "keywords", content: "IESVRA, online shopping, gadgets, electronics, home essentials, deals, AR Enterprises" },
       { name: "author", content: "IESVRA" },
-      { property: "og:title", content: "IESVRA" },
+      { property: "og:site_name", content: "IESVRA Boutique" },
+      { property: "og:title", content: "IESVRA | Everyday Essentials & Extraordinary Deals" },
       {
         property: "og:description",
-        content: "IESVRA - Everyday essentials, extraordinary deals.",
+        content: "Discover premium quality lifestyle products, trendy gadgets, home essentials & extraordinary deals at IESVRA Boutique.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "https://iesvra.com/iesvra-logo.png" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "IESVRA" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "IESVRA | Everyday Essentials & Extraordinary Deals" },
       {
         name: "twitter:description",
-        content: "IESVRA - Everyday essentials, extraordinary deals.",
+        content: "Discover premium quality lifestyle products, trendy gadgets, home essentials & extraordinary deals at IESVRA Boutique.",
       },
       { name: "twitter:image", content: "https://iesvra.com/iesvra-logo.png" },
     ],
@@ -148,7 +189,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <script
           dangerouslySetInnerHTML={{
             __html: `window.GOOGLE_CLIENT_ID = ${JSON.stringify(
-              (typeof process !== "undefined" ? process.env?.GOOGLE_CLIENT_ID : null) || "825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com"
+              (typeof process !== "undefined" ? process.env?.GOOGLE_CLIENT_ID : null) || "129499608888-ffjcvvrv58mjm3g0avv4h0ehpt7ft98f.apps.googleusercontent.com"
             )};`
           }}
         />

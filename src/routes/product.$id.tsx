@@ -18,16 +18,6 @@ const productSearchSchema = z.object({
   q: z.string().optional(),
 });
 
-export const Route = createFileRoute("/product/$id")({
-  validateSearch: (search) => productSearchSchema.parse(search),
-  head: () => {
-    return {
-      meta: [{ title: "Product Details - IESVRA" }],
-    };
-  },
-  component: ProductDetails,
-});
-
 /**
  * Resolves a 6-digit Indian PIN code to real City/District, State, and Locality.
  * Validates against the official India Post API and geocoding services.
@@ -91,13 +81,35 @@ async function resolveLocationFromPincode(pincode: string): Promise<{
   }
 
   return null;
-}
+}export const Route = createFileRoute("/product/$id")({
+  validateSearch: (search) => productSearchSchema.parse(search),
+  head: () => {
+    return {
+      meta: [
+        { title: "Product Details | IESVRA Boutique" },
+        { name: "description", content: "Explore product specifications, features, customer reviews, and fast delivery options at IESVRA." },
+        { property: "og:type", content: "product" },
+      ],
+    };
+  },
+  component: ProductDetails,
+});
 
 function ProductDetails() {
   const navigate = useNavigate();
   const { id } = Route.useParams();
   const { products, updateProduct } = useProducts();
   const product = products.find((p) => p.id === id);
+
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.name} | IESVRA Boutique`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc && product.sub) {
+        metaDesc.setAttribute("content", product.sub);
+      }
+    }
+  }, [product]);
 
   const reviews = product?.reviews || [];
   const reviewsCount = reviews.length;

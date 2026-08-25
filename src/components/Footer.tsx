@@ -56,8 +56,8 @@ export function Footer() {
             {[
               { Icon: Whatsapp, href: "https://wa.me/917061333200", title: "WhatsApp" },
               { Icon: Instagram, href: "https://www.instagram.com/iesvra.in?igsh=MXBjNnozandyY2F4eA==", title: "Instagram" },
-              { Icon: Facebook, href: "#", title: "Facebook" },
-              { Icon: Youtube, href: "#", title: "YouTube" },
+              { Icon: Facebook, href: "https://www.facebook.com/iesvra", title: "Facebook" },
+              { Icon: Youtube, href: "https://www.youtube.com/@iesvra", title: "YouTube" },
               {
                 Icon: (props: any) => (
                   <svg role="img" viewBox="0 0 24 24" fill="currentColor" {...props}>

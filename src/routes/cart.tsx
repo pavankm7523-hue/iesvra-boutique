@@ -10,7 +10,14 @@ import { fetchAddressSuggestions, checkExpressEligibility, geocodeAddress, rever
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
-    meta: [{ title: "Your Cart - IESVRA" }],
+    meta: [
+      { title: "Shopping Cart & Secure Checkout | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Review your selected items, apply discount coupons, and complete your secure checkout at IESVRA Boutique.",
+      },
+      { property: "og:title", content: "Shopping Cart & Secure Checkout | IESVRA Boutique" },
+    ],
   }),
   component: Cart,
 });

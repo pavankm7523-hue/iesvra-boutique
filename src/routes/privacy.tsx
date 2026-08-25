@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
-    meta: [{ title: "Privacy Policy - IESVRA" }],
+    meta: [
+      { title: "Privacy Policy & Data Protection | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Learn how IESVRA protects your privacy, personal information, and transaction security across our platform and mobile applications.",
+      },
+      { property: "og:title", content: "Privacy Policy & Data Protection | IESVRA Boutique" },
+    ],
   }),
   component: Privacy,
 });
@@ -51,13 +58,24 @@ function Privacy() {
             </p>
           </section>
 
-          <section className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <h2 className="text-lg font-bold text-navy-deep mb-3">5. Your Privacy Rights</h2>
-            <p className="mb-2">You have the right to:</p>
-            <ul className="list-disc pl-6 space-y-1">
-              <li>Access, edit, or delete your personal account data via the Profile screen.</li>
-              <li>Request full account and data deletion by contacting our privacy team at <a href="mailto:privacy@iesvra.com" className="text-purple-600 font-semibold underline">privacy@iesvra.com</a>.</li>
-              <li>Opt-out of non-essential marketing communications at any time.</li>
+          <section className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm" id="account-deletion">
+            <h2 className="text-lg font-bold text-navy-deep mb-3">5. Account & Data Deletion Policy & Instructions</h2>
+            <p className="mb-3">
+              We respect your right to control your personal data. Users have the right to request the permanent deletion of their IESVRA account and all associated personal information at any time.
+            </p>
+            <h3 className="font-bold text-slate-800 text-sm mb-2">How to Request Account & Data Deletion:</h3>
+            <ul className="list-disc pl-6 space-y-2 mb-4">
+              <li>
+                <strong>Option 1 — Email Request:</strong> Send an email from your registered email address to <a href="mailto:arenterprisess409@gmail.com" className="text-purple-600 font-semibold underline">arenterprisess409@gmail.com</a> or <a href="mailto:privacy@iesvra.com" className="text-purple-600 font-semibold underline">privacy@iesvra.com</a> with the subject line <code>"Account Deletion Request"</code>.
+              </li>
+              <li>
+                <strong>Option 2 — Support Contact:</strong> Submit a request through our <a href="/contact" className="text-purple-600 font-semibold underline">Contact Us Form</a> specifying your account email address.
+              </li>
+            </ul>
+            <h3 className="font-bold text-slate-800 text-sm mb-2">Data Deleted vs. Data Retained:</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Data Deleted Permanently:</strong> Your user profile, full name, email address, password hash, saved delivery addresses, phone number, and account preferences will be permanently wiped from our databases within 48 to 72 hours of receiving your request.</li>
+              <li><strong>Data Retained:</strong> Non-personally identifiable aggregated transaction records may be retained strictly as required by local tax, billing, and accounting compliance laws.</li>
             </ul>
           </section>
 

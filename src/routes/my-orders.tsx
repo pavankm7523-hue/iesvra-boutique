@@ -23,8 +23,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/my-orders")({
   head: () => ({
     meta: [
-      { title: "My Orders - IESVRA" },
-      { name: "description", content: "View all your IESVRA orders in one place." },
+      { title: "My Orders & Purchase History | IESVRA Boutique" },
+      { name: "description", content: "View all your past orders, delivery milestones, live tracking, and invoices in your IESVRA account." },
+      { property: "og:title", content: "My Orders & Purchase History | IESVRA Boutique" },
     ],
   }),
   component: MyOrdersPage,

@@ -35,22 +35,97 @@ export const Route = createFileRoute("/api/geocode")({
           const data = await res.json();
 
           if (!res.ok) {
-            console.error("[api-geocode] Ola Maps geocode failed:", res.status, data);
+            console.warn("[api-geocode] Ola Maps geocode failed, falling back to Nominatim OSM:", res.status);
+            const nominatimRes = await fetch(
+              `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&countrycodes=in&limit=1&addressdetails=1`,
+              {
+                headers: {
+                  "User-Agent": "IeswaraBoutique/1.0 (contact@iesvra.com)",
+                  "Accept-Language": "en"
+                }
+              }
+            );
+            if (nominatimRes.ok) {
+              const osmList = await nominatimRes.json();
+              if (osmList && osmList.length > 0) {
+                const item = osmList[0];
+                return new Response(
+                  JSON.stringify({
+                    geocodingResults: [
+                      {
+                        formatted_address: item.display_name,
+                        geometry: {
+                          location: {
+                            lat: parseFloat(item.lat),
+                            lng: parseFloat(item.lon)
+                          }
+                        }
+                      }
+                    ]
+                  }),
+                  {
+                    status: 200,
+                    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                  }
+                );
+              }
+            }
+
             return new Response(JSON.stringify(null), {
               status: 200,
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
             });
           }
 
           return new Response(JSON.stringify(data), {
             status: 200,
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
           });
         } catch (error: any) {
-          console.error("[api-geocode] Unexpected error:", error);
+          console.error("[api-geocode] Unexpected error, trying Nominatim:", error);
+          try {
+            const urlObj = new URL(request.url);
+            const address = urlObj.searchParams.get("address") || "";
+            if (address) {
+              const nominatimRes = await fetch(
+                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&countrycodes=in&limit=1&addressdetails=1`,
+                {
+                  headers: {
+                    "User-Agent": "IeswaraBoutique/1.0 (contact@iesvra.com)",
+                    "Accept-Language": "en"
+                  }
+                }
+              );
+              if (nominatimRes.ok) {
+                const osmList = await nominatimRes.json();
+                if (osmList && osmList.length > 0) {
+                  const item = osmList[0];
+                  return new Response(
+                    JSON.stringify({
+                      geocodingResults: [
+                        {
+                          formatted_address: item.display_name,
+                          geometry: {
+                            location: {
+                              lat: parseFloat(item.lat),
+                              lng: parseFloat(item.lon)
+                            }
+                          }
+                        }
+                      ]
+                    }),
+                    {
+                      status: 200,
+                      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    }
+                  );
+                }
+              }
+            }
+          } catch {}
           return new Response(JSON.stringify(null), {
             status: 200,
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
           });
         }
       },

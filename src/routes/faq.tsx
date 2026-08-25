@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
-    meta: [{ title: "Frequently Asked Questions - IESVRA" }],
+    meta: [
+      { title: "Frequently Asked Questions (FAQ) | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Find quick answers to common questions regarding orders, tracking, shipping timelines, payment methods, and returns at IESVRA.",
+      },
+      { property: "og:title", content: "Frequently Asked Questions (FAQ) | IESVRA Boutique" },
+    ],
   }),
   component: FAQPage,
 });
@@ -45,7 +52,11 @@ function FAQPage() {
           <div className="border border-border/40 rounded-xl p-6 bg-white shadow-sm">
             <h3 className="font-semibold text-lg text-navy-deep mb-2">How can I contact customer support?</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              You can contact our friendly support team by visiting the "Contact Us" page or emailing us directly at support.iesvra@gmail.com. We are happy to help!
+              You can contact our friendly support team by visiting the "Contact Us" page or emailing us directly at{" "}
+              <a href="mailto:support@iesvra.com" className="text-primary font-semibold hover:underline">
+                support@iesvra.com
+              </a>
+              . We are happy to help!
             </p>
           </div>
         </div>

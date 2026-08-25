@@ -49,6 +49,7 @@ export function ProductCard({
             src={product.image}
             alt={product.name}
             loading="lazy"
+            decoding="async"
             width={800}
             height={800}
             onError={(e) => {

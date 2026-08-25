@@ -15,7 +15,19 @@ const shopSearchSchema = z.object({
 export const Route = createFileRoute("/shop")({
   validateSearch: (search) => shopSearchSchema.parse(search),
   head: () => ({
-    meta: [{ title: "Shop All Collections - IESVRA" }],
+    meta: [
+      { title: "Shop All Collections & Best Sellers | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Explore top deals and browse all categories including Electronics, Smart Gadgets, Home Essentials, Beauty, and Personal Care at IESVRA.",
+      },
+      { property: "og:title", content: "Shop All Collections & Best Sellers | IESVRA Boutique" },
+      {
+        property: "og:description",
+        content: "Explore top deals and browse all categories including Electronics, Smart Gadgets, Home Essentials, Beauty, and Personal Care at IESVRA.",
+      },
+      { property: "og:type", content: "website" },
+    ],
   }),
   component: Shop,
 });

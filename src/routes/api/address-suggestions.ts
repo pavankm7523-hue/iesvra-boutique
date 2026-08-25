@@ -39,10 +39,40 @@ export const Route = createFileRoute("/api/address-suggestions")({
           console.log("[api-suggestions] Ola Autocomplete predictions count:", data?.predictions?.length);
 
           if (!res.ok) {
-            console.error("[api-suggestions] Ola Autocomplete error body:", data);
+            console.warn("[api-suggestions] Ola Autocomplete failed, falling back to Nominatim OSM:", res.status);
+            const nominatimRes = await fetch(
+              `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query.trim())}&format=json&countrycodes=in&limit=6&addressdetails=1`,
+              {
+                headers: {
+                  "User-Agent": "IeswaraBoutique/1.0 (contact@iesvra.com)",
+                  "Accept-Language": "en"
+                }
+              }
+            );
+            if (nominatimRes.ok) {
+              const osmList = await nominatimRes.json();
+              const predictions = osmList.map((item: any) => ({
+                description: item.display_name,
+                place_id: item.place_id ? String(item.place_id) : undefined,
+                geometry: {
+                  location: {
+                    lat: parseFloat(item.lat),
+                    lng: parseFloat(item.lon)
+                  }
+                }
+              }));
+              return new Response(JSON.stringify({ predictions }), {
+                status: 200,
+                headers: { 
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+                },
+              });
+            }
+
             return new Response(JSON.stringify({ predictions: [] }), {
               status: 200,
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
             });
           }
 
@@ -54,10 +84,42 @@ export const Route = createFileRoute("/api/address-suggestions")({
             },
           });
         } catch (error: any) {
-          console.error("[api-suggestions] Unexpected error:", error);
+          console.error("[api-suggestions] Unexpected error, trying Nominatim fallback:", error);
+          try {
+            const urlObj = new URL(request.url);
+            const query = urlObj.searchParams.get("query") || urlObj.searchParams.get("q") || "";
+            if (query && query.trim().length >= 3) {
+              const nominatimRes = await fetch(
+                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query.trim())}&format=json&countrycodes=in&limit=6&addressdetails=1`,
+                {
+                  headers: {
+                    "User-Agent": "IeswaraBoutique/1.0 (contact@iesvra.com)",
+                    "Accept-Language": "en"
+                  }
+                }
+              );
+              if (nominatimRes.ok) {
+                const osmList = await nominatimRes.json();
+                const predictions = osmList.map((item: any) => ({
+                  description: item.display_name,
+                  place_id: item.place_id ? String(item.place_id) : undefined,
+                  geometry: {
+                    location: {
+                      lat: parseFloat(item.lat),
+                      lng: parseFloat(item.lon)
+                    }
+                  }
+                }));
+                return new Response(JSON.stringify({ predictions }), {
+                  status: 200,
+                  headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                });
+              }
+            }
+          } catch {}
           return new Response(JSON.stringify({ predictions: [] }), {
             status: 200,
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
           });
         }
       },

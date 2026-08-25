@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/returns")({
   head: () => ({
-    meta: [{ title: "Return & Refund Policy - IESVRA" }],
+    meta: [
+      { title: "Return & Refund Policy | IESVRA Boutique" },
+      {
+        name: "description",
+        content: "Read our hassle-free 7-day return and refund policy at IESVRA Boutique. Learn about return eligibility, refunds, and replacements.",
+      },
+      { property: "og:title", content: "Return & Refund Policy | IESVRA Boutique" },
+    ],
   }),
   component: ReturnPolicy,
 });

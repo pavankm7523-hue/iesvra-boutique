@@ -247,6 +247,8 @@
 
   // ==================== APP LIFECYCLE ====================
   function init() {
+    clearLegacyDemoAddress();
+    syncSelectedAddressUI();
     // Run auth email migration
     migrateAuthEmail();
 
@@ -335,20 +337,11 @@
       });
     }
 
-    // 1. Splash Screen Transition (Blinkit style ~2.3s duration for animated sequence)
-    setTimeout(() => {
-      const splash = document.getElementById('splash');
-      if (splash) {
-        splash.style.setProperty('opacity', '0', 'important');
-        splash.style.setProperty('transform', 'scale(1.03)', 'important');
-        setTimeout(() => {
-          splash.style.setProperty('display', 'none', 'important');
-          checkNavigationState();
-        }, 400);
-      } else {
-        checkNavigationState();
-      }
-    }, 1200);
+    // Go directly to login/home. The branded Android launch screen is enough;
+    // showing a second HTML splash made startup feel broken.
+    const splash = document.getElementById('splash');
+    if (splash) splash.style.setProperty('display', 'none', 'important');
+    checkNavigationState();
   }
 
   // ==================== AUTH DATA MIGRATION ====================
@@ -412,12 +405,9 @@
   }
 
   function checkNavigationState() {
-    const onboardingSeen = localStorage.getItem('iesvra_onboarding_seen');
     const authSession = localStorage.getItem('ishvara_auth');
 
-    if (!onboardingSeen) {
-      initOnboarding();
-    } else if (!authSession) {
+    if (!authSession) {
       initLogin();
     } else {
       // User is logged in, update Profile display and switch to Home Screen
@@ -1833,7 +1823,7 @@
 
     const stickyPayTitle = document.getElementById('checkoutStickyPaymentTitle');
     if (stickyPayTitle) {
-      stickyPayTitle.textContent = checkoutPaymentMode === 'razorpay' ? 'PhonePe UPI' : 'Cash on Delivery';
+      stickyPayTitle.textContent = checkoutPaymentMode === 'razorpay' ? 'Secure online payment' : 'Cash on Delivery';
     }
 
     const stickyAddressText = document.getElementById('checkoutStickyAddressText');
@@ -2486,7 +2476,7 @@
       `;
 
       const initGoogle = () => {
-        const client_id = window.GOOGLE_CLIENT_ID || "825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com";
+        const client_id = window.GOOGLE_CLIENT_ID || "129499608888-ffjcvvrv58mjm3g0avv4h0ehpt7ft98f.apps.googleusercontent.com";
         google.accounts.id.initialize({
           client_id: client_id,
           callback: (response) => {
@@ -3347,32 +3337,37 @@
     if (platform === 'google') {
       showToast("Opening Google Sign-In...");
       
-      // Native Capacitor Google Auth integration
-      let googleAuth = null;
+      // Native Capacitor Google Credential Manager integration.
+      let socialLogin = null;
       if (window.Capacitor && window.Capacitor.isNativePlatform()) {
         try {
-          if (window.Capacitor.Plugins && window.Capacitor.Plugins.GoogleAuth) {
-            googleAuth = window.Capacitor.Plugins.GoogleAuth;
-          } else if (typeof window.Capacitor.registerPlugin === 'function') {
-            googleAuth = window.Capacitor.registerPlugin('GoogleAuth');
-          }
+          socialLogin = window.Capacitor.registerPlugin('SocialLogin');
         } catch (e) {
-          console.error("Failed to load/register native GoogleAuth plugin:", e);
+          console.error("Failed to register SocialLogin plugin:", e);
         }
       }
 
-      if (googleAuth) {
+      if (socialLogin) {
         try {
-          const googleUser = await googleAuth.signIn();
-          if (googleUser && googleUser.email) {
-            const name = googleUser.displayName || googleUser.email.split('@')[0];
-            completeGoogleAuth(name, googleUser.email);
+          await socialLogin.initialize({
+            google: {
+              webClientId: '129499608888-ffjcvvrv58mjm3g0avv4h0ehpt7ft98f.apps.googleusercontent.com',
+              mode: 'online'
+            }
+          });
+          const login = await socialLogin.login({
+            provider: 'google',
+            options: { scopes: ['email', 'profile'] }
+          });
+          const profile = login?.result?.profile;
+          if (profile?.email) {
+            completeGoogleAuth(profile.name || profile.email.split('@')[0], profile.email);
           } else {
             showToast("Google Sign-In cancelled.");
           }
         } catch (error) {
-          console.error("Capacitor Google Auth error:", error);
-          showToast("Google Sign-In failed.");
+          console.error("Capacitor SocialLogin error:", error);
+          showToast("Google Sign-In failed. Please try again.");
         }
         return;
       }
@@ -3388,31 +3383,85 @@
       if (!popup) {
         showToast("Popup blocked! Please allow popups for this site.");
       }
-    } else {
-      showToast("Logging in with Apple...");
-      setTimeout(() => {
-        const name = "Apple User";
-        const email = "appleuser@apple.com";
-        const userSession = { name, email, role: 'user' };
-        localStorage.setItem('ishvara_auth', JSON.stringify(userSession));
-        
-        window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
-
-        const loginScreen = document.getElementById('loginScreen');
-        if (loginScreen) {
-          loginScreen.style.opacity = '0';
-          setTimeout(() => {
-            loginScreen.style.display = 'none';
-            updateProfileDisplay();
-            switchTab('home');
-          }, 300);
-        }
-      }, 800);
     }
   };
 
   // Location Picker Modal Functions
+  const LEGACY_DEMO_ADDRESS = "New Jaganpura Jagdish Chauk Atal Vihar Colony, Ramkrishan Nagar, Patna";
+
+  function clearLegacyDemoAddress() {
+    if (localStorage.getItem('IESVRA_delivery_address_line1') === LEGACY_DEMO_ADDRESS) {
+      ['IESVRA_delivery_address_line1', 'IESVRA_delivery_address_line2', 'IESVRA_delivery_city',
+        'IESVRA_delivery_state', 'IESVRA_delivery_pincode', 'iesvra_lat', 'iesvra_lng']
+        .forEach((key) => localStorage.removeItem(key));
+    }
+  }
+
+  function getSavedAddress() {
+    return {
+      line1: localStorage.getItem('IESVRA_delivery_address_line1') || '',
+      line2: localStorage.getItem('IESVRA_delivery_address_line2') || '',
+      city: localStorage.getItem('IESVRA_delivery_city') || '',
+      state: localStorage.getItem('IESVRA_delivery_state') || '',
+      pincode: localStorage.getItem('IESVRA_delivery_pincode') || ''
+    };
+  }
+
+  function syncSelectedAddressUI() {
+    const saved = getSavedAddress();
+    const hasAddress = Boolean(saved.line1);
+    const summary = [saved.line1, saved.line2, saved.city, saved.state, saved.pincode].filter(Boolean).join(', ');
+    const activeLabel = document.getElementById('activeAddressLabel');
+    const stickyTitle = document.getElementById('checkoutStickyAddressTitle');
+    const stickyText = document.getElementById('checkoutStickyAddressText');
+    if (activeLabel) activeLabel.textContent = hasAddress ? summary : 'Select delivery address';
+    if (stickyTitle) stickyTitle.textContent = hasAddress ? 'Selected address' : 'Select address';
+    if (stickyText) stickyText.textContent = hasAddress ? summary : 'Enter delivery address';
+  }
+
+  function parseAddressComponents(result) {
+    const parsed = { city: '', state: '', pincode: '' };
+    for (const component of result?.address_components || []) {
+      const types = component.types || [];
+      if (types.includes('postal_code')) parsed.pincode = component.long_name || '';
+      if (types.includes('administrative_area_level_1')) parsed.state = component.long_name || '';
+      if (types.includes('locality') || types.includes('city') || types.includes('administrative_area_level_2')) {
+        parsed.city = parsed.city || component.long_name || '';
+      }
+    }
+    return parsed;
+  }
+
+  function applySelectedAddress(address, details = {}) {
+    const values = {
+      line1: address || '',
+      line2: '',
+      city: details.city || '',
+      state: details.state || '',
+      pincode: details.pincode || ''
+    };
+    const fields = {
+      checkoutAddress1: values.line1,
+      checkoutAddress2: values.line2,
+      checkoutCity: values.city,
+      checkoutState: values.state,
+      checkoutPincode: values.pincode
+    };
+    Object.entries(fields).forEach(([id, value]) => {
+      const field = document.getElementById(id);
+      if (field) field.value = value;
+    });
+    localStorage.setItem('IESVRA_delivery_address_line1', values.line1);
+    localStorage.setItem('IESVRA_delivery_address_line2', values.line2);
+    localStorage.setItem('IESVRA_delivery_city', values.city);
+    localStorage.setItem('IESVRA_delivery_state', values.state);
+    localStorage.setItem('IESVRA_delivery_pincode', values.pincode);
+    syncSelectedAddressUI();
+    window.updateCheckoutSummary();
+  }
+
   window.openLocationPicker = () => {
+    syncSelectedAddressUI();
     const overlay = document.getElementById('locationPickerOverlay');
     if (overlay) {
       overlay.style.display = 'flex';
@@ -3442,26 +3491,20 @@
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         try {
-          const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}`);
+          const res = await fetch(`${API_BASE}/api/reverse-geocode?lat=${lat}&lng=${lng}`);
           if (!res.ok) throw new Error("Failed to reverse geocode");
           const data = await res.json();
-          const address = data?.results?.[0]?.formatted_address || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-          
-          const activeAddressLabel = document.getElementById('activeAddressLabel');
-          if (activeAddressLabel) {
-            activeAddressLabel.textContent = address;
-          }
-          const checkoutAddr1 = document.getElementById('checkoutAddress1');
-          if (checkoutAddr1) {
-            checkoutAddr1.value = address;
-          }
+          const result = data?.results?.[0];
+          const address = result?.formatted_address || result?.name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+          applySelectedAddress(address, parseAddressComponents(result));
+          const currentLocationText = document.getElementById('currentLocationText');
+          if (currentLocationText) currentLocationText.textContent = address;
           
           // Save coordinates for the checkout map
           localStorage.setItem('iesvra_lat', lat);
           localStorage.setItem('iesvra_lng', lng);
           
           showToast("Location updated successfully!");
-          window.updateCheckoutSummary();
           window.closeLocationPicker();
         } catch (e) {
           console.error("Reverse geocoding error:", e);
@@ -3494,7 +3537,7 @@
 
       debounceTimer = setTimeout(async () => {
         try {
-          const res = await fetch(`/api/address-suggestions?query=${encodeURIComponent(query)}`);
+          const res = await fetch(`${API_BASE}/api/address-suggestions?query=${encodeURIComponent(query)}`);
           if (!res.ok) throw new Error("Autocomplete API failed");
           const data = await res.json();
           const predictions = data?.predictions || [];
@@ -3519,21 +3562,25 @@
     });
   });
 
-  window.selectSuggestedLocation = (description, lat, lng) => {
-    const activeAddressLabel = document.getElementById('activeAddressLabel');
-    if (activeAddressLabel) {
-      activeAddressLabel.textContent = description;
+  window.selectSuggestedLocation = async (description, lat, lng) => {
+    let addressDetails = {};
+    if (lat && lng) {
+      try {
+        const response = await fetch(`${API_BASE}/api/reverse-geocode?lat=${lat}&lng=${lng}`);
+        if (response.ok) {
+          const data = await response.json();
+          addressDetails = parseAddressComponents(data?.results?.[0]);
+        }
+      } catch (error) {
+        console.warn('Could not load the selected address details:', error);
+      }
     }
-    const checkoutAddr1 = document.getElementById('checkoutAddress1');
-    if (checkoutAddr1) {
-      checkoutAddr1.value = description;
-    }
+    applySelectedAddress(description, addressDetails);
     if (lat && lng) {
       localStorage.setItem('iesvra_lat', lat);
       localStorage.setItem('iesvra_lng', lng);
     }
     showToast("Address selected!");
-    window.updateCheckoutSummary();
     window.closeLocationPicker();
     
     // Clear suggestion container
@@ -3549,16 +3596,13 @@
   };
 
   window.selectSavedAddress = (label) => {
-    const activeAddressLabel = document.getElementById('activeAddressLabel');
-    if (activeAddressLabel) {
-      activeAddressLabel.textContent = label + " - New Jaganpura, Patna";
+    const saved = getSavedAddress();
+    if (!saved.line1) {
+      showToast('No saved address yet. Add or detect one first.');
+      return;
     }
-    const checkoutAddr1 = document.getElementById('checkoutAddress1');
-    if (checkoutAddr1) {
-      checkoutAddr1.value = "New Jaganpura Jagdish Chauk Atal Vihar Colony, Ramkrishan Nagar, Patna";
-    }
+    applySelectedAddress(saved.line1, saved);
     showToast(`Selected address: ${label}`);
-    window.updateCheckoutSummary();
     window.closeLocationPicker();
   };
 
