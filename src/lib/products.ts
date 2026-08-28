@@ -753,21 +753,6 @@ export const initialProducts: Product[] = [
         "id": "media_8_1",
         "type": "image",
         "url": "/products/prod_8_1.jpg"
-      },
-      {
-        "id": "media_8_2",
-        "type": "image",
-        "url": "/products/prod_8_2.jpg"
-      },
-      {
-        "id": "media_8_3",
-        "type": "image",
-        "url": "/products/prod_8_3.jpg"
-      },
-      {
-        "id": "media_8_4",
-        "type": "image",
-        "url": "/products/prod_8_4.jpg"
       }
     ],
     "colors": [],
@@ -862,26 +847,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GX62T8Z5_1",
         "type": "image",
         "url": "/products/B0GX62T8Z5/image_1.jpg"
-      },
-      {
-        "id": "med_B0GX62T8Z5_2",
-        "type": "image",
-        "url": "/products/B0GX62T8Z5/image_2.jpg"
-      },
-      {
-        "id": "med_B0GX62T8Z5_3",
-        "type": "image",
-        "url": "/products/B0GX62T8Z5/image_3.jpg"
-      },
-      {
-        "id": "med_B0GX62T8Z5_4",
-        "type": "image",
-        "url": "/products/B0GX62T8Z5/image_4.jpg"
-      },
-      {
-        "id": "med_B0GX62T8Z5_5",
-        "type": "image",
-        "url": "/products/B0GX62T8Z5/image_5.jpg"
       }
     ],
     "colors": [],
@@ -909,31 +874,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GN1MQTH7_1",
         "type": "image",
         "url": "/products/B0GN1MQTH7/image_1.jpg"
-      },
-      {
-        "id": "med_B0GN1MQTH7_2",
-        "type": "image",
-        "url": "/products/B0GN1MQTH7/image_2.jpg"
-      },
-      {
-        "id": "med_B0GN1MQTH7_3",
-        "type": "image",
-        "url": "/products/B0GN1MQTH7/image_3.jpg"
-      },
-      {
-        "id": "med_B0GN1MQTH7_4",
-        "type": "image",
-        "url": "/products/B0GN1MQTH7/image_4.jpg"
-      },
-      {
-        "id": "med_B0GN1MQTH7_5",
-        "type": "image",
-        "url": "/products/B0GN1MQTH7/image_5.jpg"
-      },
-      {
-        "id": "med_B0GN1MQTH7_6",
-        "type": "image",
-        "url": "/products/B0GN1MQTH7/image_6.jpg"
       }
     ],
     "colors": [],
@@ -961,21 +901,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GKWZQD8W_1",
         "type": "image",
         "url": "/products/B0GKWZQD8W/image_1.jpg"
-      },
-      {
-        "id": "med_B0GKWZQD8W_2",
-        "type": "image",
-        "url": "/products/B0GKWZQD8W/image_2.jpg"
-      },
-      {
-        "id": "med_B0GKWZQD8W_3",
-        "type": "image",
-        "url": "/products/B0GKWZQD8W/image_3.jpg"
-      },
-      {
-        "id": "med_B0GKWZQD8W_4",
-        "type": "image",
-        "url": "/products/B0GKWZQD8W/image_4.jpg"
       }
     ],
     "colors": [],
@@ -1003,26 +928,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMNP246V_1",
         "type": "image",
         "url": "/products/B0FMNP246V/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMNP246V_2",
-        "type": "image",
-        "url": "/products/B0FMNP246V/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMNP246V_3",
-        "type": "image",
-        "url": "/products/B0FMNP246V/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMNP246V_4",
-        "type": "image",
-        "url": "/products/B0FMNP246V/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMNP246V_5",
-        "type": "image",
-        "url": "/products/B0FMNP246V/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1050,26 +955,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GY4MYZFR_1",
         "type": "image",
         "url": "/products/B0GY4MYZFR/image_1.jpg"
-      },
-      {
-        "id": "med_B0GY4MYZFR_2",
-        "type": "image",
-        "url": "/products/B0GY4MYZFR/image_2.jpg"
-      },
-      {
-        "id": "med_B0GY4MYZFR_3",
-        "type": "image",
-        "url": "/products/B0GY4MYZFR/image_3.jpg"
-      },
-      {
-        "id": "med_B0GY4MYZFR_4",
-        "type": "image",
-        "url": "/products/B0GY4MYZFR/image_4.jpg"
-      },
-      {
-        "id": "med_B0GY4MYZFR_5",
-        "type": "image",
-        "url": "/products/B0GY4MYZFR/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1097,21 +982,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0H2Z62YGG_1",
         "type": "image",
         "url": "/products/B0H2Z62YGG/image_1.jpg"
-      },
-      {
-        "id": "med_B0H2Z62YGG_2",
-        "type": "image",
-        "url": "/products/B0H2Z62YGG/image_2.jpg"
-      },
-      {
-        "id": "med_B0H2Z62YGG_3",
-        "type": "image",
-        "url": "/products/B0H2Z62YGG/image_3.jpg"
-      },
-      {
-        "id": "med_B0H2Z62YGG_4",
-        "type": "image",
-        "url": "/products/B0H2Z62YGG/image_4.jpg"
       }
     ],
     "colors": [],
@@ -1166,26 +1036,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GZHK8MYT_1",
         "type": "image",
         "url": "/products/B0GZHK8MYT/image_1.jpg"
-      },
-      {
-        "id": "med_B0GZHK8MYT_2",
-        "type": "image",
-        "url": "/products/B0GZHK8MYT/image_2.jpg"
-      },
-      {
-        "id": "med_B0GZHK8MYT_3",
-        "type": "image",
-        "url": "/products/B0GZHK8MYT/image_3.jpg"
-      },
-      {
-        "id": "med_B0GZHK8MYT_4",
-        "type": "image",
-        "url": "/products/B0GZHK8MYT/image_4.jpg"
-      },
-      {
-        "id": "med_B0GZHK8MYT_5",
-        "type": "image",
-        "url": "/products/B0GZHK8MYT/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1213,26 +1063,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FN7FW23S_1",
         "type": "image",
         "url": "/products/B0FN7FW23S/image_1.jpg"
-      },
-      {
-        "id": "med_B0FN7FW23S_2",
-        "type": "image",
-        "url": "/products/B0FN7FW23S/image_2.jpg"
-      },
-      {
-        "id": "med_B0FN7FW23S_3",
-        "type": "image",
-        "url": "/products/B0FN7FW23S/image_3.jpg"
-      },
-      {
-        "id": "med_B0FN7FW23S_4",
-        "type": "image",
-        "url": "/products/B0FN7FW23S/image_4.jpg"
-      },
-      {
-        "id": "med_B0FN7FW23S_5",
-        "type": "image",
-        "url": "/products/B0FN7FW23S/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1260,31 +1090,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GP6SWNGM_1",
         "type": "image",
         "url": "/products/B0GP6SWNGM/image_1.jpg"
-      },
-      {
-        "id": "med_B0GP6SWNGM_2",
-        "type": "image",
-        "url": "/products/B0GP6SWNGM/image_2.jpg"
-      },
-      {
-        "id": "med_B0GP6SWNGM_3",
-        "type": "image",
-        "url": "/products/B0GP6SWNGM/image_3.jpg"
-      },
-      {
-        "id": "med_B0GP6SWNGM_4",
-        "type": "image",
-        "url": "/products/B0GP6SWNGM/image_4.jpg"
-      },
-      {
-        "id": "med_B0GP6SWNGM_5",
-        "type": "image",
-        "url": "/products/B0GP6SWNGM/image_5.jpg"
-      },
-      {
-        "id": "med_B0GP6SWNGM_6",
-        "type": "image",
-        "url": "/products/B0GP6SWNGM/image_6.jpg"
       }
     ],
     "colors": [],
@@ -1312,31 +1117,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GKWVTHTT_1",
         "type": "image",
         "url": "/products/B0GKWVTHTT/image_1.jpg"
-      },
-      {
-        "id": "med_B0GKWVTHTT_2",
-        "type": "image",
-        "url": "/products/B0GKWVTHTT/image_2.jpg"
-      },
-      {
-        "id": "med_B0GKWVTHTT_3",
-        "type": "image",
-        "url": "/products/B0GKWVTHTT/image_3.jpg"
-      },
-      {
-        "id": "med_B0GKWVTHTT_4",
-        "type": "image",
-        "url": "/products/B0GKWVTHTT/image_4.jpg"
-      },
-      {
-        "id": "med_B0GKWVTHTT_5",
-        "type": "image",
-        "url": "/products/B0GKWVTHTT/image_5.jpg"
-      },
-      {
-        "id": "med_B0GKWVTHTT_6",
-        "type": "image",
-        "url": "/products/B0GKWVTHTT/image_6.jpg"
       }
     ],
     "colors": [],
@@ -1364,16 +1144,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GYFBYGZB_1",
         "type": "image",
         "url": "/products/B0GYFBYGZB/image_1.jpg"
-      },
-      {
-        "id": "med_B0GYFBYGZB_2",
-        "type": "image",
-        "url": "/products/B0GYFBYGZB/image_2.jpg"
-      },
-      {
-        "id": "med_B0GYFBYGZB_3",
-        "type": "image",
-        "url": "/products/B0GYFBYGZB/image_3.jpg"
       }
     ],
     "colors": [],
@@ -1401,26 +1171,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GYNLKW67_1",
         "type": "image",
         "url": "/products/B0GYNLKW67/image_1.jpg"
-      },
-      {
-        "id": "med_B0GYNLKW67_2",
-        "type": "image",
-        "url": "/products/B0GYNLKW67/image_2.jpg"
-      },
-      {
-        "id": "med_B0GYNLKW67_3",
-        "type": "image",
-        "url": "/products/B0GYNLKW67/image_3.jpg"
-      },
-      {
-        "id": "med_B0GYNLKW67_4",
-        "type": "image",
-        "url": "/products/B0GYNLKW67/image_4.jpg"
-      },
-      {
-        "id": "med_B0GYNLKW67_5",
-        "type": "image",
-        "url": "/products/B0GYNLKW67/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1448,21 +1198,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GYN9V6S7_1",
         "type": "image",
         "url": "/products/B0GYN9V6S7/image_1.jpg"
-      },
-      {
-        "id": "med_B0GYN9V6S7_2",
-        "type": "image",
-        "url": "/products/B0GYN9V6S7/image_2.jpg"
-      },
-      {
-        "id": "med_B0GYN9V6S7_3",
-        "type": "image",
-        "url": "/products/B0GYN9V6S7/image_3.jpg"
-      },
-      {
-        "id": "med_B0GYN9V6S7_4",
-        "type": "image",
-        "url": "/products/B0GYN9V6S7/image_4.jpg"
       }
     ],
     "colors": [],
@@ -1490,26 +1225,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FT3SHG1X_1",
         "type": "image",
         "url": "/products/B0FT3SHG1X/image_1.jpg"
-      },
-      {
-        "id": "med_B0FT3SHG1X_2",
-        "type": "image",
-        "url": "/products/B0FT3SHG1X/image_2.jpg"
-      },
-      {
-        "id": "med_B0FT3SHG1X_3",
-        "type": "image",
-        "url": "/products/B0FT3SHG1X/image_3.jpg"
-      },
-      {
-        "id": "med_B0FT3SHG1X_4",
-        "type": "image",
-        "url": "/products/B0FT3SHG1X/image_4.jpg"
-      },
-      {
-        "id": "med_B0FT3SHG1X_5",
-        "type": "image",
-        "url": "/products/B0FT3SHG1X/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1545,26 +1260,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FT3TBXHK_1",
         "type": "image",
         "url": "/products/B0FT3TBXHK/image_1.jpg"
-      },
-      {
-        "id": "med_B0FT3TBXHK_2",
-        "type": "image",
-        "url": "/products/B0FT3TBXHK/image_2.jpg"
-      },
-      {
-        "id": "med_B0FT3TBXHK_3",
-        "type": "image",
-        "url": "/products/B0FT3TBXHK/image_3.jpg"
-      },
-      {
-        "id": "med_B0FT3TBXHK_4",
-        "type": "image",
-        "url": "/products/B0FT3TBXHK/image_4.jpg"
-      },
-      {
-        "id": "med_B0FT3TBXHK_5",
-        "type": "image",
-        "url": "/products/B0FT3TBXHK/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1592,26 +1287,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FT3X23KM_1",
         "type": "image",
         "url": "/products/B0FT3X23KM/image_1.jpg"
-      },
-      {
-        "id": "med_B0FT3X23KM_2",
-        "type": "image",
-        "url": "/products/B0FT3X23KM/image_2.jpg"
-      },
-      {
-        "id": "med_B0FT3X23KM_3",
-        "type": "image",
-        "url": "/products/B0FT3X23KM/image_3.jpg"
-      },
-      {
-        "id": "med_B0FT3X23KM_4",
-        "type": "image",
-        "url": "/products/B0FT3X23KM/image_4.jpg"
-      },
-      {
-        "id": "med_B0FT3X23KM_5",
-        "type": "image",
-        "url": "/products/B0FT3X23KM/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1639,26 +1314,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FT3R2ZDX_1",
         "type": "image",
         "url": "/products/B0FT3R2ZDX/image_1.jpg"
-      },
-      {
-        "id": "med_B0FT3R2ZDX_2",
-        "type": "image",
-        "url": "/products/B0FT3R2ZDX/image_2.jpg"
-      },
-      {
-        "id": "med_B0FT3R2ZDX_3",
-        "type": "image",
-        "url": "/products/B0FT3R2ZDX/image_3.jpg"
-      },
-      {
-        "id": "med_B0FT3R2ZDX_4",
-        "type": "image",
-        "url": "/products/B0FT3R2ZDX/image_4.jpg"
-      },
-      {
-        "id": "med_B0FT3R2ZDX_5",
-        "type": "image",
-        "url": "/products/B0FT3R2ZDX/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1686,26 +1341,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FJLTRRHM_1",
         "type": "image",
         "url": "/products/B0FJLTRRHM/image_1.jpg"
-      },
-      {
-        "id": "med_B0FJLTRRHM_2",
-        "type": "image",
-        "url": "/products/B0FJLTRRHM/image_2.jpg"
-      },
-      {
-        "id": "med_B0FJLTRRHM_3",
-        "type": "image",
-        "url": "/products/B0FJLTRRHM/image_3.jpg"
-      },
-      {
-        "id": "med_B0FJLTRRHM_4",
-        "type": "image",
-        "url": "/products/B0FJLTRRHM/image_4.jpg"
-      },
-      {
-        "id": "med_B0FJLTRRHM_5",
-        "type": "image",
-        "url": "/products/B0FJLTRRHM/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1760,26 +1395,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FN49BJHQ_1",
         "type": "image",
         "url": "/products/B0FN49BJHQ/image_1.jpg"
-      },
-      {
-        "id": "med_B0FN49BJHQ_2",
-        "type": "image",
-        "url": "/products/B0FN49BJHQ/image_2.jpg"
-      },
-      {
-        "id": "med_B0FN49BJHQ_3",
-        "type": "image",
-        "url": "/products/B0FN49BJHQ/image_3.jpg"
-      },
-      {
-        "id": "med_B0FN49BJHQ_4",
-        "type": "image",
-        "url": "/products/B0FN49BJHQ/image_4.jpg"
-      },
-      {
-        "id": "med_B0FN49BJHQ_5",
-        "type": "image",
-        "url": "/products/B0FN49BJHQ/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1807,26 +1422,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNMQTDCR_1",
         "type": "image",
         "url": "/products/B0FNMQTDCR/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNMQTDCR_2",
-        "type": "image",
-        "url": "/products/B0FNMQTDCR/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNMQTDCR_3",
-        "type": "image",
-        "url": "/products/B0FNMQTDCR/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNMQTDCR_4",
-        "type": "image",
-        "url": "/products/B0FNMQTDCR/image_4.jpg"
-      },
-      {
-        "id": "med_B0FNMQTDCR_5",
-        "type": "image",
-        "url": "/products/B0FNMQTDCR/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1854,21 +1449,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GY8NFSF2_1",
         "type": "image",
         "url": "/products/B0GY8NFSF2/image_1.jpg"
-      },
-      {
-        "id": "med_B0GY8NFSF2_2",
-        "type": "image",
-        "url": "/products/B0GY8NFSF2/image_2.jpg"
-      },
-      {
-        "id": "med_B0GY8NFSF2_3",
-        "type": "image",
-        "url": "/products/B0GY8NFSF2/image_3.jpg"
-      },
-      {
-        "id": "med_B0GY8NFSF2_4",
-        "type": "image",
-        "url": "/products/B0GY8NFSF2/image_4.jpg"
       }
     ],
     "colors": [],
@@ -1896,26 +1476,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FJLTJBNY_1",
         "type": "image",
         "url": "/products/B0FJLTJBNY/image_1.jpg"
-      },
-      {
-        "id": "med_B0FJLTJBNY_2",
-        "type": "image",
-        "url": "/products/B0FJLTJBNY/image_2.jpg"
-      },
-      {
-        "id": "med_B0FJLTJBNY_3",
-        "type": "image",
-        "url": "/products/B0FJLTJBNY/image_3.jpg"
-      },
-      {
-        "id": "med_B0FJLTJBNY_4",
-        "type": "image",
-        "url": "/products/B0FJLTJBNY/image_4.jpg"
-      },
-      {
-        "id": "med_B0FJLTJBNY_5",
-        "type": "image",
-        "url": "/products/B0FJLTJBNY/image_5.jpg"
       }
     ],
     "colors": [],
@@ -1943,21 +1503,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FT3TD2Z8_1",
         "type": "image",
         "url": "/products/B0FT3TD2Z8/image_1.jpg"
-      },
-      {
-        "id": "med_B0FT3TD2Z8_2",
-        "type": "image",
-        "url": "/products/B0FT3TD2Z8/image_2.jpg"
-      },
-      {
-        "id": "med_B0FT3TD2Z8_3",
-        "type": "image",
-        "url": "/products/B0FT3TD2Z8/image_3.jpg"
-      },
-      {
-        "id": "med_B0FT3TD2Z8_4",
-        "type": "image",
-        "url": "/products/B0FT3TD2Z8/image_4.jpg"
       }
     ],
     "colors": [],
@@ -1985,26 +1530,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMMCKYHB_1",
         "type": "image",
         "url": "/products/B0FMMCKYHB/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMMCKYHB_2",
-        "type": "image",
-        "url": "/products/B0FMMCKYHB/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMMCKYHB_3",
-        "type": "image",
-        "url": "/products/B0FMMCKYHB/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMMCKYHB_4",
-        "type": "image",
-        "url": "/products/B0FMMCKYHB/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMMCKYHB_5",
-        "type": "image",
-        "url": "/products/B0FMMCKYHB/image_5.jpg"
       }
     ],
     "colors": [],
@@ -2032,21 +1557,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GYF7HYV1_1",
         "type": "image",
         "url": "/products/B0GYF7HYV1/image_1.jpg"
-      },
-      {
-        "id": "med_B0GYF7HYV1_2",
-        "type": "image",
-        "url": "/products/B0GYF7HYV1/image_2.jpg"
-      },
-      {
-        "id": "med_B0GYF7HYV1_3",
-        "type": "image",
-        "url": "/products/B0GYF7HYV1/image_3.jpg"
-      },
-      {
-        "id": "med_B0GYF7HYV1_4",
-        "type": "image",
-        "url": "/products/B0GYF7HYV1/image_4.jpg"
       }
     ],
     "colors": [],
@@ -2074,16 +1584,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GYF3LHPY_1",
         "type": "image",
         "url": "/products/B0GYF3LHPY/image_1.jpg"
-      },
-      {
-        "id": "med_B0GYF3LHPY_2",
-        "type": "image",
-        "url": "/products/B0GYF3LHPY/image_2.jpg"
-      },
-      {
-        "id": "med_B0GYF3LHPY_3",
-        "type": "image",
-        "url": "/products/B0GYF3LHPY/image_3.jpg"
       }
     ],
     "colors": [],
@@ -2111,26 +1611,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FKMBDMLT_1",
         "type": "image",
         "url": "/products/B0FKMBDMLT/image_1.jpg"
-      },
-      {
-        "id": "med_B0FKMBDMLT_2",
-        "type": "image",
-        "url": "/products/B0FKMBDMLT/image_2.jpg"
-      },
-      {
-        "id": "med_B0FKMBDMLT_3",
-        "type": "image",
-        "url": "/products/B0FKMBDMLT/image_3.jpg"
-      },
-      {
-        "id": "med_B0FKMBDMLT_4",
-        "type": "image",
-        "url": "/products/B0FKMBDMLT/image_4.jpg"
-      },
-      {
-        "id": "med_B0FKMBDMLT_5",
-        "type": "image",
-        "url": "/products/B0FKMBDMLT/image_5.jpg"
       }
     ],
     "colors": [],
@@ -2158,21 +1638,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GTQ7TCKY_1",
         "type": "image",
         "url": "/products/B0GTQ7TCKY/image_1.jpg"
-      },
-      {
-        "id": "med_B0GTQ7TCKY_2",
-        "type": "image",
-        "url": "/products/B0GTQ7TCKY/image_2.jpg"
-      },
-      {
-        "id": "med_B0GTQ7TCKY_3",
-        "type": "image",
-        "url": "/products/B0GTQ7TCKY/image_3.jpg"
-      },
-      {
-        "id": "med_B0GTQ7TCKY_4",
-        "type": "image",
-        "url": "/products/B0GTQ7TCKY/image_4.jpg"
       }
     ],
     "colors": [],
@@ -2200,21 +1665,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GTLYX2JX_1",
         "type": "image",
         "url": "/products/B0GTLYX2JX/image_1.jpg"
-      },
-      {
-        "id": "med_B0GTLYX2JX_2",
-        "type": "image",
-        "url": "/products/B0GTLYX2JX/image_2.jpg"
-      },
-      {
-        "id": "med_B0GTLYX2JX_3",
-        "type": "image",
-        "url": "/products/B0GTLYX2JX/image_3.jpg"
-      },
-      {
-        "id": "med_B0GTLYX2JX_4",
-        "type": "image",
-        "url": "/products/B0GTLYX2JX/image_4.jpg"
       }
     ],
     "colors": [],
@@ -2242,26 +1692,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GN21V5Z7_1",
         "type": "image",
         "url": "/products/B0GN21V5Z7/image_1.jpg"
-      },
-      {
-        "id": "med_B0GN21V5Z7_2",
-        "type": "image",
-        "url": "/products/B0GN21V5Z7/image_2.jpg"
-      },
-      {
-        "id": "med_B0GN21V5Z7_3",
-        "type": "image",
-        "url": "/products/B0GN21V5Z7/image_3.jpg"
-      },
-      {
-        "id": "med_B0GN21V5Z7_4",
-        "type": "image",
-        "url": "/products/B0GN21V5Z7/image_4.jpg"
-      },
-      {
-        "id": "med_B0GN21V5Z7_5",
-        "type": "image",
-        "url": "/products/B0GN21V5Z7/image_5.jpg"
       }
     ],
     "colors": [],
@@ -2289,26 +1719,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0H7S3FQWS_1",
         "type": "image",
         "url": "/products/B0H7S3FQWS/image_1.jpg"
-      },
-      {
-        "id": "med_B0H7S3FQWS_2",
-        "type": "image",
-        "url": "/products/B0H7S3FQWS/image_2.jpg"
-      },
-      {
-        "id": "med_B0H7S3FQWS_3",
-        "type": "image",
-        "url": "/products/B0H7S3FQWS/image_3.jpg"
-      },
-      {
-        "id": "med_B0H7S3FQWS_4",
-        "type": "image",
-        "url": "/products/B0H7S3FQWS/image_4.jpg"
-      },
-      {
-        "id": "med_B0H7S3FQWS_5",
-        "type": "image",
-        "url": "/products/B0H7S3FQWS/image_5.jpg"
       }
     ],
     "colors": [],
@@ -2336,26 +1746,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GPH37X28_1",
         "type": "image",
         "url": "/products/B0GPH37X28/image_1.jpg"
-      },
-      {
-        "id": "med_B0GPH37X28_2",
-        "type": "image",
-        "url": "/products/B0GPH37X28/image_2.jpg"
-      },
-      {
-        "id": "med_B0GPH37X28_3",
-        "type": "image",
-        "url": "/products/B0GPH37X28/image_3.jpg"
-      },
-      {
-        "id": "med_B0GPH37X28_4",
-        "type": "image",
-        "url": "/products/B0GPH37X28/image_4.jpg"
-      },
-      {
-        "id": "med_B0GPH37X28_5",
-        "type": "image",
-        "url": "/products/B0GPH37X28/image_5.jpg"
       }
     ],
     "colors": [],
@@ -2383,21 +1773,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GNS8BS61_1",
         "type": "image",
         "url": "/products/B0GNS8BS61/image_1.jpg"
-      },
-      {
-        "id": "med_B0GNS8BS61_2",
-        "type": "image",
-        "url": "/products/B0GNS8BS61/image_2.jpg"
-      },
-      {
-        "id": "med_B0GNS8BS61_3",
-        "type": "image",
-        "url": "/products/B0GNS8BS61/image_3.jpg"
-      },
-      {
-        "id": "med_B0GNS8BS61_4",
-        "type": "image",
-        "url": "/products/B0GNS8BS61/image_4.jpg"
       }
     ],
     "colors": [],
@@ -2425,26 +1800,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMNQZXH8_1",
         "type": "image",
         "url": "/products/B0FMNQZXH8/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMNQZXH8_2",
-        "type": "image",
-        "url": "/products/B0FMNQZXH8/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMNQZXH8_3",
-        "type": "image",
-        "url": "/products/B0FMNQZXH8/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMNQZXH8_4",
-        "type": "image",
-        "url": "/products/B0FMNQZXH8/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMNQZXH8_5",
-        "type": "image",
-        "url": "/products/B0FMNQZXH8/image_5.jpg"
       }
     ],
     "colors": [],
@@ -2472,26 +1827,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GGH1ZFYN_1",
         "type": "image",
         "url": "/products/B0GGH1ZFYN/image_1.jpg"
-      },
-      {
-        "id": "med_B0GGH1ZFYN_2",
-        "type": "image",
-        "url": "/products/B0GGH1ZFYN/image_2.jpg"
-      },
-      {
-        "id": "med_B0GGH1ZFYN_3",
-        "type": "image",
-        "url": "/products/B0GGH1ZFYN/image_3.jpg"
-      },
-      {
-        "id": "med_B0GGH1ZFYN_4",
-        "type": "image",
-        "url": "/products/B0GGH1ZFYN/image_4.jpg"
-      },
-      {
-        "id": "med_B0GGH1ZFYN_5",
-        "type": "image",
-        "url": "/products/B0GGH1ZFYN/image_5.jpg"
       }
     ],
     "colors": [],
@@ -2519,31 +1854,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0CKJ2HCQ6_1",
         "type": "image",
         "url": "/products/B0CKJ2HCQ6/image_1.jpg"
-      },
-      {
-        "id": "med_B0CKJ2HCQ6_2",
-        "type": "image",
-        "url": "/products/B0CKJ2HCQ6/image_2.jpg"
-      },
-      {
-        "id": "med_B0CKJ2HCQ6_3",
-        "type": "image",
-        "url": "/products/B0CKJ2HCQ6/image_3.jpg"
-      },
-      {
-        "id": "med_B0CKJ2HCQ6_4",
-        "type": "image",
-        "url": "/products/B0CKJ2HCQ6/image_4.jpg"
-      },
-      {
-        "id": "med_B0CKJ2HCQ6_5",
-        "type": "image",
-        "url": "/products/B0CKJ2HCQ6/image_5.jpg"
-      },
-      {
-        "id": "med_B0CKJ2HCQ6_6",
-        "type": "image",
-        "url": "/products/B0CKJ2HCQ6/image_6.jpg"
       }
     ],
     "colors": [],
@@ -2571,36 +1881,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0F8BWVZ64_1",
         "type": "image",
         "url": "/products/B0F8BWVZ64/image_1.jpg"
-      },
-      {
-        "id": "med_B0F8BWVZ64_2",
-        "type": "image",
-        "url": "/products/B0F8BWVZ64/image_2.jpg"
-      },
-      {
-        "id": "med_B0F8BWVZ64_3",
-        "type": "image",
-        "url": "/products/B0F8BWVZ64/image_3.jpg"
-      },
-      {
-        "id": "med_B0F8BWVZ64_4",
-        "type": "image",
-        "url": "/products/B0F8BWVZ64/image_4.jpg"
-      },
-      {
-        "id": "med_B0F8BWVZ64_5",
-        "type": "image",
-        "url": "/products/B0F8BWVZ64/image_5.jpg"
-      },
-      {
-        "id": "med_B0F8BWVZ64_6",
-        "type": "image",
-        "url": "/products/B0F8BWVZ64/image_6.jpg"
-      },
-      {
-        "id": "med_B0F8BWVZ64_7",
-        "type": "image",
-        "url": "/products/B0F8BWVZ64/image_7.jpg"
       }
     ],
     "colors": [],
@@ -2628,21 +1908,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0H6M1SP15_1",
         "type": "image",
         "url": "/products/B0H6M1SP15/image_1.jpg"
-      },
-      {
-        "id": "med_B0H6M1SP15_2",
-        "type": "image",
-        "url": "/products/B0H6M1SP15/image_2.jpg"
-      },
-      {
-        "id": "med_B0H6M1SP15_3",
-        "type": "image",
-        "url": "/products/B0H6M1SP15/image_3.jpg"
-      },
-      {
-        "id": "med_B0H6M1SP15_4",
-        "type": "image",
-        "url": "/products/B0H6M1SP15/image_4.jpg"
       }
     ],
     "colors": [],
@@ -2670,31 +1935,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMNWLK3C_1",
         "type": "image",
         "url": "/products/B0FMNWLK3C/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMNWLK3C_2",
-        "type": "image",
-        "url": "/products/B0FMNWLK3C/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMNWLK3C_3",
-        "type": "image",
-        "url": "/products/B0FMNWLK3C/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMNWLK3C_4",
-        "type": "image",
-        "url": "/products/B0FMNWLK3C/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMNWLK3C_5",
-        "type": "image",
-        "url": "/products/B0FMNWLK3C/image_5.jpg"
-      },
-      {
-        "id": "med_B0FMNWLK3C_6",
-        "type": "image",
-        "url": "/products/B0FMNWLK3C/image_6.jpg"
       }
     ],
     "colors": [],
@@ -2722,31 +1962,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMNFV2DJ_1",
         "type": "image",
         "url": "/products/B0FMNFV2DJ/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMNFV2DJ_2",
-        "type": "image",
-        "url": "/products/B0FMNFV2DJ/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMNFV2DJ_3",
-        "type": "image",
-        "url": "/products/B0FMNFV2DJ/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMNFV2DJ_4",
-        "type": "image",
-        "url": "/products/B0FMNFV2DJ/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMNFV2DJ_5",
-        "type": "image",
-        "url": "/products/B0FMNFV2DJ/image_5.jpg"
-      },
-      {
-        "id": "med_B0FMNFV2DJ_6",
-        "type": "image",
-        "url": "/products/B0FMNFV2DJ/image_6.jpg"
       }
     ],
     "colors": [],
@@ -2774,31 +1989,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMNFZ6KS_1",
         "type": "image",
         "url": "/products/B0FMNFZ6KS/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMNFZ6KS_2",
-        "type": "image",
-        "url": "/products/B0FMNFZ6KS/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMNFZ6KS_3",
-        "type": "image",
-        "url": "/products/B0FMNFZ6KS/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMNFZ6KS_4",
-        "type": "image",
-        "url": "/products/B0FMNFZ6KS/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMNFZ6KS_5",
-        "type": "image",
-        "url": "/products/B0FMNFZ6KS/image_5.jpg"
-      },
-      {
-        "id": "med_B0FMNFZ6KS_6",
-        "type": "image",
-        "url": "/products/B0FMNFZ6KS/image_6.jpg"
       }
     ],
     "colors": [],
@@ -2826,31 +2016,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMNFDX1Z_1",
         "type": "image",
         "url": "/products/B0FMNFDX1Z/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMNFDX1Z_2",
-        "type": "image",
-        "url": "/products/B0FMNFDX1Z/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMNFDX1Z_3",
-        "type": "image",
-        "url": "/products/B0FMNFDX1Z/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMNFDX1Z_4",
-        "type": "image",
-        "url": "/products/B0FMNFDX1Z/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMNFDX1Z_5",
-        "type": "image",
-        "url": "/products/B0FMNFDX1Z/image_5.jpg"
-      },
-      {
-        "id": "med_B0FMNFDX1Z_6",
-        "type": "image",
-        "url": "/products/B0FMNFDX1Z/image_6.jpg"
       }
     ],
     "colors": [],
@@ -2878,31 +2043,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMNT8XSN_1",
         "type": "image",
         "url": "/products/B0FMNT8XSN/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMNT8XSN_2",
-        "type": "image",
-        "url": "/products/B0FMNT8XSN/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMNT8XSN_3",
-        "type": "image",
-        "url": "/products/B0FMNT8XSN/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMNT8XSN_4",
-        "type": "image",
-        "url": "/products/B0FMNT8XSN/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMNT8XSN_5",
-        "type": "image",
-        "url": "/products/B0FMNT8XSN/image_5.jpg"
-      },
-      {
-        "id": "med_B0FMNT8XSN_6",
-        "type": "image",
-        "url": "/products/B0FMNT8XSN/image_6.jpg"
       }
     ],
     "colors": [],
@@ -2930,31 +2070,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FMNJ7LVF_1",
         "type": "image",
         "url": "/products/B0FMNJ7LVF/image_1.jpg"
-      },
-      {
-        "id": "med_B0FMNJ7LVF_2",
-        "type": "image",
-        "url": "/products/B0FMNJ7LVF/image_2.jpg"
-      },
-      {
-        "id": "med_B0FMNJ7LVF_3",
-        "type": "image",
-        "url": "/products/B0FMNJ7LVF/image_3.jpg"
-      },
-      {
-        "id": "med_B0FMNJ7LVF_4",
-        "type": "image",
-        "url": "/products/B0FMNJ7LVF/image_4.jpg"
-      },
-      {
-        "id": "med_B0FMNJ7LVF_5",
-        "type": "image",
-        "url": "/products/B0FMNJ7LVF/image_5.jpg"
-      },
-      {
-        "id": "med_B0FMNJ7LVF_6",
-        "type": "image",
-        "url": "/products/B0FMNJ7LVF/image_6.jpg"
       }
     ],
     "colors": [],
@@ -2982,31 +2097,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FKMKZLBJ_1",
         "type": "image",
         "url": "/products/B0FKMKZLBJ/image_1.jpg"
-      },
-      {
-        "id": "med_B0FKMKZLBJ_2",
-        "type": "image",
-        "url": "/products/B0FKMKZLBJ/image_2.jpg"
-      },
-      {
-        "id": "med_B0FKMKZLBJ_3",
-        "type": "image",
-        "url": "/products/B0FKMKZLBJ/image_3.jpg"
-      },
-      {
-        "id": "med_B0FKMKZLBJ_4",
-        "type": "image",
-        "url": "/products/B0FKMKZLBJ/image_4.jpg"
-      },
-      {
-        "id": "med_B0FKMKZLBJ_5",
-        "type": "image",
-        "url": "/products/B0FKMKZLBJ/image_5.jpg"
-      },
-      {
-        "id": "med_B0FKMKZLBJ_6",
-        "type": "image",
-        "url": "/products/B0FKMKZLBJ/image_6.jpg"
       }
     ],
     "colors": [],
@@ -3034,21 +2124,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FJLRDFK2_1",
         "type": "image",
         "url": "/products/B0FJLRDFK2/image_1.jpg"
-      },
-      {
-        "id": "med_B0FJLRDFK2_2",
-        "type": "image",
-        "url": "/products/B0FJLRDFK2/image_2.jpg"
-      },
-      {
-        "id": "med_B0FJLRDFK2_3",
-        "type": "image",
-        "url": "/products/B0FJLRDFK2/image_3.jpg"
-      },
-      {
-        "id": "med_B0FJLRDFK2_4",
-        "type": "image",
-        "url": "/products/B0FJLRDFK2/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3076,21 +2151,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FKMZY6L3_1",
         "type": "image",
         "url": "/products/B0FKMZY6L3/image_1.jpg"
-      },
-      {
-        "id": "med_B0FKMZY6L3_2",
-        "type": "image",
-        "url": "/products/B0FKMZY6L3/image_2.jpg"
-      },
-      {
-        "id": "med_B0FKMZY6L3_3",
-        "type": "image",
-        "url": "/products/B0FKMZY6L3/image_3.jpg"
-      },
-      {
-        "id": "med_B0FKMZY6L3_4",
-        "type": "image",
-        "url": "/products/B0FKMZY6L3/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3118,21 +2178,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FKN5CB6D_1",
         "type": "image",
         "url": "/products/B0FKN5CB6D/image_1.jpg"
-      },
-      {
-        "id": "med_B0FKN5CB6D_2",
-        "type": "image",
-        "url": "/products/B0FKN5CB6D/image_2.jpg"
-      },
-      {
-        "id": "med_B0FKN5CB6D_3",
-        "type": "image",
-        "url": "/products/B0FKN5CB6D/image_3.jpg"
-      },
-      {
-        "id": "med_B0FKN5CB6D_4",
-        "type": "image",
-        "url": "/products/B0FKN5CB6D/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3160,21 +2205,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GYNSPBFF_1",
         "type": "image",
         "url": "/products/B0GYNSPBFF/image_1.jpg"
-      },
-      {
-        "id": "med_B0GYNSPBFF_2",
-        "type": "image",
-        "url": "/products/B0GYNSPBFF/image_2.jpg"
-      },
-      {
-        "id": "med_B0GYNSPBFF_3",
-        "type": "image",
-        "url": "/products/B0GYNSPBFF/image_3.jpg"
-      },
-      {
-        "id": "med_B0GYNSPBFF_4",
-        "type": "image",
-        "url": "/products/B0GYNSPBFF/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3202,26 +2232,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FKYM1S95_1",
         "type": "image",
         "url": "/products/B0FKYM1S95/image_1.jpg"
-      },
-      {
-        "id": "med_B0FKYM1S95_2",
-        "type": "image",
-        "url": "/products/B0FKYM1S95/image_2.jpg"
-      },
-      {
-        "id": "med_B0FKYM1S95_3",
-        "type": "image",
-        "url": "/products/B0FKYM1S95/image_3.jpg"
-      },
-      {
-        "id": "med_B0FKYM1S95_4",
-        "type": "image",
-        "url": "/products/B0FKYM1S95/image_4.jpg"
-      },
-      {
-        "id": "med_B0FKYM1S95_5",
-        "type": "image",
-        "url": "/products/B0FKYM1S95/image_5.jpg"
       }
     ],
     "colors": [],
@@ -3249,26 +2259,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FKYNNVLN_1",
         "type": "image",
         "url": "/products/B0FKYNNVLN/image_1.jpg"
-      },
-      {
-        "id": "med_B0FKYNNVLN_2",
-        "type": "image",
-        "url": "/products/B0FKYNNVLN/image_2.jpg"
-      },
-      {
-        "id": "med_B0FKYNNVLN_3",
-        "type": "image",
-        "url": "/products/B0FKYNNVLN/image_3.jpg"
-      },
-      {
-        "id": "med_B0FKYNNVLN_4",
-        "type": "image",
-        "url": "/products/B0FKYNNVLN/image_4.jpg"
-      },
-      {
-        "id": "med_B0FKYNNVLN_5",
-        "type": "image",
-        "url": "/products/B0FKYNNVLN/image_5.jpg"
       }
     ],
     "colors": [],
@@ -3296,26 +2286,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FM7LGD47_1",
         "type": "image",
         "url": "/products/B0FM7LGD47/image_1.jpg"
-      },
-      {
-        "id": "med_B0FM7LGD47_2",
-        "type": "image",
-        "url": "/products/B0FM7LGD47/image_2.jpg"
-      },
-      {
-        "id": "med_B0FM7LGD47_3",
-        "type": "image",
-        "url": "/products/B0FM7LGD47/image_3.jpg"
-      },
-      {
-        "id": "med_B0FM7LGD47_4",
-        "type": "image",
-        "url": "/products/B0FM7LGD47/image_4.jpg"
-      },
-      {
-        "id": "med_B0FM7LGD47_5",
-        "type": "image",
-        "url": "/products/B0FM7LGD47/image_5.jpg"
       }
     ],
     "colors": [],
@@ -3343,21 +2313,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNN2D5CD_1",
         "type": "image",
         "url": "/products/B0FNN2D5CD/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNN2D5CD_2",
-        "type": "image",
-        "url": "/products/B0FNN2D5CD/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNN2D5CD_3",
-        "type": "image",
-        "url": "/products/B0FNN2D5CD/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNN2D5CD_4",
-        "type": "image",
-        "url": "/products/B0FNN2D5CD/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3385,21 +2340,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNN4WQNQ_1",
         "type": "image",
         "url": "/products/B0FNN4WQNQ/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNN4WQNQ_2",
-        "type": "image",
-        "url": "/products/B0FNN4WQNQ/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNN4WQNQ_3",
-        "type": "image",
-        "url": "/products/B0FNN4WQNQ/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNN4WQNQ_4",
-        "type": "image",
-        "url": "/products/B0FNN4WQNQ/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3427,21 +2367,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNN66P5B_1",
         "type": "image",
         "url": "/products/B0FNN66P5B/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNN66P5B_2",
-        "type": "image",
-        "url": "/products/B0FNN66P5B/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNN66P5B_3",
-        "type": "image",
-        "url": "/products/B0FNN66P5B/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNN66P5B_4",
-        "type": "image",
-        "url": "/products/B0FNN66P5B/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3469,21 +2394,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNN49PMX_1",
         "type": "image",
         "url": "/products/B0FNN49PMX/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNN49PMX_2",
-        "type": "image",
-        "url": "/products/B0FNN49PMX/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNN49PMX_3",
-        "type": "image",
-        "url": "/products/B0FNN49PMX/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNN49PMX_4",
-        "type": "image",
-        "url": "/products/B0FNN49PMX/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3511,21 +2421,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNN6BRJD_1",
         "type": "image",
         "url": "/products/B0FNN6BRJD/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNN6BRJD_2",
-        "type": "image",
-        "url": "/products/B0FNN6BRJD/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNN6BRJD_3",
-        "type": "image",
-        "url": "/products/B0FNN6BRJD/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNN6BRJD_4",
-        "type": "image",
-        "url": "/products/B0FNN6BRJD/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3553,21 +2448,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNN7W66B_1",
         "type": "image",
         "url": "/products/B0FNN7W66B/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNN7W66B_2",
-        "type": "image",
-        "url": "/products/B0FNN7W66B/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNN7W66B_3",
-        "type": "image",
-        "url": "/products/B0FNN7W66B/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNN7W66B_4",
-        "type": "image",
-        "url": "/products/B0FNN7W66B/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3595,21 +2475,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNN7Q41H_1",
         "type": "image",
         "url": "/products/B0FNN7Q41H/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNN7Q41H_2",
-        "type": "image",
-        "url": "/products/B0FNN7Q41H/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNN7Q41H_3",
-        "type": "image",
-        "url": "/products/B0FNN7Q41H/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNN7Q41H_4",
-        "type": "image",
-        "url": "/products/B0FNN7Q41H/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3637,21 +2502,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FNN672TC_1",
         "type": "image",
         "url": "/products/B0FNN672TC/image_1.jpg"
-      },
-      {
-        "id": "med_B0FNN672TC_2",
-        "type": "image",
-        "url": "/products/B0FNN672TC/image_2.jpg"
-      },
-      {
-        "id": "med_B0FNN672TC_3",
-        "type": "image",
-        "url": "/products/B0FNN672TC/image_3.jpg"
-      },
-      {
-        "id": "med_B0FNN672TC_4",
-        "type": "image",
-        "url": "/products/B0FNN672TC/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3679,21 +2529,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FJLQTH6X_1",
         "type": "image",
         "url": "/products/B0FJLQTH6X/image_1.jpg"
-      },
-      {
-        "id": "med_B0FJLQTH6X_2",
-        "type": "image",
-        "url": "/products/B0FJLQTH6X/image_2.jpg"
-      },
-      {
-        "id": "med_B0FJLQTH6X_3",
-        "type": "image",
-        "url": "/products/B0FJLQTH6X/image_3.jpg"
-      },
-      {
-        "id": "med_B0FJLQTH6X_4",
-        "type": "image",
-        "url": "/products/B0FJLQTH6X/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3721,21 +2556,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FJLT87Q2_1",
         "type": "image",
         "url": "/products/B0FJLT87Q2/image_1.jpg"
-      },
-      {
-        "id": "med_B0FJLT87Q2_2",
-        "type": "image",
-        "url": "/products/B0FJLT87Q2/image_2.jpg"
-      },
-      {
-        "id": "med_B0FJLT87Q2_3",
-        "type": "image",
-        "url": "/products/B0FJLT87Q2/image_3.jpg"
-      },
-      {
-        "id": "med_B0FJLT87Q2_4",
-        "type": "image",
-        "url": "/products/B0FJLT87Q2/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3763,21 +2583,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GGH7RQGL_1",
         "type": "image",
         "url": "/products/B0GGH7RQGL/image_1.jpg"
-      },
-      {
-        "id": "med_B0GGH7RQGL_2",
-        "type": "image",
-        "url": "/products/B0GGH7RQGL/image_2.jpg"
-      },
-      {
-        "id": "med_B0GGH7RQGL_3",
-        "type": "image",
-        "url": "/products/B0GGH7RQGL/image_3.jpg"
-      },
-      {
-        "id": "med_B0GGH7RQGL_4",
-        "type": "image",
-        "url": "/products/B0GGH7RQGL/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3805,21 +2610,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0FS831QLM_1",
         "type": "image",
         "url": "/products/B0FS831QLM/image_1.jpg"
-      },
-      {
-        "id": "med_B0FS831QLM_2",
-        "type": "image",
-        "url": "/products/B0FS831QLM/image_2.jpg"
-      },
-      {
-        "id": "med_B0FS831QLM_3",
-        "type": "image",
-        "url": "/products/B0FS831QLM/image_3.jpg"
-      },
-      {
-        "id": "med_B0FS831QLM_4",
-        "type": "image",
-        "url": "/products/B0FS831QLM/image_4.jpg"
       }
     ],
     "colors": [],
@@ -3847,26 +2637,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GKVPGWDV_1",
         "type": "image",
         "url": "/products/B0GKVPGWDV/image_1.jpg"
-      },
-      {
-        "id": "med_B0GKVPGWDV_2",
-        "type": "image",
-        "url": "/products/B0GKVPGWDV/image_2.jpg"
-      },
-      {
-        "id": "med_B0GKVPGWDV_3",
-        "type": "image",
-        "url": "/products/B0GKVPGWDV/image_3.jpg"
-      },
-      {
-        "id": "med_B0GKVPGWDV_4",
-        "type": "image",
-        "url": "/products/B0GKVPGWDV/image_4.jpg"
-      },
-      {
-        "id": "med_B0GKVPGWDV_5",
-        "type": "image",
-        "url": "/products/B0GKVPGWDV/image_5.jpg"
       }
     ],
     "colors": [],
@@ -3894,26 +2664,6 @@ export const initialProducts: Product[] = [
         "id": "med_B0GKVWDYSM_1",
         "type": "image",
         "url": "/products/B0GKVWDYSM/image_1.jpg"
-      },
-      {
-        "id": "med_B0GKVWDYSM_2",
-        "type": "image",
-        "url": "/products/B0GKVWDYSM/image_2.jpg"
-      },
-      {
-        "id": "med_B0GKVWDYSM_3",
-        "type": "image",
-        "url": "/products/B0GKVWDYSM/image_3.jpg"
-      },
-      {
-        "id": "med_B0GKVWDYSM_4",
-        "type": "image",
-        "url": "/products/B0GKVWDYSM/image_4.jpg"
-      },
-      {
-        "id": "med_B0GKVWDYSM_5",
-        "type": "image",
-        "url": "/products/B0GKVWDYSM/image_5.jpg"
       }
     ],
     "colors": [],
@@ -4150,11 +2900,6 @@ export const initialProducts: Product[] = [
         "id": "med_ncert_pcmbe_12_1",
         "type": "image",
         "url": "/products/books/ncert_pcmbe_class_12th.jpeg"
-      },
-      {
-        "id": "med_ncert_pcmbe_12_2",
-        "type": "image",
-        "url": "/products/books/ncert_pcmbe_class_12th_(1).jpeg"
       }
     ],
     "colors": [],
