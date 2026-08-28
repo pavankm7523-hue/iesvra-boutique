@@ -3,6 +3,7 @@ import { ShoppingCart, Trash2, ArrowRight, X, CreditCard, CheckCircle, MapPin, Z
 import { useCartItems, removeFromCart, updateCartQuantity } from "@/lib/cart";
 import { useState, useEffect, useRef } from "react";
 import { AddressPicker } from "@/components/AddressPicker";
+import { PasswordInput } from "@/components/PasswordInput";
 import { useCurrentUser } from "@/lib/auth";
 import { createOrder } from "@/lib/orders";
 import { toast } from "sonner";
@@ -1713,12 +1714,11 @@ function Cart() {
                         </div>
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">CVV</label>
-                          <input
+                          <PasswordInput
                             required
-                            type="password"
                             placeholder="123"
                             defaultValue="111"
-                            maxLength={3}
+                            maxLength={4}
                             className="h-10 px-3 rounded-lg border border-border text-sm outline-none focus:border-[#0b72e7] transition-all font-mono"
                           />
                         </div>

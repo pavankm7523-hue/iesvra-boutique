@@ -1,9 +1,19 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect, useRef } from "react";
 const logo = "/iesvra-logo.png";
-import { loginUser, registerUserInDb, validateUserCredentials, updateUserPassword, hasUserAccount, getRegisteredUsers, saveRegisteredUsers } from "@/lib/auth";
+import {
+  loginUser,
+  registerUserInDbAsync,
+  validateUserCredentialsAsync,
+  updateUserPasswordAsync,
+  hasUserAccount,
+  getRegisteredUsers,
+  saveRegisteredUsers,
+  syncAuthWithDb,
+} from "@/lib/auth";
+import { PasswordInput } from "@/components/PasswordInput";
 import { toast } from "sonner";
-import { Check, X, Shield, Lock, Eye, EyeOff, ArrowLeft, KeyRound } from "lucide-react";
+import { Check, X, Shield, Lock, ArrowLeft, KeyRound, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -19,7 +29,7 @@ export const Route = createFileRoute("/login")({
 function Login() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,6 +42,11 @@ function Login() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [generatedOtp, setGeneratedOtp] = useState("");
+
+  // Sync users database on mount
+  useEffect(() => {
+    syncAuthWithDb();
+  }, []);
 
   // Mock social login states
   const [socialProvider, setSocialProvider] = useState<string | null>(null);
@@ -108,7 +123,7 @@ function Login() {
     }
   }, [socialProvider]);
 
-  const handleForgotSubmit = (e: React.FormEvent) => {
+  const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (forgotStep === 'email') {
       if (!forgotEmail.trim()) {
@@ -159,14 +174,22 @@ function Login() {
         toast.error("Passwords do not match.");
         return;
       }
-      const success = updateUserPassword(forgotEmail, newPassword);
-      if (success) {
-        toast.success("Password reset successful! Please log in with your new password.");
-        setForgotStep('none');
-        setEmail(forgotEmail);
-        setPassword("");
-      } else {
-        toast.error("Failed to reset password. Please try again.");
+
+      setIsSubmitting(true);
+      try {
+        const success = await updateUserPasswordAsync(forgotEmail, newPassword);
+        if (success) {
+          toast.success("Password reset successful! Please log in with your new password.");
+          setForgotStep('none');
+          setEmail(forgotEmail);
+          setPassword("");
+        } else {
+          toast.error("Failed to reset password. Please try again.");
+        }
+      } catch (err: any) {
+        toast.error(err.message || "Failed to reset password.");
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -208,7 +231,7 @@ function Login() {
 
   const isPasswordStrong = passwordStrength === 100;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email.trim() || !password.trim()) {
@@ -216,46 +239,55 @@ function Login() {
       return;
     }
 
-    if (isLogin) {
-      // Login flow
-      const res = validateUserCredentials(email, password);
-      if (res.success) {
-        loginUser(res.name || email.split("@")[0], email.trim(), res.role || "user");
-        if (res.role === "admin") {
-          toast.success("Welcome back, Administrator!");
-          navigate({ to: "/admin" });
+    setIsSubmitting(true);
+
+    try {
+      if (isLogin) {
+        // Real-time server-backed Login flow
+        const res = await validateUserCredentialsAsync(email, password);
+        if (res.success) {
+          loginUser(res.name || email.split("@")[0], email.trim(), res.role || "user");
+          if (res.role === "admin") {
+            toast.success("Welcome back, Administrator!");
+            navigate({ to: "/admin" });
+          } else {
+            toast.success("Logged in successfully!");
+            navigate({ to: "/" });
+          }
         } else {
-          toast.success("Logged in successfully!");
-          navigate({ to: "/" });
+          toast.error(res.error || "Invalid email or password.");
         }
       } else {
-        toast.error(res.error || "Invalid email or password.");
-      }
-    } else {
-      // Sign up flow
-      if (!name.trim()) {
-        toast.error("Please enter your name.");
-        return;
-      }
-      if (!isPasswordStrong) {
-        toast.error("Please choose a strong password matching all criteria.");
-        return;
-      }
+        // Sign up flow
+        if (!name.trim()) {
+          toast.error("Please enter your name.");
+          return;
+        }
+        if (!isPasswordStrong) {
+          toast.error("Please choose a strong password matching all criteria.");
+          return;
+        }
 
-      // Check if trying to register as admin
-      if (email.trim().toLowerCase() === "admin@IESVRA.com") {
-        toast.error("This email is reserved for system administrator.");
-        return;
-      }
+        // Check if trying to register as admin
+        if (email.trim().toLowerCase() === "admin@iesvra.com") {
+          toast.error("This email is reserved for system administrator.");
+          return;
+        }
 
-      const success = registerUserInDb(name.trim(), email.trim(), password);
-      if (success) {
-        loginUser(name.trim(), email.trim(), "user");
-        toast.success("Account created successfully! Welcome to IESVRA.");
-        navigate({ to: "/" });
-      } else {
-        toast.error("This email address is already registered. Please sign in instead.");
+        const res = await registerUserInDbAsync(name.trim(), email.trim(), password);
+        if (res.success && res.user) {
+          loginUser(res.user.name, res.user.email, res.user.role || "user");
+          toast.success("Account created successfully! Welcome to IESVRA.");
+          navigate({ to: "/" });
+        } else {
+          toast.error(res.error || "This email address is already registered. Please sign in instead.");
+        }
       }
+    } catch (err: any) {
+      console.error("[Login] Submit error:", err);
+      toast.error(err.message || "An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -351,33 +383,37 @@ function Login() {
             <form onSubmit={handleForgotSubmit} className="space-y-5">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-navy-deep">New Password</label>
-                <input
+                <PasswordInput
                   required
-                  type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full h-11 px-4 rounded-md border border-input bg-background focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm"
+                  className="h-11 px-4 rounded-md border border-input bg-background focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm"
                   placeholder="Min 8 characters"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-navy-deep">Confirm New Password</label>
-                <input
+                <PasswordInput
                   required
-                  type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full h-11 px-4 rounded-md border border-input bg-background focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm"
+                  className="h-11 px-4 rounded-md border border-input bg-background focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm"
                   placeholder="Confirm password"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full h-11 rounded-md font-semibold text-sm bg-navy-deep text-white hover:bg-navy-deep/90 active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer"
+                disabled={isSubmitting}
+                className="w-full h-11 rounded-md font-semibold text-sm bg-navy-deep text-white hover:bg-navy-deep/90 active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                <Lock className="h-4 w-4 text-gold" /> Reset Password
+                {isSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Lock className="h-4 w-4 text-gold" />
+                )}
+                {isSubmitting ? "Updating Password..." : "Reset Password"}
               </button>
             </form>
           </div>
@@ -435,23 +471,13 @@ function Login() {
                     </button>
                   )}
                 </div>
-                <div className="relative">
-                  <input
-                    required
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-11 pl-4 pr-12 rounded-md border border-input bg-background focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm"
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-navy-deep/40 hover:text-navy-deep transition cursor-pointer"
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
+                <PasswordInput
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-11 px-4 rounded-md border border-input bg-background focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors text-sm"
+                  placeholder="••••••••"
+                />
               </div>
 
               {/* Real-time Password Strength indicator */}
@@ -528,14 +554,19 @@ function Login() {
 
               <button
                 type="submit"
-                disabled={!isLogin && !isPasswordStrong}
+                disabled={isSubmitting || (!isLogin && !isPasswordStrong)}
                 className={`w-full h-11 rounded-md font-semibold text-sm transition mt-2 cursor-pointer flex items-center justify-center gap-2 ${
-                  !isLogin && !isPasswordStrong
+                  (!isLogin && !isPasswordStrong) || isSubmitting
                     ? "bg-navy-deep/20 text-navy-deep/40 cursor-not-allowed border border-border"
                     : "bg-navy-deep text-white hover:bg-navy-deep/90 active:scale-95"
                 }`}
               >
-                <Lock className="h-4 w-4" /> {isLogin ? "Sign In" : "Create Account"}
+                {isSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Lock className="h-4 w-4" />
+                )}
+                {isSubmitting ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
               </button>
             </form>
 

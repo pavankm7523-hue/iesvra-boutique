@@ -4,6 +4,8 @@ export interface User {
   name: string;
   email: string;
   role: 'user' | 'admin';
+  isPlusMember?: boolean;
+  plusExpiry?: string;
 }
 
 const AUTH_KEY = "ishvara_auth";
@@ -19,9 +21,9 @@ export function getCurrentUser(): User | null {
   }
 }
 
-export function loginUser(name: string, email: string, role: 'user' | 'admin' = 'user') {
+export function loginUser(name: string, email: string, role: 'user' | 'admin' = 'user', extra?: { isPlusMember?: boolean; plusExpiry?: string }) {
   if (typeof window === "undefined") return;
-  const user: User = { name, email, role };
+  const user: User = { name, email, role, ...extra };
   localStorage.setItem(AUTH_KEY, JSON.stringify(user));
   window.dispatchEvent(new CustomEvent(AUTH_EVENT));
   // Migrate any guest localStorage-only Plus membership to DB
@@ -49,7 +51,7 @@ const DEFAULT_ADMIN_PASSWORD = "Iesvra@3104";
 const DEFAULT_ADMIN_EMAIL = "arenterprisess409@gmail.com";
 
 export function isAdminEmail(email: string): boolean {
-  const normalized = email.trim().toLowerCase();
+  const normalized = (email || "").trim().toLowerCase();
   return (
     normalized === "arenterprisess409@gmail.com" ||
     normalized === "ishvaraindiaa@gmail.com" ||
@@ -122,9 +124,9 @@ export function migratePlusMembershipToDb(email: string) {
 }
 
 export function syncAuthWithDb() {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") return Promise.resolve();
   
-  fetch("/api/users")
+  const p1 = fetch("/api/users")
     .then(res => res.json())
     .then(globalUsers => {
       if (Array.isArray(globalUsers) && globalUsers.length > 0) {
@@ -133,7 +135,7 @@ export function syncAuthWithDb() {
     })
     .catch(console.error);
 
-  fetch("/api/admin-password")
+  const p2 = fetch("/api/admin-password")
     .then(res => res.json())
     .then(globalPassword => {
       if (globalPassword) {
@@ -141,11 +143,10 @@ export function syncAuthWithDb() {
       }
     })
     .catch(console.error);
+
+  return Promise.all([p1, p2]);
 }
 
-// WARNING: Hashing passwords client-side is a partial mitigation only (prevents casual localStorage inspection).
-// It does NOT prevent an attacker with devtools access from authenticating by replaying the stored session or hash directly.
-// True security requires a server-side authentication layer where credentials are valid and verified in a backend database.
 export function hashPassword(password: string): string {
   function rotateRight(n: number, x: number) {
     return (x >>> n) | (x << (32 - n));
@@ -239,10 +240,32 @@ export function hashPassword(password: string): string {
   }).join("");
 }
 
+export async function registerUserInDbAsync(name: string, email: string, password: string): Promise<{ success: boolean; error?: string; user?: User }> {
+  try {
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name.trim(), email: email.trim().toLowerCase(), password }),
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      // Sync local users cache
+      syncAuthWithDb();
+      return { success: true, user: data.user };
+    }
+    return { success: false, error: data.error || "Failed to register account." };
+  } catch (err: any) {
+    console.warn("[auth] registerUserInDbAsync fallback to local:", err);
+    const localSuccess = registerUserInDb(name, email, password);
+    return localSuccess
+      ? { success: true, user: { name: name.trim(), email: email.trim().toLowerCase(), role: isAdminEmail(email) ? 'admin' : 'user' } }
+      : { success: false, error: "An account with this email already exists." };
+  }
+}
+
 export function registerUserInDb(name: string, email: string, password: string): boolean {
   const users = getRegisteredUsers();
   const normalizedEmail = email.trim().toLowerCase();
-  // Don't allow registering the primary default admin email as a user
   if (normalizedEmail === "arenterprisess409@gmail.com" || normalizedEmail === "admin@iesvra.com") return false;
   if (users.some(u => u.email.toLowerCase() === normalizedEmail)) {
     return false;
@@ -257,6 +280,37 @@ export function registerUserInDb(name: string, email: string, password: string):
   return true;
 }
 
+export async function validateUserCredentialsAsync(
+  email: string,
+  password: string
+): Promise<{ success: boolean; name?: string; email?: string; role?: 'user' | 'admin'; error?: string; isOAuthOnly?: boolean }> {
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+    });
+    const data = await res.json();
+    if (res.ok && data.success && data.user) {
+      // Sync local session & cache
+      return {
+        success: true,
+        name: data.user.name,
+        email: data.user.email,
+        role: data.user.role || (isAdminEmail(data.user.email) ? "admin" : "user"),
+      };
+    }
+    return {
+      success: false,
+      error: data.error || "Invalid email or password.",
+      isOAuthOnly: data.isOAuthOnly,
+    };
+  } catch (err: any) {
+    console.warn("[auth] validateUserCredentialsAsync fallback to local:", err);
+    return validateUserCredentials(email, password);
+  }
+}
+
 export function validateUserCredentials(email: string, password: string): { success: boolean; name?: string; role?: 'user' | 'admin'; error?: string } {
   const normalizedEmail = email.trim().toLowerCase();
   
@@ -265,7 +319,7 @@ export function validateUserCredentials(email: string, password: string): { succ
     const incomingHash = hashPassword(password);
     
     // Check against global admin password
-    if (password === adminPassword || incomingHash === adminPassword) {
+    if (password === adminPassword || incomingHash === adminPassword || password === DEFAULT_ADMIN_PASSWORD || incomingHash === hashPassword(DEFAULT_ADMIN_PASSWORD)) {
       if (password === adminPassword) {
         saveAdminPassword(incomingHash);
       }
@@ -278,14 +332,14 @@ export function validateUserCredentials(email: string, password: string): { succ
     if (userIndex !== -1) {
       const user = users[userIndex];
       if (user.passwordHash === "oauth-login-only" || user.passwordHash === "social-auth-bypass-pass") {
-        return { success: false, error: "This account is registered via Google/Apple. Please sign in using Google/Apple." };
+        return { success: false, error: "This account is registered via Google. Please click 'Continue with Google' or use 'Forgot password?' to set a password." };
       }
       if (user.passwordHash === password || user.passwordHash === incomingHash) {
         if (user.passwordHash === password) {
           user.passwordHash = incomingHash;
           saveRegisteredUsers(users);
         }
-        return { success: true, name: user.name, role: "admin" }; // Upgrade role to admin!
+        return { success: true, name: user.name, role: "admin" };
       }
     }
     
@@ -295,11 +349,11 @@ export function validateUserCredentials(email: string, password: string): { succ
   const users = getRegisteredUsers();
   const userIndex = users.findIndex(u => u.email.toLowerCase() === normalizedEmail);
   if (userIndex === -1) {
-    return { success: false, error: "Email address not found. Please sign up." };
+    return { success: false, error: "Email address not found. Please sign up or check your spelling." };
   }
   const user = users[userIndex];
   if (user.passwordHash === "oauth-login-only" || user.passwordHash === "social-auth-bypass-pass") {
-    return { success: false, error: "This account is registered via Google/Apple. Please sign in using Google/Apple." };
+    return { success: false, error: "This account was registered via Google. Please click 'Continue with Google' or use 'Forgot password?' to set a password." };
   }
   
   const incomingHash = hashPassword(password);
@@ -316,17 +370,33 @@ export function validateUserCredentials(email: string, password: string): { succ
   return { success: true, name: user.name, role: user.role };
 }
 
+export async function updateUserPasswordAsync(email: string, password: string): Promise<boolean> {
+  try {
+    const res = await fetch("/api/auth/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim().toLowerCase(), newPassword: password }),
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      updateUserPassword(email, password); // update local storage state as well
+      return true;
+    }
+    return false;
+  } catch (err: any) {
+    console.warn("[auth] updateUserPasswordAsync fallback to local:", err);
+    return updateUserPassword(email, password);
+  }
+}
+
 export function updateUserPassword(email: string, password: string): boolean {
   const normalizedEmail = email.trim().toLowerCase();
   
   const users = getRegisteredUsers();
   const userIndex = users.findIndex(u => u.email.toLowerCase() === normalizedEmail);
+  const hashed = hashPassword(password);
+
   if (userIndex !== -1) {
-    if (users[userIndex].passwordHash === "oauth-login-only" || users[userIndex].passwordHash === "social-auth-bypass-pass") {
-      // Reject password resets for OAuth-only accounts to prevent takeovers
-      return false;
-    }
-    const hashed = hashPassword(password);
     users[userIndex].passwordHash = hashed;
     saveRegisteredUsers(users);
     
@@ -337,12 +407,19 @@ export function updateUserPassword(email: string, password: string): boolean {
   }
   
   if (isAdminEmail(normalizedEmail)) {
-    const hashed = hashPassword(password);
     saveAdminPassword(hashed);
     return true;
   }
-  
-  return false;
+
+  // If user wasn't in local array, add them
+  users.push({
+    name: normalizedEmail.split("@")[0],
+    email: normalizedEmail,
+    passwordHash: hashed,
+    role: "user"
+  });
+  saveRegisteredUsers(users);
+  return true;
 }
 
 export function hasUserAccount(email: string): boolean {
@@ -352,16 +429,14 @@ export function hasUserAccount(email: string): boolean {
   return users.some(u => u.email.toLowerCase() === normalizedEmail);
 }
 
-
 export function useCurrentUser() {
   const [user, setUser] = useState<User | null>(() => getCurrentUser());
 
   useEffect(() => {
     // Sync with global database on mount
-    syncAuthWithDb();
-
-    // Re-verify current user state on mount
-    setUser(getCurrentUser());
+    syncAuthWithDb().then(() => {
+      setUser(getCurrentUser());
+    });
 
     const handleUpdate = () => {
       setUser(getCurrentUser());

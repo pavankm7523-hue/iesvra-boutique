@@ -57,6 +57,9 @@ import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
+import { Route as ApiAuthResetPasswordRouteImport } from './routes/api/auth/reset-password'
+import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
+import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiAuthGoogleCallbackRouteImport } from './routes/api/auth/google-callback'
 import { Route as ApiAuthGoogleRouteImport } from './routes/api/auth/google'
 import { Route as AdminProductNewRouteImport } from './routes/admin.product.new'
@@ -302,6 +305,21 @@ const ApiNewsletterSubscribeRoute = ApiNewsletterSubscribeRouteImport.update({
   path: '/api/newsletter/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthResetPasswordRoute = ApiAuthResetPasswordRouteImport.update({
+  id: '/api/auth/reset-password',
+  path: '/api/auth/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthRegisterRoute = ApiAuthRegisterRouteImport.update({
+  id: '/api/auth/register',
+  path: '/api/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
+  id: '/api/auth/login',
+  path: '/api/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthGoogleCallbackRoute = ApiAuthGoogleCallbackRouteImport.update({
   id: '/api/auth/google-callback',
   path: '/api/auth/google-callback',
@@ -375,6 +393,9 @@ export interface FileRoutesByFullPath {
   '/admin/product/new': typeof AdminProductNewRoute
   '/api/auth/google': typeof ApiAuthGoogleRoute
   '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/auth/reset-password': typeof ApiAuthResetPasswordRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesByTo {
@@ -428,6 +449,9 @@ export interface FileRoutesByTo {
   '/admin/product/new': typeof AdminProductNewRoute
   '/api/auth/google': typeof ApiAuthGoogleRoute
   '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/auth/reset-password': typeof ApiAuthResetPasswordRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesById {
@@ -483,6 +507,9 @@ export interface FileRoutesById {
   '/admin/product/new': typeof AdminProductNewRoute
   '/api/auth/google': typeof ApiAuthGoogleRoute
   '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/auth/reset-password': typeof ApiAuthResetPasswordRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRouteTypes {
@@ -539,6 +566,9 @@ export interface FileRouteTypes {
     | '/admin/product/new'
     | '/api/auth/google'
     | '/api/auth/google-callback'
+    | '/api/auth/login'
+    | '/api/auth/register'
+    | '/api/auth/reset-password'
     | '/api/newsletter/subscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -592,6 +622,9 @@ export interface FileRouteTypes {
     | '/admin/product/new'
     | '/api/auth/google'
     | '/api/auth/google-callback'
+    | '/api/auth/login'
+    | '/api/auth/register'
+    | '/api/auth/reset-password'
     | '/api/newsletter/subscribe'
   id:
     | '__root__'
@@ -646,6 +679,9 @@ export interface FileRouteTypes {
     | '/admin/product/new'
     | '/api/auth/google'
     | '/api/auth/google-callback'
+    | '/api/auth/login'
+    | '/api/auth/register'
+    | '/api/auth/reset-password'
     | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
 }
@@ -693,6 +729,9 @@ export interface RootRouteChildren {
   ProductIdRoute: typeof ProductIdRoute
   ApiAuthGoogleRoute: typeof ApiAuthGoogleRoute
   ApiAuthGoogleCallbackRoute: typeof ApiAuthGoogleCallbackRoute
+  ApiAuthLoginRoute: typeof ApiAuthLoginRoute
+  ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
+  ApiAuthResetPasswordRoute: typeof ApiAuthResetPasswordRoute
   ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
 }
 
@@ -1034,6 +1073,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNewsletterSubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/reset-password': {
+      id: '/api/auth/reset-password'
+      path: '/api/auth/reset-password'
+      fullPath: '/api/auth/reset-password'
+      preLoaderRoute: typeof ApiAuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/register': {
+      id: '/api/auth/register'
+      path: '/api/auth/register'
+      fullPath: '/api/auth/register'
+      preLoaderRoute: typeof ApiAuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/login': {
+      id: '/api/auth/login'
+      path: '/api/auth/login'
+      fullPath: '/api/auth/login'
+      preLoaderRoute: typeof ApiAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/google-callback': {
       id: '/api/auth/google-callback'
       path: '/api/auth/google-callback'
@@ -1133,6 +1193,9 @@ const rootRouteChildren: RootRouteChildren = {
   ProductIdRoute: ProductIdRoute,
   ApiAuthGoogleRoute: ApiAuthGoogleRoute,
   ApiAuthGoogleCallbackRoute: ApiAuthGoogleCallbackRoute,
+  ApiAuthLoginRoute: ApiAuthLoginRoute,
+  ApiAuthRegisterRoute: ApiAuthRegisterRoute,
+  ApiAuthResetPasswordRoute: ApiAuthResetPasswordRoute,
   ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,
 }
 export const routeTree = rootRouteImport
