@@ -4,27 +4,30 @@ import { categories, useProducts } from "@/lib/products";
 import { useHeroBanners } from "@/lib/hero";
 import { ProductCard } from "@/components/ProductCard";
 import { useState, useMemo } from "react";
-import { SlidersHorizontal, X, Filter, RotateCcw, Check } from "lucide-react";
+import { SlidersHorizontal, X, Filter, RotateCcw, Check, Sparkles, Tag, Flame, Percent } from "lucide-react";
 
 const shopSearchSchema = z.object({
   category: z.string().optional(),
   q: z.string().optional(),
   bannerId: z.string().optional(),
+  deals: z.union([z.boolean(), z.string()]).optional(),
+  dealTier: z.string().optional(), // e.g. "mega" (40%+ off), "under499"
+  sortBy: z.string().optional(),
 });
 
 export const Route = createFileRoute("/shop")({
   validateSearch: (search) => shopSearchSchema.parse(search),
   head: () => ({
     meta: [
-      { title: "Shop All Collections & Best Sellers | IESVRA Boutique" },
+      { title: "Shop All Collections & Best Deals | IESVRA Boutique" },
       {
         name: "description",
-        content: "Explore top deals and browse all categories including Electronics, Smart Gadgets, Home Essentials, Beauty, and Personal Care at IESVRA.",
+        content: "Explore top deals, mega discounts, and browse all categories including Electronics, Smart Gadgets, Home Essentials, and Beauty at IESVRA.",
       },
-      { property: "og:title", content: "Shop All Collections & Best Sellers | IESVRA Boutique" },
+      { property: "og:title", content: "Shop All Collections & Best Deals | IESVRA Boutique" },
       {
         property: "og:description",
-        content: "Explore top deals and browse all categories including Electronics, Smart Gadgets, Home Essentials, Beauty, and Personal Care at IESVRA.",
+        content: "Explore top deals, mega discounts, and browse all categories at IESVRA Boutique.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -33,14 +36,21 @@ export const Route = createFileRoute("/shop")({
 });
 
 function Shop() {
-  const { category, q, bannerId } = Route.useSearch();
+  const searchParams = Route.useSearch();
+  const { category, q, bannerId, deals, dealTier } = searchParams;
   const navigate = useNavigate({ from: Route.fullPath });
   const { products: allProducts } = useProducts();
   const { data: banners } = useHeroBanners();
+
+  // Detect whether deals mode is active
+  const isDealsParam = deals === true || deals === "true" || deals === "1";
+  const isDealsSearchQuery = q?.trim().toLowerCase() === "deals" || q?.trim().toLowerCase() === "deal" || q?.trim().toLowerCase() === "offers" || q?.trim().toLowerCase() === "offer";
+  const isDealsActive = isDealsParam || isDealsSearchQuery;
+  const effectiveQ = isDealsSearchQuery ? undefined : q;
   
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [selectedPrices, setSelectedPrices] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<string>("recommended");
+  const [sortBy, setSortBy] = useState<string>(isDealsActive ? "biggest-discount" : (searchParams.sortBy || "recommended"));
 
   const isBannerActive = (b: any) => {
     if (!b.isSpecialSale) return true;
@@ -61,9 +71,26 @@ function Shop() {
 
   const handleCategoryToggle = (catName: string) => {
     if (category?.toLowerCase() === catName.toLowerCase()) {
-      navigate({ search: (prev) => ({ ...prev, category: undefined }) });
+      navigate({ search: (prev: any) => ({ ...prev, category: undefined }) });
     } else {
-      navigate({ search: (prev) => ({ ...prev, category: catName }) });
+      navigate({ search: (prev: any) => ({ ...prev, category: catName }) });
+    }
+  };
+
+  const handleDealsToggle = () => {
+    if (isDealsActive) {
+      navigate({ search: (prev: any) => ({ ...prev, deals: undefined, dealTier: undefined, q: isDealsSearchQuery ? undefined : prev.q }) });
+    } else {
+      navigate({ search: (prev: any) => ({ ...prev, deals: true, q: isDealsSearchQuery ? undefined : prev.q }) });
+      setSortBy("biggest-discount");
+    }
+  };
+
+  const handleDealTierToggle = (tier: string) => {
+    if (dealTier === tier) {
+      navigate({ search: (prev: any) => ({ ...prev, dealTier: undefined }) });
+    } else {
+      navigate({ search: (prev: any) => ({ ...prev, deals: true, dealTier: tier }) });
     }
   };
 
@@ -77,10 +104,11 @@ function Shop() {
 
   const resetAllFilters = () => {
     setSelectedPrices([]);
-    navigate({ search: (prev) => ({ ...prev, category: undefined, q: undefined }) });
+    setSortBy("recommended");
+    navigate({ search: () => ({}) });
   };
 
-  const activeFilterCount = (category ? 1 : 0) + selectedPrices.length + (q ? 1 : 0);
+  const activeFilterCount = (category ? 1 : 0) + selectedPrices.length + (effectiveQ ? 1 : 0) + (isDealsActive ? 1 : 0) + (dealTier ? 1 : 0);
 
   const filteredProducts = useMemo(() => {
     return allProducts.filter((p) => {
@@ -97,10 +125,23 @@ function Shop() {
         ? p.categories.some(cat => cat.toLowerCase() === category.toLowerCase()) 
         : true;
 
+      // Deals filter check
+      if (isDealsActive) {
+        const hasDiscount = (p.mrp && p.mrp > p.price) || (activeBanner && activeBanner.productPrices?.[p.id] !== undefined) || p.isBestSeller;
+        if (!hasDiscount) return false;
+
+        const effectiveMrp = (activeBanner && activeBanner.productPrices?.[p.id] !== undefined) ? p.price : (p.mrp || p.price);
+        const effectivePrice = (activeBanner && activeBanner.productPrices?.[p.id] !== undefined) ? activeBanner.productPrices[p.id] : p.price;
+        const discountPct = effectiveMrp > effectivePrice ? Math.round(((effectiveMrp - effectivePrice) / effectiveMrp) * 100) : 0;
+
+        if (dealTier === "mega" && discountPct < 40) return false;
+        if (dealTier === "under499" && effectivePrice > 499) return false;
+      }
+
       // Smart Fuzzy Search Matcher
       let matchesSearch = true;
-      if (q && q.trim()) {
-        const queryClean = q.trim().toLowerCase();
+      if (effectiveQ && effectiveQ.trim()) {
+        const queryClean = effectiveQ.trim().toLowerCase();
         const qStem = queryClean.replace(/(?:ers|es|s)$/, '');
         
         const name = (p.name || "").toLowerCase();
@@ -127,7 +168,7 @@ function Shop() {
       
       return matchesCategory && matchesSearch;
     });
-  }, [allProducts, activeBanner, globalExclusiveIds, category, q, selectedPrices]);
+  }, [allProducts, activeBanner, globalExclusiveIds, category, effectiveQ, isDealsActive, dealTier, selectedPrices]);
 
   const sortedProducts = useMemo(() => {
     let list = filteredProducts.map(p => {
@@ -141,7 +182,13 @@ function Shop() {
       return p;
     });
 
-    if (sortBy === "low-to-high") {
+    if (sortBy === "biggest-discount") {
+      list.sort((a, b) => {
+        const discA = a.mrp && a.mrp > a.price ? (a.mrp - a.price) / a.mrp : 0;
+        const discB = b.mrp && b.mrp > b.price ? (b.mrp - b.price) / b.mrp : 0;
+        return discB - discA;
+      });
+    } else if (sortBy === "low-to-high") {
       list.sort((a, b) => a.price - b.price);
     } else if (sortBy === "high-to-low") {
       list.sort((a, b) => b.price - a.price);
@@ -155,31 +202,72 @@ function Shop() {
   return (
     <div className="bg-[#F8F9FC] text-foreground min-h-screen font-sans pb-16">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#2D1263] via-[#380E83] to-[#5B21B6] py-12 md:py-16 text-center px-4 relative overflow-hidden">
-        <h1 className="font-display text-3xl md:text-5xl text-white mb-3 relative z-10 tracking-tight font-extrabold">
-          {activeBanner ? activeBanner.title : category ? `${category}` : q ? `Search Results for "${q}"` : "All"} <span className="italic font-light text-amber-300">Collections</span>
-        </h1>
-        <p className="text-purple-100 max-w-2xl mx-auto relative z-10 font-medium text-xs md:text-sm">
-          Explore premium wellness, personal care, audio & lifestyle essentials. Handpicked for quality & speed.
-        </p>
+      <div className={`py-12 md:py-16 text-center px-4 relative overflow-hidden transition-all duration-300 ${
+        isDealsActive
+          ? "bg-gradient-to-r from-[#1e0a45] via-[#380E83] to-[#6B21A8]"
+          : "bg-gradient-to-r from-[#2D1263] via-[#380E83] to-[#5B21B6]"
+      }`}>
+        <div className="relative z-10 max-w-3xl mx-auto space-y-2">
+          {isDealsActive && (
+            <div className="inline-flex items-center gap-1.5 bg-amber-400/20 border border-amber-400/40 text-amber-300 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-1 shadow-sm animate-pulse">
+              <Flame className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <span>Flash Deals & Limited-Time Offers</span>
+            </div>
+          )}
+          <h1 className="font-display text-3xl md:text-5xl text-white tracking-tight font-extrabold">
+            {activeBanner
+              ? activeBanner.title
+              : isDealsActive
+              ? "⚡ Exclusive Deals & Discounts"
+              : category
+              ? `${category}`
+              : effectiveQ
+              ? `Search Results for "${effectiveQ}"`
+              : "All"}{" "}
+            <span className="italic font-light text-amber-300">
+              {isDealsActive ? "Catalog" : "Collections"}
+            </span>
+          </h1>
+          <p className="text-purple-100 max-w-2xl mx-auto font-medium text-xs md:text-sm">
+            {isDealsActive
+              ? "Discover verified price drops, extraordinary savings up to 70% off, and handpicked deal items with express dispatch."
+              : "Explore premium wellness, personal care, audio & lifestyle essentials. Handpicked for quality & speed."}
+          </p>
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
         {/* ========================================================
-            TOP CATEGORY PILLS ROW (QUICK 1-CLICK SELECTION)
+            TOP QUICK PILLS ROW (DEALS + CATEGORIES)
            ======================================================== */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none select-none">
+          {/* Deals Pill */}
           <button
-            onClick={() => navigate({ search: (prev) => ({ ...prev, category: undefined }) })}
+            onClick={handleDealsToggle}
+            className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer border flex items-center gap-1.5 ${
+              isDealsActive
+                ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 border-amber-400 shadow-md shadow-amber-500/25 ring-2 ring-amber-400/50"
+                : "bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100 hover:border-amber-300"
+            }`}
+          >
+            <Flame className={`h-3.5 w-3.5 ${isDealsActive ? "fill-slate-950 text-slate-950" : "fill-amber-500 text-amber-600"}`} />
+            <span>🔥 Deals & Offers</span>
+          </button>
+
+          {/* All Products Pill */}
+          <button
+            onClick={() => navigate({ search: () => ({}) })}
             className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer border ${
-              !category
+              !category && !isDealsActive && !effectiveQ
                 ? "bg-[#6B46C1] text-white border-[#6B46C1] shadow-md shadow-purple-600/20"
                 : "bg-white text-slate-700 border-slate-200 hover:border-purple-300 hover:bg-purple-50/50"
             }`}
           >
             All Products
           </button>
+
+          {/* Category Pills */}
           {categories.map((cat) => {
             const isActive = category?.toLowerCase() === cat.name.toLowerCase();
             return (
@@ -198,8 +286,49 @@ function Shop() {
           })}
         </div>
 
+        {/* Deals Quick Sub-Tiers (when Deals is active) */}
+        {isDealsActive && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 select-none text-xs">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 shrink-0">
+              Filter Deals:
+            </span>
+            <button
+              onClick={() => handleDealTierToggle("mega")}
+              className={`px-3 py-1.5 rounded-lg font-bold border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                dealTier === "mega"
+                  ? "bg-purple-900 text-white border-purple-900 shadow-sm"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              <Percent className="h-3 w-3 text-amber-500" />
+              <span>Mega Deals (40%+ Off)</span>
+            </button>
+            <button
+              onClick={() => handleDealTierToggle("under499")}
+              className={`px-3 py-1.5 rounded-lg font-bold border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                dealTier === "under499"
+                  ? "bg-purple-900 text-white border-purple-900 shadow-sm"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              <Tag className="h-3 w-3 text-emerald-600" />
+              <span>Under ₹499</span>
+            </button>
+            {(dealTier || isDealsActive) && (
+              <button
+                onClick={() => navigate({ search: (prev: any) => ({ ...prev, dealTier: undefined }) })}
+                className={`px-3 py-1.5 rounded-lg font-bold border transition-all cursor-pointer whitespace-nowrap ${
+                  !dealTier ? "bg-purple-100 text-purple-900 border-purple-200" : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                All Deals ({allProducts.filter(p => p.mrp > p.price).length})
+              </button>
+            )}
+          </div>
+        )}
+
         {/* ========================================================
-            FILTER CONTROL BAR (FULL-WIDTH COMPACT TOOLBAR)
+            FILTER CONTROL BAR
            ======================================================== */}
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
           
@@ -217,15 +346,28 @@ function Shop() {
             )}
           </button>
 
-          {/* Middle: Product Count & Active Search/Category Badge */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+          {/* Middle: Product Count & Active Search/Category/Deals Badges */}
+          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-600">
             <span>
               Showing <strong className="text-slate-900 font-extrabold">{sortedProducts.length}</strong> products
             </span>
-            {q && (
-              <span className="bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1">
-                "{q}"
-                <X className="h-3 w-3 cursor-pointer hover:text-red-600" onClick={() => navigate({ search: (prev) => ({ ...prev, q: undefined }) })} />
+            {isDealsActive && (
+              <span className="bg-amber-100 text-amber-950 border border-amber-300 px-2.5 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1 shadow-xs">
+                <Flame className="h-3 w-3 fill-amber-500 text-amber-600" />
+                <span>{dealTier === "mega" ? "Mega Deals (40%+ OFF)" : dealTier === "under499" ? "Deals Under ₹499" : "Deals & Discounts"}</span>
+                <X className="h-3 w-3 cursor-pointer hover:text-red-600 ml-0.5" onClick={handleDealsToggle} />
+              </span>
+            )}
+            {category && (
+              <span className="bg-purple-100 text-purple-900 px-2.5 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1">
+                {category}
+                <X className="h-3 w-3 cursor-pointer hover:text-red-600" onClick={() => navigate({ search: (prev: any) => ({ ...prev, category: undefined }) })} />
+              </span>
+            )}
+            {effectiveQ && (
+              <span className="bg-slate-100 text-slate-900 px-2.5 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1">
+                "{effectiveQ}"
+                <X className="h-3 w-3 cursor-pointer hover:text-red-600" onClick={() => navigate({ search: (prev: any) => ({ ...prev, q: undefined }) })} />
               </span>
             )}
           </div>
@@ -239,6 +381,7 @@ function Shop() {
               className="bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-purple-400 cursor-pointer uppercase tracking-wider"
             >
               <option value="recommended">RECOMMENDED</option>
+              <option value="biggest-discount">BIGGEST DISCOUNT (%)</option>
               <option value="low-to-high">PRICE: LOW TO HIGH</option>
               <option value="high-to-low">PRICE: HIGH TO LOW</option>
               <option value="newest">NEWEST ARRIVALS</option>
@@ -247,7 +390,7 @@ function Shop() {
         </div>
 
         {/* ========================================================
-            FULL-WIDTH PRODUCT GRID (4 COLUMNS ON DESKTOP)
+            PRODUCT GRID
            ======================================================== */}
         {sortedProducts.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-300 p-8 space-y-3">
@@ -309,6 +452,63 @@ function Shop() {
             {/* Modal Body */}
             <div className="flex-1 overflow-y-auto p-6 space-y-8">
               
+              {/* Deals & Offers Filter Group */}
+              <div>
+                <h4 className="font-extrabold text-xs uppercase tracking-widest text-slate-900 mb-4 pb-2 border-b border-slate-100 flex justify-between items-center">
+                  <span>Special Offers</span>
+                  <span className="text-[10px] text-amber-600 font-bold">⚡ Flash Deals</span>
+                </h4>
+                <div className="space-y-2.5">
+                  <label
+                    onClick={handleDealsToggle}
+                    className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer select-none ${
+                      isDealsActive
+                        ? "bg-amber-50 border-amber-300 text-amber-950 font-bold"
+                        : "bg-white border-slate-200 text-slate-700 font-medium hover:bg-slate-50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isDealsActive}
+                        onChange={() => {}}
+                        className="w-4 h-4 rounded text-amber-600 focus:ring-0 accent-amber-600 cursor-pointer"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold flex items-center gap-1.5">
+                          <Flame className="h-4 w-4 text-amber-500 fill-amber-500" /> All Deals & Discounts
+                        </span>
+                        <span className="text-[11px] text-slate-500 font-normal">Products with verified price drops</span>
+                      </div>
+                    </div>
+                    {isDealsActive && <Check className="h-4 w-4 text-amber-600" />}
+                  </label>
+
+                  {isDealsActive && (
+                    <div className="pl-4 space-y-2 border-l-2 border-amber-300 ml-3 pt-1">
+                      <label
+                        onClick={() => handleDealTierToggle("mega")}
+                        className={`flex items-center justify-between p-2.5 rounded-lg border text-xs cursor-pointer select-none ${
+                          dealTier === "mega" ? "bg-purple-50 border-purple-300 font-bold text-purple-900" : "bg-white border-slate-200 text-slate-700"
+                        }`}
+                      >
+                        <span>🔥 Mega Discounts (40%+ OFF)</span>
+                        {dealTier === "mega" && <Check className="h-3.5 w-3.5 text-purple-600" />}
+                      </label>
+                      <label
+                        onClick={() => handleDealTierToggle("under499")}
+                        className={`flex items-center justify-between p-2.5 rounded-lg border text-xs cursor-pointer select-none ${
+                          dealTier === "under499" ? "bg-purple-50 border-purple-300 font-bold text-purple-900" : "bg-white border-slate-200 text-slate-700"
+                        }`}
+                      >
+                        <span>⚡ Budget Deals (Under ₹499)</span>
+                        {dealTier === "under499" && <Check className="h-3.5 w-3.5 text-purple-600" />}
+                      </label>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Category Filter Group */}
               <div>
                 <h4 className="font-extrabold text-xs uppercase tracking-widest text-slate-900 mb-4 pb-2 border-b border-slate-100 flex justify-between items-center">

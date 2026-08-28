@@ -15,6 +15,8 @@ export function BottomNav() {
   const currentUser = useCurrentUser();
 
   const currentPath = location.pathname;
+  const search = (location.search || {}) as Record<string, any>;
+  const isDealsInShop = currentPath === "/shop" && (Boolean(search?.deals) || search?.deals === "true" || search?.q === "deals" || search?.q === "deal");
 
   const navItems = [
     {
@@ -29,15 +31,14 @@ export function BottomNav() {
       label: "Categories",
       to: "/shop" as const,
       icon: Grid,
-      isActive: currentPath === "/shop",
+      isActive: currentPath === "/shop" && !isDealsInShop,
     },
     {
       id: "deals",
       label: "Deals",
-      to: "/shop" as const,
-      search: { q: "deals" },
+      to: "/deals" as const,
       icon: IndianRupee,
-      isActive: currentPath.includes("deals"),
+      isActive: currentPath === "/deals" || isDealsInShop,
     },
     {
       id: "cart",
@@ -58,31 +59,42 @@ export function BottomNav() {
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 py-1.5">
-      <div className="flex items-center justify-around max-w-md mx-auto">
+      <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = item.isActive;
-
           return (
             <Link
               key={item.id}
               to={item.to}
-              search={item.search}
-              className={`flex flex-col items-center justify-center transition-all duration-200 ${
-                active
-                  ? "bg-[#F0EBFF] text-[#6B46C1] px-3.5 py-1 rounded-2xl"
-                  : "text-slate-600 hover:text-[#6B46C1] py-1"
+              className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+                item.isActive
+                  ? "text-[#6B46C1]"
+                  : "text-slate-500 hover:text-slate-900"
               }`}
             >
-              <div className="relative">
-                <Icon className={`h-5 w-5 ${active ? "stroke-[2.5]" : "stroke-[1.8]"}`} />
+              <div
+                className={`relative flex items-center justify-center transition-all ${
+                  item.isActive
+                    ? "bg-[#6B46C1]/10 px-3.5 py-1 rounded-full scale-105"
+                    : "p-1"
+                }`}
+              >
+                <Icon
+                  className={`h-5 w-5 transition-transform ${
+                    item.isActive ? "stroke-[2.5]" : "stroke-2"
+                  }`}
+                />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[10px] font-extrabold h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center border-2 border-white">
+                  <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-white shadow-xs">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] tracking-tight mt-0.5 ${active ? "font-bold" : "font-medium"}`}>
+              <span
+                className={`text-[10px] font-bold mt-0.5 tracking-tight ${
+                  item.isActive ? "text-[#6B46C1]" : "text-slate-500"
+                }`}
+              >
                 {item.label}
               </span>
             </Link>

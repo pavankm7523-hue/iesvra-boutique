@@ -19,6 +19,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MyOrdersRouteImport } from './routes/my-orders'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as DealsRouteImport } from './routes/deals'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -113,6 +114,11 @@ const LoginRoute = LoginRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -347,6 +353,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
+  '/deals': typeof DealsRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/my-orders': typeof MyOrdersRoute
@@ -403,6 +410,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
+  '/deals': typeof DealsRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/my-orders': typeof MyOrdersRoute
@@ -461,6 +469,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
+  '/deals': typeof DealsRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/my-orders': typeof MyOrdersRoute
@@ -520,6 +529,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cart'
     | '/contact'
+    | '/deals'
     | '/faq'
     | '/login'
     | '/my-orders'
@@ -576,6 +586,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/cart'
     | '/contact'
+    | '/deals'
     | '/faq'
     | '/login'
     | '/my-orders'
@@ -633,6 +644,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cart'
     | '/contact'
+    | '/deals'
     | '/faq'
     | '/login'
     | '/my-orders'
@@ -691,6 +703,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   CartRoute: typeof CartRoute
   ContactRoute: typeof ContactRoute
+  DealsRoute: typeof DealsRoute
   FaqRoute: typeof FaqRoute
   LoginRoute: typeof LoginRoute
   MyOrdersRoute: typeof MyOrdersRoute
@@ -805,6 +818,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -1155,6 +1175,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   CartRoute: CartRoute,
   ContactRoute: ContactRoute,
+  DealsRoute: DealsRoute,
   FaqRoute: FaqRoute,
   LoginRoute: LoginRoute,
   MyOrdersRoute: MyOrdersRoute,

@@ -108,7 +108,7 @@ export function Footer() {
               <Link to="/shop" className="hover:text-gold transition-colors">New Arrivals</Link>
             </li>
             <li>
-              <Link to="/" hash="deals" className="hover:text-gold transition-colors">Offers</Link>
+              <Link to="/deals" className="hover:text-gold transition-colors">Offers & Deals</Link>
             </li>
             <li>
               <Link to="/track-order" className="hover:text-gold transition-colors">Track Order</Link>

@@ -500,7 +500,7 @@ export function Home() {
       {/* ========================================================
           8. BEST SELLERS & EXPANDED CATALOG SECTION
          ======================================================== */}
-      <section id="best-sellers-section" className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-10">
+      <section id="deals" className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-10">
         <div className="flex items-center justify-between mb-6 border-b border-slate-200/60 pb-3">
           <h2 className="text-lg sm:text-xl font-bold font-display text-slate-900 tracking-tight flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-500 fill-amber-500" />

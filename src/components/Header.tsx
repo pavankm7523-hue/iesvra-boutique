@@ -196,7 +196,7 @@ export function Header() {
     { label: "All Categories", to: "/shop" as const },
     { label: "Best Sellers", to: "/shop" as const },
     { label: "New Arrivals", to: "/shop" as const },
-    { label: "Offers", to: "/" as const, hash: "deals" },
+    { label: "Deals & Offers", to: "/deals" as const },
     { label: "Track Order", to: "/track-order" as const },
     { label: "Contact Us", to: "/contact" as const },
   ];
