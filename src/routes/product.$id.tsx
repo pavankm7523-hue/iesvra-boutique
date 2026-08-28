@@ -407,8 +407,10 @@ function ProductDetails() {
 
   // ---- LIVE SOCIAL PROOF (product page) ----
   // NOTE: Must be here BEFORE any early returns to satisfy React Rules of Hooks
-  const [pdpShopperCount, setPdpShopperCount] = useState(() => Math.floor(8 + Math.random() * 22));
+  // Deterministic first render prevents SSR hydration text mismatches.
+  const [pdpShopperCount, setPdpShopperCount] = useState(18);
   useEffect(() => {
+    setPdpShopperCount(Math.floor(8 + Math.random() * 22));
     const interval = setInterval(() => {
       setPdpShopperCount(prev => {
         const delta = Math.floor(Math.random() * 5) - 2;
@@ -766,12 +768,12 @@ function ProductDetails() {
               <div className="space-y-2 text-xs sm:text-sm text-navy-deep/90 leading-relaxed">
                 <div>
                   <span className="font-bold text-primary">FREE delivery </span>
-                  <span className="font-extrabold text-navy-deep">{deliveryDates.freeFormatted}</span>
+                  <span suppressHydrationWarning className="font-extrabold text-navy-deep">{deliveryDates.freeFormatted}</span>
                   <span className="text-navy-deep/70"> on orders over ₹499.</span>
                 </div>
                 <div>
                   <span className="text-navy-deep/70">Or fastest delivery </span>
-                  <span className="font-extrabold text-navy-deep">{deliveryDates.fastestPrefix}, {deliveryDates.fastestFormatted}</span>
+                  <span suppressHydrationWarning className="font-extrabold text-navy-deep">{deliveryDates.fastestPrefix}, {deliveryDates.fastestFormatted}</span>
                   <span className="text-navy-deep/70">. Order within </span>
                   <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-flex items-center gap-1.5 tabular-nums">
                     <Clock className="h-3 w-3 text-emerald-600 animate-pulse shrink-0" />
