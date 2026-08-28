@@ -124,7 +124,7 @@ export function useCartItems(): CartItem[] {
       // Read current products list from localStorage to verify live prices
       let latestProducts: Product[] = [];
       try {
-        const stored = localStorage.getItem("ishvara_products_v11");
+        const stored = localStorage.getItem("ishvara_products_v12");
         if (stored) {
           latestProducts = JSON.parse(stored);
         }

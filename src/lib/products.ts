@@ -290,7 +290,7 @@ export const initialProducts: Product[] = [
     "id": "prod_drive_1",
     "name": "7-Section Square Masala Box",
     "sub": "Plastic Spice Container with Spoon for Kitchen Storage",
-    "price": 89,
+    "price": 289,
     "mrp": 599,
     "categories": [
       "Home & Kitchen"
@@ -3139,22 +3139,42 @@ export function useProducts() {
   // The browser must start with the same catalog used by SSR. Cached/global
   // products are applied after hydration to avoid stale prices/text causing a
   // full React hydration failure.
-  const [products, setProducts] = useState<Product[]>(() => initialProducts.map(normalizeProduct));
+  const [products, setProducts] = useState<Product[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("ishvara_products_v12");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed.map((p: any) => normalizeProduct({
+              ...p,
+              categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
+            }));
+          }
+        }
+      } catch {}
+    }
+    return initialProducts.map(normalizeProduct);
+  });
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    // 1. Immediately read cached local catalog
     const stored = localStorage.getItem("ishvara_products_v12");
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setProducts(parsed.map((p: any) => normalizeProduct({
-          ...p,
-          categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
-        })));
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProducts(parsed.map((p: any) => normalizeProduct({
+            ...p,
+            categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
+          })));
+        }
       } catch {}
     }
 
-    fetch("/api/products")
+    // 2. Fetch live data with no-store to bypass any proxy / CDN / browser cache
+    fetch("/api/products", { cache: "no-store" })
       .then((res) => res.json())
       .then((globalList) => {
         if (Array.isArray(globalList) && globalList.length > 0) {
@@ -3178,12 +3198,23 @@ export function useProducts() {
     const handleUpdate = () => {
       const latest = localStorage.getItem("ishvara_products_v12");
       if (latest) {
-        try { setProducts(JSON.parse(latest)); } catch {}
+        try {
+          const parsed = JSON.parse(latest);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProducts(parsed.map((p: any) => normalizeProduct({
+              ...p,
+              categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
+            })));
+          }
+        } catch {}
       }
     };
+
     window.addEventListener("ishvara_products_changed", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
     return () => {
       window.removeEventListener("ishvara_products_changed", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
     };
   }, []);
 

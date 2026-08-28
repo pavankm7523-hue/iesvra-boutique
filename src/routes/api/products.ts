@@ -12,7 +12,9 @@ export const Route = createFileRoute("/api/products")({
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
-              "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+              "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+              "Pragma": "no-cache",
+              "Expires": "0",
             },
           });
         } catch (e: any) {
