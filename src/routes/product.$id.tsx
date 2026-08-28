@@ -709,32 +709,32 @@ function ProductDetails() {
                         key={variant.label || idx}
                         type="button"
                         onClick={() => setSelectedVariantIndex(idx)}
-                        className={`relative p-3 rounded-lg border-2 text-left cursor-pointer transition-all duration-150 flex flex-col justify-between min-h-[96px] ${
+                        className={`relative p-3 rounded-lg border-2 text-left cursor-pointer transition-all duration-150 flex flex-col justify-between min-h-[96px] min-w-0 ${
                           isSelected
                             ? "border-[#007185] bg-[#f0f8ff] ring-1 ring-[#007185] shadow-sm"
                             : "border-gray-300 hover:border-gray-600 bg-white"
                         }`}
                       >
                         {/* Top: Size / Pack Label */}
-                        <div className="font-bold text-sm text-navy-deep leading-tight">
+                        <div className="font-bold text-sm text-navy-deep leading-tight break-words">
                           {variant.label}
                         </div>
 
                         {/* Middle: Current Price */}
-                        <div className="text-sm font-semibold text-navy-deep mt-1">
+                        <div className="text-sm font-semibold text-navy-deep mt-1 break-words">
                           ₹{Number(variant.price).toLocaleString(undefined, { minimumFractionDigits: Number.isInteger(variant.price) ? 0 : 2 })}
                         </div>
 
                         {/* Subtitle: (₹X.XX / count) */}
                         {perCountText && (
-                          <div className="text-[11px] text-gray-500 leading-tight mt-0.5">
+                          <div className="text-[11px] text-gray-500 leading-tight mt-0.5 break-words">
                             {perCountText}
                           </div>
                         )}
 
                         {/* Strikethrough MRP */}
                         {variant.mrp && variant.mrp > variant.price && (
-                          <div className="text-xs text-gray-400 line-through mt-0.5">
+                          <div className="text-xs text-gray-400 line-through mt-0.5 break-words">
                             ₹{Number(variant.mrp).toLocaleString(undefined, { minimumFractionDigits: Number.isInteger(variant.mrp) ? 0 : 2 })}
                           </div>
                         )}
@@ -749,12 +749,12 @@ function ProductDetails() {
             <div className="bg-white rounded-2xl border-2 border-border/80 p-5 sm:p-6 shadow-md shadow-navy-deep/5 space-y-4">
               {/* Total Price Header */}
               <div className="border-b border-border/40 pb-3">
-                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-0">
+                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 sm:gap-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-navy-deep/60">Total Amount:</span>
-                  <div className="sm:text-right">
-                    <span className="text-xl sm:text-2xl font-black text-navy-deep">₹{totalPrice.toLocaleString()}.00</span>
+                  <div className="sm:text-right min-w-0">
+                    <span className="text-xl sm:text-2xl font-black text-navy-deep break-words block">₹{totalPrice.toLocaleString()}.00</span>
                     {totalSavings > 0 && (
-                      <p className="text-[10px] sm:text-[11px] font-semibold text-emerald-700">
+                      <p className="text-[10px] sm:text-[11px] font-semibold text-emerald-700 break-words whitespace-normal mt-0.5">
                         You save ₹{totalSavings.toLocaleString()}.00 ({discount}%)
                       </p>
                     )}
@@ -1002,22 +1002,22 @@ function ProductDetails() {
             {/* Description & Product Overview */}
             <div className="space-y-3 text-sm text-navy-deep/80 leading-relaxed font-light pt-2">
               <h3 className="font-bold text-navy-deep uppercase tracking-wider text-xs">About this item</h3>
-              <p className="bg-white/60 p-4 rounded-xl border border-border/40">{product.description}</p>
+              <p className="bg-white/60 p-4 rounded-xl border border-border/40 whitespace-pre-wrap break-words">{product.description}</p>
             </div>
 
             {/* Features strip */}
-            <div className="grid grid-cols-3 gap-4 border-t border-border pt-6 text-[11px] text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-gold shrink-0" />
-                <span>100% Safe Payments</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-border pt-6 text-[11px] text-muted-foreground">
+              <div className="flex items-start sm:items-center gap-2 min-w-0">
+                <Shield className="h-4 w-4 text-gold shrink-0 mt-0.5 sm:mt-0" />
+                <span className="break-words">100% Safe Payments</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Truck className="h-4 w-4 text-gold shrink-0" />
-                <span>Free Delivery above ₹499</span>
+              <div className="flex items-start sm:items-center gap-2 min-w-0">
+                <Truck className="h-4 w-4 text-gold shrink-0 mt-0.5 sm:mt-0" />
+                <span className="break-words">Free Delivery above ₹499</span>
               </div>
-              <div className="flex items-center gap-2">
-                <RefreshCcw className="h-4 w-4 text-gold shrink-0" />
-                <span>{formatProductPolicy(product)}</span>
+              <div className="flex items-start sm:items-center gap-2 min-w-0">
+                <RefreshCcw className="h-4 w-4 text-gold shrink-0 mt-0.5 sm:mt-0" />
+                <span className="break-words whitespace-normal">{formatProductPolicy(product)}</span>
               </div>
             </div>
           </div>
