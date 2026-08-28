@@ -899,7 +899,7 @@ export const initialProducts: Product[] = [
     "name": "3 Compartment Lunch Box for Office & School",
     "sub": "1400ml Leakproof Bento Lunch Box with Spoon & Fork | BPA Free Plastic Tiffin Box for Kids & Adults | Multicolor",
     "price": 249,
-    "mrp": 499,
+    "mrp": 250,
     "categories": [
       "Home & Kitchen"
     ],

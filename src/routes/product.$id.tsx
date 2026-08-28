@@ -755,7 +755,7 @@ function ProductDetails() {
                   <span className="text-xs font-bold uppercase tracking-wider text-navy-deep/60">Total Amount:</span>
                   <div className="sm:text-right min-w-0">
                     <span className="text-xl sm:text-2xl font-black text-navy-deep break-words block">₹{totalPrice.toLocaleString()}.00</span>
-                    {totalSavings > 0 && (
+                    {discount > 0 && totalSavings > 0 && (
                       <p className="text-[10px] sm:text-[11px] font-semibold text-emerald-700 break-words whitespace-normal mt-0.5">
                         You save ₹{totalSavings.toLocaleString()}.00 ({discount}%)
                       </p>
