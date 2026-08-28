@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ShoppingCart, Trash2, ArrowRight, X, CreditCard, CheckCircle, MapPin, Zap, Truck, Navigation, Locate, Tag } from "lucide-react";
-import { useCartItems, removeFromCart, updateCartQuantity } from "@/lib/cart";
 import { useState, useEffect, useRef } from "react";
+import { ShoppingCart, Trash2, ArrowRight, X, CreditCard, CheckCircle, MapPin, Zap, Truck, Navigation, Locate, Tag, Pencil } from "lucide-react";
+import { useCartItems, removeFromCart, updateCartQuantity } from "@/lib/cart";
 import { AddressPicker } from "@/components/AddressPicker";
 import { PasswordInput } from "@/components/PasswordInput";
 import { useCurrentUser } from "@/lib/auth";
@@ -175,40 +175,57 @@ function Cart() {
     );
   };
 
+  const [addressTag, setAddressTag] = useState<string>("Home");
+  const [addressFlat, setAddressFlat] = useState("");
+  const [addressFloor, setAddressFloor] = useState("");
+  const [addressLocality, setAddressLocality] = useState("");
+  const [addressLandmark, setAddressLandmark] = useState("");
+  const [rzpKey, setRzpKey] = useState("");
+
   // Sync state with localStorage changes
   useEffect(() => {
     const handleSync = () => {
-      setShippingName(localStorage.getItem("IESVRA_shipping_name") || "");
-      setShippingEmail(localStorage.getItem("IESVRA_shipping_email") || "");
-      setShippingPhone(localStorage.getItem("IESVRA_shipping_phone") || "");
-      setRzpKey(localStorage.getItem("IESVRA_rzp_key") || "");
+      const sName = localStorage.getItem("IESVRA_shipping_name") || "";
+      const sEmail = localStorage.getItem("IESVRA_shipping_email") || "";
+      const sPhone = localStorage.getItem("IESVRA_shipping_phone") || "";
+      const sFlat = localStorage.getItem("IESVRA_delivery_address_flat") || "";
+      const sFloor = localStorage.getItem("IESVRA_delivery_address_floor") || "";
+      const sLocality = localStorage.getItem("IESVRA_delivery_address_locality") || "";
+      const sLandmark = localStorage.getItem("IESVRA_delivery_address_landmark") || "";
+      const sTag = localStorage.getItem("IESVRA_delivery_address_tag") || "Home";
+      const sLine1 = localStorage.getItem("IESVRA_delivery_address_line1") || "";
+      const sLine2 = localStorage.getItem("IESVRA_delivery_address_line2") || "";
+      const sCity = localStorage.getItem("IESVRA_delivery_city") || "";
+      const sState = localStorage.getItem("IESVRA_delivery_state") || "";
+      const sPincode = localStorage.getItem("IESVRA_delivery_pincode") || "";
+      const sFull = localStorage.getItem("IESVRA_delivery_address") || "";
+      const sLat = localStorage.getItem("IESVRA_delivery_address_lat");
+      const sLng = localStorage.getItem("IESVRA_delivery_address_lng");
 
-      const savedLine1 = localStorage.getItem("IESVRA_delivery_address_line1") || "";
-      const savedLine2 = localStorage.getItem("IESVRA_delivery_address_line2") || "";
-      const savedCity = localStorage.getItem("IESVRA_delivery_city") || "";
-      const savedState = localStorage.getItem("IESVRA_delivery_state") || "";
-      const savedPincode = localStorage.getItem("IESVRA_delivery_pincode") || "";
-      
-      if (savedLine1) {
-        setAddressLine1(savedLine1);
-        setAddressLine2(savedLine2);
-        setCity(savedCity);
-        setState(savedState);
-        setPincode(savedPincode);
-        
-        const formatted = [savedLine1, savedLine2, savedCity, `${savedState} - ${savedPincode}`].filter(Boolean).join(", ");
-        setShippingAddress(formatted);
-        setAddressSearch("");
-        setIsAddressConfirmed(true);
-        
-        const isExpress = localStorage.getItem("IESVRA_is_express_eligible") === "true";
-        setIsExpressAvailable(isExpress);
-        setDeliverySpeed(isExpress ? "express" : "standard");
-      } else {
-        if (savedCity) setCity(savedCity);
-        if (savedState) setState(savedState);
-        if (savedPincode) setPincode(savedPincode);
+      setShippingName(sName);
+      setShippingEmail(sEmail || (currentUser ? currentUser.email : ""));
+      setShippingPhone(sPhone);
+      setAddressFlat(sFlat);
+      setAddressFloor(sFloor);
+      setAddressLocality(sLocality);
+      setAddressLandmark(sLandmark);
+      setAddressTag(sTag);
+      setAddressLine1(sLine1 || sFlat);
+      setAddressLine2(sLine2 || [sLocality, sLandmark].filter(Boolean).join(", "));
+      setCity(sCity);
+      setState(sState);
+      setPincode(sPincode);
+      if (sLat && sLng) {
+        setPinnedLat(parseFloat(sLat));
+        setPinnedLng(parseFloat(sLng));
       }
+
+      const formatted = sFull || [sFlat || sLine1, sFloor, sLocality, sLandmark || sLine2, sCity, sState && sPincode ? `${sState} - ${sPincode}` : (sState || sPincode)].filter(Boolean).join(", ");
+      setShippingAddress(formatted);
+
+      const isExpress = localStorage.getItem("IESVRA_is_express_eligible") === "true";
+      setIsExpressAvailable(isExpress);
+      setDeliverySpeed(isExpress ? "express" : "standard");
     };
     handleSync(); // Initial load
     window.addEventListener("iesvra-address-updated", handleSync);
@@ -217,7 +234,19 @@ function Cart() {
       window.removeEventListener("iesvra-address-updated", handleSync);
       window.removeEventListener("storage", handleSync);
     };
-  }, []);
+  }, [currentUser]);
+
+  // When checkout opens, if address is not set yet, automatically prompt the Address Modal
+  useEffect(() => {
+    if (isCheckoutOpen) {
+      const sFlat = localStorage.getItem("IESVRA_delivery_address_flat") || "";
+      const sLocality = localStorage.getItem("IESVRA_delivery_address_locality") || "";
+      const sLine1 = localStorage.getItem("IESVRA_delivery_address_line1") || "";
+      if (!sFlat && !sLocality && !sLine1) {
+        setIsAddressPickerOpen(true);
+      }
+    }
+  }, [isCheckoutOpen]);
 
   // Debounced search for suggestions based on autocomplete search bar
   useEffect(() => {
@@ -278,7 +307,6 @@ function Cart() {
   const [mockPaymentMethod, setMockPaymentMethod] = useState<'card' | 'upi' | 'netbanking'>('card');
   const [isMockPaying, setIsMockPaying] = useState(false);
 
-  const [rzpKey, setRzpKey] = useState("");
 
   useEffect(() => {
     if (currentUser) {
@@ -598,81 +626,40 @@ function Cart() {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Run validation on all fields
-    const newErrors: Record<string, string> = {};
-    const trimmedName = shippingName.trim();
-    const trimmedEmail = shippingEmail.trim();
-    const trimmedPhone = shippingPhone.trim().replace(/\D/g, "");
-    const trimmedLine1 = addressLine1.trim();
-    const trimmedCity = city.trim();
-    const trimmedState = state.trim();
-    const trimmedPincode = pincode.trim().replace(/\D/g, "");
+    const sFlat = addressFlat || localStorage.getItem("IESVRA_delivery_address_flat") || addressLine1;
+    const sLocality = addressLocality || localStorage.getItem("IESVRA_delivery_address_locality") || city;
+    const sName = shippingName.trim() || localStorage.getItem("IESVRA_shipping_name") || "";
+    const sPhone = shippingPhone.trim().replace(/\D/g, "") || (localStorage.getItem("IESVRA_shipping_phone") || "").replace(/\D/g, "");
+    const combinedAddress = shippingAddress || [sFlat, addressFloor, sLocality, addressLandmark, city, state && pincode ? `${state} - ${pincode}` : (state || pincode)].filter(Boolean).join(", ");
 
-    if (!trimmedName || trimmedName.length < 2) {
-      newErrors.name = "Please enter your full name (minimum 2 characters)";
-    }
-    
-    if (!trimmedPhone) {
-      newErrors.phone = "Please enter your mobile phone number";
-    } else if (trimmedPhone.length !== 10 || !/^[6-9]/.test(trimmedPhone)) {
-      newErrors.phone = "Please enter a valid 10-digit Indian mobile number (starting with 6-9)";
-    }
-
-    if (!trimmedEmail) {
-      newErrors.email = "Please enter your email address";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      newErrors.email = "Please enter a valid email address (e.g. name@example.com)";
-    }
-    
-    if (!trimmedLine1 || trimmedLine1.length < 5) {
-      newErrors.addressLine1 = "Please enter complete house/flat no., building and street (min 5 characters)";
-    }
-    
-    if (!trimmedCity || trimmedCity.length < 2) {
-      newErrors.city = "Please enter city name";
-    }
-    
-    if (!trimmedState || !INDIAN_STATES.includes(trimmedState)) {
-      newErrors.state = "Please select a valid state from the list";
-    }
-    
-    if (!trimmedPincode || trimmedPincode.length !== 6) {
-      newErrors.pincode = "Please enter a valid 6-digit postal PIN code";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      toast.error("Please provide your complete delivery address and contact details before proceeding.");
-      const firstErrorKey = Object.keys(newErrors)[0];
-      const targetInput = document.querySelector(`[data-field="${firstErrorKey}"]`) || document.querySelector('form');
-      if (targetInput) {
-        targetInput.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+    if (!sFlat && !sLocality && !shippingAddress) {
+      toast.error("Please add your delivery address to proceed.");
+      setIsAddressPickerOpen(true);
       return;
     }
 
-    setErrors({});
-    const combinedAddress = [addressLine1, addressLine2, city, `${state} - ${pincode}`].filter(Boolean).join(", ");
+    if (!sName) {
+      toast.error("Please enter your name in the delivery address.");
+      setIsAddressPickerOpen(true);
+      return;
+    }
 
-    // Save fields to localStorage
-    localStorage.setItem("IESVRA_shipping_name", shippingName.trim());
-    localStorage.setItem("IESVRA_shipping_email", shippingEmail.trim());
-    localStorage.setItem("IESVRA_shipping_phone", shippingPhone.trim());
+    if (!sPhone || sPhone.length !== 10) {
+      toast.error("Please provide a valid 10-digit mobile number in the delivery address.");
+      setIsAddressPickerOpen(true);
+      return;
+    }
+
+    localStorage.setItem("IESVRA_shipping_name", sName);
+    localStorage.setItem("IESVRA_shipping_phone", sPhone);
     localStorage.setItem("IESVRA_delivery_address", combinedAddress);
-    localStorage.setItem("IESVRA_delivery_address_line1", addressLine1);
-    localStorage.setItem("IESVRA_delivery_address_line2", addressLine2);
-    localStorage.setItem("IESVRA_delivery_city", city);
-    localStorage.setItem("IESVRA_delivery_state", state);
-    localStorage.setItem("IESVRA_delivery_pincode", pincode);
-    localStorage.setItem("IESVRA_is_express_eligible", isExpressAvailable ? "true" : "false");
-    window.dispatchEvent(new Event("iesvra-address-updated"));
 
     if (paymentMode === "cod") {
       try {
         const order = await createOrder(
-          shippingName.trim(),
-          shippingEmail.trim(),
-          shippingPhone.trim(),
+          sName,
+          shippingEmail.trim() || `${sPhone}@customer.iesvra.com`,
+          sPhone,
           combinedAddress,
           cartItems,
           subtotal,
@@ -743,9 +730,9 @@ function Cart() {
 
             // Create order with status Paid
             const order = await createOrder(
-              shippingName.trim(),
-              shippingEmail.trim(),
-              shippingPhone.trim(),
+              sName,
+              shippingEmail.trim() || `${sPhone}@customer.iesvra.com`,
+              sPhone,
               combinedAddress,
               cartItems,
               subtotal,
@@ -766,9 +753,9 @@ function Cart() {
           }
         },
         prefill: {
-          name: shippingName.trim(),
-          email: shippingEmail.trim(),
-          contact: shippingPhone.trim(),
+          name: sName,
+          email: shippingEmail.trim() || undefined,
+          contact: sPhone,
         },
         notes: {
           address: combinedAddress,
@@ -1148,283 +1135,66 @@ function Cart() {
                 /* CHECKOUT FLOW */
                 <form onSubmit={handlePlaceOrder} className="space-y-6 pb-24">
                   
-                  {/* STEP 1: ADDRESS ENTRY */}
-                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-border/40 space-y-4">
-                    <h4 className="font-bold text-navy-deep flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-[#0b72e7]" /> Delivery Location & Contact
-                    </h4>
-                    
-                    {/* Autocomplete Search Bar */}
-                    <div className="relative">
-                      <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Quick Search Address</label>
-                        <button
-                          type="button"
-                          onClick={handleUseCurrentLocation}
-                          disabled={isLocating}
-                          className="text-[10px] uppercase font-bold text-[#0b72e7] tracking-wider hover:underline flex items-center gap-1 cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed"
-                        >
-                          📍 {isLocating ? "Locating..." : "Use Current Location"}
-                        </button>
+                  {/* STEP 1: DELIVERY ADDRESS CARD (Driven exclusively by Address Modal) */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-border/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-[#0b72e7]" />
+                        <h4 className="font-bold text-navy-deep text-sm">Delivery Address</h4>
                       </div>
-                      <div className="relative mt-1">
-                        <input
-                          ref={addressInputRef}
-                          type="text"
-                          value={addressSearch}
-                          onChange={(e) => {
-                            setAddressSearch(e.target.value);
-                            setShowSuggestions(true);
-                          }}
-                          onFocus={() => setShowSuggestions(true)}
-                          placeholder="Search area, building, street..."
-                          className="w-full h-10 pl-9 pr-4 bg-[#f8f9fb] border-none rounded-xl focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs transition-all text-navy-deep font-semibold placeholder:text-navy-deep/30"
-                        />
-                        <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-navy-deep/40" />
-                      </div>
-                      
-                      {showSuggestions && addressSearch.trim().length >= 3 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-border/50 overflow-hidden z-30 max-h-[200px] overflow-y-auto">
-                          {isSearchingSuggestions && (
-                            <div className="py-3 text-center text-xs text-navy-deep/50 font-medium">
-                              Searching addresses...
-                            </div>
-                          )}
-                          {!isSearchingSuggestions && suggestions.length > 0 && suggestions.map((addr, i) => (
-                            <button
-                              key={i}
-                              type="button"
-                              onClick={() => handleAddressSelect(addr)}
-                              className="w-full text-left px-4 py-2 hover:bg-[#f8f9fb] text-xs text-navy-deep/80 border-b border-border/10 last:border-0 flex items-start gap-2 transition-colors"
-                            >
-                              <MapPin className="h-3 w-3 text-navy-deep/30 shrink-0 mt-0.5" />
-                              <span>{addr}</span>
-                            </button>
-                          ))}
-                          {!isSearchingSuggestions && suggestions.length === 0 && (
-                            <div className="py-3 px-4 text-center text-xs text-navy-deep/40 font-medium">
-                              No results found — try a different search
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Contact Details */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Full Name *</label>
-                        <input
-                          type="text"
-                          data-field="name"
-                          value={shippingName}
-                          onChange={(e) => {
-                            setShippingName(e.target.value);
-                            if (errors.name) setErrors(prev => ({ ...prev, name: "" }));
-                          }}
-                          placeholder="Jane Doe"
-                          className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
-                            errors.name 
-                              ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
-                              : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
-                          }`}
-                        />
-                        {errors.name && <span className="text-[9px] text-red-500 font-semibold">{errors.name}</span>}
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Phone Number *</label>
-                        <input
-                          type="tel"
-                          data-field="phone"
-                          value={shippingPhone}
-                          onChange={(e) => {
-                            setShippingPhone(e.target.value);
-                            if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
-                          }}
-                          placeholder="e.g. 9876543210"
-                          maxLength={10}
-                          className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
-                            errors.phone 
-                              ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
-                              : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
-                          }`}
-                        />
-                        {errors.phone && <span className="text-[9px] text-red-500 font-semibold">{errors.phone}</span>}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Email Address *</label>
-                      <input
-                        type="email"
-                        data-field="email"
-                        value={shippingEmail}
-                        onChange={(e) => {
-                          setShippingEmail(e.target.value);
-                          if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
-                        }}
-                        placeholder="jane.doe@example.com"
-                        className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
-                          errors.email 
-                            ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
-                            : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
-                        }`}
-                      />
-                      {errors.email && <span className="text-[9px] text-red-500 font-semibold">{errors.email}</span>}
-                    </div>
-
-                    {/* Map Pinpoint Selector Card */}
-                    <div 
-                      onClick={() => setIsAddressPickerOpen(true)}
-                      className="flex flex-col gap-2.5 bg-[#f5fbf7] hover:bg-[#ebf8f0] p-4 rounded-xl border border-[#cbeed6] hover:border-[#a3e0b4] transition-all cursor-pointer group shadow-sm active:scale-[0.99]"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex gap-2">
-                          <div className="bg-[#0c831f] text-white p-1.5 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <MapPin className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <span className="text-xs font-bold text-navy-deep group-hover:text-[#0c831f] transition-colors">Pin Exact Delivery Location</span>
-                            <p className="text-[10px] text-navy-deep/60 mt-0.5">
-                              Use search & interactive map to set perfect delivery spot
-                            </p>
-                          </div>
-                        </div>
-                        {pinnedLat && pinnedLng ? (
-                          <span className="text-[9px] font-semibold text-[#0c831f] bg-[#e6f4e8] px-2 py-0.5 rounded-full">
-                            Location Set
-                          </span>
-                        ) : (
-                          <span className="text-[9px] font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full animate-pulse">
-                            Required
-                          </span>
-                        )}
-                      </div>
-                      
-                      {addressLine1 && (
-                        <div className="bg-[#f8f9fb] p-2.5 rounded-lg border border-border/20 text-[11px] text-navy-deep/75 font-semibold leading-relaxed flex gap-1.5 items-center">
-                          <span className="text-[#0c831f] font-bold">📍</span>
-                          <span className="truncate">{addressLine1}{addressLine2 ? `, ${addressLine2}` : ""}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {isAddressPickerOpen && (
-                      <AddressPicker onClose={() => setIsAddressPickerOpen(false)} />
-                    )}
-
-                    {/* Address Fields */}
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Address Line 1 * (House/Flat No, Building, Street)</label>
-                      <input
-                        type="text"
-                        data-field="addressLine1"
-                        value={addressLine1}
-                        onChange={(e) => {
-                          setAddressLine1(e.target.value);
-                          if (errors.addressLine1) setErrors(prev => ({ ...prev, addressLine1: "" }));
-                        }}
-                        placeholder="Flat 101, Maple Heights, Main Road"
-                        className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
-                          errors.addressLine1 
-                            ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
-                            : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
-                        }`}
-                      />
-                      {errors.addressLine1 && <span className="text-[9px] text-red-500 font-semibold">{errors.addressLine1}</span>}
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Address Line 2 (Landmark, Area - Optional)</label>
-                      <input
-                        type="text"
-                        value={addressLine2}
-                        onChange={(e) => setAddressLine2(e.target.value)}
-                        placeholder="Near Rajendra Nagar Over Bridge"
-                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">City *</label>
-                        <input
-                          type="text"
-                          data-field="city"
-                          value={city}
-                          onChange={(e) => {
-                            setCity(e.target.value);
-                            if (errors.city) setErrors(prev => ({ ...prev, city: "" }));
-                          }}
-                          placeholder="Patna"
-                          className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
-                            errors.city 
-                              ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
-                              : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
-                          }`}
-                        />
-                        {errors.city && <span className="text-[9px] text-red-500 font-semibold">{errors.city}</span>}
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Pincode *</label>
-                        <input
-                          type="text"
-                          data-field="pincode"
-                          value={pincode}
-                          onChange={(e) => {
-                            setPincode(e.target.value);
-                            if (errors.pincode) setErrors(prev => ({ ...prev, pincode: "" }));
-                          }}
-                          placeholder="800020"
-                          maxLength={6}
-                          className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
-                            errors.pincode 
-                              ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
-                              : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
-                          }`}
-                        />
-                        {errors.pincode && <span className="text-[9px] text-red-500 font-semibold">{errors.pincode}</span>}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">State *</label>
-                      <select
-                        data-field="state"
-                        value={state}
-                        onChange={(e) => {
-                          setState(e.target.value);
-                          if (errors.state) setErrors(prev => ({ ...prev, state: "" }));
-                        }}
-                        className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold cursor-pointer transition-all ${
-                          errors.state 
-                            ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
-                            : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
-                        }`}
+                      <button
+                        type="button"
+                        onClick={() => setIsAddressPickerOpen(true)}
+                        className="text-xs font-bold text-[#0b72e7] hover:bg-[#0b72e7]/10 px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
                       >
-                        <option value="">Select State</option>
-                        {INDIAN_STATES.map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                      {errors.state && <span className="text-[9px] text-red-500 font-semibold">{errors.state}</span>}
+                        <Pencil className="h-3.5 w-3.5" />
+                        <span>{shippingAddress || addressFlat || addressLocality ? "Change Address" : "Add Address"}</span>
+                      </button>
                     </div>
 
-                    {isCheckingDelivery && (
-                      <div className="py-1 flex items-center justify-center gap-2">
-                        <div className="w-4 h-4 border-2 border-[#0b72e7]/20 border-t-[#0b72e7] rounded-full animate-spin" />
-                        <span className="text-[10px] font-semibold text-navy-deep/60 animate-pulse">Calculating delivery speed eligibility...</span>
+                    {shippingAddress || (addressFlat && addressLocality) ? (
+                      <div 
+                        onClick={() => setIsAddressPickerOpen(true)}
+                        className="p-4 bg-[#f8f9fb] hover:bg-[#f0f4f9] rounded-xl border border-border/30 transition-all cursor-pointer group"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#0c831f]/10 text-[#0c831f] border border-[#0c831f]/20">
+                              {addressTag === "Work" ? "💼 Work" : addressTag === "Hotel" ? "🏨 Hotel" : addressTag === "Other" ? "📍 Other" : "🏠 Home"}
+                            </span>
+                            <span className="text-xs font-bold text-navy-deep">{shippingName || "Customer"}</span>
+                            {shippingPhone && <span className="text-xs text-navy-deep/60 font-semibold">• {shippingPhone}</span>}
+                          </div>
+                          <span className="text-[11px] font-bold text-[#0b72e7] group-hover:underline">Edit</span>
+                        </div>
+                        <p className="text-xs text-navy-deep/80 font-medium leading-relaxed">
+                          {[
+                            addressFlat || addressLine1,
+                            addressFloor,
+                            addressLocality,
+                            addressLandmark || addressLine2,
+                            city,
+                            state && pincode ? `${state} - ${pincode}` : (state || pincode)
+                          ].filter(Boolean).join(", ") || shippingAddress}
+                        </p>
                       </div>
-                    )}
-
-                    {verificationError && (
-                      <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs font-semibold leading-normal">
-                        ⚠️ {verificationError}
+                    ) : (
+                      <div 
+                        onClick={() => setIsAddressPickerOpen(true)}
+                        className="p-5 bg-amber-50/70 border-2 border-dashed border-amber-300 hover:border-amber-400 rounded-xl cursor-pointer text-center transition-all group"
+                      >
+                        <div className="w-10 h-10 mx-auto rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                          <MapPin className="h-5 w-5" />
+                        </div>
+                        <p className="text-xs font-bold text-navy-deep">No address set</p>
+                        <p className="text-[11px] text-amber-800/80 font-medium mt-0.5">Click here to set your delivery location on the map</p>
                       </div>
                     )}
                   </div>
+
+                  {isAddressPickerOpen && (
+                    <AddressPicker onClose={() => setIsAddressPickerOpen(false)} />
+                  )}
 
                   {/* STEP 2: DELIVERY SPEED */}
                   <div className="bg-white p-5 rounded-2xl shadow-sm border border-border/40">
