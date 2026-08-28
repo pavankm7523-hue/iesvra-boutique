@@ -55,7 +55,61 @@ export type Product = {
   stock?: number;
   boughtInPastMonth?: number;
   variants?: ProductVariant[];
+  returnWindowDays?: number;
+  isRefundable?: boolean;
+  replacementWindowDays?: number;
+  isReplaceable?: boolean;
 };
+
+export type ProductPolicy = {
+  returnWindowDays: number;
+  isRefundable: boolean;
+  replacementWindowDays: number;
+  isReplaceable: boolean;
+};
+
+export const DEFAULT_PRODUCT_POLICY: ProductPolicy = {
+  returnWindowDays: 7,
+  isRefundable: true,
+  replacementWindowDays: 7,
+  isReplaceable: true,
+};
+
+export function getProductPolicy(product?: Partial<Product> | null): ProductPolicy {
+  return {
+    returnWindowDays: Math.max(0, Number(product?.returnWindowDays ?? DEFAULT_PRODUCT_POLICY.returnWindowDays)),
+    isRefundable: product?.isRefundable ?? DEFAULT_PRODUCT_POLICY.isRefundable,
+    replacementWindowDays: Math.max(0, Number(product?.replacementWindowDays ?? DEFAULT_PRODUCT_POLICY.replacementWindowDays)),
+    isReplaceable: product?.isReplaceable ?? DEFAULT_PRODUCT_POLICY.isReplaceable,
+  };
+}
+
+export function formatProductPolicy(product?: Partial<Product> | null): string {
+  const policy = getProductPolicy(product);
+
+  if (policy.isRefundable && policy.isReplaceable) {
+    if (policy.returnWindowDays === policy.replacementWindowDays) {
+      return `${policy.returnWindowDays} day return, refund or replacement available`;
+    }
+    return `${policy.returnWindowDays} day return & refund, ${policy.replacementWindowDays} day replacement`;
+  }
+  if (policy.isRefundable) {
+    return `${policy.returnWindowDays} day return & refund available, non-replaceable`;
+  }
+  if (policy.isReplaceable) {
+    return `${policy.replacementWindowDays} day replacement, non-refundable`;
+  }
+  return "Non-refundable and non-replaceable";
+}
+
+function normalizeProduct(product: Product): Product {
+  return {
+    ...product,
+    categories: product.categories ?? ["Uncategorized"],
+    stock: typeof product.stock === "number" ? product.stock : 50,
+    ...getProductPolicy(product),
+  };
+}
 
 export const colorMap: Record<string, string> = {
   "Blush Pink": "#FFB6C1",
@@ -4330,15 +4384,14 @@ export function useProducts() {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          return parsed.map((p: any) => ({
+          return parsed.map((p: any) => normalizeProduct({
             ...p,
             categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
-            stock: typeof p.stock === "number" ? p.stock : 50,
           }));
         } catch {}
       }
     }
-    return initialProducts;
+    return initialProducts.map(normalizeProduct);
   });
   const [isLoaded, setIsLoaded] = useState(true);
 
@@ -4347,10 +4400,7 @@ export function useProducts() {
       .then((res) => res.json())
       .then((globalList) => {
         if (Array.isArray(globalList) && globalList.length > 0) {
-          const normalizedGlobal = globalList.map((p: any) => ({
-            ...p,
-            stock: typeof p.stock === "number" ? p.stock : 50,
-          }));
+          const normalizedGlobal = globalList.map((p: Product) => normalizeProduct(p));
           setProducts(normalizedGlobal);
           safeSetLocalProducts("ishvara_products_v12", normalizedGlobal);
         } else {

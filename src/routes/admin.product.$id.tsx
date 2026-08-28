@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useProducts, categories } from "@/lib/products";
+import { useProducts, categories, DEFAULT_PRODUCT_POLICY, getProductPolicy } from "@/lib/products";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Save, Plus, Trash2, Layers } from "lucide-react";
 import { toast } from "sonner";
 import { MediaUploader } from "@/components/MediaUploader";
-import type { ProductMedia, ProductVariant } from "@/lib/products";
+import { ProductPolicyFields } from "@/components/ProductPolicyFields";
+import type { ProductMedia, ProductPolicy, ProductVariant } from "@/lib/products";
 
 export const Route = createFileRoute("/admin/product/$id")({
   component: EditProduct,
@@ -31,6 +32,7 @@ function EditProduct() {
 
   const [gallery, setGallery] = useState<ProductMedia[]>([]);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [policy, setPolicy] = useState<ProductPolicy>(DEFAULT_PRODUCT_POLICY);
 
   useEffect(() => {
     if (product) {
@@ -47,6 +49,7 @@ function EditProduct() {
       });
       setGallery(product.gallery || [{ id: "main", type: "image", url: product.image }]);
       setVariants(product.variants || []);
+      setPolicy(getProductPolicy(product));
     }
   }, [product]);
 
@@ -97,6 +100,7 @@ function EditProduct() {
       colors: formData.colors,
       description: formData.description,
       isBestSeller: formData.isBestSeller,
+      ...policy,
     };
     
     updateProduct(updatedProduct);
@@ -187,6 +191,8 @@ function EditProduct() {
             <MediaUploader value={gallery} onChange={setGallery} />
           </div>
         </div>
+
+        <ProductPolicyFields value={policy} onChange={setPolicy} />
 
         {/* Size / Pack Variants Section */}
         <div className="space-y-4 pt-4 border-t border-border/50">

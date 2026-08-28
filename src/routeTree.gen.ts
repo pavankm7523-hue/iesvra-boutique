@@ -36,6 +36,7 @@ import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confi
 import { Route as ApiSaveOrderRouteImport } from './routes/api/save-order'
 import { Route as ApiSaveAddressRouteImport } from './routes/api/save-address'
 import { Route as ApiReverseGeocodeRouteImport } from './routes/api/reverse-geocode'
+import { Route as ApiReturnRequestsRouteImport } from './routes/api/return-requests'
 import { Route as ApiResolveMapsUrlRouteImport } from './routes/api/resolve-maps-url'
 import { Route as ApiProductsRouteImport } from './routes/api/products'
 import { Route as ApiPlusMembershipRouteImport } from './routes/api/plus-membership'
@@ -51,6 +52,7 @@ import { Route as ApiAutocompleteRouteImport } from './routes/api/autocomplete'
 import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin-password'
 import { Route as ApiAddressSuggestionsRouteImport } from './routes/api/address-suggestions'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminReturnsRouteImport } from './routes/admin.returns'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
@@ -195,6 +197,11 @@ const ApiReverseGeocodeRoute = ApiReverseGeocodeRouteImport.update({
   path: '/api/reverse-geocode',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReturnRequestsRoute = ApiReturnRequestsRouteImport.update({
+  id: '/api/return-requests',
+  path: '/api/return-requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiResolveMapsUrlRoute = ApiResolveMapsUrlRouteImport.update({
   id: '/api/resolve-maps-url',
   path: '/api/resolve-maps-url',
@@ -270,6 +277,11 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReturnsRoute = AdminReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminOrdersRoute = AdminOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
@@ -330,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/returns': typeof AdminReturnsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
@@ -345,6 +358,7 @@ export interface FileRoutesByFullPath {
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
+  '/api/return-requests': typeof ApiReturnRequestsRoute
   '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
   '/api/save-address': typeof ApiSaveAddressRoute
   '/api/save-order': typeof ApiSaveOrderRoute
@@ -381,6 +395,7 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/returns': typeof AdminReturnsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
@@ -396,6 +411,7 @@ export interface FileRoutesByTo {
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
+  '/api/return-requests': typeof ApiReturnRequestsRoute
   '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
   '/api/save-address': typeof ApiSaveAddressRoute
   '/api/save-order': typeof ApiSaveOrderRoute
@@ -434,6 +450,7 @@ export interface FileRoutesById {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/returns': typeof AdminReturnsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
@@ -449,6 +466,7 @@ export interface FileRoutesById {
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
+  '/api/return-requests': typeof ApiReturnRequestsRoute
   '/api/reverse-geocode': typeof ApiReverseGeocodeRoute
   '/api/save-address': typeof ApiSaveAddressRoute
   '/api/save-order': typeof ApiSaveOrderRoute
@@ -488,6 +506,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/hero'
     | '/admin/orders'
+    | '/admin/returns'
     | '/admin/settings'
     | '/api/address-suggestions'
     | '/api/admin-password'
@@ -503,6 +522,7 @@ export interface FileRouteTypes {
     | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
+    | '/api/return-requests'
     | '/api/reverse-geocode'
     | '/api/save-address'
     | '/api/save-order'
@@ -539,6 +559,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/hero'
     | '/admin/orders'
+    | '/admin/returns'
     | '/admin/settings'
     | '/api/address-suggestions'
     | '/api/admin-password'
@@ -554,6 +575,7 @@ export interface FileRouteTypes {
     | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
+    | '/api/return-requests'
     | '/api/reverse-geocode'
     | '/api/save-address'
     | '/api/save-order'
@@ -591,6 +613,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/hero'
     | '/admin/orders'
+    | '/admin/returns'
     | '/admin/settings'
     | '/api/address-suggestions'
     | '/api/admin-password'
@@ -606,6 +629,7 @@ export interface FileRouteTypes {
     | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
+    | '/api/return-requests'
     | '/api/reverse-geocode'
     | '/api/save-address'
     | '/api/save-order'
@@ -655,6 +679,7 @@ export interface RootRouteChildren {
   ApiPlusMembershipRoute: typeof ApiPlusMembershipRoute
   ApiProductsRoute: typeof ApiProductsRoute
   ApiResolveMapsUrlRoute: typeof ApiResolveMapsUrlRoute
+  ApiReturnRequestsRoute: typeof ApiReturnRequestsRoute
   ApiReverseGeocodeRoute: typeof ApiReverseGeocodeRoute
   ApiSaveAddressRoute: typeof ApiSaveAddressRoute
   ApiSaveOrderRoute: typeof ApiSaveOrderRoute
@@ -862,6 +887,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiReverseGeocodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/return-requests': {
+      id: '/api/return-requests'
+      path: '/api/return-requests'
+      fullPath: '/api/return-requests'
+      preLoaderRoute: typeof ApiReturnRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/resolve-maps-url': {
       id: '/api/resolve-maps-url'
       path: '/api/resolve-maps-url'
@@ -967,6 +999,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/returns': {
+      id: '/admin/returns'
+      path: '/returns'
+      fullPath: '/admin/returns'
+      preLoaderRoute: typeof AdminReturnsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/orders': {
       id: '/admin/orders'
       path: '/orders'
@@ -1030,6 +1069,7 @@ interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminHeroRoute: typeof AdminHeroRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
+  AdminReturnsRoute: typeof AdminReturnsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminProductIdRoute: typeof AdminProductIdRoute
@@ -1040,6 +1080,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminHeroRoute: AdminHeroRoute,
   AdminOrdersRoute: AdminOrdersRoute,
+  AdminReturnsRoute: AdminReturnsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminProductIdRoute: AdminProductIdRoute,
@@ -1078,6 +1119,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPlusMembershipRoute: ApiPlusMembershipRoute,
   ApiProductsRoute: ApiProductsRoute,
   ApiResolveMapsUrlRoute: ApiResolveMapsUrlRoute,
+  ApiReturnRequestsRoute: ApiReturnRequestsRoute,
   ApiReverseGeocodeRoute: ApiReverseGeocodeRoute,
   ApiSaveAddressRoute: ApiSaveAddressRoute,
   ApiSaveOrderRoute: ApiSaveOrderRoute,

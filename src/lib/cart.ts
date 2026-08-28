@@ -16,6 +16,10 @@ export interface CartItem {
   normalPrice?: number;
   isDigital?: boolean;
   type?: string;
+  returnWindowDays?: number;
+  isRefundable?: boolean;
+  replacementWindowDays?: number;
+  isReplaceable?: boolean;
 }
 
 const CART_KEY = "ishvara_cart";
@@ -69,7 +73,11 @@ export function addToCart(product: Product, color: string, quantity = 1, bannerI
       saleEndDate,
       normalPrice,
       isDigital: product.isDigital,
-      type: product.type
+      type: product.type,
+      returnWindowDays: product.returnWindowDays ?? 7,
+      isRefundable: product.isRefundable ?? true,
+      replacementWindowDays: product.replacementWindowDays ?? 7,
+      isReplaceable: product.isReplaceable ?? true,
     });
   }
 

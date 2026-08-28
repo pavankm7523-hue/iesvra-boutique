@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCurrentUser, logoutUser } from "@/lib/auth";
 import { useOrdersList, cancelOrder } from "@/lib/orders";
+import { formatProductPolicy, getProductPolicy, useProducts } from "@/lib/products";
+import { createReturnRequest, useReturnRequests, type ReturnRequestType } from "@/lib/returnRequests";
 import { useEffect, useState } from "react";
 import {
   Package,
@@ -17,6 +19,7 @@ import {
   Phone,
   MapPin,
   XCircle,
+  RefreshCcw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -69,6 +72,27 @@ function MyOrdersPage() {
   const navigate = useNavigate();
   const allOrders = useOrdersList();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { products } = useProducts();
+  const { requests: returnRequests, refresh: refreshReturnRequests } = useReturnRequests({ customerEmail: user?.email || "__not_authenticated__" });
+  const [requestDraft, setRequestDraft] = useState<{ orderId: string; productId: string; requestType: ReturnRequestType } | null>(null);
+  const [requestReason, setRequestReason] = useState("");
+  const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
+
+  const submitReturnRequest = async () => {
+    if (!requestDraft || !user) return;
+    setIsSubmittingRequest(true);
+    try {
+      await createReturnRequest({ ...requestDraft, customerEmail: user.email, reason: requestReason });
+      toast.success("Your request was submitted for admin approval.");
+      setRequestDraft(null);
+      setRequestReason("");
+      await refreshReturnRequests();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not submit the request.");
+    } finally {
+      setIsSubmittingRequest(false);
+    }
+  };
 
   const handleCancelOrderClick = async (orderId: string) => {
     const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
@@ -376,11 +400,18 @@ function MyOrdersPage() {
                           Items Ordered
                         </p>
                         <div className="space-y-3">
-                          {order.items.map((item) => (
-                            <div
-                              key={`${item.id}-${item.color}`}
-                              className="flex items-center gap-4 bg-white rounded-xl border border-border/40 p-3"
-                            >
+                          {order.items.map((item) => {
+                            const liveProduct = products.find((product) => product.id === item.id);
+                            const policySource = { ...liveProduct, ...item };
+                            const policy = getProductPolicy(policySource);
+                            const daysSinceDelivery = Math.max(0, Math.floor((Date.now() - new Date(order.date).getTime()) / 86_400_000));
+                            const canReturn = order.status === "Delivered" && policy.isRefundable && daysSinceDelivery <= policy.returnWindowDays;
+                            const canReplace = order.status === "Delivered" && policy.isReplaceable && daysSinceDelivery <= policy.replacementWindowDays;
+                            const existingRequest = returnRequests.find((request) => request.orderId === order.id && request.productId === item.id && request.status !== "Rejected");
+                            const isDraftOpen = requestDraft?.orderId === order.id && requestDraft.productId === item.id;
+
+                            return <div key={`${item.id}-${item.color}`} className="bg-white rounded-xl border border-border/40 p-3 space-y-3">
+                              <div className="flex items-center gap-4">
                               <img
                                 src={item.image}
                                 alt={item.name}
@@ -393,6 +424,9 @@ function MyOrdersPage() {
                                 <p className="text-xs text-navy-deep/50 mt-0.5">
                                   {item.color} · Qty: {item.quantity}
                                 </p>
+                                <p className="text-[11px] text-navy-deep/60 mt-1 flex items-center gap-1">
+                                  <RefreshCcw className="h-3 w-3 text-gold" /> {formatProductPolicy(policySource)}
+                                </p>
                               </div>
                               <div className="text-right shrink-0">
                                 <p className="font-bold text-navy-deep text-sm">
@@ -402,8 +436,36 @@ function MyOrdersPage() {
                                   ₹{item.price.toLocaleString()} each
                                 </p>
                               </div>
-                            </div>
-                          ))}
+                              </div>
+
+                              {existingRequest ? (
+                                <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                                  {existingRequest.requestType === "return" ? "Return" : "Replacement"} request: <strong>{existingRequest.status}</strong>
+                                </div>
+                              ) : (canReturn || canReplace) ? (
+                                <div className="flex flex-wrap gap-2 pt-2 border-t border-border/30">
+                                  {canReturn && <button type="button" onClick={() => { setRequestDraft({ orderId: order.id, productId: item.id, requestType: "return" }); setRequestReason(""); }} className="px-3 py-2 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold cursor-pointer">Request return & refund</button>}
+                                  {canReplace && <button type="button" onClick={() => { setRequestDraft({ orderId: order.id, productId: item.id, requestType: "replacement" }); setRequestReason(""); }} className="px-3 py-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold cursor-pointer">Request replacement</button>}
+                                </div>
+                              ) : order.status === "Delivered" ? (
+                                <p className="text-xs text-navy-deep/45 pt-2 border-t border-border/30">The return/replacement window for this item is closed or unavailable.</p>
+                              ) : null}
+
+                              {isDraftOpen && (
+                                <div className="rounded-xl border border-gold/30 bg-gold/5 p-4 space-y-3">
+                                  <div>
+                                    <p className="text-sm font-bold text-navy-deep">Request {requestDraft.requestType}</p>
+                                    <p className="text-xs text-navy-deep/55">This will be sent as Pending for admin review. It will not be auto-approved.</p>
+                                  </div>
+                                  <textarea value={requestReason} onChange={(event) => setRequestReason(event.target.value)} rows={3} placeholder="Tell us what went wrong…" className="w-full rounded-lg border border-border/60 bg-white px-3 py-2 text-sm focus:outline-none focus:border-gold resize-none" />
+                                  <div className="flex justify-end gap-2">
+                                    <button type="button" onClick={() => setRequestDraft(null)} className="px-3 py-2 rounded-lg border border-border/60 text-xs font-bold cursor-pointer">Cancel</button>
+                                    <button type="button" disabled={isSubmittingRequest || requestReason.trim().length < 5} onClick={() => void submitReturnRequest()} className="px-4 py-2 rounded-lg bg-navy-deep text-white text-xs font-bold disabled:opacity-50 cursor-pointer">{isSubmittingRequest ? "Submitting…" : "Submit for approval"}</button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>;
+                          })}
                         </div>
                       </div>
 

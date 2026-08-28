@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useProducts, categories } from "@/lib/products";
+import { useProducts, categories, DEFAULT_PRODUCT_POLICY } from "@/lib/products";
 import { useState } from "react";
 import { ArrowLeft, Save, Plus, Trash2, Layers } from "lucide-react";
 import { toast } from "sonner";
 import { MediaUploader } from "@/components/MediaUploader";
-import type { ProductMedia, ProductVariant } from "@/lib/products";
+import { ProductPolicyFields } from "@/components/ProductPolicyFields";
+import type { ProductMedia, ProductPolicy, ProductVariant } from "@/lib/products";
 
 export const Route = createFileRoute("/admin/product/new")({
   component: NewProduct,
@@ -27,6 +28,7 @@ function NewProduct() {
 
   const [gallery, setGallery] = useState<ProductMedia[]>([]);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [policy, setPolicy] = useState<ProductPolicy>(DEFAULT_PRODUCT_POLICY);
 
   const handleAddVariant = () => {
     setVariants([
@@ -72,6 +74,7 @@ function NewProduct() {
       colors: formData.colors,
       description: formData.description,
       isBestSeller: formData.isBestSeller,
+      ...policy,
       reviews: [],
     };
     
@@ -158,6 +161,8 @@ function NewProduct() {
             <MediaUploader value={gallery} onChange={setGallery} />
           </div>
         </div>
+
+        <ProductPolicyFields value={policy} onChange={setPolicy} />
 
         {/* Size / Pack Variants Section */}
         <div className="space-y-4 pt-4 border-t border-border/50">

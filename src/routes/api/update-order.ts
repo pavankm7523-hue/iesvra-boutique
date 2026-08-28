@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
+import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
 
 export const Route = createFileRoute("/api/update-order")({
   server: {
@@ -60,6 +61,15 @@ export const Route = createFileRoute("/api/update-order")({
               JSON.stringify({ error: "Order not found" }),
               { status: 404, headers: { "Content-Type": "application/json" } }
             );
+          }
+
+          if (status === "Delivered") {
+            const deliveryDates = await getMetadataFromDb("global_order_delivery_dates");
+            const nextDeliveryDates = {
+              ...(deliveryDates && typeof deliveryDates === "object" ? deliveryDates : {}),
+              [id]: deliveryDates?.[id] || new Date().toISOString(),
+            };
+            await saveMetadataToDb("global_order_delivery_dates", nextDeliveryDates);
           }
 
           // Return success

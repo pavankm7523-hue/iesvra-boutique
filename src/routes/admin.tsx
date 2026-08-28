@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { ArrowLeft, LayoutDashboard, Settings, PackageOpen, ShieldAlert, Layers, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, Settings, PackageOpen, ShieldAlert, Layers, Image as ImageIcon, RefreshCcw } from "lucide-react";
 import { useCurrentUser } from "@/lib/auth";
 
 export const Route = createFileRoute("/admin")({
@@ -63,6 +63,14 @@ function AdminLayout() {
           >
             <PackageOpen className="h-5 w-5" />
             Orders
+          </Link>
+          <Link
+            to="/admin/returns"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 text-white font-medium transition-colors"
+            activeProps={{ className: "bg-white/10 text-gold" }}
+          >
+            <RefreshCcw className="h-5 w-5" />
+            Returns / Replacements
           </Link>
           <Link
             to="/admin/categories"

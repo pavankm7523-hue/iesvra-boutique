@@ -22,6 +22,8 @@ export const Route = createFileRoute("/api/upload")({
           const body = await request.json();
           const { fileData, fileName, contentType } = body;
 
+
+
           if (!fileData) {
             return new Response(
               JSON.stringify({ error: "No fileData provided" }),
@@ -36,20 +38,24 @@ export const Route = createFileRoute("/api/upload")({
           const base64Data = fileData.replace(/^data:[^;]+;base64,/, "");
           const buffer = Buffer.from(base64Data, "base64");
 
-          const ext = (fileName && fileName.includes(".")) 
-            ? fileName.substring(fileName.lastIndexOf(".")).toLowerCase()
-            : ".jpg";
-
-          const cleanExt = ext.replace(/[^a-z0-9.]/g, "") || ".jpg";
+          const dataMimeType = fileData.match(/^data:([^;]+);base64,/)?.[1];
+          const mimeType = dataMimeType || contentType || "application/octet-stream";
+          const extensionByMime: Record<string, string> = {
+            "image/jpeg": ".jpg",
+            "image/png": ".png",
+            "image/webp": ".webp",
+            "image/gif": ".gif",
+            "image/svg+xml": ".svg",
+            "video/mp4": ".mp4",
+            "video/webm": ".webm",
+          };
+          const originalExtension = (fileName && fileName.includes("."))
+            ? fileName.substring(fileName.lastIndexOf(".")).toLowerCase().replace(/[^a-z0-9.]/g, "")
+            : "";
+          const cleanExt = extensionByMime[mimeType] || originalExtension || ".bin";
           const uniqueFileName = `upload_${Date.now()}_${Math.random().toString(36).substring(2, 9)}${cleanExt}`;
 
-          const mimeType = contentType || (
-            cleanExt === ".png" ? "image/png" :
-            cleanExt === ".webp" ? "image/webp" :
-            cleanExt === ".gif" ? "image/gif" :
-            cleanExt === ".mp4" ? "video/mp4" :
-            "image/jpeg"
-          );
+
 
           // Upload to Supabase Storage bucket
           const uploadRes = await fetch(
@@ -66,6 +72,8 @@ export const Route = createFileRoute("/api/upload")({
             }
           );
 
+
+
           if (!uploadRes.ok) {
             const errText = await uploadRes.text();
             console.error("[upload API] Supabase storage upload failed:", uploadRes.status, errText);
@@ -76,6 +84,8 @@ export const Route = createFileRoute("/api/upload")({
           }
 
           const publicUrl = `${url}/storage/v1/object/public/${bucketName}/${uniqueFileName}`;
+
+
 
           return new Response(
             JSON.stringify({ success: true, url: publicUrl, fileName: uniqueFileName }),

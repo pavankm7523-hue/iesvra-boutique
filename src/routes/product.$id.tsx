@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useProducts, colorMap, type ProductMedia } from "@/lib/products";
+import { formatProductPolicy, useProducts, colorMap, type ProductMedia } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
 import { useIsInWishlist, toggleWishlist } from "@/lib/wishlist";
 import { geocodeAddress, reverseGeocode } from "@/lib/delivery";
@@ -749,12 +749,12 @@ function ProductDetails() {
             <div className="bg-white rounded-2xl border-2 border-border/80 p-5 sm:p-6 shadow-md shadow-navy-deep/5 space-y-4">
               {/* Total Price Header */}
               <div className="border-b border-border/40 pb-3">
-                <div className="flex items-baseline justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-0">
                   <span className="text-xs font-bold uppercase tracking-wider text-navy-deep/60">Total Amount:</span>
-                  <div className="text-right">
-                    <span className="text-2xl font-black text-navy-deep">₹{totalPrice.toLocaleString()}.00</span>
+                  <div className="sm:text-right">
+                    <span className="text-xl sm:text-2xl font-black text-navy-deep">₹{totalPrice.toLocaleString()}.00</span>
                     {totalSavings > 0 && (
-                      <p className="text-[11px] font-semibold text-emerald-700">
+                      <p className="text-[10px] sm:text-[11px] font-semibold text-emerald-700">
                         You save ₹{totalSavings.toLocaleString()}.00 ({discount}%)
                       </p>
                     )}
@@ -951,20 +951,16 @@ function ProductDetails() {
                 </div>
                 <div className="grid grid-cols-3 gap-2 py-0.5">
                   <span className="text-navy-deep/50 font-medium">Ships from</span>
-                  <span className="col-span-2 font-semibold text-navy-deep">IESVRA Logistics</span>
+                  <span className="col-span-2 font-semibold text-navy-deep">IESVRA</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2 py-0.5">
                   <span className="text-navy-deep/50 font-medium">Sold by</span>
-                  <span className="col-span-2 font-semibold text-primary">IESVRA Direct</span>
+                  <span className="col-span-2 font-semibold text-primary">IESVRA</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2 py-0.5">
                   <span className="text-navy-deep/50 font-medium">Returns</span>
-                  <span className="col-span-2 font-semibold text-navy-deep">14-Day Replacement / Return</span>
+                  <span className="col-span-2 font-semibold text-navy-deep">{formatProductPolicy(product)}</span>
                 </div>
-              </div>
-
-              {/* Add to Wishlist Button */}
-              <div className="border-t border-border/40 pt-3">
                 <button
                   type="button"
                   onClick={handleWishlistToggle}
@@ -1021,7 +1017,7 @@ function ProductDetails() {
               </div>
               <div className="flex items-center gap-2">
                 <RefreshCcw className="h-4 w-4 text-gold shrink-0" />
-                <span>Easy Returns within 14 Days</span>
+                <span>{formatProductPolicy(product)}</span>
               </div>
             </div>
           </div>
