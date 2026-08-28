@@ -9,7 +9,10 @@ type PreparedUpload = {
   contentType: string;
 };
 
-
+function logUploadStage(stage: string, details?: unknown) {
+  const suffix = details === undefined ? "" : ` ${JSON.stringify(details)}`;
+  console.log(`[MediaUploader] ${stage}${suffix}`);
+}
 
 const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "svg", "avif", "bmp"]);
 const VIDEO_EXTENSIONS = new Set(["mp4", "webm", "mov", "m4v"]);
@@ -93,7 +96,11 @@ async function prepareImageUpload(file: File): Promise<PreparedUpload> {
 }
 
 async function uploadPreparedFile(prepared: PreparedUpload): Promise<string> {
-
+  logUploadStage("upload API call start", {
+    fileName: prepared.fileName,
+    contentType: prepared.contentType,
+    payloadBytes: prepared.dataUrl.length,
+  });
   const response = await fetch("/api/upload", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -104,7 +111,11 @@ async function uploadPreparedFile(prepared: PreparedUpload): Promise<string> {
     }),
   });
   const responseText = await response.text();
-
+  logUploadStage("upload API call response", {
+    status: response.status,
+    ok: response.ok,
+    body: responseText,
+  });
 
   let responseData: { url?: string; error?: string } = {};
   try {
@@ -126,10 +137,15 @@ export function MediaUploader({ value = [], onChange }: {
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-
+  useEffect(() => {
+    logUploadStage("state update after upload observed", {
+      mediaCount: value.length,
+      mediaUrls: value.map((media) => media.url),
+    });
+  }, [value]);
 
   const processFiles = useCallback(async (files: FileList | File[]) => {
-
+    logUploadStage("processFiles invoked", { count: files.length });
     if (!files.length) return;
     setIsProcessing(true);
     const newMedia: ProductMedia[] = [];
@@ -138,7 +154,13 @@ export function MediaUploader({ value = [], onChange }: {
       for (let index = 0; index < files.length; index += 1) {
         const file = files[index];
         const kind = mediaKind(file);
-
+        logUploadStage("file read start", {
+          index,
+          name: file.name,
+          type: file.type || "(empty MIME type)",
+          size: file.size,
+          inferredKind: kind,
+        });
         if (!kind) {
           console.warn("[MediaUploader] file rejected", { name: file.name, type: file.type });
           toast.error(`File "${file.name}" is not a supported image or video.`);
@@ -157,7 +179,12 @@ export function MediaUploader({ value = [], onChange }: {
                 fileName: file.name,
                 contentType: file.type || "video/mp4",
               };
-
+          logUploadStage("file read complete", {
+            sourceName: file.name,
+            uploadName: prepared.fileName,
+            contentType: prepared.contentType,
+            dataUrlPrefix: prepared.dataUrl.slice(0, 32),
+          });
           const mediaUrl = await uploadPreparedFile(prepared);
           newMedia.push({
             id: `media_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -175,18 +202,22 @@ export function MediaUploader({ value = [], onChange }: {
 
       if (newMedia.length > 0) {
         const nextValue = [...value, ...newMedia];
-
+        logUploadStage("state update requested after upload", {
+          previousCount: value.length,
+          addedCount: newMedia.length,
+          nextCount: nextValue.length,
+        });
         onChange(nextValue);
         toast.success(`Uploaded ${newMedia.length} media item(s)`);
       }
     } finally {
       setIsProcessing(false);
-
+      logUploadStage("batch complete", { addedCount: newMedia.length });
     }
   }, [onChange, value]);
 
   const processDroppedUrl = useCallback(async (url: string) => {
-
+    logUploadStage("dropped URL detected", { url });
     setIsProcessing(true);
     try {
       const response = await fetch(url);
@@ -205,7 +236,11 @@ export function MediaUploader({ value = [], onChange }: {
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
-
+    logUploadStage("onDragEnter", {
+      types: Array.from(event.dataTransfer.types),
+      fileCount: event.dataTransfer.files.length,
+      itemCount: event.dataTransfer.items.length,
+    });
     setIsDragging(true);
   };
 
@@ -213,7 +248,7 @@ export function MediaUploader({ value = [], onChange }: {
     event.preventDefault();
     event.stopPropagation();
     event.dataTransfer.dropEffect = "copy";
-
+    logUploadStage("onDragOver", { types: Array.from(event.dataTransfer.types) });
     setIsDragging(true);
   };
 
@@ -221,7 +256,7 @@ export function MediaUploader({ value = [], onChange }: {
     event.preventDefault();
     event.stopPropagation();
     if (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget as Node)) {
-
+      logUploadStage("onDragLeave");
       setIsDragging(false);
     }
   };
@@ -241,7 +276,14 @@ export function MediaUploader({ value = [], onChange }: {
       || htmlImageUrl
       || (/^https?:\/\//i.test(event.dataTransfer.getData("text/plain").trim()) ? event.dataTransfer.getData("text/plain").trim() : "");
 
-
+    logUploadStage("onDrop", {
+      types: Array.from(event.dataTransfer.types),
+      directFileCount: event.dataTransfer.files.length,
+      itemFileCount: filesFromItems.length,
+      resolvedFileCount: files.length,
+      hasDroppedUrl: Boolean(droppedUrl),
+      items: Array.from(event.dataTransfer.items).map((item) => ({ kind: item.kind, type: item.type })),
+    });
     if (files.length > 0) void processFiles(files);
     else if (droppedUrl) void processDroppedUrl(droppedUrl);
     else {
@@ -254,7 +296,7 @@ export function MediaUploader({ value = [], onChange }: {
     const handlePaste = async (event: ClipboardEvent) => {
       if (!event.clipboardData) return;
       if (event.clipboardData.files.length > 0) {
-
+        logUploadStage("paste files", { count: event.clipboardData.files.length });
         await processFiles(event.clipboardData.files);
         return;
       }
@@ -294,7 +336,7 @@ export function MediaUploader({ value = [], onChange }: {
           type="file"
           ref={fileInputRef}
           onChange={(event) => {
-
+            logUploadStage("file input change", { count: event.target.files?.length || 0 });
             if (event.target.files?.length) void processFiles(event.target.files);
             event.target.value = "";
           }}
