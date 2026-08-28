@@ -198,7 +198,6 @@ function Cart() {
         
         const formatted = [savedLine1, savedLine2, savedCity, `${savedState} - ${savedPincode}`].filter(Boolean).join(", ");
         setShippingAddress(formatted);
-        // Don't pre-fill the search box with saved address — keep it blank for fresh searching
         setAddressSearch("");
         setIsAddressConfirmed(true);
         
@@ -206,11 +205,9 @@ function Cart() {
         setIsExpressAvailable(isExpress);
         setDeliverySpeed(isExpress ? "express" : "standard");
       } else {
-        const savedAddress = localStorage.getItem("IESVRA_delivery_address") || "";
-        if (savedAddress) {
-          // Store the parsed line1 for the address form but keep search box blank
-          setAddressLine1(savedAddress.split(",")[0] || "");
-        }
+        if (savedCity) setCity(savedCity);
+        if (savedState) setState(savedState);
+        if (savedPincode) setPincode(savedPincode);
       }
     };
     handleSync(); // Initial load
@@ -603,23 +600,54 @@ function Cart() {
 
     // Run validation on all fields
     const newErrors: Record<string, string> = {};
-    if (!shippingName.trim()) newErrors.name = "Please enter your name";
-    if (!shippingEmail.trim()) newErrors.email = "Please enter your email";
-    if (!shippingPhone.trim()) newErrors.phone = "Please enter your phone number";
+    const trimmedName = shippingName.trim();
+    const trimmedEmail = shippingEmail.trim();
+    const trimmedPhone = shippingPhone.trim().replace(/\D/g, "");
+    const trimmedLine1 = addressLine1.trim();
+    const trimmedCity = city.trim();
+    const trimmedState = state.trim();
+    const trimmedPincode = pincode.trim().replace(/\D/g, "");
+
+    if (!trimmedName || trimmedName.length < 2) {
+      newErrors.name = "Please enter your full name (minimum 2 characters)";
+    }
     
-    if (!addressLine1.trim()) newErrors.addressLine1 = "Please enter Address Line 1";
-    if (!city.trim()) newErrors.city = "Please enter city";
-    if (!state.trim()) newErrors.state = "Please select state";
+    if (!trimmedPhone) {
+      newErrors.phone = "Please enter your mobile phone number";
+    } else if (trimmedPhone.length !== 10 || !/^[6-9]/.test(trimmedPhone)) {
+      newErrors.phone = "Please enter a valid 10-digit Indian mobile number (starting with 6-9)";
+    }
+
+    if (!trimmedEmail) {
+      newErrors.email = "Please enter your email address";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      newErrors.email = "Please enter a valid email address (e.g. name@example.com)";
+    }
     
-    if (!pincode.trim()) {
-      newErrors.pincode = "Please enter pincode";
-    } else if (!/^\d{6}$/.test(pincode.trim())) {
-      newErrors.pincode = "Please enter a valid 6-digit pincode";
+    if (!trimmedLine1 || trimmedLine1.length < 5) {
+      newErrors.addressLine1 = "Please enter complete house/flat no., building and street (min 5 characters)";
+    }
+    
+    if (!trimmedCity || trimmedCity.length < 2) {
+      newErrors.city = "Please enter city name";
+    }
+    
+    if (!trimmedState || !INDIAN_STATES.includes(trimmedState)) {
+      newErrors.state = "Please select a valid state from the list";
+    }
+    
+    if (!trimmedPincode || trimmedPincode.length !== 6) {
+      newErrors.pincode = "Please enter a valid 6-digit postal PIN code";
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      toast.error("Please fill in all required fields correctly.");
+      toast.error("Please provide your complete delivery address and contact details before proceeding.");
+      const firstErrorKey = Object.keys(newErrors)[0];
+      const targetInput = document.querySelector(`[data-field="${firstErrorKey}"]`) || document.querySelector('form');
+      if (targetInput) {
+        targetInput.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
 
@@ -676,10 +704,7 @@ function Cart() {
 
       const createData = await createRes.json();
       if (!createRes.ok || !createData.order_id) {
-        console.warn("Failed to create Razorpay order on backend, falling back to mock:", createData.error);
-        toast.info("Falling back to Simulated Test Payment Mode.");
-        setIsMockRazorpayOpen(true);
-        return;
+        throw new Error(createData.error || "Failed to initialize Razorpay payment. Please try again.");
       }
 
       const { order_id, key_id } = createData;
@@ -687,10 +712,7 @@ function Cart() {
       // 2. Load Razorpay checkout script
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
-        console.warn("Razorpay SDK failed to load, falling back to mock payment.");
-        toast.info("Razorpay SDK unavailable. Falling back to Simulated Test Payment Mode.");
-        setIsMockRazorpayOpen(true);
-        return;
+        throw new Error("Razorpay payment gateway SDK failed to load. Please check your internet connection.");
       }
 
       // 3. Open Razorpay payment popup
@@ -765,9 +787,10 @@ function Cart() {
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
     } catch (err: any) {
-      console.warn("Razorpay placement error, falling back to mock payment:", err);
-      toast.info("Falling back to Simulated Test Payment Mode.");
-      setIsMockRazorpayOpen(true);
+      console.error("Razorpay placement error:", err);
+      toast.error(err?.message || "Payment gateway error. Please try again.");
+    } finally {
+      setIsProcessingPayment(false);
     }
   };
 
@@ -1193,13 +1216,18 @@ function Cart() {
                         <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Full Name *</label>
                         <input
                           type="text"
+                          data-field="name"
                           value={shippingName}
                           onChange={(e) => {
                             setShippingName(e.target.value);
                             if (errors.name) setErrors(prev => ({ ...prev, name: "" }));
                           }}
                           placeholder="Jane Doe"
-                          className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                          className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
+                            errors.name 
+                              ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
+                              : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
+                          }`}
                         />
                         {errors.name && <span className="text-[9px] text-red-500 font-semibold">{errors.name}</span>}
                       </div>
@@ -1208,13 +1236,19 @@ function Cart() {
                         <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Phone Number *</label>
                         <input
                           type="tel"
+                          data-field="phone"
                           value={shippingPhone}
                           onChange={(e) => {
                             setShippingPhone(e.target.value);
                             if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
                           }}
-                          placeholder="e.g. 7061333200"
-                          className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                          placeholder="e.g. 9876543210"
+                          maxLength={10}
+                          className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
+                            errors.phone 
+                              ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
+                              : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
+                          }`}
                         />
                         {errors.phone && <span className="text-[9px] text-red-500 font-semibold">{errors.phone}</span>}
                       </div>
@@ -1224,13 +1258,18 @@ function Cart() {
                       <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Email Address *</label>
                       <input
                         type="email"
+                        data-field="email"
                         value={shippingEmail}
                         onChange={(e) => {
                           setShippingEmail(e.target.value);
                           if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
                         }}
                         placeholder="jane.doe@example.com"
-                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                        className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
+                          errors.email 
+                            ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
+                            : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
+                        }`}
                       />
                       {errors.email && <span className="text-[9px] text-red-500 font-semibold">{errors.email}</span>}
                     </div>
@@ -1280,13 +1319,18 @@ function Cart() {
                       <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Address Line 1 * (House/Flat No, Building, Street)</label>
                       <input
                         type="text"
+                        data-field="addressLine1"
                         value={addressLine1}
                         onChange={(e) => {
                           setAddressLine1(e.target.value);
                           if (errors.addressLine1) setErrors(prev => ({ ...prev, addressLine1: "" }));
                         }}
-                        placeholder="Flat 101, Maple Heights"
-                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                        placeholder="Flat 101, Maple Heights, Main Road"
+                        className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
+                          errors.addressLine1 
+                            ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
+                            : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
+                        }`}
                       />
                       {errors.addressLine1 && <span className="text-[9px] text-red-500 font-semibold">{errors.addressLine1}</span>}
                     </div>
@@ -1298,7 +1342,7 @@ function Cart() {
                         value={addressLine2}
                         onChange={(e) => setAddressLine2(e.target.value)}
                         placeholder="Near Rajendra Nagar Over Bridge"
-                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
                       />
                     </div>
 
@@ -1307,13 +1351,18 @@ function Cart() {
                         <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">City *</label>
                         <input
                           type="text"
+                          data-field="city"
                           value={city}
                           onChange={(e) => {
                             setCity(e.target.value);
                             if (errors.city) setErrors(prev => ({ ...prev, city: "" }));
                           }}
                           placeholder="Patna"
-                          className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                          className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
+                            errors.city 
+                              ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
+                              : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
+                          }`}
                         />
                         {errors.city && <span className="text-[9px] text-red-500 font-semibold">{errors.city}</span>}
                       </div>
@@ -1322,6 +1371,7 @@ function Cart() {
                         <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">Pincode *</label>
                         <input
                           type="text"
+                          data-field="pincode"
                           value={pincode}
                           onChange={(e) => {
                             setPincode(e.target.value);
@@ -1329,7 +1379,11 @@ function Cart() {
                           }}
                           placeholder="800020"
                           maxLength={6}
-                          className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold"
+                          className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold transition-all ${
+                            errors.pincode 
+                              ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
+                              : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
+                          }`}
                         />
                         {errors.pincode && <span className="text-[9px] text-red-500 font-semibold">{errors.pincode}</span>}
                       </div>
@@ -1338,12 +1392,17 @@ function Cart() {
                     <div className="flex flex-col gap-1">
                       <label className="text-[10px] font-bold uppercase tracking-wider text-navy-deep/60">State *</label>
                       <select
+                        data-field="state"
                         value={state}
                         onChange={(e) => {
                           setState(e.target.value);
                           if (errors.state) setErrors(prev => ({ ...prev, state: "" }));
                         }}
-                        className="h-10 px-3 bg-[#f8f9fb] rounded-xl border-none focus:ring-2 focus:ring-[#0b72e7]/20 outline-none text-xs text-navy-deep font-semibold cursor-pointer"
+                        className={`h-10 px-3 rounded-xl outline-none text-xs text-navy-deep font-semibold cursor-pointer transition-all ${
+                          errors.state 
+                            ? "bg-red-50/50 border border-red-400 focus:ring-2 focus:ring-red-400/20" 
+                            : "bg-[#f8f9fb] border border-transparent focus:ring-2 focus:ring-[#0b72e7]/20"
+                        }`}
                       >
                         <option value="">Select State</option>
                         {INDIAN_STATES.map((s) => (

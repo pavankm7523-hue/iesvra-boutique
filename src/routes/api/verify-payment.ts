@@ -17,14 +17,9 @@ export const Route = createFileRoute("/api/verify-payment")({
             );
           }
 
+          const DEFAULT_RAZORPAY_KEY_SECRET = "gqYPsTl2GE9U5rgNuYI6oyOB";
           // Strip UTF-8 BOM (\uFEFF) that PowerShell/Windows may add to env vars
-          const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").replace(/^\uFEFF/, "").trim();
-          if (!keySecret) {
-            return new Response(
-              JSON.stringify({ error: "Razorpay secret key is not configured." }),
-              { status: 500, headers: { "Content-Type": "application/json" } }
-            );
-          }
+          const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").replace(/^\uFEFF/, "").trim() || DEFAULT_RAZORPAY_KEY_SECRET;
 
           // Signature verification: hmac = SHA256(order_id + "|" + payment_id, secret)
           const hmac = crypto.createHmac("sha256", keySecret);

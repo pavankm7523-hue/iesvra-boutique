@@ -5,13 +5,13 @@ import process from "node:process";
 // Strip UTF-8 BOM (ï»¿ / \uFEFF) that PowerShell/Windows sometimes adds when piping strings
 const stripBom = (s: string) => s.replace(/^\uFEFF/, "").trim();
 
-// Helper to construct Razorpay client dynamically using process.env
+const DEFAULT_RAZORPAY_KEY_ID = "rzp_live_TTeFSLVIx1tbKM";
+const DEFAULT_RAZORPAY_KEY_SECRET = "gqYPsTl2GE9U5rgNuYI6oyOB";
+
+// Helper to construct Razorpay client dynamically using process.env with live key fallback
 const getRazorpayInstance = () => {
-  const keyId = stripBom(process.env.RAZORPAY_KEY_ID || "");
-  const keySecret = stripBom(process.env.RAZORPAY_KEY_SECRET || "");
-  if (!keyId || !keySecret) {
-    throw new Error("Razorpay API keys are not configured in environment variables.");
-  }
+  const keyId = stripBom(process.env.RAZORPAY_KEY_ID || "") || DEFAULT_RAZORPAY_KEY_ID;
+  const keySecret = stripBom(process.env.RAZORPAY_KEY_SECRET || "") || DEFAULT_RAZORPAY_KEY_SECRET;
   return { instance: new Razorpay({ key_id: keyId, key_secret: keySecret }), keyId };
 };
 
