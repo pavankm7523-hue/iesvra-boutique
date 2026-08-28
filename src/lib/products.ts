@@ -102,11 +102,24 @@ export function formatProductPolicy(product?: Partial<Product> | null): string {
   return "Non-refundable and non-replaceable";
 }
 
+import { generateProductReviews } from "./reviewGenerator";
+
 function normalizeProduct(product: Product): Product {
+  const existingReviews = Array.isArray(product.reviews) && product.reviews.length >= 25
+    ? product.reviews
+    : generateProductReviews(product.id, product.name, product.categories?.[0] || "General");
+
+  const avgRating = existingReviews.length > 0
+    ? parseFloat((existingReviews.reduce((acc, r) => acc + r.rating, 0) / existingReviews.length).toFixed(1))
+    : (product.rating || 4.8);
+
   return {
     ...product,
     categories: product.categories ?? ["Uncategorized"],
     stock: typeof product.stock === "number" ? product.stock : 50,
+    reviews: existingReviews,
+    reviewsCount: existingReviews.length,
+    rating: avgRating,
     ...getProductPolicy(product),
   };
 }

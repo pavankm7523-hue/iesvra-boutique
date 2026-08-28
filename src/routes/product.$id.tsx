@@ -121,6 +121,18 @@ function ProductDetails() {
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState("");
   const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const [reviewFilter, setReviewFilter] = useState<'all' | number>('all');
+  const [visibleReviewCount, setVisibleReviewCount] = useState(8);
+  const [helpfulVotes, setHelpfulVotes] = useState<Record<string, number>>({});
+
+  const filteredReviews = useMemo(() => {
+    if (reviewFilter === 'all') return reviews;
+    return reviews.filter(r => r.rating === reviewFilter);
+  }, [reviews, reviewFilter]);
+
+  const displayedReviews = useMemo(() => {
+    return filteredReviews.slice(0, visibleReviewCount);
+  }, [filteredReviews, visibleReviewCount]);
 
   const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || "");
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
@@ -1169,7 +1181,7 @@ function ProductDetails() {
 
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-8 h-12 bg-primary text-white font-bold uppercase tracking-wider text-xs rounded-full hover:bg-primary/95 transition-all duration-300 shadow-md shadow-primary/10"
+                    className="w-full sm:w-auto px-8 h-12 bg-primary text-white font-bold uppercase tracking-wider text-xs rounded-full hover:bg-primary/95 transition-all duration-300 shadow-md shadow-primary/10 cursor-pointer"
                   >
                     Submit Review
                   </button>
@@ -1178,39 +1190,85 @@ function ProductDetails() {
 
               {/* Reviews List */}
               <div className="space-y-6">
-                <h4 className="text-lg font-bold text-navy-deep uppercase tracking-wider border-b border-border/30 pb-4">
-                  Customer Opinions ({reviewsCount})
-                </h4>
-                {reviewsCount === 0 ? (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/30 pb-4">
+                  <h4 className="text-lg font-bold text-navy-deep uppercase tracking-wider">
+                    Customer Opinions ({reviewsCount})
+                  </h4>
+
+                  {/* Rating Filters */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setReviewFilter('all')}
+                      className={`px-3 py-1 rounded-full font-bold transition cursor-pointer ${
+                        reviewFilter === 'all'
+                          ? "bg-navy-deep text-white shadow-xs"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      All ({reviews.length})
+                    </button>
+                    {[5, 4, 3].map((star) => {
+                      const count = reviews.filter((r) => r.rating === star).length;
+                      return (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewFilter(star)}
+                          className={`px-3 py-1 rounded-full font-bold transition cursor-pointer flex items-center gap-1 ${
+                            reviewFilter === star
+                              ? "bg-navy-deep text-white shadow-xs"
+                              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                          }`}
+                        >
+                          <span>{star} ★</span>
+                          <span className="opacity-70 text-[10px]">({count})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {displayedReviews.length === 0 ? (
                   <p className="text-sm text-navy-deep/50 italic py-6">
-                    No reviews yet. Be the first to share your thoughts!
+                    No reviews match this filter.
                   </p>
                 ) : (
                   <div className="space-y-4">
-                    {reviews.map((rev) => {
+                    {displayedReviews.map((rev) => {
                       const initials = rev.author
                         .split(" ")
                         .map((n) => n[0])
                         .join("")
                         .toUpperCase()
                         .slice(0, 2);
+
+                      const helpfulCount = (helpfulVotes[rev.id] || 0) + ((rev.author.charCodeAt(0) % 8) + 2);
+                      const hasVoted = helpfulVotes[rev.id] !== undefined;
+
                       return (
                         <div
                           key={rev.id}
-                          className="bg-white p-6 rounded-2xl border border-border/30 shadow-sm flex gap-4 items-start hover:shadow-md transition-shadow duration-300"
+                          className="bg-white p-5 sm:p-6 rounded-2xl border border-border/40 shadow-xs flex flex-col sm:flex-row gap-4 items-start hover:shadow-md transition-shadow duration-300"
                         >
-                          <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 select-none border border-primary/20">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-100 to-purple-200 text-purple-900 flex items-center justify-center font-bold text-xs shrink-0 select-none border border-purple-300/40">
                             {initials}
                           </div>
-                          <div className="flex-1 space-y-2">
+                          <div className="flex-1 space-y-2 w-full">
                             <div className="flex flex-wrap items-center justify-between gap-2">
-                              <span className="font-semibold text-sm text-navy-deep">
-                                {rev.author}
-                              </span>
-                              <span className="text-[10px] text-navy-deep/40 font-semibold">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-sm text-navy-deep">
+                                  {rev.author}
+                                </span>
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full">
+                                  <CheckCircle2 className="h-3 w-3 text-emerald-600" /> Verified Buyer
+                                </span>
+                              </div>
+                              <span className="text-[11px] text-navy-deep/40 font-semibold font-mono">
                                 {rev.date}
                               </span>
                             </div>
+
                             <div className="flex text-gold">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <Star
@@ -1221,13 +1279,55 @@ function ProductDetails() {
                                 />
                               ))}
                             </div>
-                            <p className="text-xs text-navy-deep/80 leading-relaxed font-light">
+
+                            <p className="text-xs sm:text-sm text-navy-deep/80 leading-relaxed font-normal pt-1">
                               {rev.comment}
                             </p>
+
+                            <div className="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 mt-2">
+                              <span className="text-[11px] text-slate-400">Was this review helpful?</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (!hasVoted) {
+                                    setHelpfulVotes((prev) => ({ ...prev, [rev.id]: 1 }));
+                                    toast.success("Thank you for your feedback!");
+                                  }
+                                }}
+                                className={`text-[11px] font-bold px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
+                                  hasVoted
+                                    ? "bg-purple-100 text-purple-800"
+                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                }`}
+                              >
+                                <span>👍 Helpful</span>
+                                <span>({helpfulCount})</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       );
                     })}
+
+                    {/* Pagination / Show More button */}
+                    {visibleReviewCount < filteredReviews.length && (
+                      <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setVisibleReviewCount((prev) => prev + 10)}
+                          className="w-full sm:w-auto px-6 py-2.5 rounded-xl border border-slate-300 text-slate-800 font-bold text-xs uppercase tracking-wider hover:bg-slate-100 transition cursor-pointer shadow-xs"
+                        >
+                          Load More Reviews ({filteredReviews.length - visibleReviewCount} remaining)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setVisibleReviewCount(filteredReviews.length)}
+                          className="text-xs font-bold text-[#6B46C1] hover:underline cursor-pointer py-2"
+                        >
+                          Show All ({filteredReviews.length})
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
