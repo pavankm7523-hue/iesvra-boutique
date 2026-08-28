@@ -480,10 +480,10 @@ function ProductDetails() {
   };
 
   return (
-    <div key={product.id} className="bg-background text-foreground min-h-screen pb-16">
+    <div key={product.id} className="min-h-screen w-full min-w-0 max-w-full overflow-x-clip bg-background pb-16 text-foreground">
       {/* Breadcrumbs */}
-      <div className="bg-cream border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-4 text-xs font-semibold uppercase tracking-widest text-navy-deep/60 flex flex-wrap items-center gap-3">
+      <div className="w-full min-w-0 max-w-full overflow-x-clip bg-cream border-b border-border/50">
+        <div className="max-w-7xl min-w-0 mx-auto px-4 lg:px-8 py-4 text-xs font-semibold uppercase tracking-widest text-navy-deep/60 flex flex-wrap items-center gap-3">
           <Link to="/" className="hover:text-primary transition">
             Home
           </Link>
@@ -506,10 +506,10 @@ function ProductDetails() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+      <div className="w-full min-w-0 max-w-7xl mx-auto overflow-x-clip px-4 lg:px-8 py-10">
+        <div className="grid w-full min-w-0 max-w-full lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* Left Column: Image & Gallery (5 cols) */}
-          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+          <div className="w-full min-w-0 max-w-full lg:col-span-5 space-y-6 lg:sticky lg:top-24">
             <div className="bg-white rounded-[2rem] border border-border/30 overflow-hidden shadow-2xl shadow-navy-deep/5 w-full aspect-square relative flex items-center justify-center p-8 group/main-img">
               {galleryItems[activeIndex]?.type === "video" ? (
                 <video
@@ -563,7 +563,7 @@ function ProductDetails() {
 
             {/* Thumbnails */}
             {galleryItems.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2 px-1 justify-start sm:justify-center sm:flex-wrap sm:overflow-visible sm:pb-0 scrollbar-none">
+              <div className="flex w-full min-w-0 max-w-full touch-pan-x justify-start gap-3 overflow-x-auto overscroll-x-contain pb-2 px-1 sm:justify-center sm:flex-wrap sm:overflow-visible sm:pb-0 scrollbar-none">
                 {galleryItems.map((item, idx) => (
                   <button
                     key={item.id || idx}
@@ -601,7 +601,7 @@ function ProductDetails() {
           </div>
 
           {/* Center/Right Column: Product Details & Amazon Purchase Box (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="w-full min-w-0 max-w-full lg:col-span-7 space-y-6">
             
             {/* Top Badges & Category Header */}
             <div className="space-y-3">
@@ -629,16 +629,16 @@ function ProductDetails() {
               </div>
 
               {/* Title & Subtitle */}
-              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-semibold text-navy-deep leading-tight">
+              <h1 className="max-w-full whitespace-normal break-words [overflow-wrap:anywhere] font-display text-2xl sm:text-3xl lg:text-4xl font-semibold text-navy-deep leading-tight">
                 {product.name}
               </h1>
-              <p className="text-sm text-navy-deep/60 font-light">
+              <p className="max-w-full whitespace-normal break-words [overflow-wrap:anywhere] text-sm text-navy-deep/60 font-light">
                 {(product.sub || "").replace(/IESVRA Boutique/g, "IESVRA")}
               </p>
             </div>
 
             {/* Ratings & Social Proof Line */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-border/40 py-3.5 text-sm">
+            <div className="flex w-full min-w-0 max-w-full flex-wrap items-center gap-x-5 gap-y-2 border-y border-border/40 py-3.5 text-sm">
               <div className="flex items-center gap-2">
                 <div className="flex items-center text-gold">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -660,16 +660,16 @@ function ProductDetails() {
 
               {/* "X,000+ bought in past month" (Shown when boughtInPastMonth is set) */}
               {product.boughtInPastMonth && product.boughtInPastMonth > 0 && (
-                <div className="flex items-center gap-1.5 text-xs text-navy-deep/80 font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md text-[#92400e]">
-                  <Zap className="h-3 w-3 text-[#d97706] fill-[#d97706]" />
-                  <span>{product.boughtInPastMonth.toLocaleString()}+ bought in past month</span>
+                <div className="flex min-w-0 max-w-full items-center gap-1.5 text-xs text-navy-deep/80 font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md text-[#92400e]">
+                  <Zap className="h-3 w-3 shrink-0 text-[#d97706] fill-[#d97706]" />
+                  <span className="min-w-0 whitespace-normal break-words">{product.boughtInPastMonth.toLocaleString()}+ bought in past month</span>
                 </div>
               )}
             </div>
 
             {/* Price Row */}
             <div className="space-y-1">
-              <div className="flex items-baseline gap-3">
+              <div className="flex min-w-0 flex-wrap items-baseline gap-3">
                 <span className="text-3xl sm:text-4xl font-extrabold text-navy-deep tracking-tight">
                   ₹{currentPrice.toLocaleString()}.00
                 </span>
@@ -748,7 +748,7 @@ function ProductDetails() {
             )}
 
             {/* AMAZON-STYLE PURCHASE BOX CARD */}
-            <div className="bg-white rounded-2xl border-2 border-border/80 p-5 sm:p-6 shadow-md shadow-navy-deep/5 space-y-4">
+            <div className="w-full min-w-0 max-w-full overflow-x-clip bg-white rounded-2xl border-2 border-border/80 p-5 sm:p-6 shadow-md shadow-navy-deep/5 space-y-4">
               {/* Total Price Header */}
               <div className="border-b border-border/40 pb-3">
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 sm:gap-0">
@@ -765,17 +765,17 @@ function ProductDetails() {
               </div>
 
               {/* Delivery Estimates */}
-              <div className="space-y-2 text-xs sm:text-sm text-navy-deep/90 leading-relaxed">
-                <div>
+              <div className="min-w-0 max-w-full space-y-2 text-xs sm:text-sm text-navy-deep/90 leading-relaxed">
+                <div className="max-w-full whitespace-normal break-words [overflow-wrap:anywhere]">
                   <span className="font-bold text-primary">FREE delivery </span>
                   <span suppressHydrationWarning className="font-extrabold text-navy-deep">{deliveryDates.freeFormatted}</span>
                   <span className="text-navy-deep/70"> on orders over ₹499.</span>
                 </div>
-                <div>
+                <div className="max-w-full whitespace-normal break-words [overflow-wrap:anywhere]">
                   <span className="text-navy-deep/70">Or fastest delivery </span>
                   <span suppressHydrationWarning className="font-extrabold text-navy-deep">{deliveryDates.fastestPrefix}, {deliveryDates.fastestFormatted}</span>
                   <span className="text-navy-deep/70">. Order within </span>
-                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-flex items-center gap-1.5 tabular-nums">
+                  <span className="max-w-full flex-wrap font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-flex items-center gap-1.5 tabular-nums">
                     <Clock className="h-3 w-3 text-emerald-600 animate-pulse shrink-0" />
                     <span>
                       {countdown.hours} hrs {countdown.minutes} mins {countdown.seconds} secs
@@ -1002,9 +1002,9 @@ function ProductDetails() {
             </div>
 
             {/* Description & Product Overview */}
-            <div className="space-y-3 text-sm text-navy-deep/80 leading-relaxed font-light pt-2">
+            <div className="w-full min-w-0 max-w-full space-y-3 text-sm text-navy-deep/80 leading-relaxed font-light pt-2">
               <h3 className="font-bold text-navy-deep uppercase tracking-wider text-xs">About this item</h3>
-              <p className="bg-white/60 p-4 rounded-xl border border-border/40 whitespace-pre-wrap break-words">{product.description}</p>
+              <p className="w-full min-w-0 max-w-full bg-white/60 p-4 rounded-xl border border-border/40 whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{product.description}</p>
             </div>
 
             {/* Features strip */}
