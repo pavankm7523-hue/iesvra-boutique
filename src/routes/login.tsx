@@ -10,10 +10,11 @@ import {
   getRegisteredUsers,
   saveRegisteredUsers,
   syncAuthWithDb,
+  isAdminEmail,
 } from "@/lib/auth";
 import { PasswordInput } from "@/components/PasswordInput";
 import { toast } from "sonner";
-import { Check, X, Shield, Lock, ArrowLeft, KeyRound, Loader2 } from "lucide-react";
+import { Check, X, Shield, Lock, ArrowLeft, KeyRound, Loader2, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -48,7 +49,7 @@ function Login() {
     syncAuthWithDb();
   }, []);
 
-  // Mock social login states
+  // Social login modal states
   const [socialProvider, setSocialProvider] = useState<string | null>(null);
   const [socialEmail, setSocialEmail] = useState("");
 
@@ -58,23 +59,27 @@ function Login() {
   };
 
   const handleSocialLoginSubmit = (nameVal: string, emailVal: string) => {
-    loginUser(nameVal, emailVal, "user");
-
-    const users = getRegisteredUsers();
     const normalizedEmail = emailVal.trim().toLowerCase();
-    if (!users.some((u: any) => u.email.toLowerCase() === normalizedEmail)) {
+    const users = getRegisteredUsers();
+    const existing = users.find((u: any) => (u.email || "").toLowerCase() === normalizedEmail);
+    const finalName = existing?.name || nameVal || normalizedEmail.split("@")[0];
+    const finalRole = isAdminEmail(normalizedEmail) ? "admin" : (existing?.role || "user");
+
+    loginUser(finalName, normalizedEmail, finalRole);
+
+    if (!existing) {
       users.push({
-        name: nameVal,
+        name: finalName,
         email: normalizedEmail,
-        passwordHash: "social-auth-bypass-pass",
-        role: 'user'
+        passwordHash: "oauth-login-only",
+        role: finalRole,
       });
       saveRegisteredUsers(users);
     }
 
-    toast.success(`Logged in successfully via ${socialProvider}!`);
+    toast.success(`Logged in successfully as ${finalName}!`);
     setSocialProvider(null);
-    navigate({ to: "/" });
+    navigate({ to: finalRole === "admin" ? "/admin" : "/" });
   };
 
   const googleBtnRef = useRef<HTMLDivElement>(null);
@@ -83,31 +88,47 @@ function Login() {
     if (socialProvider !== "Google") return;
 
     const initGoogleBtn = () => {
-      const client_id = (window as any).GOOGLE_CLIENT_ID || "129499608888-ffjcvvrv58mjm3g0avv4h0ehpt7ft98f.apps.googleusercontent.com";
-      (window as any).google.accounts.id.initialize({
-        client_id: client_id,
-        callback: (response: any) => {
-          try {
-            const base64Url = response.credential.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            const payload = JSON.parse(jsonPayload);
-            if (payload && payload.email) {
-              handleSocialLoginSubmit(payload.name || payload.email.split('@')[0], payload.email);
-            }
-          } catch (err) {
-            console.error("Google authentication error:", err);
+      const client_id =
+        (window as any).GOOGLE_CLIENT_ID ||
+        "825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com";
+
+      try {
+        if ((window as any).google?.accounts?.id) {
+          (window as any).google.accounts.id.initialize({
+            client_id: client_id,
+            callback: (response: any) => {
+              try {
+                const base64Url = response.credential.split(".")[1];
+                const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+                const jsonPayload = decodeURIComponent(
+                  atob(base64)
+                    .split("")
+                    .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join("")
+                );
+                const payload = JSON.parse(jsonPayload);
+                if (payload && payload.email) {
+                  handleSocialLoginSubmit(
+                    payload.name || payload.email.split("@")[0],
+                    payload.email
+                  );
+                }
+              } catch (err) {
+                console.error("Google authentication parse error:", err);
+              }
+            },
+          });
+
+          if (googleBtnRef.current) {
+            (window as any).google.accounts.id.renderButton(googleBtnRef.current, {
+              theme: "outline",
+              size: "large",
+              width: "280",
+            });
           }
         }
-      });
-      if (googleBtnRef.current) {
-        (window as any).google.accounts.id.renderButton(googleBtnRef.current, {
-          theme: "outline",
-          size: "large",
-          width: "300"
-        });
+      } catch (e) {
+        console.warn("Google SDK init exception:", e);
       }
     };
 
@@ -125,7 +146,7 @@ function Login() {
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (forgotStep === 'email') {
+    if (forgotStep === "email") {
       if (!forgotEmail.trim()) {
         toast.error("Please enter your email.");
         return;
@@ -137,7 +158,6 @@ function Login() {
       const otp = Math.floor(1000 + Math.random() * 9000).toString();
       setGeneratedOtp(otp);
 
-      // Send OTP via Resend through our own secure /api/send-otp endpoint
       const sendOtpPromise = fetch("/api/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -157,15 +177,15 @@ function Login() {
         },
       });
 
-      setForgotStep('otp');
-    } else if (forgotStep === 'otp') {
+      setForgotStep("otp");
+    } else if (forgotStep === "otp") {
       if (forgotOtp === generatedOtp || forgotOtp === "1234") {
         toast.success("OTP verified successfully!");
-        setForgotStep('reset');
+        setForgotStep("reset");
       } else {
         toast.error("Invalid OTP code. Please enter the code sent to your email.");
       }
-    } else if (forgotStep === 'reset') {
+    } else if (forgotStep === "reset") {
       if (newPassword.length < 8) {
         toast.error("Password must be at least 8 characters long.");
         return;
@@ -180,7 +200,7 @@ function Login() {
         const success = await updateUserPasswordAsync(forgotEmail, newPassword);
         if (success) {
           toast.success("Password reset successful! Please log in with your new password.");
-          setForgotStep('none');
+          setForgotStep("none");
           setEmail(forgotEmail);
           setPassword("");
         } else {
@@ -243,7 +263,6 @@ function Login() {
 
     try {
       if (isLogin) {
-        // Real-time server-backed Login flow
         const res = await validateUserCredentialsAsync(email, password);
         if (res.success) {
           loginUser(res.name || email.split("@")[0], email.trim(), res.role || "user");
@@ -258,7 +277,6 @@ function Login() {
           toast.error(res.error || "Invalid email or password.");
         }
       } else {
-        // Sign up flow
         if (!name.trim()) {
           toast.error("Please enter your name.");
           return;
@@ -268,7 +286,6 @@ function Login() {
           return;
         }
 
-        // Check if trying to register as admin
         if (email.trim().toLowerCase() === "admin@iesvra.com") {
           toast.error("This email is reserved for system administrator.");
           return;
@@ -298,12 +315,12 @@ function Login() {
           <div className="space-y-6">
             <button
               type="button"
-              onClick={() => setForgotStep('none')}
+              onClick={() => setForgotStep("none")}
               className="inline-flex items-center gap-1 text-xs text-navy-deep/60 hover:text-gold transition-colors font-medium cursor-pointer"
             >
               <ArrowLeft className="h-3.5 w-3.5" /> Back to Login
             </button>
-            
+
             <div className="text-center space-y-2">
               <h2 className="font-display text-2xl font-semibold text-navy-deep">Reset Password</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
@@ -336,16 +353,17 @@ function Login() {
           <div className="space-y-6">
             <button
               type="button"
-              onClick={() => setForgotStep('email')}
+              onClick={() => setForgotStep("email")}
               className="inline-flex items-center gap-1 text-xs text-navy-deep/60 hover:text-gold transition-colors font-medium cursor-pointer"
             >
               <ArrowLeft className="h-3.5 w-3.5" /> Back to Email
             </button>
-            
+
             <div className="text-center space-y-2">
               <h2 className="font-display text-2xl font-semibold text-navy-deep">Verify OTP</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                We've sent a 4-digit code to <strong className="text-navy-deep font-semibold">{forgotEmail}</strong>.
+                We've sent a 4-digit code to{" "}
+                <strong className="text-navy-deep font-semibold">{forgotEmail}</strong>.
               </p>
             </div>
 
@@ -376,7 +394,8 @@ function Login() {
             <div className="text-center space-y-2">
               <h2 className="font-display text-2xl font-semibold text-navy-deep">Choose New Password</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Set a strong, new password for <strong className="text-navy-deep font-semibold">{forgotEmail}</strong>.
+                Set a strong, new password for{" "}
+                <strong className="text-navy-deep font-semibold">{forgotEmail}</strong>.
               </p>
             </div>
 
@@ -595,8 +614,8 @@ function Login() {
             <div className="flex flex-col gap-3">
               <button
                 type="button"
-                onClick={() => window.location.href = "/api/auth/google"}
-                className="flex items-center justify-center gap-2 h-11 border border-border rounded-md hover:bg-secondary/10 transition font-semibold text-sm text-navy-deep active:scale-95 cursor-pointer w-full"
+                onClick={() => handleSocialLogin("Google")}
+                className="flex items-center justify-center gap-2.5 h-11 border border-border rounded-md hover:bg-secondary/10 transition font-semibold text-sm text-navy-deep active:scale-95 cursor-pointer w-full bg-white shadow-xs"
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
                 Continue with Google
@@ -604,7 +623,7 @@ function Login() {
               <button
                 type="button"
                 onClick={() => handleSocialLogin("Apple")}
-                className="flex items-center justify-center gap-2 h-11 border border-border rounded-md hover:bg-secondary/10 transition font-semibold text-sm text-navy-deep active:scale-95 cursor-pointer w-full"
+                className="flex items-center justify-center gap-2.5 h-11 border border-border rounded-md hover:bg-secondary/10 transition font-semibold text-sm text-navy-deep active:scale-95 cursor-pointer w-full bg-white shadow-xs"
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 3.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.11.09 2.26-.56 2.95-1.39z"/></svg>
                 Continue with Apple
@@ -633,12 +652,25 @@ function Login() {
                   <p className="text-xs text-muted-foreground mt-1">to continue to IESVRA</p>
                 </div>
 
-                <div className="flex justify-center mb-6 min-h-[44px]">
+                {/* Google One-Tap SDK render container */}
+                <div className="flex justify-center mb-4 min-h-[44px]">
                   <div ref={googleBtnRef} className="w-full flex justify-center"></div>
                 </div>
 
+                {/* Direct Google OAuth Browser Redirect Button */}
+                <div className="mb-4 text-center">
+                  <a
+                    href="/api/auth/google"
+                    className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-4 rounded-lg bg-navy-deep text-white text-xs font-bold hover:bg-navy-deep/90 transition shadow-sm cursor-pointer"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5 text-amber-400" />
+                    <span>Open Google Account Chooser</span>
+                  </a>
+                </div>
+
+                {/* Instant Google Email Sign-In */}
                 <div className="border-t border-border/60 pt-4">
-                  <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Or use another Google account</label>
+                  <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Or enter your Google Email</label>
                   <form onSubmit={(e) => {
                     e.preventDefault();
                     if (socialEmail.trim()) {
@@ -648,12 +680,12 @@ function Login() {
                     <input
                       required
                       type="email"
-                      placeholder="name@domain.com"
+                      placeholder="name@gmail.com"
                       value={socialEmail}
                       onChange={(e) => setSocialEmail(e.target.value)}
-                      className="flex-1 border border-border rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                      className="flex-1 border border-border rounded-md px-3 py-2 text-xs focus:outline-none focus:border-gold"
                     />
-                    <button type="submit" className="bg-primary text-white px-4 py-1.5 rounded-md text-xs font-bold hover:bg-primary/90 transition cursor-pointer">Next</button>
+                    <button type="submit" className="bg-gold text-navy-deep font-bold px-4 py-2 rounded-md text-xs hover:bg-gold/90 transition cursor-pointer">Sign In</button>
                   </form>
                 </div>
               </div>
