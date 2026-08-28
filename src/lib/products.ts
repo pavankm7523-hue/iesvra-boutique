@@ -4378,24 +4378,24 @@ function safeSetLocalProducts(key: string, data: any) {
 }
 
 export function useProducts() {
-  const [products, setProducts] = useState<Product[]>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("ishvara_products_v12");
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          return parsed.map((p: any) => normalizeProduct({
-            ...p,
-            categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
-          }));
-        } catch {}
-      }
-    }
-    return initialProducts.map(normalizeProduct);
-  });
-  const [isLoaded, setIsLoaded] = useState(true);
+  // The browser must start with the same catalog used by SSR. Cached/global
+  // products are applied after hydration to avoid stale prices/text causing a
+  // full React hydration failure.
+  const [products, setProducts] = useState<Product[]>(() => initialProducts.map(normalizeProduct));
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    const stored = localStorage.getItem("ishvara_products_v12");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setProducts(parsed.map((p: any) => normalizeProduct({
+          ...p,
+          categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
+        })));
+      } catch {}
+    }
+
     fetch("/api/products")
       .then((res) => res.json())
       .then((globalList) => {
