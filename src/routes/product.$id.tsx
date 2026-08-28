@@ -9,7 +9,8 @@ import { geocodeAddress, reverseGeocode } from "@/lib/delivery";
 import { 
   ArrowLeft, Star, ShoppingBag, Shield, Truck, RefreshCcw, 
   ChevronLeft, ChevronRight, Users, Clock, Award, MapPin, 
-  Heart, CheckCircle2, Lock, Zap, ChevronDown, Locate, Loader2
+  Heart, CheckCircle2, Lock, Zap, ChevronDown, Locate, Loader2,
+  Share2
 } from "lucide-react";
 
 const productSearchSchema = z.object({
@@ -417,6 +418,48 @@ function ProductDetails() {
     }
   };
 
+  const handleShare = async () => {
+    if (!product) return;
+    const shareUrl = typeof window !== "undefined" ? window.location.href : `https://iesvra.com/product/${product.id}`;
+    const shareTitle = product.name;
+    const shareText = `Check out "${product.name}" on IESVRA Boutique!`;
+
+    // 1. Native Web Share API (Mobile OS Share Sheet: WhatsApp, Gmail, Messages, Copy Link, etc.)
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+        toast.success("Shared successfully!");
+        return;
+      } catch (err: any) {
+        if (err?.name === "AbortError") {
+          return; // User dismissed share sheet
+        }
+        console.warn("[Share] navigator.share error, falling back to clipboard:", err);
+      }
+    }
+
+    // 2. Fallback: Copy link to clipboard with toast confirmation
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const tempInput = document.createElement("input");
+        tempInput.value = shareUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+      }
+      toast.success("Product link copied to clipboard!");
+    } catch (e) {
+      toast.error("Could not copy link automatically. Please copy from address bar.");
+    }
+  };
+
   // ---- LIVE SOCIAL PROOF (product page) ----
   // NOTE: Must be here BEFORE any early returns to satisfy React Rules of Hooks
   // Deterministic first render prevents SSR hydration text mismatches.
@@ -544,6 +587,32 @@ function ProductDetails() {
                 </div>
               )}
 
+              {/* Floating Top-Right Actions (Share & Wishlist) */}
+              <div className="absolute top-5 right-5 flex items-center gap-2 z-20">
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-primary shadow-md backdrop-blur-xs flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-90 border border-slate-200/60"
+                  title="Share this product"
+                  aria-label="Share this product"
+                >
+                  <Share2 className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleWishlistToggle}
+                  className={`w-10 h-10 rounded-full shadow-md backdrop-blur-xs flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-90 border ${
+                    isWishlisted
+                      ? "bg-rose-50 border-rose-200 text-rose-600"
+                      : "bg-white/90 hover:bg-white border-slate-200/60 text-slate-600 hover:text-rose-600"
+                  }`}
+                  title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                  aria-label="Wishlist toggle"
+                >
+                  <Heart className={`h-4 w-4 ${isWishlisted ? "fill-rose-600 text-rose-600" : ""}`} />
+                </button>
+              </div>
+
               {/* Navigation Arrows */}
               {galleryItems.length > 1 && (
                 <>
@@ -617,27 +686,40 @@ function ProductDetails() {
             
             {/* Top Badges & Category Header */}
             <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-2.5">
-                {/* Category Pill */}
-                <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary bg-primary/10 px-3.5 py-1 rounded-full inline-block">
-                  {(product.categories || []).join(", ")}
-                </span>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {/* Category Pill */}
+                  <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary bg-primary/10 px-3.5 py-1 rounded-full inline-block">
+                    {(product.categories || []).join(", ")}
+                  </span>
 
-                {/* Amazon-Style #1 Best Seller Badge (Only for isBestSeller: true) */}
-                {product.isBestSeller && (
-                  <Link
-                    to="/shop"
-                    search={{ category: product.categories?.[0] || "All" }}
-                    className="inline-flex items-center gap-1.5 bg-[#e47911] hover:bg-[#c96608] text-white text-[11px] font-bold px-3 py-1 rounded-sm shadow-sm transition-all tracking-wide group"
-                    title={`View Best Sellers in ${product.categories?.[0] || "All"}`}
-                  >
-                    <Award className="h-3.5 w-3.5 fill-white text-white shrink-0" />
-                    <span>#1 Best Seller</span>
-                    <span className="font-normal opacity-90 lowercase first-letter:uppercase text-[10px]">
-                      in {product.categories?.[0] || "Featured"}
-                    </span>
-                  </Link>
-                )}
+                  {/* Amazon-Style #1 Best Seller Badge (Only for isBestSeller: true) */}
+                  {product.isBestSeller && (
+                    <Link
+                      to="/shop"
+                      search={{ category: product.categories?.[0] || "All" }}
+                      className="inline-flex items-center gap-1.5 bg-[#e47911] hover:bg-[#c96608] text-white text-[11px] font-bold px-3 py-1 rounded-sm shadow-sm transition-all tracking-wide group"
+                      title={`View Best Sellers in ${product.categories?.[0] || "All"}`}
+                    >
+                      <Award className="h-3.5 w-3.5 fill-white text-white shrink-0" />
+                      <span>#1 Best Seller</span>
+                      <span className="font-normal opacity-90 lowercase first-letter:uppercase text-[10px]">
+                        in {product.categories?.[0] || "Featured"}
+                      </span>
+                    </Link>
+                  )}
+                </div>
+
+                {/* Share Button (Amazon style) */}
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-primary font-bold text-xs shadow-xs transition active:scale-95 cursor-pointer shrink-0"
+                  title="Share this product"
+                >
+                  <Share2 className="h-3.5 w-3.5 text-slate-600" />
+                  <span className="hidden sm:inline">Share</span>
+                </button>
               </div>
 
               {/* Title & Subtitle */}
@@ -975,18 +1057,29 @@ function ProductDetails() {
                   <span className="text-navy-deep/50 font-medium">Returns</span>
                   <span className="col-span-2 font-semibold text-navy-deep">{formatProductPolicy(product)}</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleWishlistToggle}
-                  className={`w-full h-10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer ${
-                    isWishlisted
-                      ? "bg-rose-50 border-rose-300 text-rose-600 hover:bg-rose-100"
-                      : "bg-slate-50 border-border/80 text-navy-deep/80 hover:bg-slate-100 hover:text-navy-deep"
-                  }`}
-                >
-                  <Heart className={`h-4 w-4 ${isWishlisted ? "fill-rose-600 text-rose-600" : "text-navy-deep/60"}`} />
-                  <span>{isWishlisted ? "In Wishlist (Saved)" : "Add to Wishlist"}</span>
-                </button>
+                <div className="grid grid-cols-2 gap-2.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={handleWishlistToggle}
+                    className={`h-11 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-1.5 border cursor-pointer ${
+                      isWishlisted
+                        ? "bg-rose-50 border-rose-300 text-rose-600 hover:bg-rose-100"
+                        : "bg-slate-50 border-border/80 text-navy-deep/80 hover:bg-slate-100 hover:text-navy-deep"
+                    }`}
+                  >
+                    <Heart className={`h-4 w-4 ${isWishlisted ? "fill-rose-600 text-rose-600" : "text-navy-deep/60"}`} />
+                    <span className="truncate">{isWishlisted ? "Wishlisted" : "Wishlist"}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleShare}
+                    className="h-11 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-1.5 border border-border/80 bg-slate-50 hover:bg-slate-100 text-navy-deep/80 hover:text-navy-deep cursor-pointer"
+                  >
+                    <Share2 className="h-4 w-4 text-slate-600" />
+                    <span>Share</span>
+                  </button>
+                </div>
               </div>
             </div>
 
