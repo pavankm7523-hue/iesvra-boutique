@@ -70,7 +70,10 @@
     box-sizing: border-box;
   }
   html {
-    scroll-behavior: smooth;
+    /* Router navigation and scroll restoration should jump immediately.
+       Global smooth scrolling made product opens/back navigation visibly
+       animate through the whole page. */
+    scroll-behavior: auto;
     overflow-x: hidden;
     width: 100%;
     max-width: 100%;
