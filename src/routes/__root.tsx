@@ -187,6 +187,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `window.GOOGLE_CLIENT_ID = ${JSON.stringify(
               (typeof process !== "undefined" ? process.env?.GOOGLE_CLIENT_ID : null) || "129499608888-ffjcvvrv58mjm3g0avv4h0ehpt7ft98f.apps.googleusercontent.com"

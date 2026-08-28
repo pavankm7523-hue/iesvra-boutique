@@ -430,9 +430,13 @@ export function hasUserAccount(email: string): boolean {
 }
 
 export function useCurrentUser() {
-  const [user, setUser] = useState<User | null>(() => getCurrentUser());
+  // Keep the server render and the browser's first render identical. Reading
+  // localStorage here would make signed-in browsers hydrate different markup.
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    setUser(getCurrentUser());
+
     // Sync with global database on mount
     syncAuthWithDb().then(() => {
       setUser(getCurrentUser());
