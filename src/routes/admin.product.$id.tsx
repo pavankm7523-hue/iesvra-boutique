@@ -79,7 +79,7 @@ function EditProduct() {
     setVariants(variants.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (gallery.length === 0) {
       toast.error("Please add at least one product image before saving.");
@@ -103,9 +103,14 @@ function EditProduct() {
       ...policy,
     };
     
-    updateProduct(updatedProduct);
-    toast.success("Product updated successfully!");
-    navigate({ to: "/admin" });
+    try {
+      await updateProduct(updatedProduct);
+      toast.success("Product update saved to the live catalog!");
+      navigate({ to: "/admin" });
+    } catch (error) {
+      console.error("Product update failed:", error);
+      toast.error("Product update was not saved. Please retry; your form is still open.");
+    }
   };
 
   return (

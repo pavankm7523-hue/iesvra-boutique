@@ -26,15 +26,29 @@ export const Route = createFileRoute("/api/products")({
       },
       POST: async ({ request }) => {
         try {
-          const list = await request.json();
-          if (!Array.isArray(list)) {
-            return new Response(JSON.stringify({ error: "Invalid data. Expected an array of products." }), {
+          const payload = await request.json();
+          let list: any[];
+
+          if (Array.isArray(payload)) {
+            // Backward compatibility for existing bulk category operations.
+            list = payload;
+          } else if (payload?.action === "upsert" && payload.product?.id) {
+            const current = await getMetadataFromDb("global_products");
+            const existing = Array.isArray(current) ? current : [];
+            list = [payload.product, ...existing.filter((product: any) => product?.id !== payload.product.id)];
+          } else if (payload?.action === "delete" && payload.id) {
+            const current = await getMetadataFromDb("global_products");
+            const existing = Array.isArray(current) ? current : [];
+            list = existing.filter((product: any) => product?.id !== payload.id);
+          } else {
+            return new Response(JSON.stringify({ error: "Invalid product mutation." }), {
               status: 400,
               headers: { "Content-Type": "application/json" },
             });
           }
+
           const success = await saveMetadataToDb("global_products", list);
-          return new Response(JSON.stringify({ success }), {
+          return new Response(JSON.stringify({ success, count: list.length }), {
             status: success ? 200 : 500,
             headers: { "Content-Type": "application/json" },
           });

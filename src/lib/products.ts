@@ -3218,30 +3218,49 @@ export function useProducts() {
     };
   }, []);
 
-  const addProduct = (p: Product) => {
+  const persistProductMutation = async (payload: unknown) => {
+    const response = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || `Product save failed (${response.status})`);
+    }
+    return result;
+  };
+
+  const addProduct = async (p: Product) => {
     const updated = [p, ...products];
     setProducts(updated);
     safeSetLocalProducts("ishvara_products_v12", updated);
     triggerProductsChange();
-    
-    fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    }).catch(console.error);
+
+    try {
+      return await persistProductMutation({ action: "upsert", product: p });
+    } catch (error) {
+      setProducts(products);
+      safeSetLocalProducts("ishvara_products_v12", products);
+      triggerProductsChange();
+      throw error;
+    }
   };
 
-  const updateProduct = (p: Product) => {
+  const updateProduct = async (p: Product) => {
     const updated = products.map((prod) => (prod.id === p.id ? p : prod));
     setProducts(updated);
     safeSetLocalProducts("ishvara_products_v12", updated);
     triggerProductsChange();
 
-    fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    }).catch(console.error);
+    try {
+      return await persistProductMutation({ action: "upsert", product: p });
+    } catch (error) {
+      setProducts(products);
+      safeSetLocalProducts("ishvara_products_v12", products);
+      triggerProductsChange();
+      throw error;
+    }
   };
 
   const bulkUpdateProducts = (updatedProducts: Product[]) => {
@@ -3260,17 +3279,20 @@ export function useProducts() {
     }).catch(console.error);
   };
 
-  const deleteProduct = (id: string) => {
+  const deleteProduct = async (id: string) => {
     const updated = products.filter((prod) => prod.id !== id);
     setProducts(updated);
     safeSetLocalProducts("ishvara_products_v12", updated);
     triggerProductsChange();
 
-    fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    }).catch(console.error);
+    try {
+      return await persistProductMutation({ action: "delete", id });
+    } catch (error) {
+      setProducts(products);
+      safeSetLocalProducts("ishvara_products_v12", products);
+      triggerProductsChange();
+      throw error;
+    }
   };
 
   return {
