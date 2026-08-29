@@ -3139,23 +3139,9 @@ export function useProducts() {
   // The browser must start with the same catalog used by SSR. Cached/global
   // products are applied after hydration to avoid stale prices/text causing a
   // full React hydration failure.
-  const [products, setProducts] = useState<Product[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("ishvara_products_v12");
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed.map((p: any) => normalizeProduct({
-              ...p,
-              categories: p.categories ? p.categories : (p.category ? [p.category] : ["Uncategorized"]),
-            }));
-          }
-        }
-      } catch {}
-    }
-    return initialProducts.map(normalizeProduct);
-  });
+  const [products, setProducts] = useState<Product[]>(() =>
+    initialProducts.map(normalizeProduct)
+  );
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
