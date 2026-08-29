@@ -226,9 +226,13 @@ export function saveCategories(cats: Category[]) {
 }
 
 export function useCategories() {
-  const [cats, setCats] = useState<Category[]>(() => getCategories());
+  // Hydrate with the same deterministic catalog on the server and client.
+  // Browser-cached categories are applied only after React mounts.
+  const [cats, setCats] = useState<Category[]>(initialCategories);
 
   useEffect(() => {
+    setCats(getCategories());
+
     fetch("/api/categories")
       .then((res) => res.json())
       .then((globalCats) => {

@@ -109,7 +109,9 @@ export function clearCart() {
 }
 
 export function useCartItems(): CartItem[] {
-  const [items, setItems] = useState<CartItem[]>(() => getCart());
+  // The server cannot read localStorage, so the first client render must also
+  // be empty. The effect below restores the real cart immediately after mount.
+  const [items, setItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
     const handleUpdate = () => {

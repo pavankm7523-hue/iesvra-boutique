@@ -81,7 +81,9 @@ export function isInWishlist(id: string): boolean {
 }
 
 export function useWishlistItems(): WishlistItem[] {
-  const [items, setItems] = useState<WishlistItem[]>(() => getWishlist());
+  // Keep SSR and the browser's first render identical; restore local data in
+  // the mount effect to avoid a full-page hydration rebuild.
+  const [items, setItems] = useState<WishlistItem[]>([]);
 
   useEffect(() => {
     const handleUpdate = () => {
