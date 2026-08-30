@@ -4,6 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { formatProductPolicy, useProducts, colorMap, type ProductMedia } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
+import { MediaUploader } from "@/components/MediaUploader";
 import { useIsInWishlist, toggleWishlist } from "@/lib/wishlist";
 import { geocodeAddress, reverseGeocode } from "@/lib/delivery";
 import { 
@@ -121,6 +122,7 @@ function ProductDetails() {
   const [newAuthor, setNewAuthor] = useState("");
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState("");
+  const [newReviewPhotos, setNewReviewPhotos] = useState<ProductMedia[]>([]);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [reviewFilter, setReviewFilter] = useState<'all' | number>('all');
   const [visibleReviewCount, setVisibleReviewCount] = useState(8);
@@ -1210,7 +1212,7 @@ function ProductDetails() {
             </div>
 
             {/* Reviews List & Form */}
-            <div className="flex-1 w-full space-y-12">
+            <div id="customer-reviews" className="flex-1 w-full space-y-12 scroll-mt-28">
               {/* Write a Review Form */}
               <div className="bg-white p-8 rounded-3xl border border-border/40 shadow-sm">
                 <h4 className="text-lg font-bold text-navy-deep uppercase tracking-wider mb-6">
@@ -1229,6 +1231,7 @@ function ProductDetails() {
                       rating: newRating,
                       comment: newComment.trim(),
                       date: new Date().toISOString().split("T")[0],
+                      photos: newReviewPhotos,
                     };
                     const updatedProduct = {
                       ...product,
@@ -1239,6 +1242,7 @@ function ProductDetails() {
                     setNewAuthor("");
                     setNewComment("");
                     setNewRating(5);
+                    setNewReviewPhotos([]);
                   }}
                   className="space-y-5"
                 >
@@ -1291,6 +1295,19 @@ function ProductDetails() {
                       placeholder="Share your experience with this product..."
                       rows={4}
                       className="p-4 rounded-xl border border-border/80 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-sm transition-all resize-none"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-navy-deep/70">
+                      Add Photos <span className="font-normal normal-case text-navy-deep/45">(optional)</span>
+                    </label>
+                    <MediaUploader
+                      value={newReviewPhotos}
+                      onChange={setNewReviewPhotos}
+                      imagesOnly
+                      maxItems={5}
+                      label="Add photos of the product you received"
                     />
                   </div>
 
@@ -1398,6 +1415,16 @@ function ProductDetails() {
                             <p className="text-xs sm:text-sm text-navy-deep/80 leading-relaxed font-normal pt-1">
                               {rev.comment}
                             </p>
+
+                            {rev.photos && rev.photos.length > 0 ? (
+                              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 pt-2" aria-label="Review photos">
+                                {rev.photos.map((photo, index) => (
+                                  <a key={photo.id} href={photo.url} target="_blank" rel="noreferrer" className="aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                    <img src={photo.url} alt={`${rev.author}'s review photo ${index + 1}`} className="h-full w-full object-cover transition-transform hover:scale-105" />
+                                  </a>
+                                ))}
+                              </div>
+                            ) : null}
 
                             <div className="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 mt-2">
                               <span className="text-[11px] text-slate-400">Was this review helpful?</span>

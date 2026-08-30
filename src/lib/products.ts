@@ -20,6 +20,7 @@ export type Review = {
   rating: number;
   comment: string;
   date: string;
+  photos?: ProductMedia[];
 };
 
 export type ProductVariant = {

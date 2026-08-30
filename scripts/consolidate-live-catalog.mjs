@@ -93,7 +93,7 @@ if (!process.argv.includes("--apply")) {
 const saveResponse = await fetch("https://www.iesvra.com/api/products", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(catalog),
+  body: JSON.stringify({ action: "bulkUpsert", products: catalog }),
 });
 const result = await saveResponse.json();
 if (!saveResponse.ok || !result.success) throw new Error(result.error || `Catalog save failed (${saveResponse.status}).`);

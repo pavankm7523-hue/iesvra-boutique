@@ -100,14 +100,22 @@ function AdminCategories() {
 
     // Bulk update products
     const catName = name.trim();
+    const previousName = modalMode === "edit" ? editingCategoryName : catName;
     const updatedProducts = products.map(p => {
       const isChecked = productIds.includes(p.id);
-      const hasCat = (p.categories || []).includes(catName);
+      const existingCategories = p.categories || [];
+      const hadPreviousCategory = existingCategories.includes(previousName);
+      const withoutEditedCategory = existingCategories.filter(
+        c => c !== previousName && c !== catName
+      );
       
-      if (isChecked && !hasCat) {
-        return { ...p, categories: [...(p.categories || []), catName] };
-      } else if (!isChecked && hasCat) {
-        return { ...p, categories: (p.categories || []).filter(c => c !== catName) };
+      if (isChecked) {
+        const nextCategories = [...withoutEditedCategory, catName];
+        if (JSON.stringify(nextCategories) !== JSON.stringify(existingCategories)) {
+          return { ...p, categories: nextCategories };
+        }
+      } else if (hadPreviousCategory || existingCategories.includes(catName)) {
+        return { ...p, categories: withoutEditedCategory };
       }
       return null;
     }).filter(Boolean) as typeof products;

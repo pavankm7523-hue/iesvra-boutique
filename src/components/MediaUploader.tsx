@@ -129,9 +129,12 @@ async function uploadPreparedFile(prepared: PreparedUpload): Promise<string> {
   return responseData.url;
 }
 
-export function MediaUploader({ value = [], onChange }: {
+export function MediaUploader({ value = [], onChange, imagesOnly = false, maxItems, label }: {
   value?: ProductMedia[];
   onChange: (media: ProductMedia[]) => void;
+  imagesOnly?: boolean;
+  maxItems?: number;
+  label?: string;
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -149,9 +152,15 @@ export function MediaUploader({ value = [], onChange }: {
     if (!files.length) return;
     setIsProcessing(true);
     const newMedia: ProductMedia[] = [];
+    const remainingSlots = maxItems === undefined ? files.length : Math.max(0, maxItems - value.length);
+    if (remainingSlots === 0) {
+      toast.error(`You can upload up to ${maxItems} photos.`);
+      setIsProcessing(false);
+      return;
+    }
 
     try {
-      for (let index = 0; index < files.length; index += 1) {
+      for (let index = 0; index < Math.min(files.length, remainingSlots); index += 1) {
         const file = files[index];
         const kind = mediaKind(file);
         logUploadStage("file read start", {
@@ -164,6 +173,10 @@ export function MediaUploader({ value = [], onChange }: {
         if (!kind) {
           console.warn("[MediaUploader] file rejected", { name: file.name, type: file.type });
           toast.error(`File "${file.name}" is not a supported image or video.`);
+          continue;
+        }
+        if (imagesOnly && kind !== "image") {
+          toast.error(`File "${file.name}" is not an image.`);
           continue;
         }
         if (kind === "video" && file.size > 10 * 1024 * 1024) {
@@ -214,7 +227,7 @@ export function MediaUploader({ value = [], onChange }: {
       setIsProcessing(false);
       logUploadStage("batch complete", { addedCount: newMedia.length });
     }
-  }, [onChange, value]);
+  }, [imagesOnly, maxItems, onChange, value]);
 
   const processDroppedUrl = useCallback(async (url: string) => {
     logUploadStage("dropped URL detected", { url });
@@ -328,8 +341,8 @@ export function MediaUploader({ value = [], onChange }: {
         ) : (
           <>
             <Upload className={`h-10 w-10 mb-3 transition-transform duration-200 ${isDragging ? "text-gold scale-125" : "text-navy-deep/40"}`} />
-            <p className="text-sm font-semibold text-navy-deep text-center">{isDragging ? "Release to upload" : "Click, drag & drop, or paste to upload"}</p>
-            <p className="text-xs text-navy-deep/60 mt-1 text-center">JPG, PNG, WEBP, SVG, MP4 (images are optimized)</p>
+            <p className="text-sm font-semibold text-navy-deep text-center">{isDragging ? "Release to upload" : (label || "Click, drag & drop, or paste to upload")}</p>
+            <p className="text-xs text-navy-deep/60 mt-1 text-center">{imagesOnly ? `JPG, PNG or WEBP${maxItems ? ` · up to ${maxItems} photos` : ""}` : "JPG, PNG, WEBP, SVG, MP4 (images are optimized)"}</p>
           </>
         )}
         <input
@@ -342,7 +355,7 @@ export function MediaUploader({ value = [], onChange }: {
           }}
           className="hidden"
           multiple
-          accept="image/*,video/*"
+          accept={imagesOnly ? "image/*" : "image/*,video/*"}
         />
       </div>
 

@@ -32,6 +32,7 @@ import { Route as ApiUsersRouteImport } from './routes/api/users'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as ApiUpdateOrderRouteImport } from './routes/api/update-order'
 import { Route as ApiSendShippedEmailRouteImport } from './routes/api/send-shipped-email'
+import { Route as ApiSendReviewRequestRouteImport } from './routes/api/send-review-request'
 import { Route as ApiSendOtpRouteImport } from './routes/api/send-otp'
 import { Route as ApiSendConfirmationRouteImport } from './routes/api/send-confirmation'
 import { Route as ApiSaveOrderRouteImport } from './routes/api/save-order'
@@ -179,6 +180,11 @@ const ApiUpdateOrderRoute = ApiUpdateOrderRouteImport.update({
 const ApiSendShippedEmailRoute = ApiSendShippedEmailRouteImport.update({
   id: '/api/send-shipped-email',
   path: '/api/send-shipped-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSendReviewRequestRoute = ApiSendReviewRequestRouteImport.update({
+  id: '/api/send-review-request',
+  path: '/api/send-review-request',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSendOtpRoute = ApiSendOtpRouteImport.update({
@@ -389,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
+  '/api/send-review-request': typeof ApiSendReviewRequestRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
   '/api/update-order': typeof ApiUpdateOrderRoute
   '/api/upload': typeof ApiUploadRoute
@@ -446,6 +453,7 @@ export interface FileRoutesByTo {
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
+  '/api/send-review-request': typeof ApiSendReviewRequestRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
   '/api/update-order': typeof ApiUpdateOrderRoute
   '/api/upload': typeof ApiUploadRoute
@@ -505,6 +513,7 @@ export interface FileRoutesById {
   '/api/save-order': typeof ApiSaveOrderRoute
   '/api/send-confirmation': typeof ApiSendConfirmationRoute
   '/api/send-otp': typeof ApiSendOtpRoute
+  '/api/send-review-request': typeof ApiSendReviewRequestRoute
   '/api/send-shipped-email': typeof ApiSendShippedEmailRoute
   '/api/update-order': typeof ApiUpdateOrderRoute
   '/api/upload': typeof ApiUploadRoute
@@ -565,6 +574,7 @@ export interface FileRouteTypes {
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
+    | '/api/send-review-request'
     | '/api/send-shipped-email'
     | '/api/update-order'
     | '/api/upload'
@@ -622,6 +632,7 @@ export interface FileRouteTypes {
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
+    | '/api/send-review-request'
     | '/api/send-shipped-email'
     | '/api/update-order'
     | '/api/upload'
@@ -680,6 +691,7 @@ export interface FileRouteTypes {
     | '/api/save-order'
     | '/api/send-confirmation'
     | '/api/send-otp'
+    | '/api/send-review-request'
     | '/api/send-shipped-email'
     | '/api/update-order'
     | '/api/upload'
@@ -734,6 +746,7 @@ export interface RootRouteChildren {
   ApiSaveOrderRoute: typeof ApiSaveOrderRoute
   ApiSendConfirmationRoute: typeof ApiSendConfirmationRoute
   ApiSendOtpRoute: typeof ApiSendOtpRoute
+  ApiSendReviewRequestRoute: typeof ApiSendReviewRequestRoute
   ApiSendShippedEmailRoute: typeof ApiSendShippedEmailRoute
   ApiUpdateOrderRoute: typeof ApiUpdateOrderRoute
   ApiUploadRoute: typeof ApiUploadRoute
@@ -909,6 +922,13 @@ declare module '@tanstack/react-router' {
       path: '/api/send-shipped-email'
       fullPath: '/api/send-shipped-email'
       preLoaderRoute: typeof ApiSendShippedEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/send-review-request': {
+      id: '/api/send-review-request'
+      path: '/api/send-review-request'
+      fullPath: '/api/send-review-request'
+      preLoaderRoute: typeof ApiSendReviewRequestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/send-otp': {
@@ -1206,6 +1226,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSaveOrderRoute: ApiSaveOrderRoute,
   ApiSendConfirmationRoute: ApiSendConfirmationRoute,
   ApiSendOtpRoute: ApiSendOtpRoute,
+  ApiSendReviewRequestRoute: ApiSendReviewRequestRoute,
   ApiSendShippedEmailRoute: ApiSendShippedEmailRoute,
   ApiUpdateOrderRoute: ApiUpdateOrderRoute,
   ApiUploadRoute: ApiUploadRoute,

@@ -170,6 +170,15 @@ export function sendOrderShippedEmail(order: Order) {
     });
 }
 
+export function sendReviewRequestEmail(order: Order) {
+  if (typeof window === "undefined") return;
+  fetch("/api/send-review-request", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ order }),
+  }).catch((error) => console.error("Review request email failed (non-blocking):", error));
+}
+
 export async function createOrder(
   customerName: string,
   customerEmail: string,
@@ -249,6 +258,9 @@ export async function updateOrderStatus(orderId: string, status: 'Processing' | 
   // If status is changed to Shipped, send the notification email automatically
   if (status === 'Shipped' && oldOrder && oldOrder.status !== 'Shipped' && updatedOrder) {
     sendOrderShippedEmail(updatedOrder);
+  }
+  if (status === 'Delivered' && oldOrder && oldOrder.status !== 'Delivered' && updatedOrder) {
+    sendReviewRequestEmail(updatedOrder);
   }
   return updatedOrder;
 }
