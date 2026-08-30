@@ -787,7 +787,7 @@ function ProductDetails() {
             {product.variants && product.variants.length > 0 && (
               <div className="space-y-3 pt-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="font-medium text-navy-deep/70">Size:</span>
+                  <span className="font-medium text-navy-deep/70">Size / Quantity:</span>
                   <span className="font-bold text-navy-deep text-base">
                     {activeVariant ? activeVariant.label : product.variants[0]?.label}
                   </span>

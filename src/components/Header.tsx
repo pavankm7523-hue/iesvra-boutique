@@ -589,11 +589,11 @@ export function Header() {
         />
       )}
 
-      {/* Mobile Menu Drawer */}
-      <div 
-        className={`fixed inset-y-0 left-0 w-72 bg-navy border-r border-white/10 z-[1000] p-6 flex flex-col gap-6 transform transition-transform duration-300 lg:hidden ${
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+      {/* Keep the off-canvas drawer out of the render/compositing tree while
+          closed. A permanently mounted full-height fixed layer made mobile
+          scrolling noticeably more expensive. */}
+      {isMobileMenuOpen && <div
+        className="fixed inset-y-0 left-0 w-72 bg-navy border-r border-white/10 z-[1000] p-6 flex flex-col gap-6 lg:hidden animate-in slide-in-from-left duration-200"
       >
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <Link to="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
@@ -708,7 +708,7 @@ export function Header() {
             Mobile App
           </a>
         </nav>
-      </div>
+      </div>}
 
       {/* Address Selection Modal */}
       {isAddressModalOpen && (

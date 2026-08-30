@@ -18,6 +18,7 @@ export function ProductCard({
   bannerId?: string;
   saleEndDate?: string;
 }) {
+  const navigate = useNavigate();
   const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
   const reviews = product.reviews || [];
   const reviewsCount = reviews.length;
@@ -123,13 +124,17 @@ export function ProductCard({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              if (product.variants && product.variants.length > 0) {
+                navigate({ to: "/product/$id", params: { id: product.id } });
+                return;
+              }
               const colorToUse = product.colors && product.colors.length > 0 ? product.colors[0] : "Standard";
               // @ts-ignore - passing extra args that we will add to cart.ts next
               addToCart(product, colorToUse, 1, bannerId, saleEndDate, product.mrp); // mrp holds the normal price now
               toast.success(`Successfully added ${product.name} to your cart!`);
             }}
           >
-            Add to Cart
+            {product.variants && product.variants.length > 0 ? "Choose Options" : "Add to Cart"}
           </button>
         )}
       </div>

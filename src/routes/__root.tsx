@@ -248,6 +248,7 @@ function RootComponent() {
         >
           {/* Pulse ring */}
           <span
+            className="mobile-scroll-static"
             style={{
               position: "absolute",
               inset: 0,
@@ -275,6 +276,16 @@ function RootComponent() {
             0% { transform: scale(1); opacity: 0.4; }
             70% { transform: scale(1.6); opacity: 0; }
             100% { transform: scale(1.6); opacity: 0; }
+          }
+
+          /* Infinite animations attached to fixed/mobile chrome force the
+             compositor to keep repainting during touch scrolling. The visual
+             indicators stay animated on larger screens, but remain static on
+             phones where smooth scrolling matters more. */
+          @media (max-width: 767px), (prefers-reduced-motion: reduce) {
+            .mobile-scroll-static {
+              animation: none !important;
+            }
           }
         `}</style>
       </div>
