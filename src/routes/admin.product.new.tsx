@@ -61,7 +61,9 @@ function NewProduct() {
     }
 
     const newProduct = {
-      id: "prod_" + Date.now().toString(),
+      // Date.now() can collide when two products are created quickly or from
+      // two admin tabs. A UUID makes the catalog identity safely unique.
+      id: "prod_" + crypto.randomUUID(),
       name: formData.name,
       sub: formData.sub,
       price: Number(formData.price),

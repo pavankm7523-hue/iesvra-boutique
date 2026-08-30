@@ -3329,7 +3329,11 @@ export function useProducts() {
     triggerProductsChange();
 
     try {
-      return await persistProductMutation({ action: "upsert", product: p });
+      const result = await persistProductMutation({ action: "create", product: p });
+      if (result.product?.id !== p.id || result.product?.name !== p.name) {
+        throw new Error("Saved product identity did not match the submitted product.");
+      }
+      return result;
     } catch (error) {
       setProducts(products);
       safeSetLocalProducts("ishvara_products_v12", products);
@@ -3345,7 +3349,11 @@ export function useProducts() {
     triggerProductsChange();
 
     try {
-      return await persistProductMutation({ action: "upsert", product: p });
+      const result = await persistProductMutation({ action: "update", product: p });
+      if (result.product?.id !== p.id || result.product?.name !== p.name) {
+        throw new Error("Saved product identity did not match the submitted product.");
+      }
+      return result;
     } catch (error) {
       setProducts(products);
       safeSetLocalProducts("ishvara_products_v12", products);
@@ -3366,7 +3374,9 @@ export function useProducts() {
     fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(current),
+      // Send only the records intentionally changed. Sending the whole local
+      // catalog lets a stale admin tab overwrite unrelated newer products.
+      body: JSON.stringify({ action: "bulkUpsert", products: updatedProducts }),
     }).catch(console.error);
   };
 
