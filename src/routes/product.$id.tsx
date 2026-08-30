@@ -99,7 +99,7 @@ async function resolveLocationFromPincode(pincode: string): Promise<{
 function ProductDetails() {
   const navigate = useNavigate();
   const { id } = Route.useParams();
-  const { products, updateProduct } = useProducts();
+  const { products, updateProduct, isLoaded } = useProducts();
   const product = products.find((p) => p.id === id);
 
   useEffect(() => {
@@ -139,6 +139,14 @@ function ProductDetails() {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (!product) return;
+    setSelectedColor(product.colors?.[0] || "");
+    setSelectedVariantIndex(0);
+    setQuantity(1);
+    setActiveIndex(0);
+  }, [product?.id]);
 
   // ---- DYNAMIC REAL-TIME LIVE DELIVERY TIMER (1-SECOND TICKING) ----
   const [countdown, setCountdown] = useState<{ hours: number; minutes: number; seconds: number; isBeforeCutoff: boolean }>({
@@ -476,6 +484,35 @@ function ProductDetails() {
   }, []);
   // -------------------------------------------
 
+  // This hook must run on every render. Newly-created products are absent
+  // from the SSR fallback catalog and arrive from /api/products after mount.
+  // Keeping useMemo below the old `if (!product) return` changed the hook
+  // count between those renders and caused React error #310.
+  const galleryItems = useMemo(() => {
+    if (!product) return [] as ProductMedia[];
+    const raw = product.gallery && product.gallery.length > 0
+      ? product.gallery
+      : [{ id: "main", type: "image" as const, url: product.image }];
+    const seen = new Set<string>();
+    const items: ProductMedia[] = [];
+    for (const item of raw) {
+      if (item && item.url && !seen.has(item.url)) {
+        seen.add(item.url);
+        items.push(item);
+      }
+    }
+    return items.length > 0 ? items : [{ id: "main", type: "image" as const, url: product.image }];
+  }, [product?.gallery, product?.image]);
+
+  if (!product && !isLoaded) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-24 text-center" role="status">
+        <div className="h-10 w-10 mx-auto mb-4 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+        <p className="text-muted-foreground font-medium">Loading product details…</p>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-24 text-center">
@@ -492,21 +529,6 @@ function ProductDetails() {
       </div>
     );
   }
-
-  const galleryItems = useMemo(() => {
-    const raw = product.gallery && product.gallery.length > 0
-      ? product.gallery
-      : [{ id: "main", type: "image" as const, url: product.image }];
-    const seen = new Set<string>();
-    const items: ProductMedia[] = [];
-    for (const item of raw) {
-      if (item && item.url && !seen.has(item.url)) {
-        seen.add(item.url);
-        items.push(item);
-      }
-    }
-    return items.length > 0 ? items : [{ id: "main", type: "image" as const, url: product.image }];
-  }, [product.gallery, product.image]);
 
   const activeVariant = product.variants?.[selectedVariantIndex];
   const currentPrice = (activeVariant && typeof activeVariant.price === "number") ? activeVariant.price : product.price;
