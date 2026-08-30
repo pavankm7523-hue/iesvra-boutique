@@ -45,6 +45,14 @@ function mergeById(existing: any[], incoming: CatalogProduct[]) {
   return [...merged.values()];
 }
 
+const PRODUCT_TOMBSTONES_KEY = "global_product_tombstones";
+
+function normalizeTombstones(value: unknown): string[] {
+  return Array.isArray(value)
+    ? [...new Set(value.filter((id): id is string => typeof id === "string" && Boolean(id.trim())).map((id) => id.trim()))]
+    : [];
+}
+
 export const Route = createFileRoute("/api/products")({
   server: {
     handlers: {
@@ -75,6 +83,9 @@ export const Route = createFileRoute("/api/products")({
           let savedProduct: CatalogProduct | undefined;
           const current = await getMetadataFromDb("global_products");
           const existing = Array.isArray(current) ? current : [];
+          const storedTombstones = normalizeTombstones(await getMetadataFromDb(PRODUCT_TOMBSTONES_KEY));
+          const tombstones = new Set(storedTombstones);
+          let nextTombstones = storedTombstones;
 
           if (Array.isArray(payload)) {
             // Only allow the legacy bootstrap format when the catalog is
@@ -86,9 +97,12 @@ export const Route = createFileRoute("/api/products")({
                 headers: { "Content-Type": "application/json" },
               });
             }
-            list = payload.map(validateProduct);
+            list = payload.map(validateProduct).filter((product) => !tombstones.has(product.id));
           } else if (payload?.action === "bulkUpsert" && Array.isArray(payload.products)) {
-            list = mergeById(existing, payload.products.map(validateProduct));
+            const allowedProducts = payload.products
+              .map(validateProduct)
+              .filter((product) => !tombstones.has(product.id));
+            list = mergeById(existing, allowedProducts);
           } else if (["create", "update", "upsert"].includes(payload?.action) && payload.product?.id) {
             savedProduct = validateProduct(payload.product);
             const previous = existing.find((product: any) => product?.id === savedProduct!.id);
@@ -113,8 +127,14 @@ export const Route = createFileRoute("/api/products")({
             }
 
             list = [savedProduct, ...existing.filter((product: any) => product?.id !== savedProduct!.id)];
+            // An explicit admin create/upsert is the only operation allowed to
+            // intentionally restore a previously deleted product ID.
+            if (payload.action !== "update" && tombstones.has(savedProduct.id)) {
+              nextTombstones = storedTombstones.filter((id) => id !== savedProduct!.id);
+            }
           } else if (payload?.action === "delete" && payload.id) {
             list = existing.filter((product: any) => product?.id !== payload.id);
+            nextTombstones = normalizeTombstones([...storedTombstones, String(payload.id)]);
           } else {
             return new Response(JSON.stringify({ error: "Invalid product mutation." }), {
               status: 400,
@@ -123,6 +143,15 @@ export const Route = createFileRoute("/api/products")({
           }
 
           const success = await saveMetadataToDb("global_products", list);
+          if (success && JSON.stringify(nextTombstones) !== JSON.stringify(storedTombstones)) {
+            const tombstonesSaved = await saveMetadataToDb(PRODUCT_TOMBSTONES_KEY, nextTombstones);
+            if (!tombstonesSaved) {
+              return new Response(JSON.stringify({ error: "Product catalog changed, but deletion protection could not be saved." }), {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+              });
+            }
+          }
           if (success && savedProduct) {
             const persisted = await getMetadataFromDb("global_products");
             const verified = Array.isArray(persisted)
