@@ -35,7 +35,7 @@ export const Route = createFileRoute("/admin/orders")({
 });
 
 function AdminOrders() {
-  const orders = useOrdersList();
+  const { orders, isLoading } = useOrdersList();
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [editingTracking, setEditingTracking] = useState<Record<string, string>>({});
   

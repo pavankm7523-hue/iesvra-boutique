@@ -68,9 +68,9 @@ const statusConfig = {
 };
 
 function MyOrdersPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
-  const allOrders = useOrdersList();
+  const { orders: allOrders, isLoading: isOrdersLoading } = useOrdersList(user?.email);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const { products } = useProducts();
   const { requests: returnRequests, refresh: refreshReturnRequests } = useReturnRequests({ customerEmail: user?.email || "__not_authenticated__" });
@@ -112,13 +112,13 @@ function MyOrdersPage() {
 
   // Redirect to login ONLY after auth check finishes and no user exists
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!isAuthLoading && !user) {
       toast.error("Please log in to view your orders.");
       navigate({ to: "/login" });
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isAuthLoading, navigate]);
 
-  if (isLoading) {
+  if (isAuthLoading || (user && isOrdersLoading)) {
     return (
       <div className="min-h-screen bg-[#f8f9fb] flex flex-col items-center justify-center p-6 text-center text-navy-deep font-sans">
         <div className="w-10 h-10 border-3 border-navy-deep/20 border-t-gold rounded-full animate-spin mb-4" />

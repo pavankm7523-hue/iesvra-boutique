@@ -93,9 +93,13 @@ export const updateOrderTrackingServer = createServerFn({ method: "POST" })
   });
 
 // Client wrappers mapping database models to client hooks
-export async function getOrders(): Promise<Order[]> {
+export async function getOrders(email?: string): Promise<Order[]> {
   try {
-    return await getOrdersServer();
+    const url = email ? `/api/orders?email=${encodeURIComponent(email)}` : "/api/orders";
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const list = await res.json();
+    return Array.isArray(list) ? list : [];
   } catch (e) {
     console.error("Failed to load orders from database:", e);
     return [];
@@ -147,8 +151,6 @@ export function sendAdminOrderNotification(order: Order) {
 }
 
 export function sendOrderShippedEmail(order: Order) {
-  if (typeof window === "undefined") return;
-
   fetch("/api/send-shipped-email", {
     method: "POST",
     headers: {
@@ -348,15 +350,18 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
   }
 }
 
-export function useOrdersList() {
+export function useOrdersList(email?: string) {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchOrders = async () => {
     try {
-      const list = await getOrders();
+      const list = await getOrders(email);
       setOrders(list);
     } catch (e) {
       console.error("Failed to load orders:", e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -370,7 +375,7 @@ export function useOrdersList() {
     return () => {
       window.removeEventListener(ORDERS_EVENT, handleUpdate);
     };
-  }, []);
+  }, [email]);
 
-  return orders;
+  return { orders, isLoading, refresh: fetchOrders };
 }
