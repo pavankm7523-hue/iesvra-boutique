@@ -46,6 +46,11 @@ export type Product = {
   colors: string[];
   description: string;
   isBestSeller?: boolean;
+  featured?: boolean;
+  newArrival?: boolean;
+  sku?: string;
+  brand?: string;
+  gstRate?: number; // Percentage like 0, 5, 12, 18, 28
   reviews?: Review[];
   rating?: number;
   reviewsCount?: number;

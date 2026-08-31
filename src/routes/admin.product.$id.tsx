@@ -28,6 +28,11 @@ function EditProduct() {
     description: "",
     colors: [] as string[],
     isBestSeller: false,
+    featured: false,
+    newArrival: false,
+    sku: "",
+    brand: "",
+    gstRate: 18,
   });
 
   const [gallery, setGallery] = useState<ProductMedia[]>([]);
@@ -46,6 +51,11 @@ function EditProduct() {
         description: product.description,
         colors: product.colors || [],
         isBestSeller: product.isBestSeller || false,
+        featured: product.featured || false,
+        newArrival: product.newArrival || false,
+        sku: product.sku || "",
+        brand: product.brand || "",
+        gstRate: product.gstRate !== undefined ? product.gstRate : 18,
       });
       setGallery(product.gallery || [{ id: "main", type: "image", url: product.image }]);
       setVariants(product.variants || []);
@@ -100,6 +110,11 @@ function EditProduct() {
       colors: formData.colors,
       description: formData.description,
       isBestSeller: formData.isBestSeller,
+      featured: formData.featured,
+      newArrival: formData.newArrival,
+      sku: formData.sku,
+      brand: formData.brand,
+      gstRate: Number(formData.gstRate),
       ...policy,
     };
     
@@ -136,20 +151,43 @@ function EditProduct() {
               <input type="text" value={formData.sub} onChange={e => setFormData({...formData, sub: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-navy-deep">Selling Price (₹)</label>
-                <input required type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
+                <input required type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" placeholder="e.g. 599" />
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-navy-deep">MRP (₹)</label>
-                <input required type="number" min="0" value={formData.mrp} onChange={e => setFormData({...formData, mrp: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
+                <input required type="number" min="0" value={formData.mrp} onChange={e => setFormData({...formData, mrp: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" placeholder="e.g. 999" />
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-navy-deep">Stock Quantity</label>
                 <input required type="number" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-navy-deep">GST Rate (%)</label>
+                <select value={formData.gstRate} onChange={e => setFormData({...formData, gstRate: Number(e.target.value)})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold bg-white">
+                  <option value={0}>0%</option>
+                  <option value={5}>5%</option>
+                  <option value={12}>12%</option>
+                  <option value={18}>18%</option>
+                  <option value={28}>28%</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-navy-deep">SKU</label>
+                <input type="text" value={formData.sku} onChange={e => setFormData({...formData, sku: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" placeholder="e.g. IES-1234" />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-navy-deep">Brand</label>
+                <input type="text" value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" placeholder="e.g. IESVRA" />
               </div>
             </div>
 

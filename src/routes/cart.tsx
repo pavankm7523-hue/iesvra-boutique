@@ -441,14 +441,44 @@ function Cart() {
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
+  const totalGst = cartItems.reduce((acc, item) => {
+    const rate = item.gstRate !== undefined ? item.gstRate : 18;
+    const itemTotal = item.price * item.quantity;
+    const itemGst = itemTotal - (itemTotal / (1 + rate / 100));
+    return acc + itemGst;
+  }, 0);
+
   // Automatic Plus Member Discount (₹100 OFF applied unconditionally for members)
   const PLUS_MEMBER_DISCOUNT = 100;
   const plusDiscount = isPlusMember ? Math.min(subtotal, PLUS_MEMBER_DISCOUNT) : 0;
 
-  const FREE_SHIPPING_THRESHOLD = 499;
+  const [shippingSettings, setShippingSettings] = useState({
+    freeShippingThreshold: 499,
+    baseShipping: 59,
+    codCharge: 40,
+  });
+
+  useEffect(() => {
+    const loadSettings = () => {
+      const saved = localStorage.getItem("IESVRA_shipping_settings");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setShippingSettings({
+          freeShippingThreshold: Number(parsed.freeShippingThreshold) || 499,
+          baseShipping: Number(parsed.baseShipping) || 59,
+          codCharge: Number(parsed.codCharge) || 40,
+        });
+      }
+    };
+    loadSettings();
+    window.addEventListener("IESVRA_settings_changed", loadSettings);
+    return () => window.removeEventListener("IESVRA_settings_changed", loadSettings);
+  }, []);
+
+  const FREE_SHIPPING_THRESHOLD = shippingSettings.freeShippingThreshold;
   // IESVRA Plus Members get 100% FREE SHIPPING on EVERY order unconditionally!
   const baseShipping = hasPhysical 
-    ? (isPlusMember ? 0 : (physicalSubtotal < FREE_SHIPPING_THRESHOLD ? 59 : 0))
+    ? (isPlusMember ? 0 : (physicalSubtotal < FREE_SHIPPING_THRESHOLD ? shippingSettings.baseShipping : 0))
     : 0;
 
   // Stackable Coupon Rules Definition
@@ -528,7 +558,8 @@ function Cart() {
     }
   }
 
-  const deliveryFee = isCouponFreeShipping ? 0 : baseShipping;
+  const baseDeliveryFee = isCouponFreeShipping ? 0 : baseShipping;
+  const deliveryFee = paymentMode === 'cod' ? baseDeliveryFee + shippingSettings.codCharge : baseDeliveryFee;
   const total = Math.max(0, subtotal + deliveryFee - plusDiscount - couponDiscount);
 
   const handleApplyCoupon = (codeToApply?: string) => {
@@ -917,7 +948,7 @@ function Cart() {
                   {hasPhysical && (
                     <div className="flex justify-between text-muted-foreground">
                       <span>
-                        Shipping
+                        Shipping {paymentMode === 'cod' && '(includes COD charge)'}
                         {baseShipping > 0 && !isCouponFreeShipping && (
                           <span className="block text-[10px] font-medium text-blue-500 mt-0.5">
                             Add ₹{Math.max(0, FREE_SHIPPING_THRESHOLD - physicalSubtotal)} more for free delivery
@@ -1045,6 +1076,10 @@ function Cart() {
                   <div className="border-t border-border pt-4 flex justify-between font-semibold text-base text-navy-deep">
                     <span>Total</span>
                     <span>₹{total.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                    <span>Includes GST</span>
+                    <span>₹{Math.round(totalGst).toLocaleString()}</span>
                   </div>
                 </div>
 

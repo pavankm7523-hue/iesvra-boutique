@@ -20,6 +20,7 @@ export interface CartItem {
   isRefundable?: boolean;
   replacementWindowDays?: number;
   isReplaceable?: boolean;
+  gstRate?: number;
 }
 
 const CART_KEY = "ishvara_cart";
@@ -78,6 +79,7 @@ export function addToCart(product: Product, color: string, quantity = 1, bannerI
       isRefundable: product.isRefundable ?? true,
       replacementWindowDays: product.replacementWindowDays ?? 7,
       isReplaceable: product.isReplaceable ?? true,
+      gstRate: product.gstRate !== undefined ? product.gstRate : 18,
     });
   }
 

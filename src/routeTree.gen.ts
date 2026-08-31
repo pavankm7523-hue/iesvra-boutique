@@ -42,6 +42,7 @@ import { Route as ApiReturnRequestsRouteImport } from './routes/api/return-reque
 import { Route as ApiResolveMapsUrlRouteImport } from './routes/api/resolve-maps-url'
 import { Route as ApiProductsRouteImport } from './routes/api/products'
 import { Route as ApiPlusMembershipRouteImport } from './routes/api/plus-membership'
+import { Route as ApiOrdersRouteImport } from './routes/api/orders'
 import { Route as ApiNotifyAdminRouteImport } from './routes/api/notify-admin'
 import { Route as ApiHeroRouteImport } from './routes/api/hero'
 import { Route as ApiGetOrderRouteImport } from './routes/api/get-order'
@@ -53,10 +54,19 @@ import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
 import { Route as ApiAutocompleteRouteImport } from './routes/api/autocomplete'
 import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin-password'
 import { Route as ApiAddressSuggestionsRouteImport } from './routes/api/address-suggestions'
+import { Route as AdminWhatsappRouteImport } from './routes/admin.whatsapp'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminTaxesRouteImport } from './routes/admin.taxes'
+import { Route as AdminShippingRouteImport } from './routes/admin.shipping'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminReturnsRouteImport } from './routes/admin.returns'
+import { Route as AdminReportsRouteImport } from './routes/admin.reports'
+import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
+import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
+import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth/session'
@@ -234,6 +244,11 @@ const ApiPlusMembershipRoute = ApiPlusMembershipRouteImport.update({
   path: '/api/plus-membership',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrdersRoute = ApiOrdersRouteImport.update({
+  id: '/api/orders',
+  path: '/api/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiNotifyAdminRoute = ApiNotifyAdminRouteImport.update({
   id: '/api/notify-admin',
   path: '/api/notify-admin',
@@ -289,6 +304,26 @@ const ApiAddressSuggestionsRoute = ApiAddressSuggestionsRouteImport.update({
   path: '/api/address-suggestions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminWhatsappRoute = AdminWhatsappRouteImport.update({
+  id: '/whatsapp',
+  path: '/whatsapp',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTaxesRoute = AdminTaxesRouteImport.update({
+  id: '/taxes',
+  path: '/taxes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminShippingRoute = AdminShippingRouteImport.update({
+  id: '/shipping',
+  path: '/shipping',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -299,14 +334,39 @@ const AdminReturnsRoute = AdminReturnsRouteImport.update({
   path: '/returns',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminOrdersRoute = AdminOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminHeroRoute = AdminHeroRouteImport.update({
   id: '/hero',
   path: '/hero',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCustomersRoute = AdminCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentRoute = AdminContentRouteImport.update({
+  id: '/content',
+  path: '/content',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
@@ -383,10 +443,19 @@ export interface FileRoutesByFullPath {
   '/track-order': typeof TrackOrderRoute
   '/wishlist': typeof WishlistRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/returns': typeof AdminReturnsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/shipping': typeof AdminShippingRoute
+  '/admin/taxes': typeof AdminTaxesRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/whatsapp': typeof AdminWhatsappRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/autocomplete': typeof ApiAutocompleteRoute
@@ -398,6 +467,7 @@ export interface FileRoutesByFullPath {
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/hero': typeof ApiHeroRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/orders': typeof ApiOrdersRoute
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
@@ -443,10 +513,19 @@ export interface FileRoutesByTo {
   '/track-order': typeof TrackOrderRoute
   '/wishlist': typeof WishlistRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/returns': typeof AdminReturnsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/shipping': typeof AdminShippingRoute
+  '/admin/taxes': typeof AdminTaxesRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/whatsapp': typeof AdminWhatsappRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/autocomplete': typeof ApiAutocompleteRoute
@@ -458,6 +537,7 @@ export interface FileRoutesByTo {
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/hero': typeof ApiHeroRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/orders': typeof ApiOrdersRoute
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
@@ -505,10 +585,19 @@ export interface FileRoutesById {
   '/track-order': typeof TrackOrderRoute
   '/wishlist': typeof WishlistRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/returns': typeof AdminReturnsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/shipping': typeof AdminShippingRoute
+  '/admin/taxes': typeof AdminTaxesRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/whatsapp': typeof AdminWhatsappRoute
   '/api/address-suggestions': typeof ApiAddressSuggestionsRoute
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/autocomplete': typeof ApiAutocompleteRoute
@@ -520,6 +609,7 @@ export interface FileRoutesById {
   '/api/get-order': typeof ApiGetOrderRoute
   '/api/hero': typeof ApiHeroRoute
   '/api/notify-admin': typeof ApiNotifyAdminRoute
+  '/api/orders': typeof ApiOrdersRoute
   '/api/plus-membership': typeof ApiPlusMembershipRoute
   '/api/products': typeof ApiProductsRoute
   '/api/resolve-maps-url': typeof ApiResolveMapsUrlRoute
@@ -568,10 +658,19 @@ export interface FileRouteTypes {
     | '/track-order'
     | '/wishlist'
     | '/admin/categories'
+    | '/admin/content'
+    | '/admin/customers'
     | '/admin/hero'
+    | '/admin/notifications'
     | '/admin/orders'
+    | '/admin/payments'
+    | '/admin/reports'
     | '/admin/returns'
     | '/admin/settings'
+    | '/admin/shipping'
+    | '/admin/taxes'
+    | '/admin/users'
+    | '/admin/whatsapp'
     | '/api/address-suggestions'
     | '/api/admin-password'
     | '/api/autocomplete'
@@ -583,6 +682,7 @@ export interface FileRouteTypes {
     | '/api/get-order'
     | '/api/hero'
     | '/api/notify-admin'
+    | '/api/orders'
     | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
@@ -628,10 +728,19 @@ export interface FileRouteTypes {
     | '/track-order'
     | '/wishlist'
     | '/admin/categories'
+    | '/admin/content'
+    | '/admin/customers'
     | '/admin/hero'
+    | '/admin/notifications'
     | '/admin/orders'
+    | '/admin/payments'
+    | '/admin/reports'
     | '/admin/returns'
     | '/admin/settings'
+    | '/admin/shipping'
+    | '/admin/taxes'
+    | '/admin/users'
+    | '/admin/whatsapp'
     | '/api/address-suggestions'
     | '/api/admin-password'
     | '/api/autocomplete'
@@ -643,6 +752,7 @@ export interface FileRouteTypes {
     | '/api/get-order'
     | '/api/hero'
     | '/api/notify-admin'
+    | '/api/orders'
     | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
@@ -689,10 +799,19 @@ export interface FileRouteTypes {
     | '/track-order'
     | '/wishlist'
     | '/admin/categories'
+    | '/admin/content'
+    | '/admin/customers'
     | '/admin/hero'
+    | '/admin/notifications'
     | '/admin/orders'
+    | '/admin/payments'
+    | '/admin/reports'
     | '/admin/returns'
     | '/admin/settings'
+    | '/admin/shipping'
+    | '/admin/taxes'
+    | '/admin/users'
+    | '/admin/whatsapp'
     | '/api/address-suggestions'
     | '/api/admin-password'
     | '/api/autocomplete'
@@ -704,6 +823,7 @@ export interface FileRouteTypes {
     | '/api/get-order'
     | '/api/hero'
     | '/api/notify-admin'
+    | '/api/orders'
     | '/api/plus-membership'
     | '/api/products'
     | '/api/resolve-maps-url'
@@ -761,6 +881,7 @@ export interface RootRouteChildren {
   ApiGetOrderRoute: typeof ApiGetOrderRoute
   ApiHeroRoute: typeof ApiHeroRoute
   ApiNotifyAdminRoute: typeof ApiNotifyAdminRoute
+  ApiOrdersRoute: typeof ApiOrdersRoute
   ApiPlusMembershipRoute: typeof ApiPlusMembershipRoute
   ApiProductsRoute: typeof ApiProductsRoute
   ApiResolveMapsUrlRoute: typeof ApiResolveMapsUrlRoute
@@ -1020,6 +1141,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPlusMembershipRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/orders': {
+      id: '/api/orders'
+      path: '/api/orders'
+      fullPath: '/api/orders'
+      preLoaderRoute: typeof ApiOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/notify-admin': {
       id: '/api/notify-admin'
       path: '/api/notify-admin'
@@ -1097,6 +1225,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAddressSuggestionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/whatsapp': {
+      id: '/admin/whatsapp'
+      path: '/whatsapp'
+      fullPath: '/admin/whatsapp'
+      preLoaderRoute: typeof AdminWhatsappRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/taxes': {
+      id: '/admin/taxes'
+      path: '/taxes'
+      fullPath: '/admin/taxes'
+      preLoaderRoute: typeof AdminTaxesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/shipping': {
+      id: '/admin/shipping'
+      path: '/shipping'
+      fullPath: '/admin/shipping'
+      preLoaderRoute: typeof AdminShippingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -1111,6 +1267,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReturnsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/orders': {
       id: '/admin/orders'
       path: '/orders'
@@ -1118,11 +1288,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrdersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/hero': {
       id: '/admin/hero'
       path: '/hero'
       fullPath: '/admin/hero'
       preLoaderRoute: typeof AdminHeroRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/customers': {
+      id: '/admin/customers'
+      path: '/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminCustomersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content': {
+      id: '/admin/content'
+      path: '/content'
+      fullPath: '/admin/content'
+      preLoaderRoute: typeof AdminContentRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/categories': {
@@ -1207,10 +1398,19 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminContentRoute: typeof AdminContentRoute
+  AdminCustomersRoute: typeof AdminCustomersRoute
   AdminHeroRoute: typeof AdminHeroRoute
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
+  AdminReportsRoute: typeof AdminReportsRoute
   AdminReturnsRoute: typeof AdminReturnsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminShippingRoute: typeof AdminShippingRoute
+  AdminTaxesRoute: typeof AdminTaxesRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminWhatsappRoute: typeof AdminWhatsappRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminProductIdRoute: typeof AdminProductIdRoute
   AdminProductNewRoute: typeof AdminProductNewRoute
@@ -1218,10 +1418,19 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminContentRoute: AdminContentRoute,
+  AdminCustomersRoute: AdminCustomersRoute,
   AdminHeroRoute: AdminHeroRoute,
+  AdminNotificationsRoute: AdminNotificationsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
+  AdminReportsRoute: AdminReportsRoute,
   AdminReturnsRoute: AdminReturnsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminShippingRoute: AdminShippingRoute,
+  AdminTaxesRoute: AdminTaxesRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminWhatsappRoute: AdminWhatsappRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminProductIdRoute: AdminProductIdRoute,
   AdminProductNewRoute: AdminProductNewRoute,
@@ -1257,6 +1466,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGetOrderRoute: ApiGetOrderRoute,
   ApiHeroRoute: ApiHeroRoute,
   ApiNotifyAdminRoute: ApiNotifyAdminRoute,
+  ApiOrdersRoute: ApiOrdersRoute,
   ApiPlusMembershipRoute: ApiPlusMembershipRoute,
   ApiProductsRoute: ApiProductsRoute,
   ApiResolveMapsUrlRoute: ApiResolveMapsUrlRoute,

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useProducts } from "@/lib/products";
+import { useOrdersList } from "@/lib/orders";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
@@ -8,12 +9,43 @@ export const Route = createFileRoute("/admin/")({
 
 function AdminDashboard() {
   const { products, deleteProduct } = useProducts();
+  const { orders } = useOrdersList();
+
+  const totalOrders = orders.length;
+  const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+  const pendingOrders = orders.filter(o => o.status === 'Placed' || o.status === 'Processing').length;
+  // Compute low stock items (mock threshold for now or if we add stock field)
+  const lowStockProducts = products.filter(p => p.stock !== undefined ? p.stock < 10 : false);
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-3xl font-display font-bold text-navy-deep">Dashboard Overview</h2>
+        <p className="text-navy-deep/60 mt-1">Welcome back, Super Admin. Here is your store's performance.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-xl border border-border/50 shadow-sm flex flex-col justify-center">
+          <div className="text-sm font-semibold text-navy-deep/60 uppercase tracking-wider mb-2">Total Revenue</div>
+          <div className="text-3xl font-bold text-navy-deep">₹{totalRevenue.toLocaleString()}</div>
+        </div>
+        <div className="bg-white p-6 rounded-xl border border-border/50 shadow-sm flex flex-col justify-center">
+          <div className="text-sm font-semibold text-navy-deep/60 uppercase tracking-wider mb-2">Total Orders</div>
+          <div className="text-3xl font-bold text-navy-deep">{totalOrders}</div>
+        </div>
+        <div className="bg-white p-6 rounded-xl border border-border/50 shadow-sm flex flex-col justify-center">
+          <div className="text-sm font-semibold text-navy-deep/60 uppercase tracking-wider mb-2">Pending Orders</div>
+          <div className="text-3xl font-bold text-amber-600">{pendingOrders}</div>
+        </div>
+        <div className="bg-white p-6 rounded-xl border border-border/50 shadow-sm flex flex-col justify-center">
+          <div className="text-sm font-semibold text-navy-deep/60 uppercase tracking-wider mb-2">Low Stock Items</div>
+          <div className="text-3xl font-bold text-red-600">{lowStockProducts.length}</div>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mt-12 mb-6">
         <div>
-          <h2 className="text-3xl font-display font-bold text-navy-deep">Products Dashboard</h2>
+          <h3 className="text-2xl font-display font-bold text-navy-deep">Products Inventory</h3>
           <p className="text-navy-deep/60 mt-1">Manage your store's inventory locally.</p>
         </div>
         <Link

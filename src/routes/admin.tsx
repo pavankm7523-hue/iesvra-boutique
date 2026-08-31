@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { ArrowLeft, LayoutDashboard, Settings, PackageOpen, ShieldAlert, Layers, Image as ImageIcon, RefreshCcw } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, Settings, PackageOpen, ShieldAlert, Layers, Image as ImageIcon, RefreshCcw, Users, Truck, CreditCard, Receipt, Globe, Bell, MessageCircle, ShieldCheck, BarChart3 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/admin")({
@@ -55,55 +55,117 @@ function AdminLayout() {
             <h1 className="text-xl font-display font-bold tracking-widest uppercase">Admin Panel</h1>
           </div>
         </div>
-        <nav className="flex-1 p-4 flex flex-col gap-2">
+        <nav className="flex-1 p-4 flex flex-col gap-1 overflow-y-auto">
           <Link
             to="/admin"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 text-white font-medium transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
             activeProps={{ className: "bg-white/10 text-gold" }}
             activeOptions={{ exact: true }}
           >
-            <LayoutDashboard className="h-5 w-5" />
+            <LayoutDashboard className="h-4 w-4" />
             Dashboard
           </Link>
+          
+          <div className="pt-2 pb-1">
+            <div className="flex items-center gap-3 px-3 py-2 text-white/60 text-xs font-bold uppercase tracking-wider">
+              <PackageOpen className="h-3 w-3" />
+              Order Management
+            </div>
+            <Link
+              to="/admin/orders"
+              className="flex items-center gap-3 px-3 py-2.5 ml-3 rounded-lg hover:bg-white/10 text-white/90 text-sm font-medium transition-colors"
+              activeProps={{ className: "bg-white/10 text-gold" }}
+            >
+              Orders
+            </Link>
+            <Link
+              to="/admin/returns"
+              className="flex items-center gap-3 px-3 py-2.5 ml-3 rounded-lg hover:bg-white/10 text-white/90 text-sm font-medium transition-colors"
+              activeProps={{ className: "bg-white/10 text-gold" }}
+            >
+              Returns & Refunds
+            </Link>
+          </div>
+
           <Link
-            to="/admin/orders"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 text-white font-medium transition-colors"
+            to="/admin/customers"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
             activeProps={{ className: "bg-white/10 text-gold" }}
           >
-            <PackageOpen className="h-5 w-5" />
-            Orders
+            <Users className="h-4 w-4" />
+            Customer management
           </Link>
+
           <Link
-            to="/admin/returns"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 text-white font-medium transition-colors"
+            to="/admin/payments"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
             activeProps={{ className: "bg-white/10 text-gold" }}
           >
-            <RefreshCcw className="h-5 w-5" />
-            Returns / Replacements
+            <CreditCard className="h-4 w-4" />
+            Payment setting
           </Link>
+
           <Link
-            to="/admin/categories"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 text-white font-medium transition-colors"
+            to="/admin/taxes"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
             activeProps={{ className: "bg-white/10 text-gold" }}
           >
-            <Layers className="h-5 w-5" />
-            Categories
+            <Receipt className="h-4 w-4" />
+            Gst & tax setting
           </Link>
+
           <Link
-            to="/admin/hero"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 text-white font-medium transition-colors"
+            to="/admin/content"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
             activeProps={{ className: "bg-white/10 text-gold" }}
           >
-            <ImageIcon className="h-5 w-5" />
-            Hero Banner
+            <Globe className="h-4 w-4" />
+            Website content management
           </Link>
+
+          <Link
+            to="/admin/notifications"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
+            activeProps={{ className: "bg-white/10 text-gold" }}
+          >
+            <Bell className="h-4 w-4" />
+            Notification
+          </Link>
+
+          <Link
+            to="/admin/whatsapp"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
+            activeProps={{ className: "bg-white/10 text-gold" }}
+          >
+            <MessageCircle className="h-4 w-4" />
+            WhatsApp settings
+          </Link>
+
           <Link
             to="/admin/settings"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 text-white font-medium transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
             activeProps={{ className: "bg-white/10 text-gold" }}
           >
-            <Settings className="h-5 w-5" />
-            Settings
+            <Settings className="h-4 w-4" />
+            Store/business settings
+          </Link>
+
+          <Link
+            to="/admin/users"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
+            activeProps={{ className: "bg-white/10 text-gold" }}
+          >
+            <ShieldCheck className="h-4 w-4" />
+            Admin users & permission
+          </Link>
+
+          <Link
+            to="/admin/reports"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
+            activeProps={{ className: "bg-white/10 text-gold" }}
+          >
+            <BarChart3 className="h-4 w-4" />
+            Reports & analytics
           </Link>
         </nav>
       </aside>

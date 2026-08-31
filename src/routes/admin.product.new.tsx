@@ -24,6 +24,12 @@ function NewProduct() {
     description: "",
     colors: [] as string[],
     isBestSeller: false,
+    featured: false,
+    newArrival: false,
+    sku: "",
+    brand: "",
+    gstRate: 18,
+    stock: "",
   });
 
   const [gallery, setGallery] = useState<ProductMedia[]>([]);
@@ -76,6 +82,12 @@ function NewProduct() {
       colors: formData.colors,
       description: formData.description,
       isBestSeller: formData.isBestSeller,
+      featured: formData.featured,
+      newArrival: formData.newArrival,
+      sku: formData.sku,
+      brand: formData.brand,
+      gstRate: Number(formData.gstRate),
+      stock: Number(formData.stock),
       ...policy,
       reviews: [],
     };
@@ -113,17 +125,74 @@ function NewProduct() {
               <input type="text" value={formData.sub} onChange={e => setFormData({...formData, sub: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" placeholder="e.g. 3-in-1 functions" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-navy-deep">Selling Price (₹)</label>
-                <input required type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" placeholder="e.g. 599" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-navy-deep/70 mb-2">Selling Price (₹)</label>
+                  <input
+                    type="number"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    className="w-full px-4 py-3 rounded-md border-2 border-border/50 focus:border-gold focus:ring-0 transition-colors"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-navy-deep/70 mb-2">MRP (₹)</label>
+                  <input
+                    type="number"
+                    value={formData.mrp}
+                    onChange={(e) => setFormData({ ...formData, mrp: e.target.value })}
+                    className="w-full px-4 py-3 rounded-md border-2 border-border/50 focus:border-gold focus:ring-0 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-navy-deep/70 mb-2">Stock / Inventory</label>
+                  <input
+                    type="number"
+                    value={formData.stock}
+                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                    className="w-full px-4 py-3 rounded-md border-2 border-border/50 focus:border-gold focus:ring-0 transition-colors"
+                    placeholder="E.g. 50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-navy-deep/70 mb-2">GST Rate (%)</label>
+                  <select
+                    value={formData.gstRate}
+                    onChange={(e) => setFormData({ ...formData, gstRate: Number(e.target.value) })}
+                    className="w-full px-4 py-3 rounded-md border-2 border-border/50 focus:border-gold focus:ring-0 transition-colors bg-white"
+                  >
+                    <option value={0}>0%</option>
+                    <option value={5}>5%</option>
+                    <option value={12}>12%</option>
+                    <option value={18}>18%</option>
+                    <option value={28}>28%</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-navy-deep">MRP (₹)</label>
-                <input required type="number" min="0" value={formData.mrp} onChange={e => setFormData({...formData, mrp: e.target.value})} className="w-full border border-border/50 rounded-md px-4 py-2 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold" placeholder="e.g. 999" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-navy-deep/70 mb-2">SKU</label>
+                  <input
+                    type="text"
+                    value={formData.sku}
+                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                    className="w-full px-4 py-3 rounded-md border-2 border-border/50 focus:border-gold focus:ring-0 transition-colors"
+                    placeholder="E.g. IES-1234"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-navy-deep/70 mb-2">Brand</label>
+                  <input
+                    type="text"
+                    value={formData.brand}
+                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                    className="w-full px-4 py-3 rounded-md border-2 border-border/50 focus:border-gold focus:ring-0 transition-colors"
+                    placeholder="E.g. IESVRA"
+                  />
+                </div>
               </div>
-            </div>
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-navy-deep">Categories</label>
@@ -148,18 +217,38 @@ function NewProduct() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="checkbox"
-                id="isBestSeller"
-                checked={formData.isBestSeller}
-                onChange={e => setFormData({...formData, isBestSeller: e.target.checked})}
-                className="rounded text-gold focus:ring-gold accent-gold h-4 w-4 cursor-pointer"
-              />
-              <label htmlFor="isBestSeller" className="text-sm font-semibold text-navy-deep cursor-pointer select-none">
-                Mark as Best Seller
-              </label>
-            </div>
+              <div>
+                <label className="block text-sm font-semibold text-navy-deep/70 mb-2">Product Flags</label>
+                <div className="flex flex-col gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.isBestSeller}
+                      onChange={(e) => setFormData({ ...formData, isBestSeller: e.target.checked })}
+                      className="rounded border-2 border-border/50 text-gold focus:ring-gold"
+                    />
+                    <span className="text-sm font-medium text-navy-deep">Mark as Best Seller</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.featured}
+                      onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                      className="rounded border-2 border-border/50 text-gold focus:ring-gold"
+                    />
+                    <span className="text-sm font-medium text-navy-deep">Mark as Featured</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.newArrival}
+                      onChange={(e) => setFormData({ ...formData, newArrival: e.target.checked })}
+                      className="rounded border-2 border-border/50 text-gold focus:ring-gold"
+                    />
+                    <span className="text-sm font-medium text-navy-deep">Mark as New Arrival</span>
+                  </label>
+                </div>
+              </div>
           </div>
 
           {/* Right Column: Media Upload */}

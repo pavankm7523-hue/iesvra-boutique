@@ -99,7 +99,7 @@ export async function getOrders(email?: string): Promise<Order[]> {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const list = await res.json();
-    return Array.isArray(list) ? list : [];
+    return Array.isArray(list) ? list.filter((o: Order) => o.id && o.id.startsWith("ISH-")) : [];
   } catch (e) {
     console.error("Failed to load orders from database:", e);
     return [];
