@@ -176,8 +176,12 @@ function AdminCategories() {
               return (
                 <tr key={cat.name} className="hover:bg-secondary/5 transition-colors">
                   <td className="p-5">
-                    <div className="w-14 h-14 rounded-full overflow-hidden bg-[#f4f2ef] border border-border/50 flex items-center justify-center p-2.5">
-                      <img src={cat.image} alt={cat.name} className="w-full h-full object-contain" />
+                    <div className="w-14 h-14 shrink-0 rounded-full overflow-hidden bg-[#f4f2ef] border border-border/50">
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="w-full h-full rounded-full object-cover object-center"
+                      />
                     </div>
                   </td>
                   <td className="p-5 font-bold text-base text-navy-deep">
@@ -254,8 +258,12 @@ function AdminCategories() {
                 >
                   {image ? (
                     <div className="space-y-3 flex flex-col items-center">
-                      <div className="w-20 h-20 rounded-full overflow-hidden bg-white border border-border/50 flex items-center justify-center p-3">
-                        <img src={image} alt="Preview" className="w-full h-full object-contain" />
+                      <div className="w-20 h-20 rounded-full overflow-hidden bg-white border-2 border-white shadow-sm ring-1 ring-border/50">
+                        <img
+                          src={image}
+                          alt="Preview"
+                          className="w-full h-full rounded-full object-cover object-center"
+                        />
                       </div>
                       <p className="text-xs text-navy-deep/50 font-medium">Click box to replace image</p>
                     </div>

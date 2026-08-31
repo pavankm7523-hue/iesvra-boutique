@@ -53,6 +53,7 @@ function Shop() {
   const [sortBy, setSortBy] = useState<string>(isDealsActive ? "biggest-discount" : (searchParams.sortBy || "recommended"));
 
   const isBannerActive = (b: any) => {
+    if (b.isActive === false) return false;
     if (!b.isSpecialSale) return true;
     if (!b.saleEndDate) return true;
     return new Date() < new Date(b.saleEndDate);

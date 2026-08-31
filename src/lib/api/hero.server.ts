@@ -5,6 +5,18 @@ import * as path from "path";
 import bundledHeroData from "../../data/hero.json";
 import { getMetadataFromDb, saveMetadataToDb } from "../db.server";
 
+export const HeroCampaignTypeSchema = z.enum([
+  "standard",
+  "sale",
+  "offer",
+  "special-sale",
+  "festival-sale",
+  "festival",
+  "special-offer",
+]);
+
+export type HeroCampaignType = z.infer<typeof HeroCampaignTypeSchema>;
+
 export const HeroSettingsSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -13,7 +25,7 @@ export const HeroSettingsSchema = z.object({
   buttonLink: z.string(),
   backgroundImageUrl: z.string(),
   isSpecialSale: z.boolean(),
-  campaignType: z.enum(["standard", "sale", "festival", "special-offer"]).optional(),
+  campaignType: HeroCampaignTypeSchema.optional(),
   isActive: z.boolean().optional(),
   saleEndDate: z.string().optional(),
   productIds: z.array(z.string()).optional(),
@@ -43,11 +55,11 @@ const DEFAULT_BANNERS: HeroSettings[] = [{
 }];
 
 async function readData(): Promise<HeroSettings[]> {
-  if (memoryBanners) return memoryBanners;
-
+  // Always check the shared database first. A warm serverless instance can
+  // otherwise keep returning an old in-memory list after an admin upload.
   try {
     const dbData = await getMetadataFromDb("global_hero_banners");
-    if (Array.isArray(dbData) && dbData.length > 0) {
+    if (Array.isArray(dbData)) {
       memoryBanners = dbData as HeroSettings[];
       return memoryBanners;
     }
@@ -113,7 +125,7 @@ const NewBannerSchema = z.object({
   buttonLink: z.string().optional().default("/shop"),
   backgroundImageUrl: z.string().optional().default(""),
   isSpecialSale: z.boolean().optional().default(false),
-  campaignType: z.enum(["standard", "sale", "festival", "special-offer"]).optional().default("standard"),
+  campaignType: HeroCampaignTypeSchema.optional().default("standard"),
   isActive: z.boolean().optional().default(true),
   saleEndDate: z.string().optional().nullable(),
   productIds: z.array(z.string()).optional().default([]),

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useHeroBanners, useAddHeroBanner, useUpdateHeroBanner, useDeleteHeroBanner } from "@/lib/hero";
-import type { HeroSettings } from "@/lib/api/hero.server";
+import type { HeroCampaignType, HeroSettings } from "@/lib/api/hero.server";
 import { toast } from "sonner";
 import { Save, Image as ImageIcon, CheckCircle, Clock, Plus, Trash2, Edit, X, Search } from "lucide-react";
 import { useProducts } from "@/lib/products";
@@ -27,7 +27,7 @@ function AdminHero() {
   const [buttonLink, setButtonLink] = useState("");
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
   const [isSpecialSale, setIsSpecialSale] = useState(false);
-  const [campaignType, setCampaignType] = useState<"standard" | "sale" | "festival" | "special-offer">("standard");
+  const [campaignType, setCampaignType] = useState<HeroCampaignType>("standard");
   const [isActive, setIsActive] = useState(true);
   const [saleEndDate, setSaleEndDate] = useState("");
   const [productIds, setProductIds] = useState<string[]>([]);
@@ -48,7 +48,13 @@ function AdminHero() {
       setButtonLink(banner.buttonLink);
       setBackgroundImageUrl(banner.backgroundImageUrl);
       setIsSpecialSale(banner.isSpecialSale);
-      setCampaignType(banner.campaignType || (banner.isSpecialSale ? "sale" : "standard"));
+      setCampaignType(
+        banner.campaignType === "festival"
+          ? "festival-sale"
+          : banner.campaignType === "special-offer"
+            ? "offer"
+            : banner.campaignType || (banner.isSpecialSale ? "sale" : "standard"),
+      );
       setIsActive(banner.isActive !== false);
       setSaleEndDate(banner.saleEndDate || "");
       setProductIds(banner.productIds || []);
@@ -302,12 +308,17 @@ function AdminHero() {
                   <select value={campaignType} onChange={(e) => {
                     const value = e.target.value as typeof campaignType;
                     setCampaignType(value);
-                    setIsSpecialSale(value === "sale" || value === "special-offer");
+                    setIsSpecialSale(
+                      value === "sale" ||
+                        value === "special-sale" ||
+                        value === "festival-sale",
+                    );
                   }} className="w-full h-11 px-4 bg-[#f8f9fb] border border-border/60 rounded-lg focus:outline-none focus:border-gold/50">
-                    <option value="standard">Standard Banner</option>
+                    <option value="standard">General Banner</option>
                     <option value="sale">Sale Banner</option>
-                    <option value="festival">Festival Banner</option>
-                    <option value="special-offer">Special Offer Banner</option>
+                    <option value="offer">Offer Banner</option>
+                    <option value="special-sale">Special Sale Banner</option>
+                    <option value="festival-sale">Festival Sale Banner</option>
                   </select>
                   <p className="text-xs text-navy-deep/50 mt-1">Choose how this slide is labelled on the homepage.</p>
                 </div>
