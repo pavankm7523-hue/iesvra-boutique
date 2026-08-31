@@ -34,7 +34,13 @@ export const Route = createFileRoute("/my-orders")({
   component: MyOrdersPage,
 });
 
-const statusConfig = {
+const statusConfig: Record<string, any> = {
+  Placed: {
+    color: "bg-blue-50 text-blue-700 border-blue-200",
+    icon: CheckCircle,
+    bar: "bg-blue-300",
+    step: 1,
+  },
   Processing: {
     color: "bg-amber-100 text-amber-700 border-amber-200",
     icon: Clock,
@@ -211,7 +217,12 @@ function MyOrdersPage() {
             </p>
 
             {myOrders.map((order) => {
-              const cfg = statusConfig[order.status];
+              const cfg = statusConfig[order.status] || {
+                color: "bg-gray-100 text-gray-700 border-gray-200",
+                icon: Package,
+                bar: "bg-gray-400",
+                step: 1,
+              };
               const StatusIcon = cfg.icon;
               const isExpanded = expandedId === order.id;
 
