@@ -1,10 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import crypto from "node:crypto";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
-
-function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
+import { hashPassword, verifyPassword } from "@/lib/password.server";
 
 function isAdminEmail(email: string): boolean {
   const normalized = email.trim().toLowerCase();
@@ -31,14 +27,14 @@ export const Route = createFileRoute("/api/auth/login")({
           }
 
           const normalizedEmail = String(email).trim().toLowerCase();
-          const incomingHash = hashPassword(password);
-
           // 1. Check Administrator Login
           if (isAdminEmail(normalizedEmail)) {
             const adminPasswordRecord = await getMetadataFromDb("global_admin_password");
-            const storedAdminPassword = typeof adminPasswordRecord === "string" ? adminPasswordRecord : "Iesvra@3104";
+            const storedAdminPassword = typeof adminPasswordRecord === "string" ? adminPasswordRecord : "";
+            const adminCheck = storedAdminPassword ? await verifyPassword(String(password), storedAdminPassword) : { valid: false, needsRehash: false };
 
-            if (password === storedAdminPassword || incomingHash === storedAdminPassword || incomingHash === hashPassword("Iesvra@3104")) {
+            if (adminCheck.valid) {
+              if (adminCheck.needsRehash) await saveMetadataToDb("global_admin_password", await hashPassword(String(password)));
               return new Response(
                 JSON.stringify({
                   success: true,
@@ -84,9 +80,9 @@ export const Route = createFileRoute("/api/auth/login")({
           }
 
           // 4. Validate password (SHA256 or plaintext migration)
-          const isPasswordValid = user.passwordHash === incomingHash || user.passwordHash === password;
+          const passwordCheck = await verifyPassword(String(password), String(user.passwordHash || ""));
 
-          if (!isPasswordValid) {
+          if (!passwordCheck.valid) {
             return new Response(
               JSON.stringify({
                 success: false,
@@ -96,10 +92,10 @@ export const Route = createFileRoute("/api/auth/login")({
             );
           }
 
-          // Upgrade plaintext hash to SHA256 if needed
-          if (user.passwordHash === password) {
-            user.passwordHash = incomingHash;
-            saveMetadataToDb("global_registered_users", users).catch(console.error);
+          // Transparently upgrade legacy SHA-256/plaintext records after a valid login.
+          if (passwordCheck.needsRehash) {
+            user.passwordHash = await hashPassword(String(password));
+            await saveMetadataToDb("global_registered_users", users);
           }
 
           return new Response(

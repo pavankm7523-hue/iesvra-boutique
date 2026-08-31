@@ -1,10 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import crypto from "node:crypto";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
-
-function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
+import { hashPassword } from "@/lib/password.server";
+import { verifyPasswordResetOtp } from "@/lib/passwordReset.server";
 
 function isAdminEmail(email: string): boolean {
   const normalized = email.trim().toLowerCase();
@@ -21,11 +18,11 @@ export const Route = createFileRoute("/api/auth/reset-password")({
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-          const { email, newPassword } = body || {};
+          const { email, newPassword, otp } = body || {};
 
-          if (!email || !newPassword) {
+          if (!email || !newPassword || !otp) {
             return new Response(
-              JSON.stringify({ success: false, error: "Email and new password are required." }),
+              JSON.stringify({ success: false, error: "Email, OTP, and new password are required." }),
               { status: 400, headers: { "Content-Type": "application/json" } }
             );
           }
@@ -38,7 +35,10 @@ export const Route = createFileRoute("/api/auth/reset-password")({
           }
 
           const normalizedEmail = String(email).trim().toLowerCase();
-          const newHash = hashPassword(newPassword);
+          if (!(await verifyPasswordResetOtp(normalizedEmail, String(otp), true))) {
+            return new Response(JSON.stringify({ success: false, error: "Invalid or expired OTP." }), { status: 401, headers: { "Content-Type": "application/json" } });
+          }
+          const newHash = await hashPassword(String(newPassword));
 
           const users = (await getMetadataFromDb("global_registered_users")) || [];
           const userIndex = Array.isArray(users)
@@ -48,15 +48,8 @@ export const Route = createFileRoute("/api/auth/reset-password")({
           if (userIndex !== -1) {
             users[userIndex].passwordHash = newHash;
             await saveMetadataToDb("global_registered_users", users);
-          } else {
-            // User did not exist in array yet, create new record
-            users.push({
-              name: normalizedEmail.split("@")[0],
-              email: normalizedEmail,
-              passwordHash: newHash,
-              role: isAdminEmail(normalizedEmail) ? "admin" : "user",
-            });
-            await saveMetadataToDb("global_registered_users", users);
+          } else if (!isAdminEmail(normalizedEmail)) {
+            return new Response(JSON.stringify({ success: false, error: "Account not found." }), { status: 404, headers: { "Content-Type": "application/json" } });
           }
 
           if (isAdminEmail(normalizedEmail)) {

@@ -1,10 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import crypto from "node:crypto";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
-
-function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
+import { hashPassword } from "@/lib/password.server";
 
 function isAdminEmail(email: string): boolean {
   const normalized = email.trim().toLowerCase();
@@ -56,7 +52,7 @@ export const Route = createFileRoute("/api/auth/register")({
           const newUser = {
             name: trimmedName,
             email: normalizedEmail,
-            passwordHash: hashPassword(password),
+            passwordHash: await hashPassword(String(password)),
             role,
           };
 
