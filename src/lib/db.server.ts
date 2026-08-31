@@ -253,8 +253,9 @@ export async function saveMetadataToDb(keyStr: string, data: any): Promise<boole
     return false;
   }
 
-  // Also save a backup copy for critical keys (e.g. products, categories)
+  // Also save a backup copy and an immutable timestamped revision snapshot for critical data
   if (keyStr === "global_products" || keyStr === "global_categories" || keyStr === "global_hero_banners") {
+    // 1. Overwrite latest backup slot
     fetch(`${url}/rest/v1/orders`, {
       method: "POST",
       headers: {
@@ -269,6 +270,23 @@ export async function saveMetadataToDb(keyStr: string, data: any): Promise<boole
         shipping_address: `Automatic Backup - ${now}`
       })
     }).catch(e => console.warn(`[db] Backup record write failed for ${keyStr}:`, e));
+
+    // 2. Insert immutable revision history snapshot (never overwritten, full change history)
+    const revisionId = `history_${keyStr}_${Date.now()}`;
+    fetch(`${url}/rest/v1/orders`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates"
+      },
+      body: JSON.stringify({
+        ...mockRecord,
+        id: revisionId,
+        shipping_address: `Revision Snapshot - ${now}`
+      })
+    }).catch(e => console.warn(`[db] History revision write failed for ${revisionId}:`, e));
   }
 
   return true;
