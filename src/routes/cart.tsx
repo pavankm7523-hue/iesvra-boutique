@@ -8,6 +8,7 @@ import { useCurrentUser } from "@/lib/auth";
 import { createOrder } from "@/lib/orders";
 import { toast } from "sonner";
 import { fetchAddressSuggestions, checkExpressEligibility, geocodeAddress, reverseGeocode } from "@/lib/delivery";
+import { calculateCouponDiscount, useCoupons } from "@/lib/coupons";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -82,6 +83,7 @@ const INDIAN_STATES = [
 
 function Cart() {
   const cartItems = useCartItems();
+  const { coupons } = useCoupons();
   const currentUser = useCurrentUser();
 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -481,51 +483,7 @@ function Cart() {
     ? (isPlusMember ? 0 : (physicalSubtotal < FREE_SHIPPING_THRESHOLD ? shippingSettings.baseShipping : 0))
     : 0;
 
-  // Stackable Coupon Rules Definition
-  const VALID_COUPONS: Record<string, {
-    code: string;
-    title: string;
-    requiresFirstOrder?: boolean;
-    requiresFestival?: boolean;
-    getDiscount: (sub: number, baseShip: number) => { discount: number; isFreeShipping?: boolean; description: string };
-  }> = {
-    FIRST15: {
-      code: "FIRST15",
-      title: "15% OFF (1st Order)",
-      requiresFirstOrder: true,
-      getDiscount: (sub) => ({
-        discount: Math.round(sub * 0.15),
-        description: "Flat 15% OFF applied on your 1st order!",
-      }),
-    },
-    WELCOME10: {
-      code: "WELCOME10",
-      title: "10% OFF (1st Order)",
-      requiresFirstOrder: true,
-      getDiscount: (sub) => ({
-        discount: Math.round(sub * 0.10),
-        description: "10% OFF new customer welcome discount applied!",
-      }),
-    },
-    FREESHIP: {
-      code: "FREESHIP",
-      title: "Free Shipping",
-      getDiscount: (_, baseShip) => ({
-        discount: baseShip,
-        isFreeShipping: true,
-        description: "Free shipping applied! Delivery fee waived.",
-      }),
-    },
-    FESTIVE10: {
-      code: "FESTIVE10",
-      title: "Festive Save 10%",
-      requiresFestival: true,
-      getDiscount: (sub) => ({
-        discount: Math.min(250, Math.round(sub * 0.10)),
-        description: "Festive 10% instant discount applied!",
-      }),
-    },
-  };
+  const validCoupons = new Map(coupons.filter((coupon) => coupon.active).map((coupon) => [coupon.code, coupon]));
 
   let couponDiscount = 0;
   let isCouponFreeShipping = false;
@@ -536,22 +494,22 @@ function Cart() {
     if (normalized === "IESVRAPLUS") {
       // Handled automatically as plusDiscount, ignore if stored as a promo code
     } else {
-      const config = VALID_COUPONS[normalized];
+      const config = validCoupons.get(normalized);
       if (config) {
-        if (config.requiresFestival && !isFestivalActive()) {
+        if (subtotal < config.minimumOrder) {
           couponDiscount = 0;
           activeCouponInfo = null;
-        } else if (config.requiresFirstOrder && userOrderCount !== null && userOrderCount > 0) {
+        } else if (config.firstOrderOnly && userOrderCount !== null && userOrderCount > 0) {
           couponDiscount = 0;
           activeCouponInfo = null;
         } else {
-          const res = config.getDiscount(subtotal, baseShipping);
+          const res = calculateCouponDiscount(config, subtotal, baseShipping);
           couponDiscount = res.discount;
-          if (res.isFreeShipping) isCouponFreeShipping = true;
+          if (res.freeShipping) isCouponFreeShipping = true;
           activeCouponInfo = {
             code: config.code,
             title: config.title,
-            description: res.description,
+            description: config.description,
           };
         }
       }
@@ -562,7 +520,7 @@ function Cart() {
   const deliveryFee = paymentMode === 'cod' ? baseDeliveryFee + shippingSettings.codCharge : baseDeliveryFee;
   const total = Math.max(0, subtotal + deliveryFee - plusDiscount - couponDiscount);
 
-  const handleApplyCoupon = (codeToApply?: string) => {
+  const handleApplyCoupon = async (codeToApply?: string) => {
     const targetCode = (codeToApply || couponCodeInput).trim().toUpperCase();
     if (!targetCode) {
       setCouponError("Please enter a coupon code.");
@@ -582,33 +540,51 @@ function Cart() {
       }
     }
 
-    if (targetCode === "FESTIVE10" && !isFestivalActive()) {
-      const msg = "FESTIVE10 is currently inactive. It is only available during active festival sales.";
-      setCouponError(msg);
-      toast.error(msg);
-      return;
-    }
-
-    if ((targetCode === "FIRST15" || targetCode === "FIRST10" || targetCode === "WELCOME10") && userOrderCount !== null && userOrderCount > 0) {
+    const config = validCoupons.get(targetCode);
+    if (config?.firstOrderOnly && userOrderCount !== null && userOrderCount > 0) {
       const msg = "First-order discounts are exclusive to new customers on their very 1st order.";
       setCouponError(msg);
       toast.error(msg);
       return;
     }
 
-    const config = VALID_COUPONS[targetCode];
     if (!config) {
-      setCouponError(`Invalid coupon code "${targetCode}". Try FIRST15, WELCOME10, or FREESHIP.`);
+      setCouponError(`Invalid or inactive coupon code "${targetCode}".`);
       toast.error(`Invalid coupon code "${targetCode}"`);
       return;
     }
 
-    setCouponError(null);
-    setAppliedCouponCode(targetCode);
-    setCouponCodeInput(targetCode);
-    localStorage.setItem("IESVRA_applied_coupon", targetCode);
-    window.dispatchEvent(new Event("iesvra-coupon-updated"));
-    toast.success(`Coupon "${targetCode}" applied on top of your Plus savings! 🎉`);
+    if (subtotal < config.minimumOrder) {
+      const msg = `This coupon requires a minimum order of ₹${config.minimumOrder}.`;
+      setCouponError(msg);
+      toast.error(msg);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/coupon-validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: targetCode,
+          subtotal,
+          shipping: baseShipping,
+          email: currentUser?.email || shippingEmail,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.valid) throw new Error(result.error || "Coupon validation failed.");
+      setCouponError(null);
+      setAppliedCouponCode(targetCode);
+      setCouponCodeInput(targetCode);
+      localStorage.setItem("IESVRA_applied_coupon", targetCode);
+      window.dispatchEvent(new Event("iesvra-coupon-updated"));
+      toast.success(`Coupon "${targetCode}" applied on top of your Plus savings! 🎉`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Coupon could not be applied.";
+      setCouponError(message);
+      toast.error(message);
+    }
   };
 
   const handleRemoveCoupon = () => {

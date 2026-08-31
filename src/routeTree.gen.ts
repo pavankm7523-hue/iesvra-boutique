@@ -50,6 +50,8 @@ import { Route as ApiGeocodeRouteImport } from './routes/api/geocode'
 import { Route as ApiDiagRouteImport } from './routes/api/diag'
 import { Route as ApiDeleteOrderRouteImport } from './routes/api/delete-order'
 import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
+import { Route as ApiCouponsRouteImport } from './routes/api/coupons'
+import { Route as ApiCouponValidateRouteImport } from './routes/api/coupon-validate'
 import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
 import { Route as ApiAutocompleteRouteImport } from './routes/api/autocomplete'
 import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin-password'
@@ -65,6 +67,7 @@ import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
+import { Route as AdminDealsRouteImport } from './routes/admin.deals'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
@@ -284,6 +287,16 @@ const ApiCreateOrderRoute = ApiCreateOrderRouteImport.update({
   path: '/api/create-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCouponsRoute = ApiCouponsRouteImport.update({
+  id: '/api/coupons',
+  path: '/api/coupons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCouponValidateRoute = ApiCouponValidateRouteImport.update({
+  id: '/api/coupon-validate',
+  path: '/api/coupon-validate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCategoriesRoute = ApiCategoriesRouteImport.update({
   id: '/api/categories',
   path: '/api/categories',
@@ -357,6 +370,11 @@ const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
 const AdminHeroRoute = AdminHeroRouteImport.update({
   id: '/hero',
   path: '/hero',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDealsRoute = AdminDealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCustomersRoute = AdminCustomersRouteImport.update({
@@ -445,6 +463,7 @@ export interface FileRoutesByFullPath {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/deals': typeof AdminDealsRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -460,6 +479,8 @@ export interface FileRoutesByFullPath {
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/autocomplete': typeof ApiAutocompleteRoute
   '/api/categories': typeof ApiCategoriesRoute
+  '/api/coupon-validate': typeof ApiCouponValidateRoute
+  '/api/coupons': typeof ApiCouponsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/delete-order': typeof ApiDeleteOrderRoute
   '/api/diag': typeof ApiDiagRoute
@@ -515,6 +536,7 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/deals': typeof AdminDealsRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -530,6 +552,8 @@ export interface FileRoutesByTo {
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/autocomplete': typeof ApiAutocompleteRoute
   '/api/categories': typeof ApiCategoriesRoute
+  '/api/coupon-validate': typeof ApiCouponValidateRoute
+  '/api/coupons': typeof ApiCouponsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/delete-order': typeof ApiDeleteOrderRoute
   '/api/diag': typeof ApiDiagRoute
@@ -587,6 +611,7 @@ export interface FileRoutesById {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/deals': typeof AdminDealsRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -602,6 +627,8 @@ export interface FileRoutesById {
   '/api/admin-password': typeof ApiAdminPasswordRoute
   '/api/autocomplete': typeof ApiAutocompleteRoute
   '/api/categories': typeof ApiCategoriesRoute
+  '/api/coupon-validate': typeof ApiCouponValidateRoute
+  '/api/coupons': typeof ApiCouponsRoute
   '/api/create-order': typeof ApiCreateOrderRoute
   '/api/delete-order': typeof ApiDeleteOrderRoute
   '/api/diag': typeof ApiDiagRoute
@@ -660,6 +687,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/content'
     | '/admin/customers'
+    | '/admin/deals'
     | '/admin/hero'
     | '/admin/notifications'
     | '/admin/orders'
@@ -675,6 +703,8 @@ export interface FileRouteTypes {
     | '/api/admin-password'
     | '/api/autocomplete'
     | '/api/categories'
+    | '/api/coupon-validate'
+    | '/api/coupons'
     | '/api/create-order'
     | '/api/delete-order'
     | '/api/diag'
@@ -730,6 +760,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/content'
     | '/admin/customers'
+    | '/admin/deals'
     | '/admin/hero'
     | '/admin/notifications'
     | '/admin/orders'
@@ -745,6 +776,8 @@ export interface FileRouteTypes {
     | '/api/admin-password'
     | '/api/autocomplete'
     | '/api/categories'
+    | '/api/coupon-validate'
+    | '/api/coupons'
     | '/api/create-order'
     | '/api/delete-order'
     | '/api/diag'
@@ -801,6 +834,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/content'
     | '/admin/customers'
+    | '/admin/deals'
     | '/admin/hero'
     | '/admin/notifications'
     | '/admin/orders'
@@ -816,6 +850,8 @@ export interface FileRouteTypes {
     | '/api/admin-password'
     | '/api/autocomplete'
     | '/api/categories'
+    | '/api/coupon-validate'
+    | '/api/coupons'
     | '/api/create-order'
     | '/api/delete-order'
     | '/api/diag'
@@ -874,6 +910,8 @@ export interface RootRouteChildren {
   ApiAdminPasswordRoute: typeof ApiAdminPasswordRoute
   ApiAutocompleteRoute: typeof ApiAutocompleteRoute
   ApiCategoriesRoute: typeof ApiCategoriesRoute
+  ApiCouponValidateRoute: typeof ApiCouponValidateRoute
+  ApiCouponsRoute: typeof ApiCouponsRoute
   ApiCreateOrderRoute: typeof ApiCreateOrderRoute
   ApiDeleteOrderRoute: typeof ApiDeleteOrderRoute
   ApiDiagRoute: typeof ApiDiagRoute
@@ -1197,6 +1235,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCreateOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/coupons': {
+      id: '/api/coupons'
+      path: '/api/coupons'
+      fullPath: '/api/coupons'
+      preLoaderRoute: typeof ApiCouponsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/coupon-validate': {
+      id: '/api/coupon-validate'
+      path: '/api/coupon-validate'
+      fullPath: '/api/coupon-validate'
+      preLoaderRoute: typeof ApiCouponValidateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/categories': {
       id: '/api/categories'
       path: '/api/categories'
@@ -1302,6 +1354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminHeroRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/deals': {
+      id: '/admin/deals'
+      path: '/deals'
+      fullPath: '/admin/deals'
+      preLoaderRoute: typeof AdminDealsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/customers': {
       id: '/admin/customers'
       path: '/customers'
@@ -1400,6 +1459,7 @@ interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
+  AdminDealsRoute: typeof AdminDealsRoute
   AdminHeroRoute: typeof AdminHeroRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -1420,6 +1480,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminContentRoute: AdminContentRoute,
   AdminCustomersRoute: AdminCustomersRoute,
+  AdminDealsRoute: AdminDealsRoute,
   AdminHeroRoute: AdminHeroRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
@@ -1459,6 +1520,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminPasswordRoute: ApiAdminPasswordRoute,
   ApiAutocompleteRoute: ApiAutocompleteRoute,
   ApiCategoriesRoute: ApiCategoriesRoute,
+  ApiCouponValidateRoute: ApiCouponValidateRoute,
+  ApiCouponsRoute: ApiCouponsRoute,
   ApiCreateOrderRoute: ApiCreateOrderRoute,
   ApiDeleteOrderRoute: ApiDeleteOrderRoute,
   ApiDiagRoute: ApiDiagRoute,

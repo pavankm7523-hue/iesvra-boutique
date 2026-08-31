@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { useProducts, Product } from "@/lib/products";
 import { useHeroBanners } from "@/lib/hero";
+import { couponDiscountLabel, useCoupons } from "@/lib/coupons";
 import { addToCart } from "@/lib/cart";
 import { toast } from "sonner";
 import {
@@ -41,44 +42,11 @@ export const Route = createFileRoute("/deals")({
   component: DealsPage,
 });
 
-const COUPONS = [
-  {
-    code: "FIRST15",
-    discount: "15% OFF",
-    title: "First Order Special",
-    desc: "Flat 15% discount on your first order with no minimum spend.",
-    badge: "Most Popular",
-    color: "from-amber-500 to-amber-600",
-  },
-  {
-    code: "WELCOME10",
-    discount: "10% OFF",
-    title: "Welcome Discount",
-    desc: "Flat 10% discount for all customers on their purchases.",
-    badge: "Verified",
-    color: "from-purple-600 to-indigo-600",
-  },
-  {
-    code: "FREESHIP",
-    discount: "FREE SHIPPING",
-    title: "Free Express Delivery",
-    desc: "100% free courier delivery across India on all eligible orders.",
-    badge: "Free Delivery",
-    color: "from-emerald-600 to-teal-600",
-  },
-  {
-    code: "FESTIVE10",
-    discount: "EXTRA 10% OFF",
-    title: "Festive Bonus Saver",
-    desc: "Extra 10% instant discount up to ₹250 on premium orders.",
-    badge: "Limited Time",
-    color: "from-rose-500 to-pink-600",
-  },
-];
-
 function DealsPage() {
   const { products: allProducts } = useProducts();
   const { data: banners } = useHeroBanners();
+  const { coupons } = useCoupons();
+  const activeCoupons = coupons.filter((coupon) => coupon.active);
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<"all" | "mega" | "under499" | "bestseller" | "coupons">("all");
@@ -214,7 +182,7 @@ function DealsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {COUPONS.map((coupon) => {
+            {activeCoupons.map((coupon) => {
               const isCopied = copiedCode === coupon.code;
               return (
                 <div
@@ -227,13 +195,13 @@ function DealsPage() {
                         {coupon.badge}
                       </span>
                       <span className="text-base font-black text-amber-600">
-                        {coupon.discount}
+                        {couponDiscountLabel(coupon)}
                       </span>
                     </div>
 
                     <div>
                       <h3 className="font-bold text-slate-900 text-sm">{coupon.title}</h3>
-                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">{coupon.desc}</p>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">{coupon.description}</p>
                     </div>
                   </div>
 

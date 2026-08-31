@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { ArrowLeft, LayoutDashboard, Settings, PackageOpen, ShieldAlert, Layers, Image as ImageIcon, RefreshCcw, Users, Truck, CreditCard, Receipt, Globe, Bell, MessageCircle, ShieldCheck, BarChart3 } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, Settings, PackageOpen, ShieldAlert, Users, CreditCard, Receipt, Globe, Bell, MessageCircle, ShieldCheck, BarChart3, BadgePercent } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/admin")({
@@ -86,6 +86,15 @@ function AdminLayout() {
               Returns & Refunds
             </Link>
           </div>
+
+          <Link
+            to="/admin/deals"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 text-white text-sm font-medium transition-colors"
+            activeProps={{ className: "bg-white/10 text-gold" }}
+          >
+            <BadgePercent className="h-4 w-4" />
+            Deals & coupons
+          </Link>
 
           <Link
             to="/admin/customers"
