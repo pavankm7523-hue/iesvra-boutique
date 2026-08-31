@@ -220,6 +220,7 @@ export async function getMetadataFromDb(keyStr: string): Promise<any | null> {
 
 export async function saveMetadataToDb(keyStr: string, data: any): Promise<boolean> {
   const { url, key } = getSupabaseConfig();
+  const now = new Date().toISOString();
   const mockRecord = {
     id: keyStr,
     customer_name: "Metadata Store",
@@ -230,7 +231,7 @@ export async function saveMetadataToDb(keyStr: string, data: any): Promise<boole
     subtotal: 0,
     shipping: 0,
     total: 0,
-    date: new Date().toISOString(),
+    date: now,
     status: "Processing",
     payment_status: "Pending"
   };
@@ -250,6 +251,24 @@ export async function saveMetadataToDb(keyStr: string, data: any): Promise<boole
     const errText = await res.text();
     console.error(`[db] saveMetadataToDb failed for ${keyStr}:`, res.status, errText);
     return false;
+  }
+
+  // Also save a backup copy for critical keys (e.g. products, categories)
+  if (keyStr === "global_products" || keyStr === "global_categories" || keyStr === "global_hero_banners") {
+    fetch(`${url}/rest/v1/orders`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates"
+      },
+      body: JSON.stringify({
+        ...mockRecord,
+        id: `${keyStr}_backup_latest`,
+        shipping_address: `Automatic Backup - ${now}`
+      })
+    }).catch(e => console.warn(`[db] Backup record write failed for ${keyStr}:`, e));
   }
 
   return true;
