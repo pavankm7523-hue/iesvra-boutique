@@ -3,6 +3,7 @@ import { useProducts } from "@/lib/products";
 import { useOrdersList } from "@/lib/orders";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -11,6 +12,25 @@ export const Route = createFileRoute("/admin/")({
 function AdminDashboard() {
   const { products, deleteProduct } = useProducts();
   const { orders } = useOrdersList();
+  const [productToDelete, setProductToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const confirmProductDeletion = async () => {
+    if (!productToDelete || isDeleting) return;
+    setIsDeleting(true);
+    try {
+      const result = await deleteProduct(productToDelete.id);
+      if (result.deletedId !== productToDelete.id) {
+        throw new Error("The server did not confirm the deleted product ID.");
+      }
+      toast.success(`Product "${productToDelete.name}" deleted successfully.`);
+      setProductToDelete(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Product could not be deleted.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
@@ -97,19 +117,8 @@ function AdminDashboard() {
                       <Pencil className="h-4 w-4" />
                     </Link>
                     <button
-                      onClick={async () => {
-                        if (confirm(`Are you sure you want to delete ${product.name}?`)) {
-                          try {
-                            const result = await deleteProduct(product.id);
-                            if (result.deletedId !== product.id) {
-                              throw new Error("The server did not confirm the deleted product ID.");
-                            }
-                            toast.success(`Product "${product.name}" deleted successfully.`);
-                          } catch (error) {
-                            toast.error(error instanceof Error ? error.message : "Product could not be deleted.");
-                          }
-                        }
-                      }}
+                      type="button"
+                      onClick={() => setProductToDelete({ id: product.id, name: product.name })}
                       className="p-2 text-navy-deep/60 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
                       title="Delete Product"
                     >
@@ -129,6 +138,35 @@ function AdminDashboard() {
           </tbody>
         </table>
       </div>
+
+      {productToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-labelledby="delete-product-title">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <h3 id="delete-product-title" className="text-xl font-bold text-navy-deep">Delete product?</h3>
+            <p className="mt-3 text-sm text-navy-deep/70">
+              This will permanently remove <strong>{productToDelete.name}</strong> from the website.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => setProductToDelete(null)}
+                className="rounded-lg border border-border px-4 py-2 font-semibold text-navy-deep disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={confirmProductDeletion}
+                className="rounded-lg bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Delete Product"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
