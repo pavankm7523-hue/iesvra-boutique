@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
 import { hashPassword, verifyPassword } from "@/lib/password.server";
+import { sessionCookie } from "@/lib/session.server";
 
 function isAdminEmail(email: string): boolean {
   const normalized = email.trim().toLowerCase();
@@ -30,8 +31,17 @@ export const Route = createFileRoute("/api/auth/login")({
           // 1. Check Administrator Login
           if (isAdminEmail(normalizedEmail)) {
             const adminPasswordRecord = await getMetadataFromDb("global_admin_password");
-            const storedAdminPassword = typeof adminPasswordRecord === "string" ? adminPasswordRecord : "";
-            const adminCheck = storedAdminPassword ? await verifyPassword(String(password), storedAdminPassword) : { valid: false, needsRehash: false };
+            const storedAdminPassword = typeof adminPasswordRecord === "string" && adminPasswordRecord ? adminPasswordRecord : "";
+            
+            let adminCheck = { valid: false, needsRehash: false };
+            const DEFAULT_ADMIN_PASSWORD = "Iesvra@3104";
+            
+            if (storedAdminPassword) {
+              adminCheck = await verifyPassword(String(password), storedAdminPassword);
+            } else if (password === DEFAULT_ADMIN_PASSWORD) {
+              // Fallback to default if not yet set in DB
+              adminCheck = { valid: true, needsRehash: true };
+            }
 
             if (adminCheck.valid) {
               if (adminCheck.needsRehash) await saveMetadataToDb("global_admin_password", await hashPassword(String(password)));
@@ -44,7 +54,7 @@ export const Route = createFileRoute("/api/auth/login")({
                     role: "admin",
                   },
                 }),
-                { status: 200, headers: { "Content-Type": "application/json" } }
+                { status: 200, headers: { "Content-Type": "application/json", "Set-Cookie": sessionCookie({ name: "IESVRA Admin", email: normalizedEmail, role: "admin" }) } }
               );
             }
           }
@@ -109,7 +119,7 @@ export const Route = createFileRoute("/api/auth/login")({
                 plusExpiry: user.plusExpiry,
               },
             }),
-            { status: 200, headers: { "Content-Type": "application/json" } }
+            { status: 200, headers: { "Content-Type": "application/json", "Set-Cookie": sessionCookie({ name: user.name, email: user.email, role: isAdminEmail(user.email) ? "admin" : "user", isPlusMember: user.isPlusMember, plusExpiry: user.plusExpiry }) } }
           );
         } catch (err: any) {
           console.error("[/api/auth/login] Error:", err);
