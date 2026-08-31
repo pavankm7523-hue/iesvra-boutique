@@ -46,6 +46,23 @@ function mergeById(existing: any[], incoming: CatalogProduct[]) {
   return [...merged.values()];
 }
 
+function canonicalizeJson(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalizeJson);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .filter(([, item]) => item !== undefined)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, item]) => [key, canonicalizeJson(item)]),
+    );
+  }
+  return value;
+}
+
+function productsMatch(actual: unknown, expected: unknown): boolean {
+  return JSON.stringify(canonicalizeJson(actual)) === JSON.stringify(canonicalizeJson(expected));
+}
+
 const PRODUCT_TOMBSTONES_KEY = "global_product_tombstones";
 
 function normalizeTombstones(value: unknown): string[] {
@@ -83,6 +100,7 @@ export const Route = createFileRoute("/api/products")({
           const payload = await request.json();
           let list: any[];
           let savedProduct: CatalogProduct | undefined;
+          let deletedProductId: string | undefined;
           let productsToVerify: CatalogProduct[] = [];
           const current = await getMetadataFromDb("global_products");
           const existing = Array.isArray(current) ? current : [];
@@ -138,8 +156,9 @@ export const Route = createFileRoute("/api/products")({
               nextTombstones = storedTombstones.filter((id) => id !== savedProduct!.id);
             }
           } else if (payload?.action === "delete" && payload.id) {
-            list = existing.filter((product: any) => product?.id !== payload.id);
-            nextTombstones = normalizeTombstones([...storedTombstones, String(payload.id)]);
+            deletedProductId = String(payload.id).trim();
+            list = existing.filter((product: any) => product?.id !== deletedProductId);
+            nextTombstones = normalizeTombstones([...storedTombstones, deletedProductId]);
           } else {
             return new Response(JSON.stringify({ error: "Invalid product mutation." }), {
               status: 400,
@@ -163,10 +182,16 @@ export const Route = createFileRoute("/api/products")({
             verifiedCount = Array.isArray(persisted)
               ? productsToVerify.filter((expected) => {
                   const actual = persisted.find((product: CatalogProduct) => product?.id === expected.id);
-                  return actual && JSON.stringify(actual) === JSON.stringify(expected);
+                  return Boolean(actual && productsMatch(actual, expected));
                 }).length
               : 0;
             if (verifiedCount !== productsToVerify.length) {
+              console.error("[api/products] persistence verification mismatch", {
+                expectedIds: productsToVerify.map((product) => product.id),
+                persistedIds: Array.isArray(persisted)
+                  ? persisted.map((product: CatalogProduct) => product?.id).filter(Boolean)
+                  : [],
+              });
               return new Response(JSON.stringify({ error: "Product save verification failed. The catalog was not confirmed; please retry." }), {
                 status: 409,
                 headers: { "Content-Type": "application/json" },
@@ -174,7 +199,28 @@ export const Route = createFileRoute("/api/products")({
             }
           }
 
-          return new Response(JSON.stringify({ success, count: list.length, verifiedCount, product: savedProduct && {
+          if (success && deletedProductId) {
+            const [persisted, persistedTombstones] = await Promise.all([
+              getMetadataFromDb("global_products"),
+              getMetadataFromDb(PRODUCT_TOMBSTONES_KEY),
+            ]);
+            const productStillExists = Array.isArray(persisted)
+              && persisted.some((product: CatalogProduct) => product?.id === deletedProductId);
+            const tombstoneExists = normalizeTombstones(persistedTombstones).includes(deletedProductId);
+            if (productStillExists || !tombstoneExists) {
+              console.error("[api/products] deletion verification mismatch", {
+                deletedProductId,
+                productStillExists,
+                tombstoneExists,
+              });
+              return new Response(JSON.stringify({ error: "Product deletion was not confirmed by the database; please retry." }), {
+                status: 409,
+                headers: { "Content-Type": "application/json" },
+              });
+            }
+          }
+
+          return new Response(JSON.stringify({ success, count: list.length, verifiedCount, deletedId: deletedProductId, product: savedProduct && {
             id: savedProduct.id,
             name: savedProduct.name,
             image: savedProduct.image,

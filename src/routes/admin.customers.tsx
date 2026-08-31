@@ -8,10 +8,10 @@ export const Route = createFileRoute("/admin/customers")({
 });
 
 function CustomersManagement() {
-  const { orders, isLoaded } = useOrdersList();
+  const { orders, isLoading } = useOrdersList();
   const [search, setSearch] = useState("");
 
-  if (!isLoaded) {
+  if (isLoading) {
     return <div className="p-8 text-center">Loading customers...</div>;
   }
 

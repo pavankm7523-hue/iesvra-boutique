@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useProducts } from "@/lib/products";
 import { useOrdersList } from "@/lib/orders";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -13,7 +14,7 @@ function AdminDashboard() {
 
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
-  const pendingOrders = orders.filter(o => o.status === 'Placed' || o.status === 'Processing').length;
+  const pendingOrders = orders.filter(o => o.status === 'Processing').length;
   // Compute low stock items (mock threshold for now or if we add stock field)
   const lowStockProducts = products.filter(p => p.stock !== undefined ? p.stock < 10 : false);
 
@@ -96,9 +97,17 @@ function AdminDashboard() {
                       <Pencil className="h-4 w-4" />
                     </Link>
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         if (confirm(`Are you sure you want to delete ${product.name}?`)) {
-                          deleteProduct(product.id);
+                          try {
+                            const result = await deleteProduct(product.id);
+                            if (result.deletedId !== product.id) {
+                              throw new Error("The server did not confirm the deleted product ID.");
+                            }
+                            toast.success(`Product "${product.name}" deleted successfully.`);
+                          } catch (error) {
+                            toast.error(error instanceof Error ? error.message : "Product could not be deleted.");
+                          }
                         }
                       }}
                       className="p-2 text-navy-deep/60 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
