@@ -62,6 +62,7 @@ export const Route = createFileRoute("/api/categories")({
             status: 200,
             headers: { "Content-Type": "application/json" },
           });
+        } catch (e: any) {
           return new Response(JSON.stringify({ error: e.message }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
