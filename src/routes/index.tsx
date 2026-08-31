@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { LiveActivityTicker } from "@/components/LiveActivityTicker";
 import { addToCart } from "@/lib/cart";
 import { getCurrentUser } from "@/lib/auth";
+import { useHeroBanners } from "@/lib/hero";
 import {
   ShieldCheck,
   Truck,
@@ -50,6 +51,9 @@ export function Home() {
   const navigate = useNavigate();
   const { isLoaded, bestSellersList, products } = useProducts();
   const { categories } = useCategories();
+  const { data: heroBanners = [] } = useHeroBanners();
+  const visibleHeroBanners = heroBanners.filter((banner) => banner.isActive !== false);
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [isPlusModalOpen, setIsPlusModalOpen] = useState(false);
@@ -60,6 +64,18 @@ export function Home() {
       setIsPlusMember(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (visibleHeroBanners.length < 2) return;
+    const timer = window.setInterval(() => {
+      setActiveHeroIndex((current) => (current + 1) % visibleHeroBanners.length);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [visibleHeroBanners.length]);
+
+  useEffect(() => {
+    if (activeHeroIndex >= visibleHeroBanners.length) setActiveHeroIndex(0);
+  }, [activeHeroIndex, visibleHeroBanners.length]);
   const [isPlusPaymentProcessing, setIsPlusPaymentProcessing] = useState(false);
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
@@ -284,33 +300,42 @@ export function Home() {
          ======================================================== */}
       <section className="w-full py-2 sm:py-4 relative overflow-hidden select-none">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          
-          <Link
-            to="/shop"
-            className="block relative group overflow-hidden rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-          >
-            <picture className="w-full h-auto block">
-              {/* High-Resolution Mobile Retina Asset */}
-              <source
-                media="(max-width: 639px)"
-                srcSet="/hero-banner-mobile.webp 1920w, /hero-banner-mobile.png 1920w"
-                type="image/webp"
-              />
-              {/* Ultra High-Resolution Desktop 4K/2K Asset */}
-              <source
-                media="(min-width: 640px)"
-                srcSet="/hero-banner-desktop.webp 2560w, /hero-banner-desktop.png 2560w"
-                type="image/webp"
-              />
-              {/* Fallback Image */}
-              <img
-                src="/hero-banner-desktop.png"
-                alt="IESVRA — Smart Shopping, Faster Delivery!"
-                className="w-full h-auto block object-contain rounded-2xl sm:rounded-3xl"
-                loading="eager"
-              />
-            </picture>
-          </Link>
+          {visibleHeroBanners.length > 0 ? (
+            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-lg bg-slate-900 aspect-[16/9] sm:aspect-[16/5]">
+              {visibleHeroBanners.map((banner, index) => (
+                <a
+                  key={banner.id}
+                  href={banner.buttonLink || "/shop"}
+                  aria-hidden={index !== activeHeroIndex}
+                  className={`absolute inset-0 transition-opacity duration-700 ${index === activeHeroIndex ? "opacity-100 z-10" : "opacity-0 pointer-events-none"}`}
+                >
+                  <img src={banner.backgroundImageUrl} alt={banner.title || "IESVRA offer"} className="absolute inset-0 w-full h-full object-cover" loading={index === 0 ? "eager" : "lazy"} />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/20 to-transparent" />
+                  <div className="relative z-10 h-full flex flex-col justify-center max-w-[70%] sm:max-w-[55%] p-5 sm:p-10 text-white">
+                    {banner.campaignType && banner.campaignType !== "standard" && (
+                      <span className="w-fit mb-2 rounded-full bg-gold px-3 py-1 text-[10px] sm:text-xs font-black uppercase tracking-wider text-navy-deep">
+                        {banner.campaignType.replace("-", " ")}
+                      </span>
+                    )}
+                    <h1 className="text-xl sm:text-4xl font-black leading-tight drop-shadow">{banner.title}</h1>
+                    {banner.subtitle && <p className="mt-2 text-xs sm:text-lg text-white/90 line-clamp-2">{banner.subtitle}</p>}
+                    {banner.buttonText && <span className="mt-4 w-fit rounded-lg bg-white px-4 py-2 text-[11px] sm:text-sm font-bold text-navy-deep">{banner.buttonText}</span>}
+                  </div>
+                </a>
+              ))}
+              {visibleHeroBanners.length > 1 && (
+                <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+                  {visibleHeroBanners.map((banner, index) => (
+                    <button key={banner.id} type="button" aria-label={`Show banner ${index + 1}`} onClick={() => setActiveHeroIndex(index)} className={`h-2 rounded-full transition-all ${index === activeHeroIndex ? "w-7 bg-white" : "w-2 bg-white/55"}`} />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/shop" className="block overflow-hidden rounded-2xl sm:rounded-3xl shadow-lg">
+              <img src="/hero-banner-desktop.png" alt="IESVRA — Smart Shopping, Faster Delivery!" className="w-full h-auto object-contain" loading="eager" />
+            </Link>
+          )}
         </div>
       </section>
 

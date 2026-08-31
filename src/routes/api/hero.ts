@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/hero")({
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
-              "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+              "Cache-Control": "no-store, no-cache, must-revalidate",
             },
           });
         } catch (e: any) {

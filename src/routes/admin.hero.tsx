@@ -27,6 +27,8 @@ function AdminHero() {
   const [buttonLink, setButtonLink] = useState("");
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
   const [isSpecialSale, setIsSpecialSale] = useState(false);
+  const [campaignType, setCampaignType] = useState<"standard" | "sale" | "festival" | "special-offer">("standard");
+  const [isActive, setIsActive] = useState(true);
   const [saleEndDate, setSaleEndDate] = useState("");
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productPrices, setProductPrices] = useState<Record<string, number>>({});
@@ -46,6 +48,8 @@ function AdminHero() {
       setButtonLink(banner.buttonLink);
       setBackgroundImageUrl(banner.backgroundImageUrl);
       setIsSpecialSale(banner.isSpecialSale);
+      setCampaignType(banner.campaignType || (banner.isSpecialSale ? "sale" : "standard"));
+      setIsActive(banner.isActive !== false);
       setSaleEndDate(banner.saleEndDate || "");
       setProductIds(banner.productIds || []);
       setProductPrices(banner.productPrices || {});
@@ -59,6 +63,8 @@ function AdminHero() {
       setButtonLink("/shop");
       setBackgroundImageUrl("");
       setIsSpecialSale(false);
+      setCampaignType("standard");
+      setIsActive(true);
       setSaleEndDate("");
       setProductIds([]);
       setProductPrices({});
@@ -142,6 +148,8 @@ function AdminHero() {
         buttonText: buttonText || "SHOP NOW",
         backgroundImageUrl: finalBgImage,
         isSpecialSale,
+        campaignType,
+        isActive,
         saleEndDate: formattedSaleEndDate,
         productIds,
         productPrices,
@@ -241,6 +249,9 @@ function AdminHero() {
                   <Clock className="w-3 h-3" /> Sale
                 </div>
               )}
+              {banner.isActive === false && (
+                <div className="absolute bottom-3 left-3 bg-slate-900/85 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase">Hidden</div>
+              )}
             </div>
             <div className="p-3 bg-[#f8f9fb] flex items-center justify-end gap-2 border-t border-border/40">
               <button onClick={() => openForm(banner)} className="p-2 text-navy-deep hover:bg-gold hover:text-white rounded-lg transition-colors" title="Edit">
@@ -283,6 +294,30 @@ function AdminHero() {
                   <input type="checkbox" className="sr-only peer" checked={isSpecialSale} onChange={(e) => setIsSpecialSale(e.target.checked)} />
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold"></div>
                 </label>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-navy-deep mb-1">Banner Type</label>
+                  <select value={campaignType} onChange={(e) => {
+                    const value = e.target.value as typeof campaignType;
+                    setCampaignType(value);
+                    setIsSpecialSale(value === "sale" || value === "special-offer");
+                  }} className="w-full h-11 px-4 bg-[#f8f9fb] border border-border/60 rounded-lg focus:outline-none focus:border-gold/50">
+                    <option value="standard">Standard Banner</option>
+                    <option value="sale">Sale Banner</option>
+                    <option value="festival">Festival Banner</option>
+                    <option value="special-offer">Special Offer Banner</option>
+                  </select>
+                  <p className="text-xs text-navy-deep/50 mt-1">Choose how this slide is labelled on the homepage.</p>
+                </div>
+                <div className="flex items-center justify-between bg-[#f8f9fb] px-4 rounded-lg border border-border/60 min-h-11">
+                  <div>
+                    <p className="text-sm font-semibold text-navy-deep">Visible on website</p>
+                    <p className="text-xs text-navy-deep/50">Turn off to save as a hidden draft.</p>
+                  </div>
+                  <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} className="w-5 h-5 accent-gold" />
+                </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">

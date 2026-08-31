@@ -1,10 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getHeroBanners, addHeroBanner, updateHeroBanner, deleteHeroBanner, type HeroSettings } from "./api/hero.server";
+import { addHeroBanner, updateHeroBanner, deleteHeroBanner, type HeroSettings } from "./api/hero.server";
 
 export function useHeroBanners() {
   return useQuery({
     queryKey: ["heroBanners"],
-    queryFn: () => getHeroBanners(),
+    queryFn: async () => {
+      const response = await fetch(`/api/hero?t=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) throw new Error("Failed to load hero banners");
+      return (await response.json()) as HeroSettings[];
+    },
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 }
 
