@@ -196,9 +196,13 @@ export async function getMetadataFromDb(keyStr: string): Promise<any | null> {
   const { url, key } = getSupabaseConfig();
   const res = await fetch(`${url}/rest/v1/orders?id=eq.${encodeURIComponent(keyStr)}&select=*`, {
     method: "GET",
+    cache: "no-store",
     headers: {
       apikey: key,
       Authorization: `Bearer ${key}`,
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      "X-IESVRA-Read-Nonce": `${Date.now()}-${Math.random()}`,
     },
   });
 
