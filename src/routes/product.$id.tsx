@@ -558,6 +558,11 @@ function ProductDetails() {
     window.location.href = "/cart?checkout=true";
   };
 
+  const cats = product.categories || [];
+  const realCats = cats.filter(c => c.toLowerCase() !== "uncategorized");
+  const displayCats = realCats.length > 0 ? realCats : cats;
+  const primaryCat = displayCats[0] || "All";
+
   return (
     <div key={product.id} className="min-h-screen w-full min-w-0 max-w-full overflow-x-clip bg-background pb-16 text-foreground">
       {/* Breadcrumbs */}
@@ -573,10 +578,10 @@ function ProductDetails() {
           <span>/</span>
           <Link
             to="/shop"
-            search={{ category: product.categories?.[0] || "All" }}
+            search={{ category: primaryCat }}
             className="hover:text-gold transition"
           >
-            {product.categories?.[0] || "All"}
+            {primaryCat}
           </Link>
           <span>/</span>
           <span className="text-navy-deep font-medium truncate max-w-[200px] sm:max-w-xs">
@@ -714,21 +719,21 @@ function ProductDetails() {
                 <div className="flex flex-wrap items-center gap-2.5">
                   {/* Category Pill */}
                   <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary bg-primary/10 px-3.5 py-1 rounded-full inline-block">
-                    {(product.categories || []).join(", ")}
+                    {displayCats.join(", ")}
                   </span>
 
                   {/* Amazon-Style #1 Best Seller Badge (Only for isBestSeller: true) */}
                   {product.isBestSeller && (
                     <Link
                       to="/shop"
-                      search={{ category: product.categories?.[0] || "All" }}
+                      search={{ category: primaryCat }}
                       className="inline-flex items-center gap-1.5 bg-[#e47911] hover:bg-[#c96608] text-white text-[11px] font-bold px-3 py-1 rounded-sm shadow-sm transition-all tracking-wide group"
-                      title={`View Best Sellers in ${product.categories?.[0] || "All"}`}
+                      title={`View Best Sellers in ${primaryCat}`}
                     >
                       <Award className="h-3.5 w-3.5 fill-white text-white shrink-0" />
                       <span>#1 Best Seller</span>
                       <span className="font-normal opacity-90 lowercase first-letter:uppercase text-[10px]">
-                        in {product.categories?.[0] || "Featured"}
+                        in {primaryCat === "All" ? "Featured" : primaryCat}
                       </span>
                     </Link>
                   )}
