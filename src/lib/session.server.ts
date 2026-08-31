@@ -15,6 +15,8 @@ function sign(value: string) {
 
 export function sessionCookie(user: SessionUser) {
   const payload = Buffer.from(JSON.stringify({ ...user, exp: Date.now() + 7 * 86400000 })).toString("base64url");
+  const isVercelProd = process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
+  // Setting without Domain or with Domain allows cross-subdomain sharing
   return `${COOKIE}=${payload}.${sign(payload)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`;
 }
 

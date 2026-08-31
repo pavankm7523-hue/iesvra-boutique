@@ -86,7 +86,7 @@ function NewProduct() {
       navigate({ to: "/admin" });
     } catch (error) {
       console.error("Product creation failed:", error);
-      toast.error("Product could not be saved. Please retry; your form is still open.");
+      toast.error(error instanceof Error ? error.message : "Product could not be saved. Please retry; your form is still open.");
     }
   };
 

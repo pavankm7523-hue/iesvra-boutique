@@ -109,7 +109,7 @@ function EditProduct() {
       navigate({ to: "/admin" });
     } catch (error) {
       console.error("Product update failed:", error);
-      toast.error("Product update was not saved. Please retry; your form is still open.");
+      toast.error(error instanceof Error ? error.message : "Product update was not saved. Please retry; your form is still open.");
     }
   };
 
