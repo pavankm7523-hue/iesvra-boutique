@@ -88,9 +88,7 @@ function Login() {
     if (socialProvider !== "Google") return;
 
     const initGoogleBtn = () => {
-      const client_id =
-        (window as any).GOOGLE_CLIENT_ID ||
-        "825754182940-32tep8cm2tku2cdpfmd29adhn8q8j4du.apps.googleusercontent.com";
+      const client_id = (window as any).GOOGLE_CLIENT_ID;
 
       try {
         if ((window as any).google?.accounts?.id) {
