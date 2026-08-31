@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useCurrentUser, logoutUser } from "@/lib/auth";
+import { useAuth, logoutUser } from "@/lib/auth";
 import { useOrdersList, cancelOrder } from "@/lib/orders";
 import { formatProductPolicy, getProductPolicy, useProducts } from "@/lib/products";
 import { createReturnRequest, useReturnRequests, type ReturnRequestType } from "@/lib/returnRequests";
@@ -68,7 +68,7 @@ const statusConfig = {
 };
 
 function MyOrdersPage() {
-  const user = useCurrentUser();
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const allOrders = useOrdersList();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -110,35 +110,28 @@ function MyOrdersPage() {
     }
   };
 
-  const [isAuthLoaded, setIsAuthLoaded] = useState(false);
-
+  // Redirect to login ONLY after auth check finishes and no user exists
   useEffect(() => {
-    setIsAuthLoaded(true);
-  }, []);
+    if (!isLoading && !user) {
+      toast.error("Please log in to view your orders.");
+      navigate({ to: "/login" });
+    }
+  }, [user, isLoading, navigate]);
 
-  // Redirect to login only if truly not authenticated.
-  // Double-check localStorage directly to avoid the SSR hydration race
-  // where React state (user) is still null but localStorage has the session.
-  useEffect(() => {
-    if (!isAuthLoaded) return;
-    // Give useCurrentUser's effect time to sync localStorage → state
-    const timer = setTimeout(() => {
-      const rawAuth = typeof window !== "undefined" ? localStorage.getItem("ishvara_auth") : null;
-      if (!rawAuth && user === null) {
-        toast.error("Please log in to view your orders.");
-        navigate({ to: "/login" });
-      }
-    }, 150);
-    return () => clearTimeout(timer);
-  }, [user, isAuthLoaded, navigate]);
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#f8f9fb] flex flex-col items-center justify-center p-6 text-center text-navy-deep font-sans">
+        <div className="w-10 h-10 border-3 border-navy-deep/20 border-t-gold rounded-full animate-spin mb-4" />
+        <p className="text-xs font-bold uppercase tracking-wider text-navy-deep/60">Loading your orders...</p>
+      </div>
+    );
+  }
 
-  // Also read directly from localStorage for the initial render guard
-  const hasLocalSession = typeof window !== "undefined" && !!localStorage.getItem("ishvara_auth");
-  if (!isAuthLoaded || !user) return null;
+  if (!user) return null;
 
   // Filter orders by logged-in user email (case-insensitive)
   const myOrders = allOrders.filter(
-    (o) => o.customerEmail.toLowerCase() === user.email.toLowerCase()
+    (o) => (o.customerEmail || "").toLowerCase() === (user.email || "").toLowerCase()
   );
 
   const handleLogout = () => {

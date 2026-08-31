@@ -14,13 +14,24 @@ let currentSessionUser: User | null = null;
 
 export function getCurrentUser(): User | null {
   if (typeof window === "undefined") return null;
-  return currentSessionUser;
+  if (currentSessionUser) return currentSessionUser;
+  try {
+    const raw = localStorage.getItem(AUTH_KEY);
+    if (raw) {
+      currentSessionUser = JSON.parse(raw);
+      return currentSessionUser;
+    }
+  } catch {}
+  return null;
 }
 
 export function loginUser(name: string, email: string, role: 'user' | 'admin' = 'user', extra?: { isPlusMember?: boolean; plusExpiry?: string }) {
   if (typeof window === "undefined") return;
   const user: User = { name, email, role, ...extra };
   currentSessionUser = user;
+  try {
+    localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+  } catch {}
   window.dispatchEvent(new CustomEvent(AUTH_EVENT));
   // Migrate any guest localStorage-only Plus membership to DB
   migratePlusMembershipToDb(email);
@@ -29,6 +40,9 @@ export function loginUser(name: string, email: string, role: 'user' | 'admin' = 
 export function logoutUser() {
   if (typeof window === "undefined") return;
   currentSessionUser = null;
+  try {
+    localStorage.removeItem(AUTH_KEY);
+  } catch {}
   void fetch("/api/auth/logout", { method: "POST" });
   window.dispatchEvent(new CustomEvent(AUTH_EVENT));
 }
@@ -422,19 +436,44 @@ export function hasUserAccount(email: string): boolean {
   return users.some(u => u.email.toLowerCase() === normalizedEmail);
 }
 
-export function useCurrentUser() {
-  // Keep the server render and the browser's first render identical. Reading
-  // localStorage here would make signed-in browsers hydrate different markup.
-  const [user, setUser] = useState<User | null>(null);
+export function useAuth() {
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== "undefined") {
+      return getCurrentUser();
+    }
+    return null;
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // 1. Initial immediate sync from localStorage
+    const local = getCurrentUser();
+    if (local) {
+      setUser(local);
+    }
+
+    // 2. Authoritative check with server session
     fetch("/api/auth/session", { cache: "no-store" })
       .then(res => res.json())
       .then(data => {
-        currentSessionUser = data.user || null;
-        setUser(currentSessionUser);
+        if (data && data.user) {
+          currentSessionUser = data.user;
+          try { localStorage.setItem(AUTH_KEY, JSON.stringify(data.user)); } catch {}
+          setUser(data.user);
+        } else {
+          // If server explicitly returns null and there is no valid cookie, clear stale local session
+          currentSessionUser = null;
+          try { localStorage.removeItem(AUTH_KEY); } catch {}
+          setUser(null);
+        }
       })
-      .catch(() => setUser(null));
+      .catch(() => {
+        // In case of network error, preserve local session
+        setUser(getCurrentUser());
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
 
     const handleUpdate = () => {
       setUser(getCurrentUser());
@@ -445,5 +484,10 @@ export function useCurrentUser() {
     };
   }, []);
 
+  return { user, isLoading, isAuthenticated: !!user };
+}
+
+export function useCurrentUser() {
+  const { user } = useAuth();
   return user;
 }

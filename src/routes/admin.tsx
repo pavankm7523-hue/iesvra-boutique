@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { ArrowLeft, LayoutDashboard, Settings, PackageOpen, ShieldAlert, Layers, Image as ImageIcon, RefreshCcw } from "lucide-react";
-import { useCurrentUser } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -10,7 +10,16 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminLayout() {
-  const currentUser = useCurrentUser();
+  const { user: currentUser, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#f8f9fb] flex flex-col items-center justify-center p-6 text-center text-navy-deep font-sans">
+        <div className="w-10 h-10 border-3 border-navy-deep/20 border-t-gold rounded-full animate-spin mb-4" />
+        <p className="text-xs font-bold uppercase tracking-wider text-navy-deep/60">Verifying administrator access...</p>
+      </div>
+    );
+  }
 
   if (!currentUser || currentUser.role !== "admin") {
     return (
