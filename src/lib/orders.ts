@@ -23,7 +23,7 @@ export interface Order {
   shipping: number;
   total: number;
   date: string;
-  status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending';
+  status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending' | 'Archived';
   paymentStatus?: 'Paid' | 'Pending - COD';
   trackingId?: string;
   source?: 'website' | 'mobile';
@@ -241,7 +241,7 @@ export async function createOrder(
   return savedOrder;
 }
 
-export async function updateOrderStatus(orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending') {
+export async function updateOrderStatus(orderId: string, status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Cancelled - Refund Pending' | 'Archived') {
   const oldOrder = await getOrderById(orderId);
   
   // Use direct fetch to /api/update-order to avoid createServerFn SSR caching issues
