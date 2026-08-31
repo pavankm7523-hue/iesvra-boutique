@@ -177,17 +177,7 @@ export type Category = {
   image: string;
 };
 
-export const initialCategories: Category[] = [
-  { name: "Massagers", image: pHead },
-  { name: "Mobile Accessories", image: pAirpods },
-  { name: "Beauty & Personal Care", image: pVanity },
-  { name: "Home & Kitchen", image: pJar },
-  { name: "Bags & Travel", image: pTravel },
-  { name: "Drinkware", image: pSteel },
-  { name: "Daily Essentials", image: pDish },
-  { name: "Fans & Coolers", image: pFan },
-  { name: "Books & Stationery", image: "/products/books/ncert_pcm_set_full_edited_26-27.png" },
-];
+export const initialCategories: Category[] = [];
 
 const categoryImageMap: Record<string, string> = {
   "Massagers": pHead,
