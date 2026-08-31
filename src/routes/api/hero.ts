@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
+import { requireAdmin } from "@/lib/session.server";
 
 export const Route = createFileRoute("/api/hero")({
   server: {
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/api/hero")({
         }
       },
       POST: async ({ request }) => {
+        const forbidden = requireAdmin(request); if (forbidden) return forbidden;
         try {
           const list = await request.json();
           if (!Array.isArray(list)) {

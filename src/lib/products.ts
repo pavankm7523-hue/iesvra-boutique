@@ -215,15 +215,19 @@ export function getCategories(): Category[] {
   }
 }
 
-export function saveCategories(cats: Category[]) {
+export async function saveCategories(cats: Category[]) {
   if (typeof window === "undefined") return;
-  localStorage.setItem("ishvara_categories_v3", JSON.stringify(cats));
-  window.dispatchEvent(new CustomEvent("ishvara_categories_changed"));
-  fetch("/api/categories", {
+  const response = await fetch("/api/categories", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(cats),
-  }).catch(console.error);
+  });
+  const result = await response.json().catch(() => null) as { success?: boolean; error?: string } | null;
+  if (!response.ok || !result?.success) {
+    throw new Error(result?.error || `Category save failed (HTTP ${response.status}).`);
+  }
+  localStorage.setItem("ishvara_categories_v3", JSON.stringify(cats));
+  window.dispatchEvent(new CustomEvent("ishvara_categories_changed"));
 }
 
 export function useCategories() {
@@ -242,11 +246,10 @@ export function useCategories() {
           setCats(sanitized);
           localStorage.setItem("ishvara_categories_v3", JSON.stringify(sanitized));
         } else {
-          fetch("/api/categories", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(cats),
-          }).catch(console.error);
+          // A page load must never repopulate the database with bundled
+          // defaults. Only an explicit, confirmed admin save may write data.
+          setCats([]);
+          localStorage.setItem("ishvara_categories_v3", "[]");
         }
       })
       .catch((err) => {
@@ -264,19 +267,19 @@ export function useCategories() {
     }
   }, []);
 
-  const addCategory = (c: Category) => {
+  const addCategory = async (c: Category) => {
     const updated = [...cats, c];
-    saveCategories(updated);
+    await saveCategories(updated);
   };
 
-  const updateCategory = (oldName: string, updated: Category) => {
+  const updateCategory = async (oldName: string, updated: Category) => {
     const updatedCats = cats.map((c) => (c.name.toLowerCase() === oldName.toLowerCase() ? updated : c));
-    saveCategories(updatedCats);
+    await saveCategories(updatedCats);
   };
 
-  const deleteCategory = (name: string) => {
+  const deleteCategory = async (name: string) => {
     const updated = cats.filter((c) => c.name.toLowerCase() !== name.toLowerCase());
-    saveCategories(updated);
+    await saveCategories(updated);
   };
 
   return {
@@ -3274,11 +3277,10 @@ export function useProducts() {
           setProducts(normalizedGlobal);
           safeSetLocalProducts("ishvara_products_v12", normalizedGlobal);
         } else {
-          fetch("/api/products", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(initialProducts),
-          }).catch(console.error);
+          // Never write the bundled fallback catalog from a page load. An
+          // empty/error response must not be able to reset live admin edits.
+          setProducts([]);
+          safeSetLocalProducts("ishvara_products_v12", []);
         }
         setIsLoaded(true);
       })
@@ -3363,7 +3365,7 @@ export function useProducts() {
     }
   };
 
-  const bulkUpdateProducts = (updatedProducts: Product[]) => {
+  const bulkUpdateProducts = async (updatedProducts: Product[]) => {
     let current = [...products];
     for (const p of updatedProducts) {
       current = current.map((prod) => (prod.id === p.id ? p : prod));
@@ -3372,13 +3374,18 @@ export function useProducts() {
     safeSetLocalProducts("ishvara_products_v12", current);
     triggerProductsChange();
 
-    fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      // Send only the records intentionally changed. Sending the whole local
-      // catalog lets a stale admin tab overwrite unrelated newer products.
-      body: JSON.stringify({ action: "bulkUpsert", products: updatedProducts }),
-    }).catch(console.error);
+    try {
+      const result = await persistProductMutation({ action: "bulkUpsert", products: updatedProducts });
+      if (result.verifiedCount !== updatedProducts.length) {
+        throw new Error("Bulk product save was not fully verified by the database.");
+      }
+      return result;
+    } catch (error) {
+      setProducts(products);
+      safeSetLocalProducts("ishvara_products_v12", products);
+      triggerProductsChange();
+      throw error;
+    }
   };
 
   const deleteProduct = async (id: string) => {

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requireAdmin } from "@/lib/session.server";
 import process from "node:process";
 
 function escapeHtml(value: unknown) {
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/api/send-review-request")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const forbidden = requireAdmin(request); if (forbidden) return forbidden;
         try {
           const { order } = await request.json();
           if (!order?.id || !order?.customerEmail || !Array.isArray(order?.items)) {

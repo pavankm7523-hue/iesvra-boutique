@@ -406,7 +406,7 @@ function DealsPage() {
                         <button
                           type="button"
                           onClick={() => {
-                            addToCart(product, 1);
+                            addToCart(product, product.colors?.[0] || "Default", 1);
                             toast.success(`Claimed deal: Added "${product.name}" to cart!`);
                           }}
                           className="w-full bg-[#1A0B3B] hover:bg-[#6B46C1] active:scale-95 text-white py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"

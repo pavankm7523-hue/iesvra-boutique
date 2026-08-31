@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
+import { requireAdmin } from "@/lib/session.server";
 
 type CatalogProduct = Record<string, any> & {
   id: string;
@@ -77,10 +78,12 @@ export const Route = createFileRoute("/api/products")({
         }
       },
       POST: async ({ request }) => {
+        const forbidden = requireAdmin(request); if (forbidden) return forbidden;
         try {
           const payload = await request.json();
           let list: any[];
           let savedProduct: CatalogProduct | undefined;
+          let productsToVerify: CatalogProduct[] = [];
           const current = await getMetadataFromDb("global_products");
           const existing = Array.isArray(current) ? current : [];
           const storedTombstones = normalizeTombstones(await getMetadataFromDb(PRODUCT_TOMBSTONES_KEY));
@@ -97,14 +100,16 @@ export const Route = createFileRoute("/api/products")({
                 headers: { "Content-Type": "application/json" },
               });
             }
-            list = payload.map(validateProduct).filter((product) => !tombstones.has(product.id));
+            list = payload.map(validateProduct).filter((product: CatalogProduct) => !tombstones.has(product.id));
           } else if (payload?.action === "bulkUpsert" && Array.isArray(payload.products)) {
             const allowedProducts = payload.products
               .map(validateProduct)
-              .filter((product) => !tombstones.has(product.id));
+              .filter((product: CatalogProduct) => !tombstones.has(product.id));
+            productsToVerify = allowedProducts;
             list = mergeById(existing, allowedProducts);
           } else if (["create", "update", "upsert"].includes(payload?.action) && payload.product?.id) {
             savedProduct = validateProduct(payload.product);
+            productsToVerify = [savedProduct];
             const previous = existing.find((product: any) => product?.id === savedProduct!.id);
 
             if (payload.action === "create" && previous) {
@@ -152,12 +157,16 @@ export const Route = createFileRoute("/api/products")({
               });
             }
           }
-          if (success && savedProduct) {
+          let verifiedCount = 0;
+          if (success && productsToVerify.length > 0) {
             const persisted = await getMetadataFromDb("global_products");
-            const verified = Array.isArray(persisted)
-              ? persisted.find((product: any) => product?.id === savedProduct!.id)
-              : undefined;
-            if (!verified || verified.name !== savedProduct.name || verified.image !== savedProduct.image) {
+            verifiedCount = Array.isArray(persisted)
+              ? productsToVerify.filter((expected) => {
+                  const actual = persisted.find((product: CatalogProduct) => product?.id === expected.id);
+                  return actual && JSON.stringify(actual) === JSON.stringify(expected);
+                }).length
+              : 0;
+            if (verifiedCount !== productsToVerify.length) {
               return new Response(JSON.stringify({ error: "Product save verification failed. The catalog was not confirmed; please retry." }), {
                 status: 409,
                 headers: { "Content-Type": "application/json" },
@@ -165,7 +174,7 @@ export const Route = createFileRoute("/api/products")({
             }
           }
 
-          return new Response(JSON.stringify({ success, count: list.length, product: savedProduct && {
+          return new Response(JSON.stringify({ success, count: list.length, verifiedCount, product: savedProduct && {
             id: savedProduct.id,
             name: savedProduct.name,
             image: savedProduct.image,

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
 import { hashPassword } from "@/lib/password.server";
+import { sessionCookie } from "@/lib/session.server";
 
 function isAdminEmail(email: string): boolean {
   const normalized = email.trim().toLowerCase();
@@ -48,7 +49,7 @@ export const Route = createFileRoute("/api/auth/register")({
             );
           }
 
-          const role = isAdminEmail(normalizedEmail) ? "admin" : "user";
+          const role: "admin" | "user" = isAdminEmail(normalizedEmail) ? "admin" : "user";
           const newUser = {
             name: trimmedName,
             email: normalizedEmail,
@@ -68,7 +69,7 @@ export const Route = createFileRoute("/api/auth/register")({
                 role: newUser.role,
               },
             }),
-            { status: 200, headers: { "Content-Type": "application/json" } }
+            { status: 200, headers: { "Content-Type": "application/json", "Set-Cookie": sessionCookie({ name: newUser.name, email: newUser.email, role: newUser.role }) } }
           );
         } catch (err: any) {
           console.error("[/api/auth/register] Error:", err);

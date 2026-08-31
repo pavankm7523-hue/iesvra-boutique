@@ -10,21 +10,17 @@ export interface User {
 
 const AUTH_KEY = "ishvara_auth";
 const AUTH_EVENT = "ishvara_auth_changed";
+let currentSessionUser: User | null = null;
 
 export function getCurrentUser(): User | null {
   if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(AUTH_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    return null;
-  }
+  return currentSessionUser;
 }
 
 export function loginUser(name: string, email: string, role: 'user' | 'admin' = 'user', extra?: { isPlusMember?: boolean; plusExpiry?: string }) {
   if (typeof window === "undefined") return;
   const user: User = { name, email, role, ...extra };
-  localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+  currentSessionUser = user;
   window.dispatchEvent(new CustomEvent(AUTH_EVENT));
   // Migrate any guest localStorage-only Plus membership to DB
   migratePlusMembershipToDb(email);
@@ -32,7 +28,8 @@ export function loginUser(name: string, email: string, role: 'user' | 'admin' = 
 
 export function logoutUser() {
   if (typeof window === "undefined") return;
-  localStorage.removeItem(AUTH_KEY);
+  currentSessionUser = null;
+  void fetch("/api/auth/logout", { method: "POST" });
   window.dispatchEvent(new CustomEvent(AUTH_EVENT));
 }
 
@@ -255,11 +252,8 @@ export async function registerUserInDbAsync(name: string, email: string, passwor
     }
     return { success: false, error: data.error || "Failed to register account." };
   } catch (err: any) {
-    console.warn("[auth] registerUserInDbAsync fallback to local:", err);
-    const localSuccess = registerUserInDb(name, email, password);
-    return localSuccess
-      ? { success: true, user: { name: name.trim(), email: email.trim().toLowerCase(), role: isAdminEmail(email) ? 'admin' : 'user' } }
-      : { success: false, error: "An account with this email already exists." };
+    console.warn("[auth] registration request failed:", err);
+    return { success: false, error: "Unable to contact the authentication server." };
   }
 }
 
@@ -306,8 +300,8 @@ export async function validateUserCredentialsAsync(
       isOAuthOnly: data.isOAuthOnly,
     };
   } catch (err: any) {
-    console.warn("[auth] validateUserCredentialsAsync fallback to local:", err);
-    return validateUserCredentials(email, password);
+    console.warn("[auth] login request failed:", err);
+    return { success: false, error: "Unable to contact the authentication server." };
   }
 }
 
@@ -370,22 +364,21 @@ export function validateUserCredentials(email: string, password: string): { succ
   return { success: true, name: user.name, role: user.role };
 }
 
-export async function updateUserPasswordAsync(email: string, password: string): Promise<boolean> {
+export async function updateUserPasswordAsync(email: string, password: string, otp: string): Promise<boolean> {
   try {
     const res = await fetch("/api/auth/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim().toLowerCase(), newPassword: password }),
+      body: JSON.stringify({ email: email.trim().toLowerCase(), newPassword: password, otp }),
     });
     const data = await res.json();
     if (res.ok && data.success) {
-      updateUserPassword(email, password); // update local storage state as well
       return true;
     }
     return false;
   } catch (err: any) {
-    console.warn("[auth] updateUserPasswordAsync fallback to local:", err);
-    return updateUserPassword(email, password);
+    console.warn("[auth] password reset request failed:", err);
+    return false;
   }
 }
 
@@ -435,12 +428,13 @@ export function useCurrentUser() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    setUser(getCurrentUser());
-
-    // Sync with global database on mount
-    syncAuthWithDb().then(() => {
-      setUser(getCurrentUser());
-    });
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then(res => res.json())
+      .then(data => {
+        currentSessionUser = data.user || null;
+        setUser(currentSessionUser);
+      })
+      .catch(() => setUser(null));
 
     const handleUpdate = () => {
       setUser(getCurrentUser());

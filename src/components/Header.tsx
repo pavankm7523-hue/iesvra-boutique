@@ -563,7 +563,6 @@ export function Header() {
                 <Link
                   key={l.label}
                   to={l.to}
-                  hash={l.hash}
                   className="text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-primary transition-colors py-3 relative group"
                 >
                   {l.label}
@@ -693,7 +692,6 @@ export function Header() {
             <Link
               key={l.label}
               to={l.to}
-              hash={l.hash}
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-sm font-semibold tracking-wide text-white/80 hover:text-gold transition-colors py-2 border-b border-white/5 last:border-0"
             >

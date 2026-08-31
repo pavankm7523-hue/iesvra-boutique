@@ -42,7 +42,6 @@ function Login() {
   const [forgotOtp, setForgotOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState("");
 
   // Sync users database on mount
   useEffect(() => {
@@ -54,8 +53,11 @@ function Login() {
   const [socialEmail, setSocialEmail] = useState("");
 
   const handleSocialLogin = (provider: string) => {
-    setSocialProvider(provider);
-    setSocialEmail("");
+    if (provider === "Google") {
+      window.location.assign("/api/auth/google");
+      return;
+    }
+    toast.error(`${provider} sign-in is not configured yet.`);
   };
 
   const handleSocialLoginSubmit = (nameVal: string, emailVal: string) => {
@@ -149,17 +151,10 @@ function Login() {
         toast.error("Please enter your email.");
         return;
       }
-      if (!hasUserAccount(forgotEmail)) {
-        toast.error("No account found with this email address. Please check and try again.");
-        return;
-      }
-      const otp = Math.floor(1000 + Math.random() * 9000).toString();
-      setGeneratedOtp(otp);
-
       const sendOtpPromise = fetch("/api/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: forgotEmail.trim(), otp }),
+        body: JSON.stringify({ email: forgotEmail.trim() }),
       }).then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to send OTP.");
@@ -177,7 +172,7 @@ function Login() {
 
       setForgotStep("otp");
     } else if (forgotStep === "otp") {
-      if (forgotOtp === generatedOtp || forgotOtp === "1234") {
+      if (/^\d{6}$/.test(forgotOtp)) {
         toast.success("OTP verified successfully!");
         setForgotStep("reset");
       } else {
@@ -195,7 +190,7 @@ function Login() {
 
       setIsSubmitting(true);
       try {
-        const success = await updateUserPasswordAsync(forgotEmail, newPassword);
+        const success = await updateUserPasswordAsync(forgotEmail, newPassword, forgotOtp);
         if (success) {
           toast.success("Password reset successful! Please log in with your new password.");
           setForgotStep("none");

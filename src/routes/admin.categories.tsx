@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCategories, useProducts, Category } from "@/lib/products";
 import { useState, useRef } from "react";
-import { Layers, Plus, Pencil, Trash2, Save, Upload, X, Image as ImageIcon, Search } from "lucide-react";
+import { Layers, Plus, Pencil, Trash2, Save, Upload, X, Image as ImageIcon, Search, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/categories")({
@@ -23,6 +23,8 @@ function AdminCategories() {
   const [image, setImage] = useState("");
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productSearch, setProductSearch] = useState("");
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,7 +47,7 @@ function AdminCategories() {
     setIsModalOpen(true);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -57,18 +59,36 @@ function AdminCategories() {
         return;
       }
       
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const result = ev.target?.result as string;
-        if (result) {
-          setImage(result);
+      setIsImageUploading(true);
+      try {
+        const fileData = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ""));
+          reader.onerror = () => reject(reader.error || new Error("Could not read the image."));
+          reader.readAsDataURL(file);
+        });
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileData, fileName: file.name, contentType: file.type }),
+        });
+        const result = await response.json().catch(() => null) as { url?: string; error?: string } | null;
+        if (!response.ok || !result?.url) {
+          throw new Error(result?.error || `Image upload failed (HTTP ${response.status}).`);
         }
-      };
-      reader.readAsDataURL(file);
+        setImage(result.url);
+        toast.success("Category image uploaded.");
+      } catch (error) {
+        console.error("[admin/categories] category image upload failed", error);
+        toast.error(error instanceof Error ? error.message : "Category image upload failed.");
+      } finally {
+        setIsImageUploading(false);
+        e.target.value = "";
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       toast.error("Please enter a category name.");
@@ -84,50 +104,58 @@ function AdminCategories() {
       image: image
     };
 
-    if (modalMode === "add") {
-      // Check for duplicate name
-      const exists = categories.some(c => c.name.toLowerCase() === name.trim().toLowerCase());
-      if (exists) {
-        toast.error("A category with this name already exists.");
-        return;
-      }
-      addCategory(categoryData);
-      toast.success(`Category "${name}" created successfully!`);
-    } else {
-      updateCategory(editingCategoryName, categoryData);
-      toast.success(`Category "${name}" updated successfully!`);
-    }
-
-    // Bulk update products
-    const catName = name.trim();
-    const previousName = modalMode === "edit" ? editingCategoryName : catName;
-    const updatedProducts = products.map(p => {
-      const isChecked = productIds.includes(p.id);
-      const existingCategories = p.categories || [];
-      const hadPreviousCategory = existingCategories.includes(previousName);
-      const withoutEditedCategory = existingCategories.filter(
-        c => c !== previousName && c !== catName
-      );
-      
-      if (isChecked) {
-        const nextCategories = [...withoutEditedCategory, catName];
-        if (JSON.stringify(nextCategories) !== JSON.stringify(existingCategories)) {
-          return { ...p, categories: nextCategories };
+    setIsSaving(true);
+    try {
+      if (modalMode === "add") {
+        // Check for duplicate name
+        const exists = categories.some(c => c.name.toLowerCase() === name.trim().toLowerCase());
+        if (exists) {
+          toast.error("A category with this name already exists.");
+          return;
         }
-      } else if (hadPreviousCategory || existingCategories.includes(catName)) {
-        return { ...p, categories: withoutEditedCategory };
+        await addCategory(categoryData);
+        toast.success(`Category "${name}" created successfully!`);
+      } else {
+        await updateCategory(editingCategoryName, categoryData);
+        toast.success(`Category "${name}" updated successfully!`);
       }
-      return null;
-    }).filter(Boolean) as typeof products;
 
-    if (updatedProducts.length > 0) {
-      bulkUpdateProducts(updatedProducts);
+      // Bulk update products
+      const catName = name.trim();
+      const previousName = modalMode === "edit" ? editingCategoryName : catName;
+      const updatedProducts = products.map(p => {
+        const isChecked = productIds.includes(p.id);
+        const existingCategories = p.categories || [];
+        const hadPreviousCategory = existingCategories.includes(previousName);
+        const withoutEditedCategory = existingCategories.filter(
+          c => c !== previousName && c !== catName
+        );
+      
+        if (isChecked) {
+          const nextCategories = [...withoutEditedCategory, catName];
+          if (JSON.stringify(nextCategories) !== JSON.stringify(existingCategories)) {
+            return { ...p, categories: nextCategories };
+          }
+        } else if (hadPreviousCategory || existingCategories.includes(catName)) {
+          return { ...p, categories: withoutEditedCategory };
+        }
+        return null;
+      }).filter(Boolean) as typeof products;
+
+      if (updatedProducts.length > 0) {
+        await bulkUpdateProducts(updatedProducts);
+      }
+
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("[admin/categories] category save failed", error);
+      toast.error(error instanceof Error ? error.message : "Category could not be saved.");
+    } finally {
+      setIsSaving(false);
     }
-
-    setIsModalOpen(false);
   };
 
-  const handleDelete = (catName: string) => {
+  const handleDelete = async (catName: string) => {
     const associatedProductsCount = products.filter(
       p => (p.categories || []).includes(catName)
     ).length;
@@ -138,8 +166,13 @@ function AdminCategories() {
     }
 
     if (confirm(confirmMsg)) {
-      deleteCategory(catName);
-      toast.success(`Category "${catName}" deleted successfully.`);
+      try {
+        await deleteCategory(catName);
+        toast.success(`Category "${catName}" deleted successfully.`);
+      } catch (error) {
+        console.error("[admin/categories] category delete failed", error);
+        toast.error(error instanceof Error ? error.message : "Category could not be deleted.");
+      }
     }
   };
 
@@ -256,7 +289,12 @@ function AdminCategories() {
                   onClick={() => fileInputRef.current?.click()}
                   className="border-2 border-dashed border-border/60 hover:border-gold/50 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer bg-secondary/5 hover:bg-gold/5 transition-all text-center"
                 >
-                  {image ? (
+                  {isImageUploading ? (
+                    <>
+                      <Loader2 className="h-8 w-8 text-gold mb-2 animate-spin" />
+                      <p className="text-xs font-bold text-navy-deep">Uploading image…</p>
+                    </>
+                  ) : image ? (
                     <div className="space-y-3 flex flex-col items-center">
                       <div className="w-20 h-20 rounded-full overflow-hidden bg-white border-2 border-white shadow-sm ring-1 ring-border/50">
                         <img
@@ -333,9 +371,11 @@ function AdminCategories() {
 
               <button
                 type="submit"
-                className="w-full h-12 bg-navy-deep text-gold font-bold uppercase tracking-widest text-xs rounded-full hover:bg-gold hover:text-navy-deep transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-navy-deep/10 cursor-pointer mt-4"
+                disabled={isImageUploading || isSaving}
+                className="w-full h-12 bg-navy-deep text-gold font-bold uppercase tracking-widest text-xs rounded-full hover:bg-gold hover:text-navy-deep transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-navy-deep/10 cursor-pointer mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Save className="h-4.5 w-4.5" /> {modalMode === "add" ? "Save Category" : "Save Changes"}
+                {isSaving ? <Loader2 className="h-4.5 w-4.5 animate-spin" /> : <Save className="h-4.5 w-4.5" />}
+                {isSaving ? "Saving…" : modalMode === "add" ? "Save Category" : "Save Changes"}
               </button>
             </form>
           </div>

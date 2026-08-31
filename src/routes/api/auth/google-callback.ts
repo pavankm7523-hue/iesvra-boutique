@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
+import { sessionCookie } from "@/lib/session.server";
 
 export const Route = createFileRoute("/api/auth/google-callback")({
   server: {
@@ -121,13 +122,6 @@ export const Route = createFileRoute("/api/auth/google-callback")({
                       email: existingUser.email,
                       role: existingUser.role,
                     })};
-                    localStorage.setItem("ishvara_auth", JSON.stringify(session));
-                    
-                    // Dispatch custom event to notify listeners on the same origin (if any)
-                    try {
-                      window.dispatchEvent(new CustomEvent("ishvara_auth_changed"));
-                    } catch (e) {}
-
                     // If opened as a popup (e.g. mobile app preview), message the opener and close
                     if (window.opener) {
                       window.opener.postMessage({ 
@@ -152,6 +146,7 @@ export const Route = createFileRoute("/api/auth/google-callback")({
           return new Response(html, {
             headers: {
               "Content-Type": "text/html",
+              "Set-Cookie": sessionCookie({ name: existingUser.name, email: existingUser.email, role: existingUser.role }),
             },
           });
         } catch (error: any) {

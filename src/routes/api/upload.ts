@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
+import { requireAdmin } from "@/lib/session.server";
 
 function getSupabaseConfig() {
   const url = (process.env.SUPABASE_URL || "").trim();
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/api/upload")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const forbidden = requireAdmin(request); if (forbidden) return forbidden;
         try {
           const body = await request.json();
           const { fileData, fileName, contentType } = body;

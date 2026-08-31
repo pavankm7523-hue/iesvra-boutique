@@ -33,6 +33,29 @@ import {
   ShoppingBag,
 } from "lucide-react";
 
+const fallbackHeroBanners = [
+  {
+    id: "fallback-hero-desktop",
+    title: "Smart Shopping, Faster Delivery",
+    subtitle: "Discover everyday essentials and limited-time offers.",
+    buttonText: "Shop Now",
+    buttonLink: "/shop",
+    backgroundImageUrl: "/hero-banner-desktop.webp",
+    campaignType: "standard" as const,
+    isActive: true,
+  },
+  {
+    id: "fallback-hero-showcase",
+    title: "Something Special, Every Day",
+    subtitle: "Fresh deals selected for the IESVRA community.",
+    buttonText: "Explore Deals",
+    buttonLink: "/deals",
+    backgroundImageUrl: "/hero-banner-3d.png",
+    campaignType: "standard" as const,
+    isActive: true,
+  },
+];
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -52,7 +75,15 @@ export function Home() {
   const { isLoaded, bestSellersList, products } = useProducts();
   const { categories } = useCategories();
   const { data: heroBanners = [] } = useHeroBanners();
-  const visibleHeroBanners = heroBanners.filter((banner) => banner.isActive !== false);
+  const activeAdminBanners = heroBanners.filter((banner) => banner.isActive !== false);
+  const visibleHeroBanners = activeAdminBanners.length >= 2
+    ? activeAdminBanners
+    : [
+        ...activeAdminBanners,
+        ...fallbackHeroBanners.filter(
+          (fallback) => !activeAdminBanners.some((banner) => banner.backgroundImageUrl === fallback.backgroundImageUrl),
+        ),
+      ];
   const [activeHeroIndex, setActiveHeroIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -69,7 +100,7 @@ export function Home() {
     if (visibleHeroBanners.length < 2) return;
     const timer = window.setInterval(() => {
       setActiveHeroIndex((current) => (current + 1) % visibleHeroBanners.length);
-    }, 5000);
+    }, 3000);
     return () => window.clearInterval(timer);
   }, [visibleHeroBanners.length]);
 

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import process from "node:process";
+import { createPasswordResetOtp } from "@/lib/passwordReset.server";
 
 export const Route = createFileRoute("/api/send-otp")({
   server: {
@@ -7,7 +8,7 @@ export const Route = createFileRoute("/api/send-otp")({
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-          const { email, otp } = body;
+          const { email } = body;
 
           if (!email || typeof email !== "string" || !email.includes("@")) {
             return new Response(
@@ -16,12 +17,8 @@ export const Route = createFileRoute("/api/send-otp")({
             );
           }
 
-          if (!otp || typeof otp !== "string") {
-            return new Response(
-              JSON.stringify({ error: "OTP is required." }),
-              { status: 400, headers: { "Content-Type": "application/json" } }
-            );
-          }
+          const normalizedEmail = email.trim().toLowerCase();
+          const otp = await createPasswordResetOtp(normalizedEmail);
 
           const apiKey = (process.env.RESEND_API_KEY || "").trim();
           if (!apiKey) {
@@ -117,7 +114,7 @@ export const Route = createFileRoute("/api/send-otp")({
             },
             body: JSON.stringify({
               from: "IESVRA Security <no-reply@iesvra.com>",
-              to: email.trim().toLowerCase(),
+              to: normalizedEmail,
               subject: `🔐 Your IESVRA Password Reset Code: ${otp}`,
               html: emailHtml,
             }),

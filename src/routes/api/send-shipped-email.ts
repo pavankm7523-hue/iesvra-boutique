@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requireAdmin } from "@/lib/session.server";
 import process from "node:process";
 
 export const Route = createFileRoute("/api/send-shipped-email")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const forbidden = requireAdmin(request); if (forbidden) return forbidden;
         try {
           const body = await request.json();
           const { order } = body;

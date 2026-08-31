@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requireAdmin } from "@/lib/session.server";
 import process from "node:process";
 import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
 
@@ -6,6 +7,7 @@ export const Route = createFileRoute("/api/update-order")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const forbidden = requireAdmin(request); if (forbidden) return forbidden;
         try {
           const body = await request.json();
           const { id, status, trackingId } = body;
