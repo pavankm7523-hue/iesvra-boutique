@@ -560,7 +560,7 @@ function ProductDetails() {
 
   const cats = product.categories || [];
   const realCats = cats.filter(c => c.toLowerCase() !== "uncategorized");
-  const displayCats = realCats.length > 0 ? realCats : cats;
+  const displayCats = realCats;
   const primaryCat = displayCats[0] || "All";
 
   return (
@@ -718,9 +718,11 @@ function ProductDetails() {
               <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2.5">
                   {/* Category Pill */}
-                  <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary bg-primary/10 px-3.5 py-1 rounded-full inline-block">
-                    {displayCats.join(", ")}
-                  </span>
+                  {displayCats.length > 0 && (
+                    <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary bg-primary/10 px-3.5 py-1 rounded-full inline-block">
+                      {displayCats.join(", ")}
+                    </span>
+                  )}
 
                   {/* Amazon-Style #1 Best Seller Badge (Only for isBestSeller: true) */}
                   {product.isBestSeller && (
