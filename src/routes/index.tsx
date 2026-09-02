@@ -534,19 +534,18 @@ export function Home() {
               key={c.name}
               to="/shop"
               search={{ category: c.name }}
-              className="group bg-white rounded-2xl p-4 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center text-center cursor-pointer"
+              aria-label={`Shop ${c.name}`}
+              title={c.name}
+              className="group block bg-white rounded-2xl border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
             >
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-slate-50 overflow-hidden flex items-center justify-center p-3 mb-3 group-hover:bg-purple-50 transition-colors">
+              <div className="aspect-square w-full overflow-hidden bg-slate-50">
                 <img
                   src={c.image}
                   alt={c.name}
                   loading="lazy"
-                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
                 />
               </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-[#6B46C1] transition-colors leading-tight line-clamp-2">
-                {c.name}
-              </span>
             </Link>
           ))}
         </div>
