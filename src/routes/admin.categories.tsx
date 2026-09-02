@@ -196,7 +196,6 @@ function AdminCategories() {
           <thead>
             <tr className="bg-secondary/20 border-b border-border/45 text-navy-deep/70 text-xs font-bold uppercase tracking-wider">
               <th className="p-5">Icon / Image</th>
-              <th className="p-5">Category Name</th>
               <th className="p-5">Product Count</th>
               <th className="p-5 text-right">Actions</th>
             </tr>
@@ -216,9 +215,6 @@ function AdminCategories() {
                         className="w-full h-full rounded-full object-cover object-center"
                       />
                     </div>
-                  </td>
-                  <td className="p-5 font-bold text-base text-navy-deep">
-                    {cat.name}
                   </td>
                   <td className="p-5">
                     <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold bg-secondary/30 text-navy-deep/80 border border-border/10">
