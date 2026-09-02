@@ -594,7 +594,7 @@ function ProductDetails() {
         <div className="grid w-full min-w-0 max-w-full lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* Left Column: Image & Gallery (5 cols) */}
           <div className="w-full min-w-0 max-w-full lg:col-span-5 space-y-6 lg:sticky lg:top-24">
-            <div className="bg-white rounded-[2rem] border border-border/30 overflow-hidden shadow-2xl shadow-navy-deep/5 w-full aspect-square relative flex items-center justify-center p-0 group/main-img">
+            <div className="bg-white rounded-[2rem] border border-border/30 overflow-hidden shadow-2xl shadow-navy-deep/5 w-full aspect-square relative flex items-center justify-center p-3 sm:p-5 group/main-img">
               {galleryItems[activeIndex]?.type === "video" ? (
                 <video
                   src={galleryItems[activeIndex]?.url}
@@ -605,7 +605,7 @@ function ProductDetails() {
                 <img
                   src={galleryItems[activeIndex]?.url || product.image}
                   alt={product.name}
-                  className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 hover:scale-105"
+                  className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 hover:scale-105"
                 />
               )}
 

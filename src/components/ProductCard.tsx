@@ -34,7 +34,7 @@ export function ProductCard({
         search={bannerId ? { bannerId } : undefined}
         className="flex flex-col flex-1 cursor-pointer"
       >
-        <div className="relative aspect-square bg-white overflow-hidden rounded-t-xl flex items-center justify-center p-0 border-b border-border/40">
+        <div className="relative aspect-square bg-white overflow-hidden rounded-t-xl flex items-center justify-center p-2 border-b border-border/40">
           {/* Dynamic Badge */}
           {product.stock === 0 ? (
             <div className="absolute top-3 left-3 z-10 bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm">
@@ -59,7 +59,7 @@ export function ProductCard({
                 target.src = product.gallery[0].url;
               }
             }}
-            className={`w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out ${product.stock === 0 ? "opacity-60 grayscale-[30%]" : ""}`}
+            className={`w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out ${product.stock === 0 ? "opacity-60 grayscale-[30%]" : ""}`}
           />
         </div>
         
