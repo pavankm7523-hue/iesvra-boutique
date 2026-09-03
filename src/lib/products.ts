@@ -205,7 +205,7 @@ export function sanitizeCategories(cats: Category[]): Category[] {
 
 export function getCategories(): Category[] {
   if (typeof window === "undefined") return initialCategories;
-  const stored = localStorage.getItem("ishvara_categories_v3");
+  const stored = localStorage.getItem("ishvara_categories_v4");
   if (!stored) return initialCategories;
   try {
     return sanitizeCategories(JSON.parse(stored));
@@ -225,7 +225,7 @@ export async function saveCategories(cats: Category[]) {
   if (!response.ok || !result?.success) {
     throw new Error(result?.error || `Category save failed (HTTP ${response.status}).`);
   }
-  localStorage.setItem("ishvara_categories_v3", JSON.stringify(cats));
+  localStorage.setItem("ishvara_categories_v4", JSON.stringify(cats));
   window.dispatchEvent(new CustomEvent("ishvara_categories_changed"));
 }
 
@@ -243,12 +243,12 @@ export function useCategories() {
         if (Array.isArray(globalCats) && globalCats.length > 0) {
           const sanitized = sanitizeCategories(globalCats);
           setCats(sanitized);
-          localStorage.setItem("ishvara_categories_v3", JSON.stringify(sanitized));
+          localStorage.setItem("ishvara_categories_v4", JSON.stringify(sanitized));
         } else {
           // A page load must never repopulate the database with bundled
           // defaults. Only an explicit, confirmed admin save may write data.
           setCats([]);
-          localStorage.setItem("ishvara_categories_v3", "[]");
+          localStorage.setItem("ishvara_categories_v4", "[]");
         }
       })
       .catch((err) => {
