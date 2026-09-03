@@ -245,10 +245,10 @@ export function useCategories() {
           setCats(sanitized);
           localStorage.setItem("ishvara_categories_v4", JSON.stringify(sanitized));
         } else {
-          // A page load must never repopulate the database with bundled
-          // defaults. Only an explicit, confirmed admin save may write data.
-          setCats([]);
-          localStorage.setItem("ishvara_categories_v4", "[]");
+          // API returned empty – fall back to the bundled defaults so the
+          // homepage always shows the 8 category cards.
+          setCats(initialCategories);
+          localStorage.setItem("ishvara_categories_v4", JSON.stringify(initialCategories));
         }
       })
       .catch((err) => {
