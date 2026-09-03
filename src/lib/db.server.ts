@@ -40,9 +40,24 @@ async function ensureProductBackupBucket(url: string, key: string): Promise<void
     }),
   });
 
-  // Supabase returns 409 when the bucket already exists, which is safe.
-  if (!response.ok && response.status !== 409) {
-    throw new Error(`Product backup bucket could not be prepared: ${response.status} ${await response.text()}`);
+  if (!response.ok) {
+    const errorText = await response.text();
+    let storageError: Record<string, unknown> = {};
+    try {
+      storageError = JSON.parse(errorText);
+    } catch {
+      // Keep the original response text for the actionable error below.
+    }
+
+    // Supabase currently wraps this conflict in HTTP 400 while the response
+    // body carries statusCode 409. Older deployments returned HTTP 409.
+    // Both mean the private backup bucket is already ready for use.
+    const bucketAlreadyExists = response.status === 409
+      || storageError.code === "BucketAlreadyExists"
+      || String(storageError.statusCode || "") === "409";
+    if (!bucketAlreadyExists) {
+      throw new Error(`Product backup bucket could not be prepared: ${response.status} ${errorText}`);
+    }
   }
 }
 
