@@ -55,7 +55,7 @@ function AdminCategories() {
         return;
       }
       if (file.size > 1024 * 1024 * 3) {
-        toast.error("File is too large. Max size is 3MB to save storage space.");
+        toast.error("File is too large. Max size is 3MB.");
         return;
       }
       
