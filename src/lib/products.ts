@@ -172,16 +172,18 @@ export type Category = {
 export const initialCategories: Category[] = [
   { name: "Daily Essentials", image: "/category-images/daily-essentials.png" },
   { name: "Beauty & Personal Care", image: "/category-images/beauty-personal-care.png" },
+  { name: "Home & Kitchen", image: "/category-images/home-kitchen.png" },
   { name: "Corporate & Promotional Gifts", image: "/category-images/corporate-promotional-gifts.png" },
   { name: "Books", image: "/category-images/books.png" },
   { name: "Massager", image: "/category-images/massager.png" },
-  { name: "Home & Kitchen", image: "/category-images/home-kitchen.png" },
-  { name: "Sports & Fitness", image: "/category-images/sports-fitness.png" },
+  { name: "Electronics & Gadgets", image: "/category-images/electronics-gadgets.png" },
   { name: "Travel & Lifestyle", image: "/category-images/travel-lifestyle.png" },
-  { name: "Mobile Accessories", image: "/category-images/electronics-gadgets.png" },
-  { name: "Bags & Travel", image: "/category-images/travel-lifestyle.png" },
-  { name: "Books & Stationery", image: "/category-images/books.png" },
-  { name: "Massagers", image: "/category-images/massager.png" },
+  { name: "Sports & Fitness", image: "/category-images/sports-fitness.png" },
+  { name: "Office & Stationery", image: "/category-images/office-stationery.png" },
+  { name: "Fashion & Accessories", image: "/category-images/fashion-accessories.png" },
+  { name: "Toys, Kids & Baby", image: "/category-images/toys-kids-baby.png" },
+  { name: "Agriculture & Garden", image: "/category-images/agriculture-garden.png" },
+  { name: "Automotive", image: "/category-images/automotive.png" },
 ];
 
 const categoryImageMap: Record<string, string> = {
