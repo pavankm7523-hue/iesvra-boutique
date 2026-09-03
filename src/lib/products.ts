@@ -170,20 +170,14 @@ export type Category = {
 };
 
 export const initialCategories: Category[] = [
-  { name: "Daily Essentials", image: "/category-images/daily-essentials.png" },
   { name: "Beauty & Personal Care", image: "/category-images/beauty-personal-care.png" },
-  { name: "Home & Kitchen", image: "/category-images/home-kitchen.png" },
   { name: "Corporate & Promotional Gifts", image: "/category-images/corporate-promotional-gifts.png" },
   { name: "Books", image: "/category-images/books.png" },
   { name: "Massager", image: "/category-images/massager.png" },
-  { name: "Electronics & Gadgets", image: "/category-images/electronics-gadgets.png" },
-  { name: "Travel & Lifestyle", image: "/category-images/travel-lifestyle.png" },
+  { name: "Daily Essentials", image: "/category-images/daily-essentials.png" },
   { name: "Sports & Fitness", image: "/category-images/sports-fitness.png" },
-  { name: "Office & Stationery", image: "/category-images/office-stationery.png" },
-  { name: "Fashion & Accessories", image: "/category-images/fashion-accessories.png" },
-  { name: "Toys, Kids & Baby", image: "/category-images/toys-kids-baby.png" },
-  { name: "Agriculture & Garden", image: "/category-images/agriculture-garden.png" },
-  { name: "Automotive", image: "/category-images/automotive.png" },
+  { name: "Travel & Lifestyle", image: "/category-images/travel-lifestyle.png" },
+  { name: "Home & Kitchen", image: "/category-images/home-kitchen.png" },
 ];
 
 const categoryImageMap: Record<string, string> = {
@@ -195,18 +189,10 @@ const categoryImageMap: Record<string, string> = {
   "Massagers": "/category-images/massager.png",
   "Daily Essentials": "/category-images/daily-essentials.png",
   "Home & Kitchen": "/category-images/home-kitchen.png",
-  "Mobile Accessories": "/category-images/electronics-gadgets.png",
-  "Electronics & Gadgets": "/category-images/electronics-gadgets.png",
-  "Bags & Travel": "/category-images/travel-lifestyle.png",
-  "Travel & Lifestyle": "/category-images/travel-lifestyle.png",
-  "Drinkware": "/category-images/home-kitchen.png",
-  "Fans & Coolers": "/category-images/electronics-gadgets.png",
   "Sports & Fitness": "/category-images/sports-fitness.png",
-  "Office & Stationery": "/category-images/office-stationery.png",
-  "Fashion & Accessories": "/category-images/fashion-accessories.png",
-  "Toys, Kids & Baby": "/category-images/toys-kids-baby.png",
-  "Agriculture & Garden": "/category-images/agriculture-garden.png",
-  "Automotive": "/category-images/automotive.png",
+  "Travel & Lifestyle": "/category-images/travel-lifestyle.png",
+  "Bags & Travel": "/category-images/travel-lifestyle.png",
+  "Drinkware": "/category-images/home-kitchen.png",
 };
 
 export function sanitizeCategories(cats: Category[]): Category[] {
