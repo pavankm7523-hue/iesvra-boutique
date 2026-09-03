@@ -54,8 +54,8 @@ function AdminCategories() {
         toast.error("Only image files are allowed.");
         return;
       }
-      if (file.size > 1024 * 1024 * 3) {
-        toast.error("File is too large. Max size is 3MB.");
+      if (file.size > 1024 * 1024 * 5) {
+        toast.error("File is too large. Max size is 5MB.");
         return;
       }
       
@@ -305,7 +305,7 @@ function AdminCategories() {
                     <>
                       <Upload className="h-8 w-8 text-navy-deep/40 mb-2" />
                       <p className="text-xs font-bold text-navy-deep">Upload Category Card Image</p>
-                      <p className="text-[10px] text-navy-deep/50 mt-1">PNG, JPG, WEBP (Max 3MB)</p>
+                      <p className="text-[10px] text-navy-deep/50 mt-1">PNG, JPG, WEBP (Max 5MB)</p>
                     </>
                   )}
                   <input 
