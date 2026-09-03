@@ -14,6 +14,87 @@ function getSupabaseConfig() {
   return { url, key };
 }
 
+const PRODUCT_BACKUP_BUCKET = "iesvra-product-backups";
+
+function safeStorageSegment(value: unknown): string {
+  const normalized = String(value || "product")
+    .trim()
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return normalized || "product";
+}
+
+async function ensureProductBackupBucket(url: string, key: string): Promise<void> {
+  const response = await fetch(`${url}/storage/v1/bucket`, {
+    method: "POST",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: PRODUCT_BACKUP_BUCKET,
+      name: PRODUCT_BACKUP_BUCKET,
+      public: false,
+      allowed_mime_types: ["application/json"],
+    }),
+  });
+
+  // Supabase returns 409 when the bucket already exists, which is safe.
+  if (!response.ok && response.status !== 409) {
+    throw new Error(`Product backup bucket could not be prepared: ${response.status} ${await response.text()}`);
+  }
+}
+
+async function uploadProductBackupObject(
+  url: string,
+  key: string,
+  objectPath: string,
+  body: string,
+): Promise<void> {
+  const response = await fetch(
+    `${url}/storage/v1/object/${PRODUCT_BACKUP_BUCKET}/${objectPath.split("/").map(encodeURIComponent).join("/")}`,
+    {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        "x-upsert": "true",
+      },
+      body,
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Product backup upload failed: ${response.status} ${await response.text()}`);
+  }
+}
+
+export async function backupProductToStorage(
+  product: Record<string, any>,
+  operation: "create" | "update" | "upsert" | "pre-delete" | "baseline",
+): Promise<{ path: string; latestPath: string }> {
+  const { url, key } = getSupabaseConfig();
+  await ensureProductBackupBucket(url, key);
+
+  const productId = safeStorageSegment(product?.id);
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const backup = JSON.stringify({
+    backedUpAt: new Date().toISOString(),
+    operation,
+    product,
+  }, null, 2);
+  const path = `products/${productId}/${timestamp}-${operation}.json`;
+  const latestPath = `products/${productId}/latest.json`;
+
+  // The timestamped copy is immutable in practice; latest.json is convenient
+  // for fast recovery and is intentionally replaced on every save.
+  await uploadProductBackupObject(url, key, path, backup);
+  await uploadProductBackupObject(url, key, latestPath, backup);
+  return { path, latestPath };
+}
+
 function parseItems(raw: any): any[] {
   // Supabase JSONB can return items as a string or as an array.
   // Normalize to a plain JS array either way.

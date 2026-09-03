@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
+import { backupProductToStorage, getMetadataFromDb, saveMetadataToDb } from "@/lib/db.server";
 import { requireAdmin } from "@/lib/session.server";
 
 type CatalogProduct = Record<string, any> & {
@@ -101,6 +101,7 @@ export const Route = createFileRoute("/api/products")({
           let list: any[];
           let savedProduct: CatalogProduct | undefined;
           let deletedProductId: string | undefined;
+          let productToDelete: CatalogProduct | undefined;
           let productsToVerify: CatalogProduct[] = [];
           const current = await getMetadataFromDb("global_products");
           const existing = Array.isArray(current) ? current : [];
@@ -157,6 +158,12 @@ export const Route = createFileRoute("/api/products")({
             }
           } else if (payload?.action === "delete" && payload.id) {
             deletedProductId = String(payload.id).trim();
+            productToDelete = existing.find((product: CatalogProduct) => product?.id === deletedProductId);
+            if (productToDelete) {
+              // A deletion is blocked unless the complete product is safely
+              // copied outside the catalog database first.
+              await backupProductToStorage(productToDelete, "pre-delete");
+            }
             list = existing.filter((product: any) => product?.id !== deletedProductId);
             nextTombstones = normalizeTombstones([...storedTombstones, deletedProductId]);
           } else {
@@ -199,6 +206,19 @@ export const Route = createFileRoute("/api/products")({
             }
           }
 
+          let backups: Array<{ productId: string; path: string }> = [];
+          if (success && productsToVerify.length > 0) {
+            backups = await Promise.all(productsToVerify.map(async (product) => {
+              const operation = payload?.action === "create"
+                ? "create"
+                : payload?.action === "update"
+                  ? "update"
+                  : "upsert";
+              const backup = await backupProductToStorage(product, operation);
+              return { productId: product.id, path: backup.path };
+            }));
+          }
+
           if (success && deletedProductId) {
             const [persisted, persistedTombstones] = await Promise.all([
               getMetadataFromDb("global_products"),
@@ -220,7 +240,7 @@ export const Route = createFileRoute("/api/products")({
             }
           }
 
-          return new Response(JSON.stringify({ success, count: list.length, verifiedCount, deletedId: deletedProductId, product: savedProduct && {
+          return new Response(JSON.stringify({ success, count: list.length, verifiedCount, backupCount: backups.length, backups, deletedId: deletedProductId, product: savedProduct && {
             id: savedProduct.id,
             name: savedProduct.name,
             image: savedProduct.image,
