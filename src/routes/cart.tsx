@@ -6,6 +6,7 @@ import { AddressPicker } from "@/components/AddressPicker";
 import { PasswordInput } from "@/components/PasswordInput";
 import { useCurrentUser } from "@/lib/auth";
 import { createOrder } from "@/lib/orders";
+import { trackMetaInitiateCheckout, trackMetaPurchase } from "@/lib/meta-pixel";
 import { toast } from "sonner";
 import { fetchAddressSuggestions, checkExpressEligibility, geocodeAddress, reverseGeocode } from "@/lib/delivery";
 import { calculateCouponDiscount, useCoupons } from "@/lib/coupons";
@@ -660,6 +661,7 @@ function Cart() {
     localStorage.setItem("IESVRA_shipping_name", sName);
     localStorage.setItem("IESVRA_shipping_phone", sPhone);
     localStorage.setItem("IESVRA_delivery_address", combinedAddress);
+    trackMetaInitiateCheckout(cartItems, total);
 
     if (paymentMode === "cod") {
       try {
@@ -676,6 +678,7 @@ function Cart() {
           pinnedLat,
           pinnedLng
         );
+        trackMetaPurchase(order);
         setPlacedOrder(order);
         toast.success("Order placed successfully via Cash on Delivery!");
       } catch (err: any) {
@@ -750,6 +753,7 @@ function Cart() {
               pinnedLng
             );
 
+            trackMetaPurchase(order);
             setPlacedOrder(order);
             toast.success(`Payment verified and order placed successfully! Order ID: ${order.id}`);
           } catch (verifyErr: any) {
@@ -1060,7 +1064,10 @@ function Cart() {
                 </div>
 
                 <button 
-                  onClick={() => setIsCheckoutOpen(true)}
+                  onClick={() => {
+                    trackMetaInitiateCheckout(cartItems, total);
+                    setIsCheckoutOpen(true);
+                  }}
                   className="w-full bg-primary text-white h-14 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-primary/95 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-primary/10 cursor-pointer"
                 >
                   Proceed to Checkout <ArrowRight className="h-4 w-4" />

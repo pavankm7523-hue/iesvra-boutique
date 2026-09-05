@@ -4,6 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { formatProductPolicy, useProducts, colorMap, type ProductMedia } from "@/lib/products";
 import { addToCart } from "@/lib/cart";
+import { trackMetaViewContent } from "@/lib/meta-pixel";
 import { MediaUploader } from "@/components/MediaUploader";
 import { useIsInWishlist, toggleWishlist } from "@/lib/wishlist";
 import { geocodeAddress, reverseGeocode } from "@/lib/delivery";
@@ -505,6 +506,11 @@ function ProductDetails() {
     }
     return items.length > 0 ? items : [{ id: "main", type: "image" as const, url: product.image }];
   }, [product?.gallery, product?.image]);
+
+  useEffect(() => {
+    if (!product) return;
+    trackMetaViewContent({ id: product.id, name: product.name, price: product.price });
+  }, [product?.id, product?.name, product?.price]);
 
   if (!product && !isLoaded) {
     return (

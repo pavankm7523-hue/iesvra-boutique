@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Product } from "./products";
+import { trackMetaAddToCart } from "./meta-pixel";
 
 export interface CartItem {
   id: string;
@@ -43,13 +44,15 @@ export function getCart(): CartItem[] {
   }
 }
 
-export function saveCart(cart: CartItem[]) {
-  if (typeof window === "undefined") return;
+export function saveCart(cart: CartItem[]): boolean {
+  if (typeof window === "undefined") return false;
   try {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
     triggerCartChange();
+    return true;
   } catch (e) {
     console.error("Failed to save cart", e);
+    return false;
   }
 }
 
@@ -83,7 +86,14 @@ export function addToCart(product: Product, color: string, quantity = 1, bannerI
     });
   }
 
-  saveCart(cart);
+  if (saveCart(cart)) {
+    trackMetaAddToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+    });
+  }
 }
 
 export function removeFromCart(id: string, color: string) {

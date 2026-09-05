@@ -4,6 +4,7 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
+  useLocation,
   useRouter,
   HeadContent,
   Scripts,
@@ -15,6 +16,22 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
 import { Toaster } from "sonner";
+import {
+  META_PIXEL_BOOTSTRAP_SCRIPT,
+  META_PIXEL_SCRIPT_ID,
+  META_PIXEL_SCRIPT_SRC,
+  trackMetaPageView,
+} from "@/lib/meta-pixel";
+
+function MetaPixelPageViews() {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackMetaPageView(location.href);
+  }, [location.href]);
+
+  return null;
+}
 
 function NotFoundComponent() {
   return (
@@ -194,6 +211,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
             )};`
           }}
         />
+        <script
+          id="iesvra-meta-pixel-bootstrap"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: META_PIXEL_BOOTSTRAP_SCRIPT }}
+        />
+        <script
+          id={META_PIXEL_SCRIPT_ID}
+          src={META_PIXEL_SCRIPT_SRC}
+          async
+        />
       </head>
       <body>
         {children}
@@ -227,6 +254,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <MetaPixelPageViews />
       <div className="flex min-h-screen w-full min-w-0 max-w-full flex-col overflow-x-clip">
         <Header />
         <main className="flex w-full min-w-0 max-w-full flex-grow flex-col overflow-x-clip">
