@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.iesvra.app",
+      "sha256_cert_fingerprints": [
+        "3C:44:C9:46:2B:7C:B8:B6:8A:42:11:70:C8:AC:35:19:BD:01:98:42:35:EA:B8:5B:EB:C4:1C:ED:72:AE:4E:5E"
+      ]
+    }
+  }
+]
