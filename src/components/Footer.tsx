@@ -1,12 +1,16 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 const logo = "/iesvra-logo.png";
 import { Facebook, Instagram, Youtube, Phone as Whatsapp } from "lucide-react";
 
 export function Footer() {
+  const pathname = useLocation({ select: (location) => location.pathname });
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
+
+  // The storefront footer belongs only on Home, not other app tabs or pages.
+  if (pathname !== "/") return null;
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
